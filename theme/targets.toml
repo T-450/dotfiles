@@ -1,0 +1,10 @@
+# template (theme/templates/) -> rendered file (relative to the repo root).
+# Every `out` is gitignored: palettes + templates are the source, outputs are build products.
+
+[[target]]
+template = "mango.conf"
+out = "colors.conf"
+
+[[target]]
+template = "foot.ini"
+out = "foot/colors.ini"

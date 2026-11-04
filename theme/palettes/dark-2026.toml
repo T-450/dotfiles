@@ -1,0 +1,47 @@
+# VS Code "2026 Dark": microsoft/vscode extensions/theme-defaults/themes/2026-dark.json
+# (include chain dark_vs -> dark_plus -> dark_modern -> 2026-dark). The comment on each
+# role is the VS Code key it comes from; `theme import-vscode` uses the same mapping.
+
+[meta]
+name = "Dark 2026"
+variant = "dark"
+source = "vscode:2026-dark"
+
+[colors]
+bg_desktop      = "#121314"  # editor.background
+bg_surface      = "#191a1b"  # statusBar.background (= panel, sideBar)
+bg_widget       = "#202122"  # quickInput.background (= notifications, menu)
+bg_hover        = "#323233"  # statusBarItem.hoverBackground
+border_hairline = "#2a2b2c"  # widget.border (= panel.border)
+border_inactive = "#333536"  # input.border
+fg_text         = "#bfbfbf"  # foreground
+fg_editor       = "#bbbebf"  # editor.foreground
+fg_secondary    = "#8c8c8c"  # descriptionForeground (= statusBar.foreground)
+fg_muted        = "#858889"  # editorLineNumber.foreground
+fg_bright       = "#ededed"  # list.activeSelectionForeground
+fg_disabled     = "#555555"  # disabledForeground
+accent          = "#3994bc"  # tab.activeBorderTop (focusBorder without alpha)
+badge           = "#307e9f"  # badge.background
+selection_bg    = "#297aa0"  # quickInputList.focusBackground
+selection_fg    = "#ffffff"  # quickInputList.focusForeground
+link            = "#48a0c7"  # textLink.foreground
+error           = "#f48771"  # errorForeground
+warning         = "#e5ba7d"  # list.warningForeground
+success         = "#73c991"  # gitDecoration.addedResourceForeground
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#cccccc"  # terminal.foreground
+bg     = "#191a1b"  # terminal.background
+cursor = "#bfbfbf"  # terminalCursor.foreground
+# ansi 0-15: VS Code's built-in dark defaults (terminalColorRegistry.ts)
+ansi = [
+	"#000000", "#cd3131", "#0dbc79", "#e5e510", "#2472c8", "#bc3fbc", "#11a8cd", "#e5e5e5",
+	"#666666", "#f14c4c", "#23d18b", "#f5f543", "#3b8eea", "#d670d6", "#29b8db", "#e5e5e5",
+]
+
+[art]  # greeter wallpaper (greeter/make-wallpaper.sh)
+planet_light = "#7cc4e6"
+planet_dark  = "#0b1f2a"
+ring_outer   = "#e5ba7d"
+ring_inner   = "#c9a066"

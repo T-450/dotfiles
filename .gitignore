@@ -1,0 +1,4 @@
+# theme/theme outputs (rendered from theme/palettes + theme/templates; `theme init` recreates them)
+/theme/current
+/colors.conf
+/foot/colors.ini
