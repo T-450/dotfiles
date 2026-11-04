@@ -506,8 +506,7 @@ def install_greeter():
         raise ThemeError("run as your user; it calls sudo itself (art is rendered as you)")
     g = REPO / "greeter"
     toml = g / "themes" / "mango.toml"
-    if not toml.exists():
-        raise ThemeError("greeter/themes/mango.toml missing: run `theme init` first")
+    render_all(current(), REPO)  # greeter toml + colors.sh for the wallpaper script
     subprocess.run([str(g / "make-wallpaper.sh")], check=True)
     wall = g / "wallpapers" / "sysc-greet-mango.png"
     prefs = GREETER_HOME / ".cache/sysc-greet/preferences"

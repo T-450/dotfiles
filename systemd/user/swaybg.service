@@ -5,7 +5,9 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/swaybg -c '#121314'
+# solid desktop color from the active palette (theme/colors.sh, rendered by theme/theme)
+EnvironmentFile=%h/.config/mango/theme/colors.sh
+ExecStart=/usr/bin/swaybg -c ${THEME_BG_DESKTOP}
 Restart=on-failure
 
 [Install]

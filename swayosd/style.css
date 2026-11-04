@@ -1,0 +1,38 @@
+/* swayosd (volume/brightness OSD), styled like the mako toasts: flat widget
+   background, hairline border, accent fill. Colors: colors.css, rendered from
+   the active palette by theme/theme. Loaded with -s by swayosd.service. */
+@import "colors.css";
+
+window#osd {
+	border-radius: 6px;
+	border: 1px solid @osd_border;
+	background: @osd_bg;
+}
+window#osd #container { margin: 14px 16px; }
+window#osd image,
+window#osd label { color: @osd_fg; }
+window#osd progressbar:disabled,
+window#osd image:disabled { opacity: 0.5; }
+window#osd progressbar,
+window#osd segmentedprogress {
+	min-height: 6px;
+	border-radius: 999px;
+	background: transparent;
+	border: none;
+}
+window#osd trough,
+window#osd segment {
+	min-height: inherit;
+	border-radius: inherit;
+	border: none;
+	background: @osd_trough;
+}
+window#osd progress,
+window#osd segment.active {
+	min-height: inherit;
+	border-radius: inherit;
+	border: none;
+	background: @osd_fill;
+}
+window#osd segment { margin-left: 8px; }
+window#osd segment:first-child { margin-left: 0; }

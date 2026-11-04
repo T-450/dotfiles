@@ -9,4 +9,4 @@ configuration {
     drun-display-format: "{name}";
 }
 
-@theme "vscode-dark-2026"
+@theme "quickinput"

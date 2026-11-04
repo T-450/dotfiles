@@ -1,4 +1,5 @@
-/* wlogout — VS Code Dark 2026 */
+/* wlogout. Colors: colors.css, rendered from the active palette by theme/theme. */
+@import "colors.css";
 * {
     background-image: none;
     box-shadow: none;
@@ -7,8 +8,8 @@
 window {
     font-family: "Inter", sans-serif;
     font-size: 12pt;
-    color: #bfbfbf;
-    background-color: rgba(18, 19, 20, 0.92);
+    color: @fg;
+    background-color: alpha(@desktop, 0.92);
 }
 
 button {
@@ -18,16 +19,16 @@ button {
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
-    color: #8c8c8c;
+    color: @muted;
     text-shadow: none;
     margin: 160px 8px;
 }
 
 button:focus,
 button:hover {
-    background-color: #202122;
-    border-color: #3994bc;
-    color: #ffffff;
+    background-color: @widget;
+    border-color: @accent;
+    color: @selfg;
 }
 
 #lock      { background-image: image(url("./icons/lock.png")); }

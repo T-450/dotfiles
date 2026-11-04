@@ -1,16 +1,6 @@
-/* VS Code Dark 2026 — styled after the status bar: flat, muted text, blue for focus. */
-@define-color bar     #191A1B;
-@define-color widget  #202122;
-@define-color hover   #323233;
-@define-color line    #2A2B2C;
-@define-color invalid #555555;
-@define-color linenr  #858889;
-@define-color muted   #8C8C8C;
-@define-color fg      #bfbfbf;
-@define-color bright  #ededed;
-@define-color accent  #3994BC;
-@define-color warn    #e5ba7d;
-@define-color error   #f48771;
+/* Styled after the VS Code status bar: flat, muted text, blue for focus. */
+/* Colors: colors.css, rendered from the active palette by theme/theme. */
+@import "colors.css";
 
 /* mangobar takes one family (first) and one global weight */
 * {
@@ -55,4 +45,4 @@ menu {
     font-size: 10px;
 }
 menuitem       { color: @fg; }
-menuitem:hover { color: #FFFFFF; background-color: #297AA0; }
+menuitem:hover { color: @selfg; background-color: @sel; }

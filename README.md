@@ -2,7 +2,7 @@
 
 Based on [DreamMaoMao/mango-config](https://github.com/DreamMaoMao/mango-config), reduced to a
 basic setup for mangowm 0.18.4 on Arch, themed with VS Code's **Dark 2026** colors (neutral greys,
-one blue accent `#3994BC`; see `THEME.md`). Every config lives in this directory; `./link.sh` symlinks it into `~/.config`.
+one blue accent). Colors come from one switchable palette: `theme/theme set <name>`, see `THEME.md`. Every config lives in this directory; `./link.sh` symlinks it into `~/.config`.
 
 ## Stack
 
@@ -14,10 +14,10 @@ one blue accent `#3994BC`; see `THEME.md`). Every config lives in this directory
 | terminal | `foot` | `foot/foot.ini` |
 | launcher | `rofi` | `rofi/config.rasi`, `rofi/themes/vscode-dark-2026.rasi` |
 | notifications | `mako` | `mako/config` |
-| lock / idle | `swaylock`, `swayidle`, `dimland-git` | `swaylock/config`, `systemd/user/swayidle.service` |
+| lock / idle | `swaylock`, `swayidle`, `dimland-git` | `theme/templates/swaylock`, `systemd/user/swayidle.service` |
 | power menu | `wlogout` | `wlogout/` |
-| wallpaper | `swaybg` (solid `#121314`) | `systemd/user/swaybg.service` |
-| OSD | `swayosd` | `scripts/volume.sh`, `scripts/brightness.sh` |
+| wallpaper | `swaybg` (solid palette `bg_desktop`) | `systemd/user/swaybg.service` |
+| OSD | `swayosd` | `swayosd/style.css`, `scripts/volume.sh`, `scripts/brightness.sh` |
 | clipboard | `wl-clipboard cliphist wl-clip-persist` | units |
 | polkit | `polkit-gnome` | unit |
 | portals | `xdg-desktop-portal-{wlr,gtk}`, `gnome-keyring` | `xdg-desktop-portal/`, `xdg-desktop-portal-wlr/` |

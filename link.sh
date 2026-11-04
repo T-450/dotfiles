@@ -33,9 +33,8 @@ link "$src/environment.d"          environment.d
 link "$src/xdg-desktop-portal"     xdg-desktop-portal
 link "$src/xdg-desktop-portal-wlr" xdg-desktop-portal-wlr
 
-# dark preference for GTK apps and the settings portal (firefox follows it)
-gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
+# GTK icons, cursor and fonts. The dark/light preference (color-scheme, gtk-theme)
+# follows the palette and is set by theme/hooks/gtk.sh.
 gsettings set org.gnome.desktop.interface icon-theme Adwaita
 gsettings set org.gnome.desktop.interface cursor-theme Adwaita
 gsettings set org.gnome.desktop.interface font-name 'Inter 11'

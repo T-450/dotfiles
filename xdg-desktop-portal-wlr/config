@@ -4,4 +4,4 @@
 #   chooser_type=none
 [screencast]
 chooser_type=simple
-chooser_cmd=slurp -f %o -or -b '#12131488' -c '#3994bcff'
+chooser_cmd=~/.config/mango/scripts/slurp-pick.sh -f %o -or

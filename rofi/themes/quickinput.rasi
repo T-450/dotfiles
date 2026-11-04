@@ -1,8 +1,7 @@
-/* VS Code Dark 2026 — modelled on the Quick Open (quickInput) widget */
+/* Launcher layout, modelled on VS Code's Quick Open (quickInput) widget.
+   Colors: colors.rasi, rendered from the active palette by theme/theme. */
+@import "colors.rasi"
 * {
-  bg: #202122; input: #191A1B; line: #2A2B2C; inborder: #333536;
-  fg: #bfbfbf; muted: #8C8C8C; placeholder: #858889; accent: #3994BC;
-  sel: #297AA0; selfg: #FFFFFF; hl: #48A0C7;
   background-color: transparent; text-color: @fg; font: "Inter 12";
 }
 window { background-color: @bg; border: 1px; border-color: @line; border-radius: 6px; width: 560px; padding: 6px; }
@@ -14,6 +13,5 @@ listview { lines: 9; spacing: 0; fixed-height: false; scrollbar: false; }
 element { padding: 4px 8px; border-radius: 3px; spacing: 8px; }
 element normal.normal, element alternate.normal { background-color: transparent; text-color: @fg; }
 element selected.normal, element selected.active { background-color: @sel; text-color: @selfg; }
-element-text { text-color: inherit; vertical-align: 0.5; highlight: bold #48A0C7; }
-element-text selected { highlight: bold #FFFFFF; }
+element-text { text-color: inherit; vertical-align: 0.5; }
 element-icon { size: 16px; }

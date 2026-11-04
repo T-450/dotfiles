@@ -7,6 +7,7 @@ echo "==> packages"
 sudo pacman -S --needed \
 	inter-font ttf-jetbrains-mono-nerd \
 	swaylock jq libnotify xdg-user-dirs wev qt6-wayland \
+	python imagemagick \
 	rtkit   # realtime scheduling for PipeWire/WirePlumber (fixes "RTKit error")
 
 echo "==> remove swaync (replaced by mako)"
@@ -31,13 +32,12 @@ if pacman -Q thermald &>/dev/null && [[ $(state thermald.service) == enabled ]];
 	sudo systemctl disable --now thermald.service
 fi
 
-echo "==> greeter (sysc-greet): Dark 2026 theme, ringed-planet header, Higgs Field animation"
+echo "==> greeter (sysc-greet): \"Mango\" theme from the active palette, ringed-planet header, Higgs Field animation"
 g="$here/../greeter"
 gh=/var/lib/greeter
-# theme -> greeter's own config dir (the greeter user cannot read /home)
-sudo install -Dm644 -o greeter -g greeter "$g/themes/dark-2026.toml" "$gh/.config/sysc-greet/themes/dark-2026.toml"
-# theme wallpaper (shown while the greeter starts; picked by theme name)
-sudo install -Dm644 "$g/wallpapers/sysc-greet-dark-2026.png" /usr/share/sysc-greet/wallpapers/sysc-greet-dark-2026.png
+# theme + wallpaper rendered from the active palette, installed into the greeter's own
+# config dir (the greeter user cannot read /home). Re-run after `theme set` to follow it.
+"$here/../theme/theme" install-greeter
 # mango ASCII profile with the planet first; package upgrades overwrite it, so a
 # pacman hook restores it from /usr/local/share after every sysc-greet upgrade
 sudo install -Dm644 "$g/ascii_configs/mango.conf" /usr/local/share/sysc-greet/mango.conf

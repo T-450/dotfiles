@@ -10,7 +10,7 @@ full)
 	grim "$file" || exit 1
 	;;
 region)
-	geom=$(slurp -b '#12131488' -c '#3994bcff' -w 2) || exit 0
+	geom=$(~/.config/mango/scripts/slurp-pick.sh -w 2) || exit 0
 	grim -g "$geom" "$file" || exit 1
 	;;
 *)

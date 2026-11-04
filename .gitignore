@@ -2,3 +2,16 @@
 /theme/current
 /colors.conf
 /foot/colors.ini
+/mako/colors
+/rofi/themes/colors.rasi
+/mangobar/colors.css
+/wlogout/colors.css
+/gtk-3.0/colors.css
+/gtk-4.0/colors.css
+/gtk-3.0/settings.ini
+/gtk-4.0/settings.ini
+/swaylock/config
+/theme/colors.sh
+/swayosd/colors.css
+/greeter/themes/mango.toml
+/greeter/wallpapers/sysc-greet-mango.png
