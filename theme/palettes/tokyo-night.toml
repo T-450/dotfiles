@@ -1,0 +1,38 @@
+# Imported with `theme import-*` from omarchy:https://raw.githubusercontent.com/omacom/omarchy/master/themes/tokyo-night/colors.toml
+
+[meta]
+name = "tokyo-night"
+variant = "dark"
+source = "omarchy:https://raw.githubusercontent.com/omacom/omarchy/master/themes/tokyo-night/colors.toml"
+
+[colors]
+bg_desktop      = "#13141c"  # omarchy
+bg_surface      = "#1a1b26"  # omarchy
+bg_widget       = "#24283b"  # omarchy
+bg_hover        = "#2f3347"  # omarchy
+border_hairline = "#252734"  # omarchy
+border_inactive = "#414868"  # omarchy
+fg_text         = "#a9b1d6"  # omarchy
+fg_editor       = "#a9b1d6"  # omarchy
+fg_secondary    = "#858caa"  # omarchy
+fg_muted        = "#565f89"  # omarchy
+fg_bright       = "#c0caf5"  # omarchy
+fg_disabled     = "#53576c"  # omarchy
+accent          = "#7aa2f7"  # omarchy
+badge           = "#6c8ed8"  # omarchy
+selection_bg    = "#292e42"  # omarchy
+selection_fg    = "#c0caf5"  # omarchy
+link            = "#449dab"  # omarchy
+error           = "#f7768e"  # omarchy
+warning         = "#e0af68"  # omarchy
+success         = "#9ece6a"  # omarchy
+shadow          = "#000000"  # omarchy
+
+[terminal]
+fg     = "#a9b1d6"
+bg     = "#1a1b26"
+cursor = "#a9b1d6"
+ansi = [
+	"#343646", "#f7768e", "#9ece6a", "#e0af68", "#7aa2f7", "#ad8ee6", "#449dab", "#a9b1d6",
+	"#565f89", "#ff7a93", "#b9f27c", "#ff9e64", "#7da6ff", "#bb9af7", "#0db9d7", "#c0caf5",
+]

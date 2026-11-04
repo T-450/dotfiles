@@ -1,0 +1,38 @@
+# Imported with `theme import-*` from vscode:https://raw.githubusercontent.com/microsoft/vscode/main/extensions/theme-defaults/themes/2026-light.json
+
+[meta]
+name = "2026 Light"
+variant = "light"
+source = "vscode:https://raw.githubusercontent.com/microsoft/vscode/main/extensions/theme-defaults/themes/2026-light.json"
+
+[colors]
+bg_desktop      = "#ffffff"  # editor.background
+bg_surface      = "#fafafd"  # statusBar.background
+bg_widget       = "#fafafd"  # quickInput.background
+bg_hover        = "#e3e3e5"  # statusBarItem.hoverBackground
+border_hairline = "#e2e2e5"  # widget.border
+border_inactive = "#ececee"  # input.border
+fg_text         = "#202020"  # foreground
+fg_editor       = "#202020"  # editor.foreground
+fg_secondary    = "#606060"  # descriptionForeground
+fg_muted        = "#606060"  # editorLineNumber.foreground
+fg_bright       = "#202020"  # list.activeSelectionForeground
+fg_disabled     = "#bbbbbb"  # disabledForeground
+accent          = "#0069cc"  # focusBorder (alpha dropped)
+badge           = "#0069cc"  # badge.background
+selection_bg    = "#0069cc"  # quickInputList.focusBackground
+selection_fg    = "#ffffff"  # quickInputList.focusForeground
+link            = "#0069cc"  # textLink.foreground
+error           = "#ad0707"  # errorForeground
+warning         = "#667309"  # list.warningForeground
+success         = "#587c0c"  # gitDecoration.addedResourceForeground
+shadow          = "#000000"  # constant
+
+[terminal]
+fg     = "#3b3b3b"
+bg     = "#fafafd"
+cursor = "#202020"
+ansi = [
+	"#000000", "#cd3131", "#107c10", "#949800", "#0451a5", "#bc05bc", "#0598bc", "#555555",
+	"#666666", "#f14c4c", "#14ce14", "#b5ba00", "#3b8eea", "#d670d6", "#29b8db", "#a5a5a5",
+]

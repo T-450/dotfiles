@@ -68,6 +68,10 @@ def to_hex(c):
     return "#" + "".join(f"{v:02x}" for v in c)
 
 
+def lum(c):
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+
 def mix(a, b, t):
     """Blend color a toward b by t (0 = a, 1 = b)."""
     return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
@@ -383,7 +387,7 @@ def import_vscode(src):
         variant = "light" if kind in ("light", "hc-light") else "dark"
     else:  # no "type" anywhere: judge by the editor background's luminance
         bg = flatten(c.get("editor.background", "#1e1e1e"), (0, 0, 0))
-        variant = "light" if (0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2]) > 128 else "dark"
+        variant = "light" if lum(bg) > 128 else "dark"
 
     def pick(keys, over=None, default=None):
         for k in keys:
@@ -417,13 +421,12 @@ def import_vscode(src):
     role("fg_muted", ["editorLineNumber.foreground"], v["bg_desktop"], mix(v["fg_text"], v["bg_desktop"], 0.4))
     role("fg_bright", ["list.activeSelectionForeground"], v["bg_surface"], v["fg_text"])
     role("fg_disabled", ["disabledForeground"], v["bg_surface"], mix(v["fg_text"], v["bg_surface"], 0.6))
-    # focusBorder often carries alpha: use its opaque hue rather than flattening it to grey
-    if "tab.activeBorderTop" in c:
-        role("accent", ["tab.activeBorderTop"], v["bg_surface"])
+    # focusBorder is the theme's focus color but often carries alpha: take its opaque hue
+    # (flattening would grey it). Not tab.activeBorderTop: 2026 Light sets that to black.
+    if re.fullmatch(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?", c.get("focusBorder", "")):
+        v["accent"], src_keys["accent"] = rgb(c["focusBorder"][:7]), "focusBorder (alpha dropped)"
     else:
-        role("accent", ["focusBorder", "button.background"], v["bg_surface"], ansi_default[12])
-        if "focusBorder" in c:
-            v["accent"] = flatten(c["focusBorder"][:7], (0, 0, 0))
+        role("accent", ["tab.activeBorderTop", "button.background"], v["bg_surface"], ansi_default[12])
     role("badge", ["badge.background"], v["bg_surface"], v["accent"])
     role("selection_bg", ["quickInputList.focusBackground", "list.activeSelectionBackground"], v["bg_widget"],
          v["accent"])
@@ -481,12 +484,15 @@ def import_omarchy(src):
     v["success"] = g("green", (0x73, 0xc9, 0x91))
     v["shadow"] = (0, 0, 0)
     names = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-    base = VSCODE_ANSI[variant]
+    base = [rgb(x) for x in VSCODE_ANSI[variant]]
+    # most Omarchy themes have no black/white: derive them from the theme, not VS Code's
+    base[0], base[8] = mix(bg, fg, 0.18), v["fg_muted"]
+    base[7], base[15] = fg, v["fg_bright"]
     ansi = []
     for i in range(16):
         explicit = d.get(f"color{i}")
         named = f"{'bright_' if i >= 8 else ''}{names[i % 8]}"
-        ansi.append(rgb(explicit, f"color{i}") if explicit else g(named, rgb(base[i])))
+        ansi.append(rgb(explicit, f"color{i}") if explicit else g(named, base[i]))
     term = {"fg": fg, "bg": bg, "cursor": g("cursor", fg)}
     meta = {"name": d.get("name", Path(src).parent.name or "imported"), "variant": variant, "source": f"omarchy:{src}"}
     return meta, v, {k: "omarchy" for k in v}, term, ansi
@@ -508,8 +514,15 @@ def import_base24(src):
     for k, src_k in {"base12": "base08", "base13": "base0a", "base14": "base0b", "base15": "base0c",
                      "base16": "base0d", "base17": "base0e"}.items():
         b.setdefault(k, b[src_k])
+    # Schemes disagree on whether base01/base10 are lighter or darker than base00
+    # (Catppuccin's base01 "mantle" is darker), so pick the tiers by luminance.
+    dark = variant == "dark"
+    deeper = lambda c: lum(c) < lum(b["base00"]) if dark else lum(c) > lum(b["base00"])
+    desktop = next((b[k] for k in ("base10", "base01", "base11") if k in b and deeper(b[k])),
+                   mix(b["base00"], (0, 0, 0) if dark else (255, 255, 255), 0.25))
+    widget = b["base01"] if not deeper(b["base01"]) else mix(b["base00"], b["base02"], 0.5)
     v = {
-        "bg_desktop": b["base10"], "bg_surface": b["base00"], "bg_widget": b["base01"],
+        "bg_desktop": desktop, "bg_surface": b["base00"], "bg_widget": widget,
         "bg_hover": b["base02"], "border_hairline": mix(b["base01"], b["base02"], 0.5),
         "border_inactive": b["base02"], "fg_text": b["base05"], "fg_editor": b["base05"],
         "fg_secondary": b["base04"], "fg_muted": b["base03"], "fg_bright": b["base06"],

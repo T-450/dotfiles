@@ -20,7 +20,7 @@ fg_secondary    = "#8c8c8c"  # descriptionForeground (= statusBar.foreground)
 fg_muted        = "#858889"  # editorLineNumber.foreground
 fg_bright       = "#ededed"  # list.activeSelectionForeground
 fg_disabled     = "#555555"  # disabledForeground
-accent          = "#3994bc"  # tab.activeBorderTop (focusBorder without alpha)
+accent          = "#3994bc"  # focusBorder without its alpha (= tab.activeBorderTop)
 badge           = "#307e9f"  # badge.background
 selection_bg    = "#297aa0"  # quickInputList.focusBackground
 selection_fg    = "#ffffff"  # quickInputList.focusForeground

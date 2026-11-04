@@ -35,7 +35,7 @@ A palette names colors by what they do, not by app. The VS Code key is where
 | `fg_muted` | `editorLineNumber.foreground` | empty tags, rofi placeholder, greeter muted |
 | `fg_bright` | `list.activeSelectionForeground` | bar tag hover text |
 | `fg_disabled` | `disabledForeground` | bar invalid |
-| `accent` | `tab.activeBorderTop` | mango focus/drop/maximized, active tag, rofi input, swaylock, slurp, swayosd fill, greeter primary |
+| `accent` | `focusBorder` (alpha dropped) | mango focus/drop/maximized, active tag, rofi input, swaylock, slurp, swayosd fill, greeter primary |
 | `badge` | `badge.background` | mango scratchpad |
 | `selection_bg` / `selection_fg` | `quickInputList.focusBackground` / `focusForeground` | rofi selected, foot selection, mango split, GTK accent, bar menu hover |
 | `link` | `textLink.foreground` | foot urls, rofi match highlight, GTK4 accent, greeter accent |

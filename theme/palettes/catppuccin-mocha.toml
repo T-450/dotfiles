@@ -1,0 +1,38 @@
+# Imported with `theme import-*` from base24:https://raw.githubusercontent.com/tinted-theming/schemes/spec-0.11/base24/catppuccin-mocha.yaml
+
+[meta]
+name = "Catppuccin Mocha"
+variant = "dark"
+source = "base24:https://raw.githubusercontent.com/tinted-theming/schemes/spec-0.11/base24/catppuccin-mocha.yaml"
+
+[colors]
+bg_desktop      = "#181825"  # base24
+bg_surface      = "#1e1e2e"  # base24
+bg_widget       = "#282839"  # base24
+bg_hover        = "#313244"  # base24
+border_hairline = "#242534"  # base24
+border_inactive = "#313244"  # base24
+fg_text         = "#cdd6f4"  # base24
+fg_editor       = "#cdd6f4"  # base24
+fg_secondary    = "#585b70"  # base24
+fg_muted        = "#45475a"  # base24
+fg_bright       = "#f5e0dc"  # base24
+fg_disabled     = "#353748"  # base24
+accent          = "#89b4fa"  # base24
+badge           = "#799edb"  # base24
+selection_bg    = "#6e8ec7"  # base24
+selection_fg    = "#b4befe"  # base24
+link            = "#94e2d5"  # base24
+error           = "#f38ba8"  # base24
+warning         = "#f9e2af"  # base24
+success         = "#a6e3a1"  # base24
+shadow          = "#000000"  # base24
+
+[terminal]
+fg     = "#cdd6f4"
+bg     = "#1e1e2e"
+cursor = "#cdd6f4"
+ansi = [
+	"#181825", "#f38ba8", "#a6e3a1", "#f9e2af", "#89b4fa", "#cba6f7", "#94e2d5", "#f5e0dc",
+	"#313244", "#eba0ac", "#a6e3a1", "#f5e0dc", "#74c7ec", "#f5c2e7", "#89dceb", "#b4befe",
+]
