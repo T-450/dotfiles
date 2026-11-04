@@ -16,7 +16,7 @@ Personal dotfiles for the **mangowm** (0.18.x) Wayland compositor on Arch, on a 
 
 ## Session architecture (spread across several files)
 
-- `config.conf` is the mango entry point. It `source=`s `env.conf bind.conf rule.conf monitor.conf tag.conf`. `bind.conf` defines `var=` shortcuts (`$term`, `$launcher`, `$locker`, `$browser`). They must be defined before use and are shared across the sourced files.
+- `config.conf` is the mango entry point. It `source=`s `colors.conf` (rendered by `theme/theme`) and `env.conf bind.conf rule.conf monitor.conf tag.conf`. `bind.conf` defines `var=` shortcuts (`$term`, `$launcher`, `$locker`, `$browser`). They must be defined before use and are shared across the sourced files.
 - **There is no `exec_once` autostart, on purpose.** Mango imports `WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_* MANGO_INSTANCE_SIGNATURE` into systemd/dbus and starts `mango-session.target` → `graphical-session.target`. Every daemon (bar, wallpaper, idle, OSD, polkit, clipboard, wlsunset, blueman) is a user unit with `PartOf=`/`After=`/`Requisite=graphical-session.target` and `WantedBy=graphical-session.target`. Follow this pattern for new daemons, and don't add `dbus-update-activation-environment` or `exec_once` lines.
 - Environment comes in two layers. `env.conf` (`env=` lines) applies to mango's own children and is reset on reload. `environment.d/10-wayland.conf` applies to systemd units and needs a relogin. A variable that both need goes in both files.
 - Logout goes through `scripts/session-quit.sh`, which stops `graphical-session.target` *before* `mmsg dispatch quit` so units don't die with display errors.
@@ -26,12 +26,14 @@ Personal dotfiles for the **mangowm** (0.18.x) Wayland compositor on Arch, on a 
 
 ## Theming
 
-All colors come from `THEME.md`, a role → VS Code key → hex table, plus foot's ANSI palette. Reuse those exact hex values, and update the table's "used in" column when a color gets a new consumer. Mango colors are written as `0xRRGGBBAA`. Fonts are Inter (UI) and JetBrains Mono Nerd Font (mono). The greeter has its own copy of the theme (`greeter/themes/dark-2026.toml`) because the `greeter` user can't read `/home`. Its art is regenerated with `greeter/make-planet.py` and `greeter/make-wallpaper.sh`.
+**Never write a color literal in a config.** Every color comes from a palette in `theme/palettes/*.toml` (semantic roles such as `bg_widget`, `accent`, `fg_secondary`) and reaches apps through `theme/theme`, which renders `theme/templates/*` into gitignored colors-only files listed in `theme/targets.toml` (`colors.conf`, `foot/colors.ini`, `mako/colors`, `*/colors.css`, `rofi/themes/colors.rasi`, `swaylock/config`, `gtk-*/settings.ini`, `theme/colors.sh`, `greeter/themes/mango.toml`), then runs `theme/hooks/*.sh` to reload apps. To color something new: use an existing role in a template (filters `|bare`, `|0x`, `|0x:33`, `|hex:88`, `|rgba:0.9`, `|mix:<role>:<t>`), or read `THEME_*` from `~/.config/mango/theme/colors.sh` in scripts and units. `THEME.md` documents the roles, their consumers (keep its "used in" column current) and how to add an app or a theme. `theme/theme lint` must stay clean. The greeter gets the active palette as a stable theme named "Mango" via `theme/theme install-greeter` (sudo), because the `greeter` user can't read `/home`. Fonts are Inter (UI) and JetBrains Mono Nerd Font (mono).
 
 ## Validating changes
 
 ```bash
-mango -c ~/.config/mango/config.conf -p && echo ok   # parse-check mango config
+theme/theme lint                                     # no color literals outside theme/
+theme/theme set "$(theme/theme current)"             # re-render + reload after editing a template
+mango -c ~/.config/mango/config.conf -p && echo ok   # parse-check (passes even if colors.conf is missing: run theme init)
 foot --check-config
 makoctl reload
 systemctl --user daemon-reload                       # after editing a unit

@@ -6,12 +6,14 @@ usage: theme list | current | lint
        theme set NAME [--to DIR]         render + run hooks/ (reload running apps)
        theme pick                        rofi menu of palettes -> set
        theme import-vscode SRC SLUG      VS Code theme JSON (file or URL) -> palettes/SLUG.toml
+                                         (imports refuse to replace a palette without --force)
        theme import-omarchy SRC SLUG     Omarchy colors.toml -> palette
        theme import-base24 SRC SLUG      tinted-theming base16/base24 YAML -> palette
        theme install-greeter             render greeter art, then sudo-install it
 
-Palettes (palettes/*.toml) hold semantic roles; templates/*.tmpl use {{role|filter}};
+Palettes (palettes/*.toml) hold semantic roles; templates/* use {{role|filter}};
 targets.toml maps each template to the file it renders (paths relative to the repo).
+Hooks (hooks/*) must not leave background processes holding stdout/stderr.
 Stdlib only, so it runs on a bare Arch install with just `python`.
 """
 import json
@@ -21,9 +23,7 @@ import subprocess
 import sys
 import tempfile
 import tomllib
-import urllib.error
 import urllib.parse
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -44,6 +44,12 @@ ROLES = [
 TERMINAL = ["fg", "bg", "cursor"]
 ART = ["planet_light", "planet_dark", "ring_outer", "ring_inner"]
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
+UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
+
+
+def clean_name(s):
+    """Theme names end up in config comments, shell and TOML strings: keep them plain text."""
+    return re.sub(r"\s+", " ", UNSAFE.sub(" ", str(s))).strip()[:80] or "unnamed"
 
 
 class ThemeError(Exception):
@@ -86,8 +92,8 @@ def palette_names():
     return sorted(p.stem for p in PALETTES.glob("*.toml"))
 
 
-def load_palette(slug):
-    path = PALETTES / f"{slug}.toml"
+def load_palette(slug, path=None):
+    path = path or PALETTES / f"{slug}.toml"
     if not path.is_file():
         raise ThemeError(f"no palette {slug!r} (have: {', '.join(palette_names())})")
     try:
@@ -123,7 +129,7 @@ def load_palette(slug):
 
     dark = variant == "dark"
     words = {
-        "name": meta.get("name", slug),
+        "name": clean_name(meta.get("name", slug)),
         "slug": slug,
         "variant": variant,
         "prefer_dark": "1" if dark else "0",
@@ -154,9 +160,12 @@ def apply_filters(name, filters, colors, words, where):
             if other not in colors:
                 raise ThemeError(f"{where}: mix with unknown role {other!r}")
             try:
-                c = mix(c, colors[other], float(t))
+                amount = float(t)
             except ValueError:
                 raise ThemeError(f"{where}: mix amount {t!r} is not a number") from None
+            if not 0 <= amount <= 1:  # also rejects nan/inf
+                raise ThemeError(f"{where}: mix amount must be 0-1, got {t!r}")
+            c = mix(c, colors[other], amount)
         elif op in ("hex", "bare", "0x", "rgb", "rgba"):
             if i != len(filters) - 1:
                 raise ThemeError(f"{where}: format filter {op!r} must come last")
@@ -196,27 +205,48 @@ def render_template(path, colors, words):
 
 
 def targets():
-    data = tomllib.loads((HERE / "targets.toml").read_text())
-    return data.get("target", [])
+    try:
+        data = tomllib.loads((HERE / "targets.toml").read_text())
+    except tomllib.TOMLDecodeError as e:
+        raise ThemeError(f"targets.toml: {e}") from None
+    ts = data.get("target", [])
+    for i, t in enumerate(ts):
+        if not isinstance(t.get("template"), str) or not isinstance(t.get("out"), str):
+            raise ThemeError(f"targets.toml: target #{i + 1} needs template and out strings")
+        mode = t.get("mode", 0o644)
+        if isinstance(mode, str):
+            try:
+                mode = int(mode, 8)
+            except ValueError:
+                raise ThemeError(f"targets.toml: target #{i + 1} mode {mode!r} is not octal") from None
+        t["mode"] = mode
+    return ts
 
 
 def render_all(slug, dest_root):
     """Render every target in memory first, then swap them all into place."""
     colors, words = load_palette(slug)
+    root = dest_root.resolve()
     rendered = []
     for t in targets():
         tmpl = TEMPLATES / t["template"]
-        out = (dest_root / t["out"]).resolve()
-        rendered.append((out, render_template(tmpl, colors, words), t.get("mode")))
+        if not tmpl.is_file():
+            raise ThemeError(f"targets.toml: no template {t['template']!r}")
+        # resolve() follows symlinked dirs; check containment on the unresolved path's parts
+        if Path(t["out"]).is_absolute() or ".." in Path(t["out"]).parts:
+            raise ThemeError(f"targets.toml: out {t['out']!r} must stay inside the repo")
+        out = root / t["out"]
+        rendered.append((out, render_template(tmpl, colors, words), t["mode"]))
     staged = []
     try:
         for out, text, mode in rendered:
             out.parent.mkdir(parents=True, exist_ok=True)
             fd, tmp = tempfile.mkstemp(dir=out.parent, prefix=f".{out.name}.")
+            staged.append((tmp, out))
             with os.fdopen(fd, "w") as f:
                 f.write(text)
-            os.chmod(tmp, int(mode, 8) if mode else 0o644)
-            staged.append((tmp, out))
+            os.chmod(tmp, mode)
+        # one rename per file: each is atomic; all content was validated before this point
         for tmp, out in staged:
             os.replace(tmp, out)
     finally:
@@ -232,11 +262,17 @@ def run_hooks(words):
                THEME_VARIANT=words["variant"], THEME_ROOT=str(REPO))
 
     def run(h):
-        try:
-            p = subprocess.run([str(h)], env=env, capture_output=True, text=True, timeout=30)
-            return h.name, p.returncode, (p.stderr or p.stdout).strip()
-        except subprocess.TimeoutExpired:
-            return h.name, -1, "timed out after 30s"
+        # stderr goes to a file, not a pipe, so a backgrounded grandchild can't stall us
+        with tempfile.TemporaryFile("w+") as err:
+            try:
+                p = subprocess.run([str(h)], env=env, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                   stderr=err, timeout=30)
+                code = p.returncode
+            except subprocess.TimeoutExpired:
+                code = -1
+            err.seek(0)
+            msg = err.read().strip() or ("timed out after 30s" if code == -1 else "")
+            return h.name, code, msg
 
     with ThreadPoolExecutor() as pool:
         results = list(pool.map(run, hooks))
@@ -275,21 +311,22 @@ LINT_SKIP = ("theme/", "plans/")
 
 
 def lint():
-    files = subprocess.run(["git", "-C", str(REPO), "ls-files", "-co", "--exclude-standard"],
-                           capture_output=True, text=True, check=True).stdout.split()
+    files = subprocess.run(["git", "-C", str(REPO), "ls-files", "-z", "-co", "--exclude-standard"],
+                           capture_output=True, text=True, check=True).stdout.split("\0")
     hits = 0
     for f in files:
-        if f.startswith(LINT_SKIP):
+        if not f or f.startswith(LINT_SKIP):
             continue
         try:
             text = (REPO / f).read_text()
-        except (UnicodeDecodeError, FileNotFoundError, IsADirectoryError):
+        except (UnicodeDecodeError, OSError):
             continue
         for n, line in enumerate(text.splitlines(), 1):
             if any(p.search(line) for p in LITERALS):
                 print(f"{f}:{n}: {line.strip()}")
                 hits += 1
-    print(f"{hits} color literal(s) outside theme/" if hits else "ok: no color literals outside theme/")
+    where = " and ".join(LINT_SKIP)
+    print(f"{hits} color literal(s) outside {where}" if hits else f"ok: no color literals outside {where}")
     return hits == 0
 
 
@@ -297,8 +334,12 @@ def lint():
 
 def fetch(src):
     if re.match(r"https?://", src):
-        with urllib.request.urlopen(src, timeout=20) as r:
-            return r.read().decode()
+        # curl, not urllib: urllib tries every IPv6 address before IPv4 and hangs on
+        # networks with a broken IPv6 route; curl falls back (Happy Eyeballs). pacman needs curl.
+        p = subprocess.run(["curl", "-fsSL", "--max-time", "30", src], capture_output=True, text=True)
+        if p.returncode != 0:
+            raise ThemeError(f"fetch {src}: {p.stderr.strip() or f'curl exit {p.returncode}'}")
+        return p.stdout
     return Path(src).expanduser().read_text()
 
 
@@ -323,8 +364,11 @@ ANSI_KEYS = ["Black", "Red", "Green", "Yellow", "Blue", "Magenta", "Cyan", "Whit
 
 
 def import_vscode(src):
-    chain, s = [], src
+    chain, s, seen = [], src, set()
     while True:  # follow "include" back to the root theme
+        if s in seen or len(seen) > 10:
+            raise ThemeError(f"include cycle or chain too deep at {s}")
+        seen.add(s)
         d = jsonc(fetch(s))
         chain.insert(0, d)
         if not d.get("include"):
@@ -334,7 +378,12 @@ def import_vscode(src):
     for d in chain:
         c.update(d.get("colors", {}))
     top = chain[-1]
-    variant = "light" if top.get("type") in ("light", "hc-light") else "dark"
+    kind = next((d["type"] for d in reversed(chain) if d.get("type")), None)
+    if kind:
+        variant = "light" if kind in ("light", "hc-light") else "dark"
+    else:  # no "type" anywhere: judge by the editor background's luminance
+        bg = flatten(c.get("editor.background", "#1e1e1e"), (0, 0, 0))
+        variant = "light" if (0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2]) > 128 else "dark"
 
     def pick(keys, over=None, default=None):
         for k in keys:
@@ -350,7 +399,9 @@ def import_vscode(src):
         src_keys[name] = next((k for k in keys if k in c), "derived")
 
     role("bg_desktop", ["editor.background"])
-    role("bg_surface", ["statusBar.background", "panel.background", "sideBar.background"], v["bg_desktop"])
+    ansi_default = [rgb(x) for x in VSCODE_ANSI[variant]]
+    role("bg_surface", ["statusBar.background", "panel.background", "sideBar.background"], v["bg_desktop"],
+         v["bg_desktop"])
     role("bg_widget", ["quickInput.background", "notifications.background", "menu.background",
                        "editorWidget.background"], v["bg_surface"], v["bg_surface"])
     role("fg_text", ["foreground", "editor.foreground"], v["bg_surface"])
@@ -360,7 +411,7 @@ def import_vscode(src):
          mix(v["bg_surface"], v["fg_text"], 0.08))
     role("border_inactive", ["input.border", "contrastBorder"], v["bg_surface"],
          mix(v["bg_surface"], v["fg_text"], 0.15))
-    role("fg_editor", ["editor.foreground", "foreground"], v["bg_desktop"])
+    role("fg_editor", ["editor.foreground", "foreground"], v["bg_desktop"], v["fg_text"])
     role("fg_secondary", ["descriptionForeground", "statusBar.foreground"], v["bg_surface"],
          mix(v["fg_text"], v["bg_surface"], 0.3))
     role("fg_muted", ["editorLineNumber.foreground"], v["bg_desktop"], mix(v["fg_text"], v["bg_desktop"], 0.4))
@@ -370,7 +421,7 @@ def import_vscode(src):
     if "tab.activeBorderTop" in c:
         role("accent", ["tab.activeBorderTop"], v["bg_surface"])
     else:
-        role("accent", ["focusBorder", "button.background"], v["bg_surface"])
+        role("accent", ["focusBorder", "button.background"], v["bg_surface"], ansi_default[12])
         if "focusBorder" in c:
             v["accent"] = flatten(c["focusBorder"][:7], (0, 0, 0))
     role("badge", ["badge.background"], v["bg_surface"], v["accent"])
@@ -379,15 +430,15 @@ def import_vscode(src):
     role("selection_fg", ["quickInputList.focusForeground", "list.activeSelectionForeground"], v["selection_bg"],
          v["fg_bright"])
     role("link", ["textLink.foreground"], v["bg_desktop"], v["accent"])
-    role("error", ["errorForeground", "editorError.foreground"], v["bg_desktop"])
-    role("warning", ["list.warningForeground", "editorWarning.foreground"], v["bg_desktop"])
-    role("success", ["gitDecoration.addedResourceForeground"], v["bg_desktop"], rgb(VSCODE_ANSI[variant][2]))
+    role("error", ["errorForeground", "editorError.foreground"], v["bg_desktop"], ansi_default[9])
+    role("warning", ["list.warningForeground", "editorWarning.foreground"], v["bg_desktop"], ansi_default[11])
+    role("success", ["gitDecoration.addedResourceForeground"], v["bg_desktop"], ansi_default[10])
     v["shadow"], src_keys["shadow"] = (0, 0, 0), "constant"
 
     term = {
-        "fg": pick(["terminal.foreground", "foreground"], v["bg_surface"]),
+        "fg": pick(["terminal.foreground", "foreground"], v["bg_surface"], v["fg_text"]),
         "bg": pick(["terminal.background", "panel.background"], v["bg_desktop"], v["bg_surface"]),
-        "cursor": pick(["terminalCursor.foreground", "foreground"], v["bg_surface"]),
+        "cursor": pick(["terminalCursor.foreground", "foreground"], v["bg_surface"], v["fg_text"]),
     }
     ansi = []
     for i in range(16):
@@ -476,10 +527,15 @@ def import_base24(src):
     return meta, v, {k: "base24" for k in v}, term, ansi
 
 
-def write_palette(slug, meta, v, src_keys, term, ansi):
+def write_palette(slug, meta, v, src_keys, term, ansi, force=False):
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug):
         raise ThemeError(f"slug {slug!r}: use lowercase letters, digits and dashes")
-    q = lambda s: json.dumps(s)  # TOML basic strings are JSON-compatible for our values
+    out = PALETTES / f"{slug}.toml"
+    if out.exists() and not force:
+        raise ThemeError(f"palettes/{slug}.toml exists (use --force to replace it)")
+    meta = dict(meta, name=clean_name(meta["name"]), source=re.sub(r"[\x00-\x1f\x7f]", "", meta["source"]))
+    # TOML basic strings accept JSON string escapes; ensure_ascii=False avoids surrogate pairs
+    q = lambda s: json.dumps(s, ensure_ascii=False)
     lines = [f"# Imported with `theme import-*` from {meta['source']}", "", "[meta]",
              f"name = {q(meta['name'])}", f"variant = {q(meta['variant'])}", f"source = {q(meta['source'])}",
              "", "[colors]"]
@@ -490,9 +546,16 @@ def write_palette(slug, meta, v, src_keys, term, ansi):
     for row in (ansi[:8], ansi[8:]):
         lines.append("\t" + ", ".join(f'"{to_hex(c)}"' for c in row) + ",")
     lines += ["]", ""]
-    out = PALETTES / f"{slug}.toml"
-    out.write_text("\n".join(lines))
-    load_palette(slug)  # validate what we wrote
+    fd, tmp = tempfile.mkstemp(dir=PALETTES, prefix=f".{slug}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write("\n".join(lines))
+        load_palette(slug, Path(tmp))  # validate before it becomes visible
+        os.chmod(tmp, 0o644)
+        os.replace(tmp, out)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
     return out
 
 
@@ -568,13 +631,19 @@ def main(argv):
                            input="\n".join(names), capture_output=True, text=True)
         if p.returncode != 0 or not p.stdout.strip():
             return 0
-        return main(["set", p.stdout.strip()])
+        try:  # run from a keybinding: stderr is invisible, so report through mako
+            return main(["set", p.stdout.strip()])
+        except ThemeError as e:
+            notify("Theme not changed", str(e), urgent=True)
+            raise
     elif cmd in ("import-vscode", "import-omarchy", "import-base24"):
+        force = "--force" in args
+        args = [a for a in args if a != "--force"]
         if len(args) != 2:
-            raise ThemeError(f"usage: theme {cmd} SRC SLUG")
+            raise ThemeError(f"usage: theme {cmd} SRC SLUG [--force]")
         fn = {"import-vscode": import_vscode, "import-omarchy": import_omarchy,
               "import-base24": import_base24}[cmd]
-        print(write_palette(args[1], *fn(args[0])))
+        print(write_palette(args[1], *fn(args[0]), force=force))
     elif cmd == "install-greeter":
         install_greeter()
     else:
@@ -588,6 +657,6 @@ if __name__ == "__main__":
     except ThemeError as e:
         print(f"theme: {e}", file=sys.stderr)
         sys.exit(2)
-    except (OSError, subprocess.CalledProcessError, urllib.error.URLError, json.JSONDecodeError) as e:
+    except (OSError, subprocess.CalledProcessError, json.JSONDecodeError, tomllib.TOMLDecodeError) as e:
         print(f"theme: {e}", file=sys.stderr)
         sys.exit(1)

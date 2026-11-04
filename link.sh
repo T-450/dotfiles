@@ -33,6 +33,12 @@ link "$src/environment.d"          environment.d
 link "$src/xdg-desktop-portal"     xdg-desktop-portal
 link "$src/xdg-desktop-portal-wlr" xdg-desktop-portal-wlr
 
+# colors: render the active palette (default dark-2026) before anything reads it.
+# init only writes files; `theme set` would also restart units, which happens below.
+"$src/theme/theme" init
+# dark/light preference for GTK, the settings portal and Firefox (theme set runs this too)
+THEME_VARIANT=$(. "$src/theme/colors.sh" && echo "$THEME_VARIANT") "$src/theme/hooks/gtk.sh"
+
 # GTK icons, cursor and fonts. The dark/light preference (color-scheme, gtk-theme)
 # follows the palette and is set by theme/hooks/gtk.sh.
 gsettings set org.gnome.desktop.interface icon-theme Adwaita
