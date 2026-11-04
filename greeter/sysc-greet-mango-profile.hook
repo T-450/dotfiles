@@ -1,0 +1,13 @@
+# Re-apply the custom mango ASCII profile (ringed planet) after sysc-greet upgrades,
+# which overwrite /usr/share/sysc-greet/ascii_configs/mango.conf.
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = sysc-greet-mango
+Target = sysc-greet
+
+[Action]
+Description = Restoring custom sysc-greet mango profile...
+When = PostTransaction
+Exec = /usr/bin/install -m644 /usr/local/share/sysc-greet/mango.conf /usr/share/sysc-greet/ascii_configs/mango.conf

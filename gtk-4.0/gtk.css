@@ -1,0 +1,18 @@
+/* libadwaita recolour — VS Code Dark 2026 */
+@define-color accent_color        #48A0C7;
+@define-color accent_bg_color     #297AA0;
+@define-color accent_fg_color     #FFFFFF;
+@define-color window_bg_color     #191A1B;
+@define-color window_fg_color     #bfbfbf;
+@define-color view_bg_color       #121314;
+@define-color view_fg_color       #BBBEBF;
+@define-color headerbar_bg_color  #191A1B;
+@define-color headerbar_fg_color  #bfbfbf;
+@define-color sidebar_bg_color    #191A1B;
+@define-color card_bg_color       #202122;
+@define-color dialog_bg_color     #202122;
+@define-color popover_bg_color    #202122;
+@define-color destructive_bg_color #f48771;
+@define-color warning_color       #e5ba7d;
+@define-color error_color         #f48771;
+@define-color success_color       #73c991;

@@ -1,0 +1,24 @@
+# swaylock — VS Code Dark 2026
+color=121314
+font=Inter
+indicator-radius=70
+indicator-thickness=3
+inside-color=00000000
+inside-clear-color=00000000
+inside-ver-color=00000000
+inside-wrong-color=00000000
+ring-color=2a2b2c
+ring-clear-color=8c8c8c
+ring-ver-color=3994bc
+ring-wrong-color=f48771
+key-hl-color=3994bc
+bs-hl-color=f48771
+text-color=00000000
+text-clear-color=00000000
+text-ver-color=00000000
+text-wrong-color=f48771
+line-color=00000000
+line-clear-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000

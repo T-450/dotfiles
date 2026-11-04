@@ -1,0 +1,15 @@
+# VS Code Dark 2026 for sysc-greet (matches the mango desktop; see ../THEME.md)
+name = "Dark 2026"
+
+[colors]
+bg_base      = "#121314"  # editor.background
+bg_active    = "#202122"  # quickInput/notifications.background
+primary      = "#3994BC"  # focusBorder
+secondary    = "#297AA0"  # quickInputList.focusBackground
+accent       = "#48A0C7"  # textLink.foreground
+warning      = "#e5ba7d"  # list.warningForeground
+danger       = "#f48771"  # errorForeground
+fg_primary   = "#bfbfbf"  # foreground
+fg_secondary = "#8C8C8C"  # descriptionForeground
+fg_muted     = "#858889"  # editorLineNumber.foreground
+border_focus = "#3994BC"  # focusBorder

@@ -1,0 +1,13 @@
+[Unit]
+Description=Night light (wlsunset)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+# day 6500K = neutral (no tint), night 3500K; sun times from location (America/Sao_Paulo)
+ExecStart=/usr/bin/wlsunset -T 6500 -t 3500 -l -23.5 -L -46.6
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+# screenshot.sh [region|full]  -> copies to clipboard and saves to ~/Pictures/Screenshots
+
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$dir"
+file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
+
+case ${1:-region} in
+full)
+	grim "$file" || exit 1
+	;;
+region)
+	geom=$(slurp -b '#12131488' -c '#3994bcff' -w 2) || exit 0
+	grim -g "$geom" "$file" || exit 1
+	;;
+*)
+	echo "usage: $0 [region|full]" >&2
+	exit 2
+	;;
+esac
+
+wl-copy --type image/png < "$file"
+notify-send -a screenshot -i "$file" "Screenshot saved" "$file"

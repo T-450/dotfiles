@@ -1,22 +1,17 @@
 {
     "layer": "top",
-    "height": 30,
+    "height": 28,
     "buffer-scale": 1,
     "modules-left": [
         "workspaces",
         "layout",
-        "window",
+        "window"
     ],
     "modules-center": [],
     "modules-right": [
-        // "custom/clock",
         "hideclients",
         "tray",
         "network",
-        // "keymode",
-        // "keyboardlayout",
-        "cpu",
-        "memory",
         "pulseaudio",
         "backlight",
         "battery",
@@ -27,9 +22,7 @@
     ],
     "workspaces": {
         "hide-empty": true,
-        // "pinned": [1, 2],
-        // "tag-names": ["1", "2", "3", "编", "网"],
-        "overview-label": "OVERVIEW",
+        "overview-label": "overview",
         "on-click": "activate",
         "on-click-right": "toggle",
         "scroll-interval": 100,
@@ -41,100 +34,53 @@
     },
     "window": {
         "format": "{}",
-        "on-click": "bash ~/.config/mango/scripts/screenshot.sh",
-        "on-click-right": "python /home/wrq/tool/ocr.py"
+        "max-length": 600,
+        "on-click": "bash ~/.config/mango/scripts/screenshot.sh region"
     },
     "network": {
-        "format": "{icon} {ifname}",
-        "format-wifi": "{signal} {ssid}",
-        "format-disconnected": "{icon}",
-        "icon-wifi": "󰖩",
-        "icon-ethernet": "󰈀",
-        "icon-disconnected": "󰖪",
-        "signal-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+        "format": "{ifname}",
+        "format-wifi": "{ssid}",
+        "format-disconnected": "offline",
         "format-alt": "↓{down} ↑{up}"
     },
     "hideclients": {
-        "format": " {}"
-    },
-    "cpu": {
-        "format": " {load}%"
-    },
-    "memory": {
-        "format": " {}%"
+        "format": "min {}"
     },
     "backlight": {
-        "format": "{icon} {percent}%",
-        "icons": [
-            "󰃞",
-            "󰃟",
-            "󰃝",
-            "󰃝",
-            "󰃠",
-            "󰃠",
-            "󰃠"
-        ],
+        "format": "bri {percent}%",
         "on-scroll-up": "bash ~/.config/mango/scripts/brightness.sh bup",
-        "on-scroll-down": "bash ~/.config/mango/scripts/brightness.sh bdown",
-        "on-click": "brightnessctl set 1%"
+        "on-scroll-down": "bash ~/.config/mango/scripts/brightness.sh bdown"
     },
     "pulseaudio": {
-        "format": "{icon} {volume}% {bt}",
-        "format-muted": "󰖁 {volume}% {bt}",
-        "icons": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-        ],
-        "icon-bluetooth": "󰂯",
+        "format": "vol {volume}%",
+        "format-muted": "muted",
         "on-click": "pamixer -t",
         "on-scroll-up": "pamixer -i 2",
         "on-scroll-down": "pamixer -d 2"
     },
     "battery": {
-        "format": "{icon} {percent}% {ac}",
-        "icons": [
-            "󰂎",
-            "󰁺",
-            "󰁻",
-            "󰁼",
-            "󰁽",
-            "󰁾",
-            "󰁿",
-            "󰂀",
-            "󰂁",
-            "󰂂",
-            "󰁹"
-        ],
-        // "icon-charging": "󰂄",
-        // "icon-full": "󰁹",
-        "icon-ac": "",
+        "format": "{percent}%",
         "hide-on-ac": true
     },
     "clock#date": {
-        "format": " {:L%b%d·%A}"
+        "format": "{:L%a %d %b}"
     },
     "clock#time": {
-        "format": " {:L%H:%M}"
+        "format": "{:L%H:%M}"
     },
     "tray": {
-        "icon-size": 25,
-        "spacing": 10
+        "icon-size": 16,
+        "spacing": 8
     },
     "custom/power": {
-        "format": "󰣇",
-        "on-click": "wlogout -C ~/.config/mango/wlogout/style.css -l ~/.config/mango/wlogout/layout -b 6 --protocol layer-shell",
-        "on-click-right": "sleep 0.1s && swaync-client -t -sw"
+        "format": "⏻",
+        "on-click": "wlogout -b 6 --protocol layer-shell",
+        "on-click-right": "makoctl mode -t do-not-disturb"
     },
     "custom/record": {
         "exec": "~/.config/mango/scripts/gpurecord.sh status",
         "format": "{}",
         "signal": 8,
         "on-click": "~/.config/mango/scripts/gpurecord.sh"
-    },
+    }
 }

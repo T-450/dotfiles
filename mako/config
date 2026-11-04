@@ -1,0 +1,25 @@
+# mako — VS Code Dark 2026 (notificationToast)
+font=Inter 11
+background-color=#202122
+text-color=#bfbfbf
+border-color=#2a2b2c
+progress-color=over #297aa0
+border-size=1
+border-radius=4
+padding=12,14
+margin=12
+width=320
+default-timeout=5000
+anchor=top-right
+layer=overlay
+max-icon-size=48
+
+[urgency=low]
+text-color=#8c8c8c
+
+[urgency=critical]
+border-color=#f48771
+default-timeout=0
+
+[mode=do-not-disturb]
+invisible=1

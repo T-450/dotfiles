@@ -1,0 +1,21 @@
+[Unit]
+Description=Idle manager (swayidle): dim 4m, lock 5m, panel off 10m
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/swayidle -w \
+  timeout 240 '/usr/bin/dimland -a 0.3' \
+  resume '/usr/bin/pkill -x dimland' \
+  timeout 300 '/bin/sh -c "pidof -q swaylock || exec /usr/bin/swaylock -f"' \
+  timeout 600 '/usr/bin/mmsg dispatch sleep_monitor,eDP-1' \
+  resume '/usr/bin/mmsg dispatch wakeup_monitor,eDP-1' \
+  before-sleep '/bin/sh -c "pidof -q swaylock || exec /usr/bin/swaylock -f"' \
+  lock '/bin/sh -c "pidof -q swaylock || exec /usr/bin/swaylock -f"'
+Restart=on-failure
+# keep swaylock alive if swayidle restarts or crashes (else the screen unlocks)
+KillMode=process
+
+[Install]
+WantedBy=graphical-session.target

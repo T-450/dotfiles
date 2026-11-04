@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth tray applet (blueman)
+PartOf=graphical-session.target
+After=graphical-session.target mangobar.service
+Requisite=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/blueman-applet
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
