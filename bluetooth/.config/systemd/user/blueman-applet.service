@@ -1,7 +1,7 @@
 [Unit]
 Description=Bluetooth tray applet (blueman)
 PartOf=graphical-session.target
-After=graphical-session.target mangobar.service
+After=graphical-session.target waybar.service
 Requisite=graphical-session.target
 
 [Service]

@@ -26,7 +26,7 @@ Usage:
 
 Environment variables:
   GPURECORD_DIR          Output directory, default ~/video
-  GPURECORD_SIGNAL       SIGRTMIN+N to poke mangobar, default 8
+  GPURECORD_SIGNAL       SIGRTMIN+N to poke waybar, default 8
   GPURECORD_STATE_DIR    State directory, default $XDG_RUNTIME_DIR/gpurecord-$UID
   GPURECORD_START_DELAY  Seconds to wait after the start notification before
                          launching gpu-screen-recorder, default 0.1
@@ -48,7 +48,7 @@ is_recording() {
 }
 
 poke_bar() {
-    pkill -"RTMIN+$signal_n" -x mangobar 2>/dev/null || true
+    pkill -"RTMIN+$signal_n" -x waybar 2>/dev/null || true
 }
 
 notify() {

@@ -1,11 +1,12 @@
 [Unit]
-Description=Status bar (mangobar)
+Description=Status bar (waybar)
 PartOf=graphical-session.target
 After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/mangobar -c %h/.config/mangobar/config.jsonc -s %h/.config/mangobar/style.css
+ExecStart=/usr/bin/waybar -c %h/.config/waybar/config.jsonc -s %h/.config/waybar/style.css
+ExecReload=/usr/bin/kill -SIGUSR2 $MAINPID
 Restart=on-failure
 
 [Install]

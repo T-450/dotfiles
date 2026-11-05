@@ -1,0 +1,96 @@
+// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar), made slimmer and colored
+// only from the palette (style.css + colors.css). Labels are dimmed with Pango alpha, not colors.
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 26,
+    "spacing": 0,
+    "reload_style_on_change": true,
+
+    "modules-left": ["ext/workspaces", "custom/sr"],
+    "modules-center": ["custom/sl", "clock#day", "custom/sl", "clock#time", "custom/sr", "clock#date", "custom/sr"],
+    "modules-right": [
+        "custom/sl", "network",
+        "custom/sl", "pulseaudio",
+        "custom/sl", "backlight",
+        "custom/sl", "memory",
+        "custom/sl", "cpu",
+        "custom/sl", "battery",
+        "custom/sl", "disk",
+        "custom/sl", "tray", "custom/record", "custom/power"
+    ],
+
+    // thin powerline chevrons between segments (Nerd Font)
+    "custom/sl": { "format": "", "tooltip": false },
+    "custom/sr": { "format": "", "tooltip": false },
+
+    // mango tags over ext-workspace-v1; empty tags are "hidden" there, so they stay out
+    "ext/workspaces": {
+        "format": "{name}",
+        "on-click": "activate",
+        "ignore-hidden": true,
+        "sort-by-id": true
+    },
+
+    "clock#day":  { "format": "{:%a}", "tooltip": false },
+    "clock#time": { "format": "{:%H:%M}", "tooltip-format": "<tt>{calendar}</tt>" },
+    "clock#date": { "format": "{:%m-%d}", "tooltip": false },
+
+    "network": {
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 {ifname}",
+        "format-disconnected": "󰤭 offline",
+        "format-alt": "󰇚 {bandwidthDownBytes} 󰕒 {bandwidthUpBytes}",
+        "tooltip-format": "{ifname} {ipaddr}/{cidr}"
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 mute",
+        "format-icons": { "headphone": "󰋋", "default": ["󰕿", "󰖀", "󰕾"] },
+        "on-click": "pamixer -t",
+        "on-scroll-up": "pamixer -i 2",
+        "on-scroll-down": "pamixer -d 2"
+    },
+    "backlight": {
+        "format": "󰃠 {percent}%",
+        "on-scroll-up": "~/.local/bin/osd-brightness bup",
+        "on-scroll-down": "~/.local/bin/osd-brightness bdown"
+    },
+    "memory": {
+        "interval": 5,
+        "format": "<span alpha='55%'>mem</span> {percentage}%",
+        "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
+    },
+    "cpu": {
+        "interval": 5,
+        "format": "<span alpha='55%'>cpu</span> {usage}%"
+    },
+    "battery": {
+        "states": { "warning": 30, "critical": 15 },
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󰚥 {capacity}%",
+        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
+    },
+    "disk": {
+        "interval": 30,
+        "path": "/",
+        "states": { "warning": 80, "critical": 90 },
+        "format": "<span alpha='55%'>disk</span> {percentage_used}%"
+    },
+    "tray": { "icon-size": 14, "spacing": 6 },
+
+    // gpurecord prints a line only while recording, and pokes signal 8 on start/stop
+    "custom/record": {
+        "exec": "~/.local/bin/gpurecord status",
+        "signal": 8,
+        "format": "{}",
+        "on-click": "~/.local/bin/gpurecord"
+    },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "wlogout -b 6 --protocol layer-shell",
+        "on-click-right": "makoctl mode -t do-not-disturb"
+    }
+}

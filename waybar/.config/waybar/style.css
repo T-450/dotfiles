@@ -1,0 +1,46 @@
+/* waybar: flat segments on the status-bar background, VS Code style (accent for focus).
+   Colors: colors.css, rendered from the active palette by theme. */
+@import "colors.css";
+
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 12px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar { background: @bar; color: @fg; }
+
+tooltip { background: @widget; border: 1px solid @line; border-radius: 4px; }
+tooltip label { color: @fg; }
+
+#workspaces button {
+    padding: 0 6px;
+    color: @muted;
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+}
+#workspaces button.active { color: @accent; }
+#workspaces button.urgent { color: @error; }
+#workspaces button:hover  { background: @hover; color: @bright; }
+
+#custom-sl, #custom-sr { color: @line; padding: 0 2px; font-size: 14px; }
+
+#clock, #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk, #tray,
+#custom-record, #custom-power { padding: 0 8px; }
+
+#clock.day, #clock.date { color: @muted; }
+#network.disconnected   { color: @warn; }
+#pulseaudio.muted       { color: @linenr; }
+#battery.warning, #disk.warning   { color: @warn; }
+#battery.critical, #disk.critical { color: @error; }
+#battery.charging       { color: @accent; }
+#custom-record          { color: @error; }
+#custom-power           { color: @muted; padding-right: 12px; }
+#custom-power:hover     { color: @bright; }
+
+menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
+menuitem { color: @fg; }
+menuitem:hover { color: @selfg; background: @sel; }
