@@ -60,3 +60,7 @@ out = "greeter/themes/mango.toml"
 [[target]]
 template = "userChrome.css"
 out = "firefox/userChrome.css"
+
+[[target]]
+template = "fastfetch.jsonc"
+out = "fastfetch/config.jsonc"

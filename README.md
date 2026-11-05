@@ -12,6 +12,7 @@ one blue accent). Colors come from one switchable palette: `theme/theme set <nam
 | login | `greetd` + `sysc-greet-mango` | `greeter/` (installed by `system/setup.sh`) |
 | bar | `mangobar-git` (AUR) | `mangobar/` |
 | terminal | `foot` | `foot/foot.ini` |
+| system info | `fastfetch` | `theme/templates/fastfetch.jsonc` (rendered to `fastfetch/config.jsonc`), `fastfetch/logo.png` |
 | launcher | `rofi` | `rofi/config.rasi`, `rofi/themes/quickinput.rasi` |
 | colors | `theme/theme` (python) | `theme/palettes/*.toml` → every app, see `THEME.md` |
 | notifications | `mako` | `mako/config` |
@@ -50,6 +51,15 @@ git clone <this repo> ~/dotfiles/mango
 `link.sh` links: `.`→`~/.config/mango`, `foot rofi mako swaylock wlogout mangobar gtk-3.0 gtk-4.0 environment.d
 xdg-desktop-portal xdg-desktop-portal-wlr` → `~/.config/<name>`, and each `systemd/user/*.service`
 → `~/.config/systemd/user/`. Existing real files are moved to `*.bak.<ts>`, never deleted.
+
+## fastfetch
+
+`fastfetch` shows a perler-bead Godzilla (sixel, drawn by foot) next to a short system summary in
+the palette's colors. `fastfetch/logo.png` was made from a photo of the beadwork: cropped to the
+beads, box-downsampled to one pixel per bead (72x110), reduced to 6 colors, scaled up 6x with
+nearest-neighbour. Your other presets in `~/.config/fastfetch/` are left alone (link.sh links only
+`config.jsonc` and `logo.png`). Run it from an open terminal: started in the same instant a window
+opens, it can read the size before mango tiles the window and stretch the logo.
 
 ## Session startup
 

@@ -39,6 +39,11 @@ link "$src/xdg-desktop-portal-wlr" xdg-desktop-portal-wlr
 # dark/light preference for GTK, the settings portal and Firefox (theme set runs this too)
 THEME_VARIANT=$(. "$src/theme/colors.sh" && echo "$THEME_VARIANT") "$src/theme/hooks/gtk.sh"
 
+# fastfetch: link only our files; ~/.config/fastfetch may hold other presets
+mkdir -p "$cfg/fastfetch"
+link "$src/fastfetch/config.jsonc" fastfetch/config.jsonc
+link "$src/fastfetch/logo.png"     fastfetch/logo.png
+
 # Firefox: palette-colored chrome. The profile in use is the Default= of the
 # [Install*] section in installs.ini (profiles.ini's Default=1 can be a stale one).
 ff=$cfg/mozilla/firefox

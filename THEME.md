@@ -86,6 +86,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | swaybg, slurp | `theme/colors.sh` | swaybg restart (hook); slurp next use |
 | Firefox | `userChrome.css` in the profile | restart Firefox |
 | greeter | `greeter/themes/mango.toml` + wallpaper, theme name "Mango" | `theme install-greeter` (sudo) |
+| fastfetch | `fastfetch/config.jsonc` rendered (keys, title, bars, separators); the logo keeps its own colors | next run |
 | zsh, vim | terminal ANSI colors (foot) | new terminals |
 | opencode | its own "system" theme = terminal ANSI colors (pick once with `/themes`) | new terminals |
 | Claude Code | `/theme` → "Dark mode (ANSI colors only)"; "Light mode (ANSI colors only)" for light palettes | new terminals |
