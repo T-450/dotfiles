@@ -56,3 +56,7 @@ out = "swayosd/colors.css"
 [[target]]
 template = "greeter.toml"
 out = "greeter/themes/mango.toml"
+
+[[target]]
+template = "userChrome.css"
+out = "firefox/userChrome.css"

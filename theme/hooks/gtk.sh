@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 # gtk.sh: tell GTK/libadwaita, the settings portal and Firefox about the variant (run by `theme set`)
-# Running GTK3 apps only re-read gtk.css when gtk-theme changes, so when the value
-# stays the same (dark palette -> another dark palette) flip it once and back.
+# GTK reads gtk.css (and its colors.css) once per process, so only apps started after
+# a switch get the new colors; flipping gtk-theme does not reload it, it only flashes.
 set -euo pipefail
 gs=org.gnome.desktop.interface
 if [[ $THEME_VARIANT == light ]]; then
-	scheme=prefer-light theme=Adwaita other=Adwaita-dark
+	scheme=prefer-light theme=Adwaita
 else
-	scheme=prefer-dark theme=Adwaita-dark other=Adwaita
+	scheme=prefer-dark theme=Adwaita-dark
 fi
 gsettings set $gs color-scheme "$scheme"
-[[ $(gsettings get $gs gtk-theme) == "'$theme'" ]] && gsettings set $gs gtk-theme "$other"
 gsettings set $gs gtk-theme "$theme"

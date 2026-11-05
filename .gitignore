@@ -16,3 +16,4 @@
 /greeter/themes/mango.toml
 /greeter/wallpapers/sysc-greet-mango.png
 __pycache__/
+/firefox/userChrome.css

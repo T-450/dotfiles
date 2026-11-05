@@ -96,7 +96,13 @@ def palette_names():
     return sorted(p.stem for p in PALETTES.glob("*.toml"))
 
 
+SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
+
+
 def load_palette(slug, path=None):
+    # slugs become paths and land in colors.sh/current: keep them to [a-z0-9-]
+    if not SLUG.fullmatch(slug):
+        raise ThemeError(f"palette name {slug!r}: use lowercase letters, digits and dashes")
     path = path or PALETTES / f"{slug}.toml"
     if not path.is_file():
         raise ThemeError(f"no palette {slug!r} (have: {', '.join(palette_names())})")
@@ -583,16 +589,18 @@ def install_greeter():
     g = REPO / "greeter"
     toml = g / "themes" / "mango.toml"
     render_all(current(), REPO)  # greeter toml + colors.sh for the wallpaper script
-    subprocess.run([str(g / "make-wallpaper.sh")], check=True)
+    subprocess.run(["bash", str(g / "make-wallpaper.sh")], check=True)
     wall = g / "wallpapers" / "sysc-greet-mango.png"
     prefs = GREETER_HOME / ".cache/sysc-greet/preferences"
     script = f"""set -e
 install -Dm644 -o greeter -g greeter {q_sh(toml)} {GREETER_HOME}/.config/sysc-greet/themes/mango.toml
 install -Dm644 {q_sh(wall)} /usr/share/sysc-greet/wallpapers/sysc-greet-mango.png
-# one-time move from the old fixed theme name to the stable "Mango" theme
+# one-time move from the old fixed theme name to the stable "Mango" theme,
+# and remove the files the old setup.sh installed for it
 if [ -f {prefs} ] && grep -q '"theme": *"Dark 2026"' {prefs}; then
 	sed -i 's/"theme": *"Dark 2026"/"theme": "Mango"/' {prefs}
 fi
+rm -f {GREETER_HOME}/.config/sysc-greet/themes/dark-2026.toml /usr/share/sysc-greet/wallpapers/sysc-greet-dark-2026.png
 """
     subprocess.run(["sudo", "sh", "-c", script], check=True)
     print("greeter: installed Mango theme + wallpaper")

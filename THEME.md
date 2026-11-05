@@ -79,15 +79,21 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 |---|---|---|
 | mango | `source=./colors.conf` | reload (hook) |
 | foot | `include=~/.config/foot/colors.ini` | new windows |
-| mangobar, wlogout, swayosd, GTK 3/4 | `@import "colors.css"` | bar/OSD restart (hook); wlogout next launch; GTK new windows (hook flips `gtk-theme` for GTK3) |
+| mangobar, wlogout, swayosd, GTK 3/4 | `@import "colors.css"` | bar/OSD restart (hook); wlogout next launch; GTK: apps started after the switch (GTK reads gtk.css once per process) |
 | rofi | `@import "colors.rasi"` in `themes/quickinput.rasi` | next launch |
 | mako | `include=~/.config/mako/colors` | `makoctl reload` (hook) |
 | swaylock | whole `swaylock/config` rendered (no include support) | next lock |
 | swaybg, slurp | `theme/colors.sh` | swaybg restart (hook); slurp next use |
 | Firefox | `userChrome.css` in the profile | restart Firefox |
 | greeter | `greeter/themes/mango.toml` + wallpaper, theme name "Mango" | `theme install-greeter` (sudo) |
+| zsh, vim | terminal ANSI colors (foot) | new terminals |
+| opencode | its own "system" theme = terminal ANSI colors (pick once with `/themes`) | new terminals |
+| Claude Code | `/theme` → "Dark mode (ANSI colors only)"; "Light mode (ANSI colors only)" for light palettes | new terminals |
 
 To theme a new app: add a template, a `[[target]]`, its output to `.gitignore`, an
 include line in the app's config, and a hook if it can reload live.
+
+Rendered files are gitignored. After a fresh clone or `git clean -X`, run
+`theme/theme init` (link.sh does), or mako, swaybg, slurp and foot fail to load their colors.
 
 Fonts: Inter (UI), JetBrains Mono Nerd Font (mono). They are not part of the palette.

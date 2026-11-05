@@ -37,7 +37,13 @@ g="$here/../greeter"
 gh=/var/lib/greeter
 # theme + wallpaper rendered from the active palette, installed into the greeter's own
 # config dir (the greeter user cannot read /home). Re-run after `theme set` to follow it.
-"$here/../theme/theme" install-greeter
+# install-greeter renders as the user and calls sudo itself, so under `sudo ./setup.sh`
+# drop back to the invoking user for it.
+if [[ $EUID -eq 0 && -n ${SUDO_USER:-} ]]; then
+	sudo -u "$SUDO_USER" "$here/../theme/theme" install-greeter
+else
+	"$here/../theme/theme" install-greeter
+fi
 # mango ASCII profile with the planet first; package upgrades overwrite it, so a
 # pacman hook restores it from /usr/local/share after every sysc-greet upgrade
 sudo install -Dm644 "$g/ascii_configs/mango.conf" /usr/local/share/sysc-greet/mango.conf

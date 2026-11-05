@@ -39,6 +39,17 @@ link "$src/xdg-desktop-portal-wlr" xdg-desktop-portal-wlr
 # dark/light preference for GTK, the settings portal and Firefox (theme set runs this too)
 THEME_VARIANT=$(. "$src/theme/colors.sh" && echo "$THEME_VARIANT") "$src/theme/hooks/gtk.sh"
 
+# Firefox: palette-colored chrome. The profile in use is the Default= of the
+# [Install*] section in installs.ini (profiles.ini's Default=1 can be a stale one).
+ff=$cfg/mozilla/firefox
+if prof=$(awk -F= '/^Default=/{print $2; exit}' "$ff/installs.ini" 2>/dev/null) && [[ -n $prof && -d $ff/$prof ]]; then
+	mkdir -p "$ff/$prof/chrome"
+	link "$src/firefox/userChrome.css" "mozilla/firefox/$prof/chrome/userChrome.css"
+	link "$src/firefox/user.js"        "mozilla/firefox/$prof/user.js"
+else
+	echo "skip    firefox (no profile yet: start Firefox once, then re-run link.sh)"
+fi
+
 # GTK icons, cursor and fonts. The dark/light preference (color-scheme, gtk-theme)
 # follows the palette and is set by theme/hooks/gtk.sh.
 gsettings set org.gnome.desktop.interface icon-theme Adwaita
