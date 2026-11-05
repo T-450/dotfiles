@@ -2,7 +2,7 @@
    Firefox chrome (tabs, toolbars, url bar, panels, sidebar) in the palette's colors.
    Variable names are ones Firefox 159's own browser CSS defines on :root (checked in
    omni.ja); a renamed variable is simply ignored, so an update only falls back to the default.
-   Linked into the profile by firefox/setup.sh; needs toolkit.legacyUserProfileCustomizations.stylesheets (user.js). */
+   Linked into the fixed profile by install.sh (stow); needs toolkit.legacyUserProfileCustomizations.stylesheets (user.js). */
 :root {
 	--toolbox-background-color: {{bg_desktop}} !important;
 	--toolbox-background-color-inactive: {{bg_desktop}} !important;

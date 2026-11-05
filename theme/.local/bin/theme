@@ -177,7 +177,50 @@ def load_palette(slug, path=None):
 TOKEN = re.compile(r"\{\{(.*?)\}\}")
 
 
+# Personal values never live in the repo: a template names them with a tag, filled at render time
+# from your git config (or the environment, for CI), or asked once on the terminal. A prompted
+# value persists because git/.config/git/config.tmpl renders it into your git config.
+IDENTITY = {  # tag: (git config key, environment variable, question)
+    "git_name": ("user.name", "GIT_AUTHOR_NAME", "Your name, for git commits"),
+    "git_email": ("user.email", "GIT_AUTHOR_EMAIL", "Your email, for git commits"),
+    "repo": (None, "DOTFILES_REPO", "This repo on GitHub (owner/name)"),
+}
+_identity = {}
+
+
+def identity(tag, where):
+    if tag in _identity:
+        return _identity[tag]
+    key, env, question = IDENTITY[tag]
+    if key:
+        value = subprocess.run(["git", "config", "--global", "--get", key],
+                               capture_output=True, text=True).stdout.strip()
+    else:  # the repo this checkout came from: its own git config's origin
+        url = subprocess.run(["git", "-C", str(REPO), "config", "--get", "remote.origin.url"],
+                             capture_output=True, text=True).stdout.strip()
+        m = re.search(r"github\.com[:/]([\w.-]+/[\w.-]+?)(?:\.git)?$", url)
+        value = m.group(1) if m else ""
+    value = value or os.environ.get(env, "").strip()
+    if not value:
+        try:
+            with open("/dev/tty", "r+") as tty:
+                tty.write(f"{question}: ")
+                tty.flush()
+                value = tty.readline().strip()
+        except OSError:
+            pass
+    if not value or UNSAFE.search(value.replace("{", "").replace("}", "")) or "\n" in value:
+        hint = f"`git config --global {key} ...`" if key else "a GitHub origin remote"
+        raise ThemeError(f"{where}: no {tag} (set {hint} or {env})")
+    _identity[tag] = value
+    return value
+
+
 def apply_filters(name, filters, colors, words, where):
+    if name in IDENTITY:
+        if filters:
+            raise ThemeError(f"{where}: {name!r} is not a color; filters not allowed")
+        return identity(name, where)
     if name in words:
         if filters:
             raise ThemeError(f"{where}: {name!r} is not a color; filters not allowed")
@@ -350,8 +393,11 @@ LITERALS = [
 ]
 # palettes hold the colors; the engine and its tests name some on purpose
 TRANSPARENT = re.compile(r"(?:#|0x)?\b0{8}\b")
-LINT_SKIP = ("theme/palettes/", "theme/.local/bin/theme", "plans/", "tests/")
+PERSONAL_SKIP = ("tests/fixtures/",)
+LINT_SKIP = ("theme/palettes/", "theme/.local/bin/theme", "tests/")
 # app state that must never be committed (passwords, tokens)
+# personal data: an email address or a path into someone's home (use {{git_email}} / {{home}} / ~)
+PERSONAL = [re.compile(r"[\w.+-]+@[\w-]+\.(?!invalid\b)[a-z]{2,}\b", re.I), re.compile(r"(?<![\w.-])/home/[a-z_][\w-]*")]
 SECRETS = re.compile(r"(^|/)(service\.json|auth\.json|hosts\.yml|.*\.key|id_[a-z0-9]+)$")
 
 
@@ -360,19 +406,24 @@ def lint():
                            capture_output=True, text=True, check=True).stdout.split("\0")
     hits = 0
     for f in files:
-        if not f or f.startswith(LINT_SKIP):
+        if not f:
             continue
         try:
             text = (REPO / f).read_text()
         except (UnicodeDecodeError, OSError):
             continue
+        colors = not f.startswith(LINT_SKIP)
         for n, line in enumerate(text.splitlines(), 1):
             # all-zero RGBA is "transparent", not a color (swaylock has no other way to say it)
-            if any(p.search(TRANSPARENT.sub("", line)) for p in LITERALS):
+            if colors and any(p.search(TRANSPARENT.sub("", line)) for p in LITERALS):
                 print(f"{f}:{n}: {line.strip()}")
                 hits += 1
+            if not f.startswith(PERSONAL_SKIP) and any(p.search(line) for p in PERSONAL):
+                print(f"{f}:{n}: personal data (use a tag, see IDENTITY in theme): {line.strip()}")
+                hits += 1
     where = ", ".join(LINT_SKIP)
-    print(f"{hits} color literal(s) outside {where}" if hits else f"ok: no color literals outside {where}")
+    print(f"{hits} finding(s): color literals outside {where}, or personal data" if hits else
+          f"ok: no color literals outside {where}, no personal data")
     bad = 0
     for f in files:
         if f and SECRETS.search(f):

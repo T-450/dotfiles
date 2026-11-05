@@ -1,0 +1,12 @@
+# git: your identity comes from tags filled at render time (`theme`): your existing git config,
+# else GIT_AUTHOR_NAME/GIT_AUTHOR_EMAIL, else a prompt. Never write the values here.
+[user]
+	name = {{git_name}}
+	email = {{git_email}}
+# GitHub over HTTPS signs in through the GitHub CLI (gh auth login)
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential

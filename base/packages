@@ -13,7 +13,6 @@ zram-generator
 networkmanager
 iwd          # NetworkManager's Wi-Fi backend (etc/NetworkManager/conf.d/wifi_backend.conf)
 ufw
-git
 less
 unzip
 zip

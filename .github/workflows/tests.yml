@@ -7,6 +7,11 @@ concurrency:
 on:
   push:
   workflow_dispatch:
+env:
+  # identity tags ({{git_name}}, {{git_email}}) for the VM; on a real machine they come from your
+  # git config or a prompt
+  GIT_AUTHOR_NAME: CI
+  GIT_AUTHOR_EMAIL: ci@example.invalid
 defaults:
   run:
     shell: bash # = bash -eo pipefail: a failing install.sh must fail the step even through `| tee`

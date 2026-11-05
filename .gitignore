@@ -3,3 +3,5 @@ __pycache__/
 /.claude/
 # test run output (screenshots, logs)
 /tests/out/
+# planning notes and session records: local only, never in git
+/plans/

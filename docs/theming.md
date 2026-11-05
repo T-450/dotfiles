@@ -83,11 +83,14 @@ Which apps use each role (generated from the templates):
 | `fg_muted` | claude, fastfetch, greeter, opencode, rofi, theme, waybar |
 | `fg_secondary` | claude, firefox, greeter, mako, mango, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
 | `fg_text` | claude, fastfetch, firefox, greeter, gtk, mako, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
+| `git_email` | git |
+| `git_name` | git |
 | `gtk_theme` | gtk |
 | `home` | runner-up |
 | `link` | claude, foot, greeter, gtk, opencode, qutebrowser, rofi, theme |
 | `name` | claude, fastfetch, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
+| `repo` | runner-up |
 | `selection_bg` | claude, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, theme, waybar |
 | `selection_fg` | firefox, foot, gtk, opencode, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |

@@ -18,7 +18,7 @@ runner-up and the Arch cloud image its VMs boot aren't Arch packages, so `pkg/` 
 
 **Rendered from the palette** (`theme`):
 
-- `runner-up/.config/runner-up/config.json.tmpl` → `runner-up/.config/runner-up/config.json`: `home`
+- `runner-up/.config/runner-up/config.json.tmpl` → `runner-up/.config/runner-up/config.json`: `home`, `repo`
 
 **User units** (enabled by `install.sh --units`): `runner-up.service`
 
