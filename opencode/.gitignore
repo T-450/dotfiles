@@ -1,2 +1,2 @@
-# rendered by theme/.local/bin/theme from the matching .tmpl (or by setup.sh); never edit
-/theme.json
+# rendered by theme/.local/bin/theme from the matching .tmpl; never edit
+/.config/opencode/themes/mango.json

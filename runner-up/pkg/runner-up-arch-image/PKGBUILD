@@ -1,0 +1,19 @@
+# The base image of runner-up's KVM places: Arch Linux's official cloud image (cloud-init),
+# pinned to one build and checked against its published SHA-256.
+pkgname=runner-up-arch-image
+_build=20261101.620452
+pkgver=${_build/./_}
+pkgrel=1
+pkgdesc='Arch Linux cloud image for runner-up KVM places'
+arch=(any)
+url='https://gitlab.archlinux.org/archlinux/arch-boxes'
+license=(GPL-3.0-or-later)
+options=(!strip !debug)
+PKGEXT=.pkg.tar   # the qcow2 is already compressed
+source=("https://geo.mirror.pkgbuild.com/images/v$_build/Arch-Linux-x86_64-cloudimg-$_build.qcow2")
+noextract=("Arch-Linux-x86_64-cloudimg-$_build.qcow2")
+sha256sums=('794eb4889b39e1f0ed7d5ae998b2a1ed2137db8cf8c3476cf2962c7437ecb003')
+
+package() {
+	install -Dm644 "Arch-Linux-x86_64-cloudimg-$_build.qcow2" "$pkgdir/usr/share/runner-up/images/arch-cloudimg.qcow2"
+}

@@ -2,7 +2,7 @@
 
 Notifications.
 
-ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+shift+\\ toggles do-not-disturb (also right-click the bar's power icon). Uses the packaged `mako.service`; `setup.sh` removes swaync, which it replaced.
+ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+shift+\\ toggles do-not-disturb (also right-click the bar's power icon). `mako.service` is this repo's own unit, bound to the session like every other daemon.
 
 ## Reference
 
@@ -13,12 +13,13 @@ ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+sh
 
 - `~/.config/mako/colors`
 - `~/.config/mako/config`
+- `~/.config/systemd/user/mako.service`
 
 **Rendered from the palette** (`theme`):
 
 - `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `bg_widget`, `border_hairline`, `error`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`
 
-**`setup.sh`** (run by `install.sh --setup`): mako replaces swaync; its packaged user unit is bound to graphical-session.target.
+**User units** (enabled by `install.sh --units`): `mako.service`
 
 **`reload.sh`** (run by `theme set`): re-read ~/.config/mako/config (and its colors include)
 <!-- end generated -->

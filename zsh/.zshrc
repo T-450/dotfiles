@@ -2,7 +2,12 @@
 export PATH=$HOME/.local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+# oh-my-zsh from the oh-my-zsh-git package (zsh/packages); it updates with the package, not itself,
+# and keeps its cache in ~/.cache (the install dir isn't writable)
+export ZSH=/usr/share/oh-my-zsh
+ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
+[[ -d $ZSH_CACHE_DIR ]] || mkdir -p "$ZSH_CACHE_DIR"
+zstyle ':omz:update' mode disabled
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,

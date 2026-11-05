@@ -1,0 +1,18 @@
+# runner-up isn't packaged for Arch (repo or AUR); this PKGBUILD installs its release binary,
+# checked against the release's published SHA-256. Bump pkgver + sha256sums together.
+pkgname=runner-up-bin
+pkgver=0.1.12
+pkgrel=1
+pkgdesc='GitHub Actions runners on your own machines, one fresh container or VM per job'
+arch=(x86_64)
+url='https://github.com/kunchenguid/runner-up'
+license=(MIT)
+depends=(github-cli qemu-base)
+provides=(runner-up)
+options=(!strip !debug)
+source=("$url/releases/download/v$pkgver/runner-up-v$pkgver-linux-amd64.tar.gz")
+sha256sums=('d2f1baf41eda70827178e3117ea109aa39623c5fcd588734db72b5fff0c35c31')
+
+package() {
+	install -Dm755 runner-up "$pkgdir/usr/bin/runner-up"
+}

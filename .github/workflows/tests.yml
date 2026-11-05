@@ -1,5 +1,5 @@
 # Clean-install proof on every push: a fresh Arch VM (runner-up KVM place, pool arch-kvm)
-# runs install.sh twice (the second run must change nothing) and then the test suite.
+# runs bootstrap.sh, then install.sh again (it must change nothing), --check and the test suite.
 name: tests
 concurrency:
   group: tests-${{ github.ref }}
@@ -21,13 +21,15 @@ jobs:
           sudo -n true && echo "sudo: ok"
           sudo pacman -Syu --needed --noconfirm git
       - uses: actions/checkout@v5
-      - name: install.sh (clean machine)
-        run: ./install.sh 2>&1 | tee "$RUNNER_TEMP/first.log"
+      - name: bootstrap.sh (fresh machine)
+        run: ./bootstrap.sh 2>&1 | tee "$RUNNER_TEMP/first.log"
       - name: install.sh again (idempotent)
         run: |
           ./install.sh 2>&1 | tee "$RUNNER_TEMP/second.log"
-          if grep -E '^(install|backup|unlink|prune|linked |enable |remove |gsettings|theme  )' "$RUNNER_TEMP/second.log"; then
+          if grep -E '^(install |backup|unlink|prune|enable |gsettings|render |linger|xdg )' "$RUNNER_TEMP/second.log"; then
             echo "::error::the second run changed something"; exit 1
           fi
+      - name: install.sh --check
+        run: ./install.sh --check
       - name: tests/run
         run: tests/run

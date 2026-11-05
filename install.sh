@@ -1,64 +1,121 @@
 #!/usr/bin/env bash
-# install.sh [--packages] [--link] [--theme] [--setup] [--units] [--home DIR] [--only PKG...]
-# Set up this desktop from the repo. Idempotent: safe to re-run, a clean Arch install included.
-# No phase flag = every phase, in this order:
-#   packages  pacman/AUR packages from every <app>/packages (sudo; AUR via yay)
-#   theme     render the active palette (theme init); before link: stow --no-folding links
-#             only files that exist, and the rendered ones are part of the apps
-#   link      GNU stow every <app> (its .config/ .local/ and dot-entries) into $HOME
-#   setup     each <app>/setup.sh (idempotent extras: system files, gsettings, profiles)
-#   units     enable the repo's user units, start them inside a running session
-# --home DIR links into DIR instead of $HOME (tests); it implies --link only unless phases are given.
-# Run as your user, not root: sudo is called where needed.
+# install.sh [--packages] [--theme] [--link] [--system] [--setup] [--units] [--check]
+#            [--only APP...] [--home DIR] [--root DIR]
+# Build this desktop from the repo. Idempotent: a second run changes nothing. Every app folder
+# is handled the same way, by these phases (no flag = all, in this order):
+#   packages  <app>/packages: pacman (repo) or yay (AUR); <app>/pkg/*/PKGBUILD: makepkg
+#   theme     render every <app>/**/*.tmpl and run <app>/render.sh (theme init)
+#   link      GNU stow: each <app>'s dot-entries (.config/, .local/, .zshrc …) into $HOME
+#   system    copy each <app>/root/** to /** (sudo; owner = owner of the nearest existing dir)
+#   setup     <app>/setup.sh: state that isn't a file (services, gsettings, login shell)
+#   units     enable every <app>/.config/systemd/user/*.service; start the new ones
+# --check     report what differs from the repo (missing links, files in the way, system files);
+#             exit 1 on any difference. Changes nothing.
+# --home DIR / --root DIR  link / copy into DIR instead of $HOME / / (tests).
+# Run as your user, not root: sudo is called only where something must change.
 set -euo pipefail
 
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-home=$HOME
-phases=() only=() home_set=
+home=$HOME root=/
+phases=() only=() check=
 
 while (($#)); do
 	case $1 in
-	--packages | --link | --theme | --setup | --units) phases+=("${1#--}") ;;
-	--home) home=$(realpath -m -- "$2") home_set=1 && shift ;;
+	--packages | --theme | --link | --system | --setup | --units) phases+=("${1#--}") ;;
+	--check) check=1 ;;
+	--home) home=$(realpath -m -- "$2") && phases+=(link) && shift ;;
+	--root) root=$(realpath -m -- "$2") && phases+=(system) && shift ;;
 	--only) shift && while (($#)) && [[ $1 != --* ]]; do only+=("$1") && shift; done && continue ;;
-	-h | --help) sed -n '2,13s/^# \{0,1\}//p' "$0" && exit 0 ;;
+	-h | --help) sed -n '2,16s/^# \{0,1\}//p' "$0" && exit 0 ;;
 	*) echo "install.sh: unknown argument $1" >&2 && exit 2 ;;
 	esac
 	shift
 done
-if ((${#phases[@]} == 0)); then
-	if [[ -n $home_set ]]; then phases=(link); else phases=(packages theme link setup units); fi
-fi
+((${#phases[@]})) || [[ -n $check ]] || phases=(packages theme link system setup units)
 [[ $EUID -ne 0 ]] || { echo "install.sh: run as your user (it calls sudo itself)" >&2 && exit 1; }
 
 say() { printf '==> %s\n' "$*"; }
 has() { local p; for p in "${phases[@]}"; do [[ $p == "$1" ]] && return 0; done; return 1; }
 
-# Stow packages: every top-level dir with a .stow-local-ignore, optionally limited by --only.
-stow_packages() {
+# every top-level folder that is an app (it has at least one of the parts below), --only applied
+apps() {
 	local d name
-	for d in "$repo"/*/.stow-local-ignore; do
-		[[ -e $d ]] || continue
-		name=$(basename "$(dirname "$d")")
+	for d in "$repo"/*/; do
+		name=$(basename "$d")
+		[[ -e $d/packages || -d $d/pkg || -e $d/.stow-local-ignore || -d $d/root || -e $d/setup.sh ]] || continue
 		if ((${#only[@]})) && [[ " ${only[*]} " != *" $name "* ]]; then continue; fi
 		echo "$name"
 	done
 }
 
-# ---------------------------------------------------------------- link (GNU stow)
-# Shared dirs that must stay real: other programs write into them, and with
-# --no-folding stow never turns a dir into a link anyway; created up front so a
-# fresh home looks like a used one.
-shared_dirs=(.config .config/systemd/user .local/bin .local/share .local/state)
+retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file must not fail the run
+	local i
+	for i in 1 2 3; do
+		"$@" && return 0
+		((i < 3)) && echo "retry   attempt $i of 3 failed: $*; again in 15s" >&2 && sleep 15
+	done
+	return 1
+}
 
+# ---------------------------------------------------------------- packages
+# Names in the sync databases go to pacman, the rest to yay (yay-bin is built from the AUR when
+# missing). A full -Syu runs first: Arch doesn't support partial upgrades. Local PKGBUILDs (for
+# programs neither repo nor AUR packages) are built when their version isn't installed.
+install_packages() {
+	local a all=() repo_pkgs=() aur=() p
+	for a in $(apps); do
+		[[ -f $repo/$a/packages ]] || continue
+		while read -r p; do all+=("$p"); done < <(sed 's/#.*//' "$repo/$a/packages" | tr -s ' \t' '\n' | sed '/^$/d')
+	done
+	retry sudo pacman -Syu --noconfirm
+	declare -A sync
+	while read -r p; do sync[$p]=1; done < <(pacman -Slq)
+	for p in $(printf '%s\n' "${all[@]}" | sort -u); do
+		if [[ -n ${sync[$p]:-} ]]; then repo_pkgs+=("$p"); else aur+=("$p"); fi
+	done
+	((${#repo_pkgs[@]} == 0)) || retry sudo pacman -S --needed --noconfirm "${repo_pkgs[@]}"
+	if ((${#aur[@]})); then
+		if ! command -v yay >/dev/null; then
+			local t
+			t=$(mktemp -d)
+			retry git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$t/yay-bin"
+			(cd "$t/yay-bin" && makepkg -si --noconfirm)
+			rm -rf -- "$t"
+		fi
+		retry yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake "${aur[@]}"
+	fi
+	local pb info name ver build
+	for a in $(apps); do
+		for pb in "$repo/$a"/pkg/*/PKGBUILD; do
+			[[ -e $pb ]] || continue
+			info=$(cd "$(dirname "$pb")" && makepkg --printsrcinfo)
+			name=$(awk -F' = ' '/^pkgname = /{print $2; exit}' <<<"$info")
+			ver=$(awk -F' = ' '/^\tepoch = /{e=$2":"} /^\tpkgver = /{v=$2} /^\tpkgrel = /{r=$2} END{print e v "-" r}' <<<"$info")
+			[[ $(pacman -Q "$name" 2>/dev/null) == "$name $ver" ]] && continue
+			build=$(mktemp -d)
+			cp -r "$(dirname "$pb")/." "$build"
+			(cd "$build" && retry makepkg -si --noconfirm --needed)
+			rm -rf -- "$build"
+		done
+	done
+}
+
+# ---------------------------------------------------------------- theme
+render_theme() { "$repo/theme/.local/bin/theme" init; }
+
+# ---------------------------------------------------------------- link (GNU stow)
+# Dirs other programs also write into stay real (--no-folding never folds a dir into a link;
+# these are made up front so a fresh home looks like a used one).
+shared_dirs=(.config .config/systemd/user .local/bin .local/share .local/state)
+stow_packages() { local a; for a in $(apps); do [[ -e $repo/$a/.stow-local-ignore ]] && echo "$a"; done; return 0; }
 stow_() { stow --dir="$repo" --target="$home" --no-folding "$@"; }
 
 # Before stowing, clear what stow refuses to replace (it aborts instead of backing up):
 #  - a real file where a link goes: moved to <name>.bak.<ts>
-#  - a symlink stow doesn't own (an older layout's link): removed if it points into the
-#    repo, else moved to <name>.bak.<ts>. Nothing is deleted that isn't the repo's own link.
+#  - a symlink stow doesn't own: removed if it points into the repo, else moved to <name>.bak.<ts>
 clear_conflicts() {
-	local out line t ts=$(date +%s) n=0
+	local out line t ts n
+	ts=$(date +%s)
 	for _ in 1 2 3 4 5; do
 		out=$(stow_ -n -R "$@" 2>&1) && return 0
 		n=0
@@ -69,7 +126,7 @@ clear_conflicts() {
 			*"existing target is not owned by stow: "*)
 				t=${line#*existing target is not owned by stow: } ;;
 			*"existing target is stowed to a different package: "*)
-				echo "install.sh: two packages provide ${line#*different package: }" >&2 && return 1 ;;
+				echo "install.sh: two apps provide ${line#*different package: }" >&2 && return 1 ;;
 			*) continue ;;
 			esac
 			t=$home/$t
@@ -86,85 +143,73 @@ clear_conflicts() {
 	return 1
 }
 
-# Links into the repo that point at nothing (a file or package that was removed).
+# links into the repo that point at nothing (a file or an app that was removed)
 prune_dangling() {
 	local l
 	while IFS= read -r -d '' l; do
 		[[ $(realpath -m -- "$l") == "$repo"/* ]] || continue
 		rm -- "$l" && echo "prune   $l"
 	done < <(find "$home" -maxdepth 1 -xtype l -print0 2>/dev/null
-		find "$home/.config" "$home/.local" -xtype l -print0 2>/dev/null)
+		find "$home/.config" "$home/.local" "$home/.claude" -xtype l -print0 2>/dev/null)
 }
 
 link() {
-	command -v stow >/dev/null || { echo "install.sh: stow missing (run the packages phase)" >&2 && return 1; }
 	local pkgs d
 	mapfile -t pkgs < <(stow_packages)
-	((${#pkgs[@]})) || { echo "install.sh: no packages found" >&2 && return 1; }
+	((${#pkgs[@]})) || return 0
 	for d in "${shared_dirs[@]}"; do mkdir -p "$home/$d"; done
 	clear_conflicts "${pkgs[@]}"
 	stow_ -R "${pkgs[@]}"
 	prune_dangling
-	echo "stowed  ${#pkgs[@]} packages into $home"
+	echo "stowed  ${#pkgs[@]} apps into $home"
 }
 
-# ---------------------------------------------------------------- packages
-# Every <app>/packages (one name per line, # comments). Names in the sync databases go to
-# pacman, the rest to yay (bootstrapped from the AUR's yay-bin when missing). A full -Syu runs
-# first: Arch doesn't support partial upgrades (-Sy then -S).
-apps() { # every top-level dir that is an app (has packages, setup.sh or .stow-local-ignore)
-	local d name
-	for d in "$repo"/*/; do
-		name=$(basename "$d")
-		[[ -e $d/packages || -e $d/setup.sh || -e $d/.stow-local-ignore ]] || continue
-		if ((${#only[@]})) && [[ " ${only[*]} " != *" $name "* ]]; then continue; fi
-		echo "$name"
-	done
-}
+# ---------------------------------------------------------------- system (<app>/root -> /)
+# Copies, not links: system services can't read your home. A file is installed only when it
+# differs. Its owner (and that of any dir created for it) is the owner of the nearest existing
+# dir above it: /etc/* stays root's, /var/lib/greeter/* the greeter's. Mode comes from the repo.
+as_root() { if [[ -w $root ]]; then "$@"; else sudo "$@"; fi; }
 
-retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file must not fail the run
-	local i
-	for i in 1 2 3; do
-		"$@" && return 0
-		((i < 3)) && echo "retry   attempt $i of 3 failed: $*; again in 15s" >&2 && sleep 15
-	done
-	return 1
-}
-
-install_packages() {
-	local a all=() repo_pkgs=() aur=() p
+system_files() { # app-relative paths under <app>/root/, templates excluded (their output is used)
+	local a f
 	for a in $(apps); do
-		[[ -f $repo/$a/packages ]] || continue
-		while read -r p; do all+=("$p"); done < <(sed 's/#.*//' "$repo/$a/packages" | tr -s ' \t' '\n' | sed '/^$/d')
+		[[ -d $repo/$a/root ]] || continue
+		while IFS= read -r -d '' f; do printf '%s\0' "$a/root/${f#./}"; done < <(cd "$repo/$a/root" && find . \( -type f -o -type l \) ! -name '*.tmpl' -print0)
 	done
-	((${#all[@]})) || return 0
-	retry sudo pacman -Syu --noconfirm # full upgrade first: never leave refreshed databases without one
-	declare -A sync
-	while read -r p; do sync[$p]=1; done < <(pacman -Slq)
-	for p in $(printf '%s\n' "${all[@]}" | sort -u); do
-		if [[ -n ${sync[$p]:-} ]]; then repo_pkgs+=("$p"); else aur+=("$p"); fi
-	done
-	retry sudo pacman -S --needed --noconfirm "${repo_pkgs[@]}"
-	((${#aur[@]})) || return 0
-	if ! command -v yay >/dev/null; then
-		local t
-		t=$(mktemp -d)
-		retry git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$t/yay-bin"
-		(cd "$t/yay-bin" && makepkg -si --noconfirm)
-		rm -rf -- "$t"
-	fi
-	retry yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake "${aur[@]}"
 }
 
-# ---------------------------------------------------------------- theme, setup, units
-render_theme() { "$repo/theme/.local/bin/theme" init; }
+system_dst() { local rel=${1#*/root/}; printf '%s' "${root%/}/$rel"; }
 
-run_setup() { # base first (services, /etc), then every app's setup.sh in name order
+same_file() { # same_file SRC DST: equal content (reading DST as root only when we can't)
+	if [[ -r $2 ]]; then cmp -s -- "$1" "$2"; elif [[ -e $2 ]]; then sudo cmp -s -- "$1" "$2"; else return 1; fi
+}
+
+install_system() {
+	local f src dst dir up owner mode missing
+	while IFS= read -r -d '' f; do
+		src=$repo/$f dst=$(system_dst "$f")
+		same_file "$src" "$dst" && continue
+		up=$(dirname "$dst")
+		while [[ ! -d $up ]]; do up=$(dirname "$up"); done
+		owner=$(stat -c %U:%G "$up")
+		# create the missing dirs one level at a time, owned like the existing one above them
+		dir=$(dirname "$dst")
+		while [[ ! -d $dir ]]; do
+			missing=$dir
+			while [[ ! -d $(dirname "$missing") ]]; do missing=$(dirname "$missing"); done
+			as_root install -d -o "${owner%:*}" -g "${owner#*:}" -m "$(stat -c %a "$up")" -- "$missing"
+		done
+		mode=$(stat -L -c %a "$src")
+		as_root install -o "${owner%:*}" -g "${owner#*:}" -m "$mode" -- "$src" "$dst"
+		echo "install $dst"
+	done < <(system_files)
+}
+
+# ---------------------------------------------------------------- setup, units
+run_setup() {
 	local a
-	for a in base $(apps); do
+	for a in $(apps); do
 		[[ -x $repo/$a/setup.sh ]] || continue
-		[[ $a == base && -n ${seen_base:-} ]] && continue
-		[[ $a == base ]] && seen_base=1
 		say "setup $a"
 		"$repo/$a/setup.sh"
 	done
@@ -175,33 +220,43 @@ enable_units() {
 		echo "skip    units: no user systemd manager (enable them from a login session)"
 		return 0
 	fi
-	local f units=()
-	for f in "$repo"/*/.config/systemd/user/*.service; do
-		[[ -e $f ]] || continue
-		if ((${#only[@]})) && [[ " ${only[*]} " != *" $(basename "${f%%/.config/*}") "* ]]; then continue; fi
-		units+=("$(basename "$f")")
+	local a f u units=() new=()
+	for a in $(apps); do
+		for f in "$repo/$a"/.config/systemd/user/*.service; do [[ -e $f ]] && units+=("$(basename "$f")"); done
 	done
 	((${#units[@]})) || return 0
 	systemctl --user daemon-reload
-	# enable and start only units not enabled yet: a re-run must not restart anything, nor bring
-	# back a bar hidden with waybar-toggle. Session units start only inside a session (Requisite=).
-	local u new=()
+	# enable and start only units not enabled yet: a re-run restarts nothing and doesn't bring back
+	# a bar hidden with waybar-toggle. Session units refuse to start outside a session (Requisite=).
 	for u in "${units[@]}"; do
 		[[ $(systemctl --user is-enabled "$u" 2>/dev/null) == enabled ]] || new+=("$u")
 	done
 	((${#new[@]})) || return 0
 	systemctl --user enable "${new[@]}" 2>/dev/null
 	echo "enable  ${new[*]}"
-	if systemctl --user -q is-active graphical-session.target; then
-		systemctl --user start "${new[@]}" || true
-	elif [[ " ${new[*]} " == *" runner-up.service "* ]]; then
-		systemctl --user start runner-up.service || true
+	systemctl --user start "${new[@]}" 2>/dev/null || true
+}
+
+# ---------------------------------------------------------------- check
+check() {
+	local bad=0 out f pkgs
+	mapfile -t pkgs < <(stow_packages)
+	if ((${#pkgs[@]})); then
+		out=$(stow_ -n -v "${pkgs[@]}" 2>&1 | grep -E '^LINK:|existing target|cannot stow' || true)
+		[[ -z $out ]] || { echo "home: differs from the repo (install.sh --link fixes it):" && printf '  %s\n' "$out" && bad=1; }
 	fi
+	while IFS= read -r -d '' f; do
+		same_file "$repo/$f" "$(system_dst "$f")" || { echo "system: $(system_dst "$f") differs from $f" && bad=1; }
+	done < <(system_files)
+	((bad)) || echo "ok: home and system files match the repo"
+	return "$bad"
 }
 
 has packages && { say "packages" && install_packages; }
 has theme && { say "theme" && render_theme; }
 has link && { say "link" && link; }
+has system && { say "system" && install_system; }
 has setup && run_setup
 has units && { say "units" && enable_units; }
+if [[ -n $check ]]; then check || exit 1; fi
 exit 0

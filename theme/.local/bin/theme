@@ -9,7 +9,6 @@ usage: theme list | current | lint
                                          (imports refuse to replace a palette without --force)
        theme import-omarchy SRC SLUG     Omarchy colors.toml -> palette
        theme import-base24 SRC SLUG      tinted-theming base16/base24 YAML -> palette
-       theme install-greeter             render greeter art, then sudo-install it
 
 Palettes (theme/palettes/*.toml) hold semantic roles. Every <app>/**/NAME.tmpl in the repo
 uses {{role|filter}} and renders in place to NAME (gitignored by that app's .gitignore).
@@ -17,6 +16,8 @@ Reload hooks (<app>/reload.sh) must not leave background processes holding stdou
 The active palette's name is kept in $XDG_STATE_HOME/theme/current.
 Stdlib only, so it runs on a bare Arch install with just `python`.
 """
+import getpass
+import hashlib
 import json
 import os
 import re
@@ -165,6 +166,8 @@ def load_palette(slug, path=None):
         "prefer_dark": "1" if dark else "0",
         "gtk_theme": "Adwaita-dark" if dark else "Adwaita",
         "color_scheme": "prefer-dark" if dark else "prefer-light",
+        "user": getpass.getuser(),  # for system files that name the user (greeter preferences)
+        "home": str(Path.home()),   # for configs that need absolute paths (runner-up)
     }
     return v, words
 
@@ -275,6 +278,23 @@ def render_all(slug, dest_root):
             if os.path.exists(tmp):
                 os.unlink(tmp)
     return words, [out for out, _, _ in rendered]
+
+
+def run_generators():
+    """<app>/render.sh: art made from the palette that isn't a template (e.g. the greeter wallpaper).
+    Each is quiet when its output is already current."""
+    for g in sorted(REPO.glob("*/render.sh")):
+        if os.access(g, os.X_OK):
+            subprocess.run([str(g)], check=True)
+
+
+def system_digest():
+    """sha256 over every file under <app>/root/ (what install.sh --system copies to /)."""
+    h = hashlib.sha256()
+    for f in sorted(REPO.glob("*/root/**/*")):
+        if f.is_file() and not f.name.endswith(".tmpl"):
+            h.update(str(f).encode() + f.read_bytes())
+    return h.hexdigest()
 
 
 def run_hooks(words):
@@ -619,43 +639,6 @@ def write_palette(slug, meta, v, src_keys, term, ansi, force=False):
     return out
 
 
-# ---------------------------------------------------------------- greeter
-
-GREETER_HOME = Path("/var/lib/greeter")
-
-
-WALLPAPER = Path("/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png")
-GREETER_STAMP = WALLPAPER.with_suffix(".png.inputs")  # sha256 of what the two files are made from
-
-
-def install_greeter():
-    """Install theme "Mango" + wallpaper for sysc-greet, only when their inputs changed
-    (the wallpaper's star noise differs per run, so outputs can't be compared directly)."""
-    if os.geteuid() == 0:
-        raise ThemeError("run as your user; it calls sudo itself (art is rendered as you)")
-    import hashlib
-    g = REPO / "greeter"
-    toml = g / "themes" / "mango.toml"  # rendered from mango.toml.tmpl
-    render_all(current(), REPO)  # greeter toml + colors.sh for the wallpaper script
-    colors = REPO / "theme" / ".config" / "theme" / "colors.sh"
-    digest = hashlib.sha256(b"".join(p.read_bytes() for p in (toml, colors, g / "make-wallpaper.sh"))).hexdigest()
-    try:
-        if GREETER_STAMP.read_text().strip() == digest and WALLPAPER.exists():
-            return
-    except OSError:
-        pass
-    subprocess.run(["bash", str(g / "make-wallpaper.sh")], check=True)
-    wall = g / "wallpapers" / "sysc-greet-mango.png"
-    script = f"""set -e
-install -Dm644 -o greeter -g greeter {q_sh(toml)} {GREETER_HOME}/.config/sysc-greet/themes/mango.toml
-install -Dm644 {q_sh(wall)} {WALLPAPER}
-echo {digest} > {GREETER_STAMP}
-"""
-    subprocess.run(["sudo", "sh", "-c", script], check=True)
-    print(f"install {GREETER_HOME}/.config/sysc-greet/themes/mango.toml")
-    print(f"install {WALLPAPER}")
-
-
 def q_sh(p):
     return "'" + str(p).replace("'", "'\\''") + "'"
 
@@ -685,6 +668,7 @@ def main(argv):
         if cmd == "set" and not args:
             raise ThemeError("usage: theme set NAME")
         slug = args[0] if args else current()
+        before = system_digest()
         words, outs = render_all(slug, to or REPO)
         if to:
             print(f"rendered {len(outs)} files for {slug} into {to}")
@@ -692,9 +676,13 @@ def main(argv):
         CURRENT.parent.mkdir(parents=True, exist_ok=True)
         CURRENT.write_text(slug + "\n")
         print(f"{words['name']}: rendered {len(outs)} files")
+        run_generators()
         if cmd == "set":
             ok = run_hooks(words)
             notify("Theme", words["name"])
+            if system_digest() != before:  # files outside $HOME need root: they apply on the next run
+                notify("Theme: login screen", "updates on the next `install.sh --system` (sudo)")
+                print("system files changed: run `install.sh --system` to apply them (sudo)")
             return 0 if ok else 1
     elif cmd == "pick":
         names = palette_names()
@@ -720,8 +708,6 @@ def main(argv):
         fn = {"import-vscode": import_vscode, "import-omarchy": import_omarchy,
               "import-base24": import_base24}[cmd]
         print(write_palette(args[1], *fn(args[0]), force=force))
-    elif cmd == "install-greeter":
-        install_greeter()
     else:
         raise ThemeError(f"unknown command {cmd!r} (see `theme help`)")
     return 0

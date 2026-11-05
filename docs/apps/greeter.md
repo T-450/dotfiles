@@ -2,7 +2,7 @@
 
 The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette.
 
-The greeter runs as the `greeter` user, which can't read your home, so `theme install-greeter` (run by `setup.sh`) renders the theme and wallpaper and installs them under `/var/lib/greeter` and `/usr/share/sysc-greet`; re-run it after `theme set`. `ascii_configs/mango.conf` is the stock mango profile with a ringed planet (from `make-planet.py`) as variant 1 (Page Up/Down cycles); a pacman hook restores it after sysc-greet upgrades. `preferences.json` is the first-install choice (theme Mango, Higgs Field background, Mango session); F1 at the greeter changes it later.
+Everything it reads lives under `greeter/root/` and is copied to `/` by `install.sh --system` (the `greeter` user can't read your home): the greetd config, the theme (rendered), the wallpaper (`render.sh`, a ringed planet on the palette's desktop color), the ASCII profile with the planet as variant 1 (Page Up/Down cycles), a pacman hook that restores that profile after sysc-greet upgrades, and the preferences (theme Mango, Higgs Field background, Mango session, your username). After `theme set`, `install.sh --system` brings the login screen along (it needs sudo; theme set says so). `make-planet.py` made the ASCII planet.
 
 ## Reference
 
@@ -11,9 +11,20 @@ The greeter runs as the `greeter` user, which can't read your home, so `theme in
 
 **Rendered from the palette** (`theme`):
 
-- `greeter/themes/mango.toml.tmpl` → `greeter/themes/mango.toml`: `accent`, `bg_desktop`, `bg_widget`, `error`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `slug`, `warning`
+- `greeter/root/var/lib/greeter/.cache/sysc-greet/preferences.tmpl` → `greeter/root/var/lib/greeter/.cache/sysc-greet/preferences`: `user`
+- `greeter/root/var/lib/greeter/.config/sysc-greet/themes/mango.toml.tmpl` → `greeter/root/var/lib/greeter/.config/sysc-greet/themes/mango.toml`: `accent`, `bg_desktop`, `bg_widget`, `error`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `slug`, `warning`
 
-**System files** (installed by `setup.sh`, sudo): `/etc/greetd/config.toml`
+**System files** (`greeter/root/`, copied by `install.sh --system`):
 
-**`setup.sh`** (run by `install.sh --setup`): greetd + sysc-greet with the "Mango" theme (idempotent; sudo). Theme + wallpaper are rendered from the active palette and installed into the greeter's own config dir (the greeter user cannot read /home); re-run `theme install-greeter` after `theme set` to follow it.
+- `/etc/greetd/config.toml`
+- `/etc/pacman.d/hooks/sysc-greet-mango-profile.hook`
+- `/usr/local/share/sysc-greet/mango.conf`
+- `/usr/share/sysc-greet/ascii_configs/mango.conf`
+- `/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png`
+- `/var/lib/greeter/.cache/sysc-greet/preferences`
+- `/var/lib/greeter/.config/sysc-greet/themes/mango.toml`
+
+**`setup.sh`** (run by `install.sh --setup`): start greetd at boot (its files come from greeter/root/ via install.sh --system).
+
+**`render.sh`** (run by `theme` after rendering): the greeter wallpaper, a ringed planet on the palette's desktop color (original art), 3840x2160; sysc-greet picks it for theme "Mango". Run by `theme` after rendering templates; remade only when the palette or this script changed. `install.sh --system` installs it.
 <!-- end generated -->

@@ -1,0 +1,29 @@
+{
+  "model": "opus",
+  "enabledPlugins": {
+    "superpowers@anthropic-plugin-directory": true,
+    "research-superpowers@anthropic-plugin-directory": true,
+    "frontend-design@anthropic-plugin-directory": true,
+    "code-review-anthropics@anthropic-plugin-directory": true,
+    "skill-creator@anthropic-plugin-directory": true,
+    "code-simplifier@anthropic-plugin-directory": true,
+    "security-guidance@anthropic-plugin-directory": true,
+    "claude-code-setup@anthropic-plugin-directory": true,
+    "commit-commands@anthropic-plugin-directory": true
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
+  "tui": "fullscreen",
+  "theme": "custom:mango",
+  "extraKnownMarketplaces": {
+    "cursor-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "cursor/plugins"
+      }
+    }
+  }
+}

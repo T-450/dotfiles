@@ -29,7 +29,7 @@ def apps():
     out = []
     for d in sorted(REPO.iterdir()):
         if d.is_dir() and d.name not in NOT_APPS and not d.name.startswith("."):
-            if any((d / f).exists() for f in ("packages", "setup.sh", ".stow-local-ignore")):
+            if any((d / f).exists() for f in ("packages", "pkg", "root", "setup.sh", ".stow-local-ignore")):
                 out.append(d.name)
     return out
 
@@ -84,8 +84,20 @@ def templates(app):
 
 
 def system_files(app):
-    etc = REPO / app / "etc"
-    return sorted("/" + str(p.relative_to(REPO / app)) for p in etc.rglob("*") if p.is_file()) if etc.exists() else []
+    """Files install.sh --system copies to /, by their installed path (templates by their output)."""
+    root = REPO / app / "root"
+    if not root.exists():
+        return []
+    out = set()
+    for p in root.rglob("*"):
+        if p.is_file() or p.is_symlink():
+            rel = "/" + str(p.relative_to(root))
+            out.add(rel[:-5] if rel.endswith(".tmpl") else rel)
+    return sorted(out)
+
+
+def pkgbuilds(app):
+    return sorted(p.parent.name for p in (REPO / app).glob("pkg/*/PKGBUILD"))
 
 
 def units(app):
@@ -99,6 +111,9 @@ def app_block(app):
     if pk:
         out.append("**Packages** (`" + app + "/packages`): " + ", ".join(
             f"`{n}`" + (f" ({c})" if c else "") for n, c in pk))
+    pb = pkgbuilds(app)
+    if pb:
+        out.append("**Built here** (`" + app + "/pkg/*/PKGBUILD`, makepkg): " + ", ".join(f"`{n}`" for n in pb))
     hf = home_files(app)
     if hf:
         out.append("**Linked into your home** (stow, `install.sh --link`):\n\n" + "\n".join(f"- `{f}`" for f in hf))
@@ -112,11 +127,13 @@ def app_block(app):
         out.append("**User units** (enabled by `install.sh --units`): " + ", ".join(f"`{u}`" for u in un))
     sf = system_files(app)
     if sf:
-        out.append("**System files** (installed by `setup.sh`, sudo): " + ", ".join(f"`{f}`" for f in sf))
-    for script in ("setup.sh", "reload.sh"):
+        out.append("**System files** (`" + app + "/root/`, copied by `install.sh --system`):\n\n"
+                   + "\n".join(f"- `{f}`" for f in sf))
+    for script in ("setup.sh", "render.sh", "reload.sh"):
         p = REPO / app / script
         if p.exists():
-            when = "run by `install.sh --setup`" if script == "setup.sh" else "run by `theme set`"
+            when = {"setup.sh": "run by `install.sh --setup`", "render.sh": "run by `theme` after rendering",
+                    "reload.sh": "run by `theme set`"}[script]
             out.append(f"**`{script}`** ({when}): {first_comment(p)}")
     return "\n\n".join(out) + "\n"
 
@@ -207,7 +224,10 @@ def main(argv):
 
 
 def declared():
-    return {n for a in apps() for n, _ in packages(a)}
+    names = {n for a in apps() for n, _ in packages(a)}
+    for a in apps():  # local PKGBUILDs count as declared too
+        names.update(pkgbuilds(a))
+    return names
 
 
 def drift():

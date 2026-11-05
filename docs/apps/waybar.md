@@ -23,7 +23,5 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view). Cent
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 
-**`setup.sh`** (run by `install.sh --setup`): remove mangobar, which waybar replaced (idempotent).
-
 **`reload.sh`** (run by `theme set`): reload waybar's config and CSS (colors.css changed) in place. A stopped bar (hidden with waybar-toggle) stays stopped.
 <!-- end generated -->

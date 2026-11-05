@@ -10,7 +10,6 @@ theme list                 # palettes (* = active)
 theme set light-2026       # switch everything (also: super+shift+t picker)
 theme init                 # render the active palette without reloading (install.sh)
 theme lint                 # no color literals; rendered files gitignored; no secrets tracked
-theme install-greeter      # login screen follows the palette (asks for sudo)
 ```
 
 The default palette is **Dark 2026**, from VS Code's
@@ -85,6 +84,7 @@ Which apps use each role (generated from the templates):
 | `fg_secondary` | claude, firefox, greeter, mako, mango, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
 | `fg_text` | claude, fastfetch, firefox, greeter, gtk, mako, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `gtk_theme` | gtk |
+| `home` | runner-up |
 | `link` | claude, foot, greeter, gtk, opencode, qutebrowser, rofi, theme |
 | `name` | claude, fastfetch, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
@@ -96,6 +96,7 @@ Which apps use each role (generated from the templates):
 | `term_bg` | claude, foot, opencode, theme |
 | `term_cursor` | foot, theme |
 | `term_fg` | foot, theme |
+| `user` | greeter |
 | `variant` | claude, foot, qutebrowser, theme |
 | `warning` | claude, fastfetch, greeter, gtk, opencode, qutebrowser, theme, waybar |
 <!-- end generated -->
@@ -143,17 +144,13 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | swaybg, slurp | `~/.config/theme/colors.sh` | swaybg restart (hook); slurp next use |
 | qutebrowser | `config.source("colors.py")` | `:config-source` in a running browser (hook) |
 | Firefox | `chrome/userChrome.css` in the profile | restart Firefox |
-| greeter | `greeter/themes/mango.toml` + wallpaper, theme "Mango" | `theme install-greeter` (sudo) |
+| greeter | `greeter/root/…/themes/mango.toml` + wallpaper (`greeter/render.sh`), theme "Mango" | `install.sh --system` (sudo; `theme set` reminds you) |
 | fastfetch | `config.jsonc` rendered (keys, title, bars, separators); the logo keeps its colors | next run |
 | zsh, vim | terminal ANSI colors (foot) | new terminals |
-| Claude Code | custom theme copied to `~/.claude/themes/mango.json`, selected as `custom:mango` | running sessions reload the file |
-| opencode | custom theme copied to `~/.config/opencode/themes/mango.json`, selected in `cli.json`; code uses the terminal ANSI hues | next start |
+| Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session |
+| opencode | `~/.config/opencode/themes/mango.json` (linked), selected in the linked `cli.json`; code uses the terminal ANSI hues | next start |
 
 To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore`, an include
 line in its config, and a `reload.sh` if it can reload live.
-
-Claude Code and opencode are selected only by their `setup.sh`, and only while no theme was ever
-chosen in them ("theme" unset; Claude's "auto" counts as a choice); after that `theme set` just
-refreshes the theme file. To go back: `/theme` in Claude Code, `/themes` in opencode.
 
 Fonts: Inter (UI), JetBrains Mono Nerd Font (mono). They are not part of the palette.

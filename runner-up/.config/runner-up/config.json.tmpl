@@ -1,0 +1,43 @@
+{
+  "github": {
+    "repos": [
+      "T-450/dotfiles"
+    ]
+  },
+  "pools": [
+    {
+      "label": "arch-kvm"
+    }
+  ],
+  "machines": [
+    {
+      "name": "laptop",
+      "agent": "/usr/bin/runner-up",
+      "cores": 8,
+      "memoryMB": 15614,
+      "roomCores": 4,
+      "roomMemoryMB": 8192,
+      "places": [
+        {
+          "id": "laptop-1",
+          "provider": "kvm",
+          "pools": [
+            "arch-kvm"
+          ],
+          "cores": 4,
+          "memoryMB": 6144,
+          "image": "/usr/share/runner-up/images/arch-cloudimg.qcow2",
+          "diskGB": 30
+        }
+      ]
+    }
+  ],
+  "announceCapacity": 50,
+  "startTimeoutSeconds": 600,
+  "bootTimeoutSeconds": 300,
+  "guestCheckSeconds": 30,
+  "maxJobSeconds": 21600,
+  "tickSeconds": 10,
+  "logKeepDays": 30,
+  "stateDir": "{{home}}/.local/state/runner-up"
+}
