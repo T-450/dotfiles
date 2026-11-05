@@ -1,0 +1,8 @@
+# ThinkPad T14 (Intel) hardware: CPU microcode, audio DSP firmware, VA-API, Vulkan, fingerprint, firmware updates, power
+intel-ucode
+sof-firmware
+intel-media-driver
+vulkan-intel
+fprintd
+fwupd
+tlp

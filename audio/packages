@@ -1,0 +1,10 @@
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+wireplumber
+gst-plugin-pipewire
+libpulse
+rtkit      # realtime scheduling for PipeWire/WirePlumber (fixes "RTKit error")
+sox
+playerctl  # media keys

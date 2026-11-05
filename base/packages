@@ -1,0 +1,25 @@
+# the system layer (archinstall installs most of it; declared so a clean install and drift checks agree)
+base
+base-devel   # makepkg, for AUR packages
+linux
+linux-zen
+linux-firmware
+mkinitcpio
+grub
+efibootmgr
+f2fs-tools
+sudo
+zram-generator
+networkmanager
+iwd          # NetworkManager's Wi-Fi backend (etc/NetworkManager/conf.d/wifi_backend.conf)
+ufw
+git
+less
+unzip
+zip
+net-tools
+jq
+libnotify   # notify-send
+xdg-user-dirs
+stow        # install.sh --link
+python      # theme engine

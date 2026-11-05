@@ -1,0 +1,7 @@
+[terminal]
+switch = true
+vt = "next"
+
+[default_session]
+command = "mango -c /etc/greetd/mango-greeter-config.conf -s /etc/greetd/mango-greeter-session.sh"
+user = "greeter"
