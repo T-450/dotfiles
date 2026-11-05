@@ -7,10 +7,11 @@ repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 # sys_file SRC DST [MODE]: install a repo file into the system (sudo) when it differs
 sys_file() {
 	local src=$1 dst=$2 mode=${3:-644}
-	if ! sudo cmp -s -- "$src" "$dst" 2>/dev/null; then
-		sudo install -Dm"$mode" -- "$src" "$dst"
-		echo "install $dst"
-	fi
+	# compare without sudo when the target is readable (most of /etc is), so a no-op run asks nothing
+	if [[ -r $dst ]] && cmp -s -- "$src" "$dst"; then return 0; fi
+	if [[ -e $dst && ! -r $dst ]] && sudo cmp -s -- "$src" "$dst"; then return 0; fi
+	sudo install -Dm"$mode" -- "$src" "$dst"
+	echo "install $dst"
 }
 
 # enable_system UNIT...: enable (and start) system units not enabled yet
