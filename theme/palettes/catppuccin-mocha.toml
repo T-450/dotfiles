@@ -14,14 +14,14 @@ border_hairline = "#242534"  # base24
 border_inactive = "#313244"  # base24
 fg_text         = "#cdd6f4"  # base24
 fg_editor       = "#cdd6f4"  # base24
-fg_secondary    = "#585b70"  # base24
-fg_muted        = "#45475a"  # base24
+fg_secondary    = "#7b8098"  # base24
+fg_muted        = "#676b80"  # base24
 fg_bright       = "#f5e0dc"  # base24
 fg_disabled     = "#353748"  # base24
 accent          = "#89b4fa"  # base24
 badge           = "#799edb"  # base24
-selection_bg    = "#6e8ec7"  # base24
-selection_fg    = "#b4befe"  # base24
+selection_bg    = "#313244"  # base24
+selection_fg    = "#cdd6f4"  # base24
 link            = "#94e2d5"  # base24
 error           = "#f38ba8"  # base24
 warning         = "#f9e2af"  # base24
@@ -34,5 +34,5 @@ bg     = "#1e1e2e"
 cursor = "#cdd6f4"
 ansi = [
 	"#181825", "#f38ba8", "#a6e3a1", "#f9e2af", "#89b4fa", "#cba6f7", "#94e2d5", "#f5e0dc",
-	"#313244", "#eba0ac", "#a6e3a1", "#f5e0dc", "#74c7ec", "#f5c2e7", "#89dceb", "#b4befe",
+	"#686b82", "#eba0ac", "#a6e3a1", "#f5e0dc", "#74c7ec", "#f5c2e7", "#89dceb", "#b4befe",
 ]

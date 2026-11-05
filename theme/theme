@@ -72,6 +72,25 @@ def lum(c):
     return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
 
 
+def contrast(a, b):
+    """WCAG 2 contrast ratio between two rgb tuples."""
+    def rel(c):
+        ch = [x / 255 for x in c]
+        ch = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in ch]
+        return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2]
+    hi, lo = sorted((rel(a), rel(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def legible(fg, bg, toward, minimum=3.0):
+    """Move fg toward `toward` in 5% steps until it reads at `minimum` contrast on bg."""
+    for i in range(21):
+        c = mix(fg, toward, i / 20)
+        if contrast(c, bg) >= minimum:
+            return c
+    return toward
+
+
 def mix(a, b, t):
     """Blend color a toward b by t (0 = a, 1 = b)."""
     return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
@@ -429,8 +448,12 @@ def import_vscode(src):
     role("fg_disabled", ["disabledForeground"], v["bg_surface"], mix(v["fg_text"], v["bg_surface"], 0.6))
     # focusBorder is the theme's focus color but often carries alpha: take its opaque hue
     # (flattening would grey it). Not tab.activeBorderTop: 2026 Light sets that to black.
-    if re.fullmatch(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?", c.get("focusBorder", "")):
-        v["accent"], src_keys["accent"] = rgb(c["focusBorder"][:7]), "focusBorder (alpha dropped)"
+    fb = c.get("focusBorder", "")
+    if re.fullmatch(r"#[0-9a-fA-F]{3,4}", fb):  # #rgb / #rgba -> #rrggbb[aa]
+        fb = "#" + "".join(ch * 2 for ch in fb[1:])
+    # a nearly transparent focusBorder means "no focus ring", not "black accent"
+    if re.fullmatch(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?", fb) and int(fb[7:9] or "ff", 16) >= 0x40:
+        v["accent"], src_keys["accent"] = rgb(fb[:7]), "focusBorder (alpha dropped)"
     else:
         role("accent", ["tab.activeBorderTop", "button.background"], v["bg_surface"], ansi_default[12])
     role("badge", ["badge.background"], v["bg_surface"], v["accent"])
@@ -492,8 +515,10 @@ def import_omarchy(src):
     names = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
     base = [rgb(x) for x in VSCODE_ANSI[variant]]
     # most Omarchy themes have no black/white: derive them from the theme, not VS Code's
-    base[0], base[8] = mix(bg, fg, 0.18), v["fg_muted"]
-    base[7], base[15] = fg, v["fg_bright"]
+    if variant == "dark":
+        base[0], base[8], base[7], base[15] = mix(bg, fg, 0.18), v["fg_muted"], fg, v["fg_bright"]
+    else:  # light bg: "black" is the dark text colour, "white" a light grey
+        base[0], base[8], base[7], base[15] = fg, v["fg_muted"], mix(bg, fg, 0.25), mix(bg, fg, 0.1)
     ansi = []
     for i in range(16):
         explicit = d.get(f"color{i}")
@@ -531,16 +556,21 @@ def import_base24(src):
         "bg_desktop": desktop, "bg_surface": b["base00"], "bg_widget": widget,
         "bg_hover": b["base02"], "border_hairline": mix(b["base01"], b["base02"], 0.5),
         "border_inactive": b["base02"], "fg_text": b["base05"], "fg_editor": b["base05"],
-        "fg_secondary": b["base04"], "fg_muted": b["base03"], "fg_bright": b["base06"],
+        # some schemes (Catppuccin) keep surface greys in base03/04: keep them readable as text
+        "fg_secondary": legible(b["base04"], b["base00"], b["base05"], 4.0),
+        "fg_muted": legible(b["base03"], b["base00"], b["base05"]), "fg_bright": b["base06"],
         "fg_disabled": mix(b["base03"], b["base00"], 0.4), "accent": b["base0d"],
-        "badge": mix(b["base0d"], b["base00"], 0.15), "selection_bg": mix(b["base0d"], b["base00"], 0.25),
-        "selection_fg": b["base07"] if variant == "dark" else b["base00"], "link": b["base0c"],
+        "badge": mix(b["base0d"], b["base00"], 0.15), "selection_bg": b["base02"],
+        # base16's own selection pair (base02 bg) instead of an accent mix, which read at 1.8:1
+        "selection_fg": legible(b["base05"], b["base02"], b["base07"], 4.5), "link": b["base0c"],
         "error": b["base08"], "warning": b["base0a"], "success": b["base0b"], "shadow": (0, 0, 0),
     }
     # tinted-theming base24 terminal mapping
     order = ["base01", "base08", "base0b", "base0a", "base0d", "base0e", "base0c", "base06",
              "base02", "base12", "base14", "base13", "base16", "base17", "base15", "base07"]
     ansi = [b[k] for k in order]
+    # bright black (zsh autosuggestions, comments) must stay visible on the terminal bg
+    ansi[8] = legible(ansi[8], b["base00"], b["base05"])
     term = {"fg": b["base05"], "bg": b["base00"], "cursor": b["base05"]}
     meta = {"name": top.get("name", "imported").strip(), "variant": variant, "source": f"base24:{src}"}
     return meta, v, {k: "base24" for k in v}, term, ansi
@@ -647,14 +677,18 @@ def main(argv):
             return 0 if ok else 1
     elif cmd == "pick":
         names = palette_names()
-        p = subprocess.run(["rofi", "-dmenu", "-i", "-p", "theme", "-selected-row",
-                            str(names.index(current()) if current() in names else 0)],
-                           input="\n".join(names), capture_output=True, text=True)
+        try:
+            p = subprocess.run(["rofi", "-dmenu", "-i", "-p", "theme", "-selected-row",
+                                str(names.index(current()) if current() in names else 0)],
+                               input="\n".join(names), capture_output=True, text=True)
+        except OSError as e:
+            notify("Theme picker failed", str(e), urgent=True)
+            raise
         if p.returncode != 0 or not p.stdout.strip():
             return 0
         try:  # run from a keybinding: stderr is invisible, so report through mako
             return main(["set", p.stdout.strip()])
-        except ThemeError as e:
+        except (ThemeError, OSError, subprocess.CalledProcessError) as e:
             notify("Theme not changed", str(e), urgent=True)
             raise
     elif cmd in ("import-vscode", "import-omarchy", "import-base24"):

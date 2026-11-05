@@ -50,7 +50,11 @@ git clone <this repo> ~/dotfiles/mango
 
 `link.sh` links: `.`→`~/.config/mango`, `foot rofi mako swaylock wlogout mangobar gtk-3.0 gtk-4.0 environment.d
 xdg-desktop-portal xdg-desktop-portal-wlr` → `~/.config/<name>`, and each `systemd/user/*.service`
-→ `~/.config/systemd/user/`. Existing real files are moved to `*.bak.<ts>`, never deleted.
+→ `~/.config/systemd/user/`. It also links `fastfetch/config.jsonc` + `logo.png` into `~/.config/fastfetch/`
+and `firefox/user.js` + `userChrome.css` into the active Firefox profile, renders the palette (`theme init`),
+and installs the Claude Code/opencode themes, selecting them in `~/.claude/settings.json` and
+`~/.config/opencode/cli.json` only if no theme was chosen there. Existing real files are moved to
+`*.bak.<ts>`, never deleted.
 
 ## fastfetch
 

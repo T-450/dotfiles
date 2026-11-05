@@ -46,9 +46,12 @@ mkdir -p "$cfg/fastfetch"
 link "$src/fastfetch/config.jsonc" fastfetch/config.jsonc
 link "$src/fastfetch/logo.png"     fastfetch/logo.png
 
-# Firefox: palette-colored chrome. The profile in use is the Default= of the
-# [Install*] section in installs.ini (profiles.ini's Default=1 can be a stale one).
+# Firefox: palette-colored chrome. The profile in use is the first install's Default= in
+# installs.ini (profiles.ini's Default=1 can be a stale one). Note: an existing user.js or
+# userChrome.css in that profile is moved to *.bak.<ts> (link() never deletes).
 ff=$cfg/mozilla/firefox
+[[ -e $ff/installs.ini ]] || [[ ! -e $HOME/.mozilla/firefox/installs.ini ]] ||
+	echo "note    firefox profile is in ~/.mozilla (pre-XDG); theme it by hand or migrate the profile"
 if prof=$(awk -F= '/^Default=/{print $2; exit}' "$ff/installs.ini" 2>/dev/null) && [[ -n $prof && -d $ff/$prof ]]; then
 	mkdir -p "$ff/$prof/chrome"
 	link "$src/firefox/userChrome.css" "mozilla/firefox/$prof/chrome/userChrome.css"

@@ -95,8 +95,10 @@ To theme a new app: add a template, a `[[target]]`, its output to `.gitignore`, 
 include line in the app's config, and a hook if it can reload live.
 
 Claude Code and opencode are selected only by `link.sh` (`agents.sh --activate`) and only while
-no theme was chosen in them (Claude `auto`/unset, opencode unset); after that `theme set` just
-refreshes the theme file. To go back: `/theme` in either app.
+no theme was ever chosen in them ("theme" unset; Claude's "auto" counts as a choice), and only if
+the app is installed; after that `theme set` just refreshes the theme file. To go back: `/theme`
+in Claude Code, `/themes` in opencode. If opencode still has 1.x settings (`tui.json`/`kv.json`)
+and no `cli.json`, start opencode once so it migrates them, then re-run link.sh.
 
 Rendered files are gitignored. After a fresh clone or `git clean -X`, run
 `theme/theme init` (link.sh does), or mako, swaybg, slurp and foot fail to load their colors.
