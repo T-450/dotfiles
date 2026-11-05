@@ -1,0 +1,36 @@
+# Session
+
+**greetd** starts sysc-greet (see [greeter](apps/greeter.md)); logging in starts mango.
+
+Mango imports `WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_* MANGO_INSTANCE_SIGNATURE`
+into systemd and dbus, then starts `mango-session.target` → `graphical-session.target`. Every daemon is
+a user unit with `PartOf=`/`After=`/`Requisite=graphical-session.target` and
+`WantedBy=graphical-session.target`, so none starts outside a session: waybar, swaybg, mako,
+swayidle, swayosd, polkit-agent, wlsunset, wl-clip-persist, cliphist, blueman-applet.
+There is **no `exec_once` autostart**, on purpose; add new daemons as units the same way.
+
+- Environment for mango's children: `mango/.config/mango/env.conf` (reset on reload; relogin to change).
+- Environment for units: `mango/.config/environment.d/10-wayland.conf` (relogin). A variable both
+  need goes in both files.
+- Logout (super+m) runs `mango-quit`: it stops `graphical-session.target` *before*
+  `mmsg dispatch quit`, so units don't die with display errors.
+- The bar toggle (super+h, `waybar-toggle`) starts and stops `waybar.service`.
+- `mmsg` is mango's IPC: `mmsg dispatch <action>`, `mmsg get all-monitors|all-devices`.
+
+## Idle
+
+swayidle (`swayidle/.config/systemd/user/swayidle.service`): dim at 4 min (dimland) → lock at 5 min
+(swaylock) → panel off at 10 min (`mmsg dispatch sleep_monitor`); lock before suspend and on
+`loginctl lock-session`. swaylock starts only if not already running (`pidof -q swaylock ||`), and
+`KillMode=process` keeps it alive if swayidle restarts. Keep both.
+
+## Debugging
+
+```bash
+systemctl --user --failed
+journalctl --user -b -u waybar        # any unit
+systemctl --user status mango-session.target graphical-session.target
+systemctl --user show-environment | grep -E 'WAYLAND_DISPLAY|XDG_CURRENT_DESKTOP|MANGO_INSTANCE'
+busctl --user list | grep -iE 'portal|Notifications'
+mango -c ~/.config/mango/config.conf -p && echo ok
+```

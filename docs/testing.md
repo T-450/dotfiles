@@ -1,0 +1,42 @@
+# Testing and CI
+
+Modeled on [Omarchy](https://github.com/basecamp/omarchy)'s `test/` (`docs/testing.md` there):
+plain bash, TAP-style lines, one file per area, a runner that keeps going past failures.
+
+```bash
+tests/run                       # every tests/unit.d/*-test.sh
+tests/run tests/unit.d/theme-test.sh
+tools/docs --check              # docs/ in step with the repo
+tools/docs --drift              # this machine's packages vs every <app>/packages
+```
+
+## Writing a test
+
+`tests/unit.d/<area>-test.sh`, picked up by name:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
+require_command foot
+scratch_home                     # HOME=<fresh dir>, XDG_* unset: nothing reaches the real home
+...
+pass "what held"                 # ok - what held
+```
+
+- `fail "desc" [detail]` prints `not ok - desc` and **ends the file**: later checks would only
+  report against state the failure already broke. `tests/run` goes on with the next file and
+  prints each failing file's log; logs stay in the directory it prints.
+- `skip "why"` for checks this machine can't run; `require_session` skips the whole file unless a
+  live mango session answers `mmsg` (session checks pass in CI's VM only when it starts one).
+- Tests never touch the real home: `scratch_home`, `install.sh --home DIR`, `theme init --to DIR`.
+
+## CI: a clean machine on every push
+
+`.github/workflows/tests.yml` runs on [runner-up](apps/runner-up.md): GitHub Actions jobs in a
+**fresh Arch Linux KVM VM per job** (Arch's official cloud image), on this laptop. The job runs
+`install.sh` on the clean VM, runs it again and fails if the second run changes anything, then runs
+`tests/run`. That is the proof that the repo reproduces the desktop from scratch.
+
+`runs-on: arch-kvm` is the pool label. The coordinator (`runner-up.service`) uses `gh`'s
+sign-in, so `gh auth login` must have run; `runner-up status` shows the place and waiting jobs.
