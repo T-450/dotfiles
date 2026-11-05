@@ -18,3 +18,4 @@
 __pycache__/
 /firefox/userChrome.css
 /fastfetch/config.jsonc
+/theme/out/

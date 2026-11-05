@@ -45,7 +45,7 @@ A palette names colors by what they do, not by app. The VS Code key is where
 | `shadow` | (constant black) | mango shadows |
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (foot; zsh, vim and
-opencode follow foot). VS Code themes rarely set ANSI colors, so the importer falls
+follow foot). VS Code themes rarely set ANSI colors, so the importer falls
 back to VS Code's own defaults (`terminalColorRegistry.ts`). `[art]` (optional) colors
 the greeter wallpaper planet; imported palettes derive it from `link`/`accent`/`warning`.
 `meta.variant` (`dark`/`light`) drives GTK `color-scheme`/`gtk-theme`, GTK
@@ -88,11 +88,15 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | greeter | `greeter/themes/mango.toml` + wallpaper, theme name "Mango" | `theme install-greeter` (sudo) |
 | fastfetch | `fastfetch/config.jsonc` rendered (keys, title, bars, separators); the logo keeps its own colors | next run |
 | zsh, vim | terminal ANSI colors (foot) | new terminals |
-| opencode | its own "system" theme = terminal ANSI colors (pick once with `/themes`) | new terminals |
-| Claude Code | `/theme` → "Dark mode (ANSI colors only)"; "Light mode (ANSI colors only)" for light palettes | new terminals |
+| Claude Code | custom theme `~/.claude/themes/mango.json` (copied by `hooks/agents.sh`), selected as `custom:mango` in `~/.claude/settings.json` | running sessions reload the file |
+| opencode | custom theme `~/.config/opencode/themes/mango.json`, selected as `{"theme": {"name": "mango"}}` in `~/.config/opencode/cli.json`; code uses the terminal ANSI hues (palettes have no syntax roles) | next start |
 
 To theme a new app: add a template, a `[[target]]`, its output to `.gitignore`, an
 include line in the app's config, and a hook if it can reload live.
+
+Claude Code and opencode are selected only by `link.sh` (`agents.sh --activate`) and only while
+no theme was chosen in them (Claude `auto`/unset, opencode unset); after that `theme set` just
+refreshes the theme file. To go back: `/theme` in either app.
 
 Rendered files are gitignored. After a fresh clone or `git clean -X`, run
 `theme/theme init` (link.sh does), or mako, swaybg, slurp and foot fail to load their colors.

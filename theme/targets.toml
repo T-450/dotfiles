@@ -64,3 +64,11 @@ out = "firefox/userChrome.css"
 [[target]]
 template = "fastfetch.jsonc"
 out = "fastfetch/config.jsonc"
+
+[[target]]
+template = "claude.json"
+out = "theme/out/claude.json"
+
+[[target]]
+template = "opencode.json"
+out = "theme/out/opencode.json"

@@ -38,6 +38,8 @@ link "$src/xdg-desktop-portal-wlr" xdg-desktop-portal-wlr
 "$src/theme/theme" init
 # dark/light preference for GTK, the settings portal and Firefox (theme set runs this too)
 THEME_VARIANT=$(. "$src/theme/colors.sh" && echo "$THEME_VARIANT") "$src/theme/hooks/gtk.sh"
+# Claude Code + opencode themes; selected only if you haven't picked one in those apps
+"$src/theme/hooks/agents.sh" --activate
 
 # fastfetch: link only our files; ~/.config/fastfetch may hold other presets
 mkdir -p "$cfg/fastfetch"
