@@ -59,16 +59,6 @@ if ! sudo test -e "$gh/.cache/sysc-greet/preferences"; then
 		sudo install -m600 -o greeter -g greeter /dev/stdin "$gh/.cache/sysc-greet/preferences"
 fi
 
-echo "==> sshd: loopback + keys only, for runner-up (CI) reaching this machine"
-sudo install -Dm644 "$here/sshd/10-local-only.conf" /etc/ssh/sshd_config.d/10-local-only.conf
-sudo ssh-keygen -A   # host keys; `sshd -t` fails without them (normally made on first start)
-sudo sshd -t
-if [[ $(state sshd.service) != enabled ]]; then
-	sudo systemctl enable --now sshd.service
-else
-	sudo systemctl reload-or-restart sshd.service
-fi
-
 echo "==> user dirs (~/Pictures for screenshots, ~/Downloads for blueman)"
 xdg-user-dirs-update
 
