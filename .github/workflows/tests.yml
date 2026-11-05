@@ -20,7 +20,7 @@ jobs:
           cat /etc/os-release | head -2; id; nproc; free -m | head -2
           sudo -n true && echo "sudo: ok"
           sudo pacman -Syu --needed --noconfirm git
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: install.sh (clean machine)
         run: ./install.sh 2>&1 | tee "$RUNNER_TEMP/first.log"
       - name: install.sh again (idempotent)
