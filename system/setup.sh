@@ -8,6 +8,7 @@ sudo pacman -S --needed \
 	inter-font ttf-jetbrains-mono-nerd \
 	swaylock jq libnotify xdg-user-dirs wev qt6-wayland \
 	python imagemagick \
+	firefox fastfetch \
 	rtkit   # realtime scheduling for PipeWire/WirePlumber (fixes "RTKit error")
 
 echo "==> remove swaync (replaced by mako)"
