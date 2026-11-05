@@ -1,5 +1,5 @@
 __pycache__/
-# Claude Code per-machine settings
-.claude/settings.local.json
+# Claude Code project settings (per machine: plugins, permissions)
+/.claude/
 # test run output (screenshots, logs)
 /tests/out/
