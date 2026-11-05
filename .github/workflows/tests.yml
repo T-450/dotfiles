@@ -1,6 +1,7 @@
 # Clean-install proof on every push: a fresh Arch VM (runner-up KVM place, pool arch-kvm)
 # runs install.sh twice (the second run must change nothing) and then the test suite.
 name: tests
+concurrency: { group: tests-${{ github.ref }}, cancel-in-progress: true }
 on:
   push:
   workflow_dispatch:

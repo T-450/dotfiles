@@ -105,7 +105,7 @@ link() {
 	clear_conflicts "${pkgs[@]}"
 	stow_ -R "${pkgs[@]}"
 	prune_dangling
-	echo "linked  ${#pkgs[@]} packages into $home"
+	echo "stowed  ${#pkgs[@]} packages into $home"
 }
 
 # ---------------------------------------------------------------- packages
