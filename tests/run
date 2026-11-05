@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# tests/run [FILE...]: run every tests/unit.d/*-test.sh (or the given ones), each in its own
+# process. A failing file doesn't stop the run; each file's output is kept in a log dir that is
+# printed at the end, next to the failures. Exit 1 if any file failed.
+set -uo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+logs=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-tests.XXXXXX")
+files=("$@")
+((${#files[@]})) || files=("$root"/tests/unit.d/*-test.sh)
+failed=() skipped=()
+for f in "${files[@]}"; do
+	name=$(basename "$f" .sh)
+	bash "$f" >"$logs/$name.log" 2>&1
+	code=$?
+	echo "$code" >"$logs/$name.code"
+	grep -q '# SKIP$' "$logs/$name.log" && skipped+=("$name")
+	if ((code)); then
+		failed+=("$name")
+		printf 'FAIL  %s\n' "$name"
+		sed 's/^/      /' "$logs/$name.log" | tail -n 15
+	else
+		printf 'ok    %s (%s checks)\n' "$name" "$(grep -c '^ok - ' "$logs/$name.log")"
+	fi
+done
+echo "logs: $logs"
+((${#skipped[@]})) && echo "skipped checks in: ${skipped[*]}"
+((${#failed[@]})) && { echo "failed: ${failed[*]}"; exit 1; }
+echo "all ${#files[@]} files passed"

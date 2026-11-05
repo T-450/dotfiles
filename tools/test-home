@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""test-home: what the repo puts into a home dir, as a comparable snapshot.
+
+usage: test-home snapshot OUT.json [--home DIR]   files reachable from DIR through links into a repo
+       test-home diff OLD.json NEW.json [--map MAP]  added / missing / changed, after renaming OLD paths
+
+A snapshot maps each file's path (relative to the home) to the sha256 of its content.
+Only paths that are, or sit under, a symlink resolving into a dotfiles checkout count
+(`~/dotfiles*`, or the repo this script is in), so the app's own files don't.
+systemd's *.wants/ links are skipped: systemctl makes those, not the repo.
+
+MAP is a text file of `old-prefix -> new-prefix` lines (first match wins; `-> -` drops the
+path: expected to disappear). Files under a renamed prefix may have changed content; diff
+lists them separately so path rewrites can be checked by eye.
+"""
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent.parent
+ROOTS = [str(HERE), str(Path.home() / "dotfiles")]
+SKIP_DIRS = {".git", "__pycache__", "cache", "Cache", "cache2", "flatpak"}
+
+
+def in_repo(p):
+    r = os.path.realpath(p)
+    return any(r == root or r.startswith(root.rstrip("/") + "/") or r.startswith(root + "-") for root in ROOTS)
+
+
+def sha(p):
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def snapshot(home):
+    out = {}
+
+    def add_tree(rel, real):
+        if os.path.isdir(real):
+            for dp, dns, fns in os.walk(real, followlinks=True):
+                dns[:] = sorted(d for d in dns if d not in SKIP_DIRS)
+                for fn in sorted(fns):
+                    f = os.path.join(dp, fn)
+                    if os.path.isfile(f):
+                        out[os.path.join(rel, os.path.relpath(f, real))] = sha(f)
+        elif os.path.isfile(real):
+            out[rel] = sha(real)
+
+    def walk(d):
+        try:
+            entries = sorted(os.scandir(d), key=lambda e: e.name)
+        except (PermissionError, FileNotFoundError):
+            return
+        for e in entries:
+            rel = os.path.relpath(e.path, home)
+            if e.name in SKIP_DIRS or e.name.endswith(".wants"):
+                continue
+            if e.is_symlink():
+                if in_repo(e.path):
+                    add_tree(rel, e.path)
+            elif e.is_dir():
+                walk(e.path)
+
+    for top in sorted(os.scandir(home), key=lambda e: e.name):
+        if top.name in (".config", ".local"):
+            walk(top.path)
+        elif top.name.startswith(".") and top.is_symlink() and in_repo(top.path):
+            add_tree(top.name, top.path)
+    return out
+
+
+def load_map(path):
+    rules = []
+    if path:
+        for line in Path(path).read_text().splitlines():
+            line = line.split("#", 1)[0].strip()
+            if line:
+                old, new = (x.strip() for x in line.split("->"))
+                rules.append((old, new))
+    return rules
+
+
+def rename(p, rules):
+    for old, new in rules:
+        if p == old or p.startswith(old.rstrip("/") + "/") or (old.endswith("/") and p.startswith(old)):
+            if new == "-":
+                return None, True
+            return new + p[len(old):], True
+    return p, False
+
+
+def diff(a, b, rules):
+    old, renamed = {}, set()
+    for p, h in a.items():
+        q, hit = rename(p, rules)
+        if q is None:
+            continue
+        old[q] = h
+        if hit:
+            renamed.add(q)
+    missing = sorted(set(old) - set(b))
+    added = sorted(set(b) - set(old))
+    changed = sorted(p for p in set(old) & set(b) if old[p] != b[p])
+    for title, items in (("missing", missing), ("added", added),
+                         ("changed (renamed)", [p for p in changed if p in renamed]),
+                         ("changed", [p for p in changed if p not in renamed])):
+        for p in items:
+            print(f"{title:18} {p}")
+    print(f"# {len(old)} expected, {len(b)} found: {len(missing)} missing, {len(added)} added, {len(changed)} changed")
+    return 1 if (missing or added or [p for p in changed if p not in renamed]) else 0
+
+
+def main(argv):
+    if len(argv) >= 2 and argv[0] == "snapshot":
+        home = argv[argv.index("--home") + 1] if "--home" in argv else str(Path.home())
+        snap = snapshot(os.path.abspath(home))
+        Path(argv[1]).write_text(json.dumps(snap, indent=1, sort_keys=True) + "\n")
+        print(f"{len(snap)} files -> {argv[1]}")
+        return 0
+    if len(argv) >= 3 and argv[0] == "diff":
+        rules = load_map(argv[argv.index("--map") + 1] if "--map" in argv else None)
+        return diff(json.loads(Path(argv[1]).read_text()), json.loads(Path(argv[2]).read_text()), rules)
+    print(__doc__.strip(), file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
