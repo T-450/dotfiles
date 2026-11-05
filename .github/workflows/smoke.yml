@@ -1,0 +1,16 @@
+# Proves the runner-up pool: a job in a fresh Arch KVM VM on the coordinator's machine.
+name: smoke
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/workflows/smoke.yml, runner-up/**]
+jobs:
+  arch-vm:
+    runs-on: arch-kvm
+    timeout-minutes: 15
+    steps:
+      - run: |
+          uname -a
+          cat /etc/os-release
+          nproc; free -m; df -h /
+          id; command -v pacman sudo git || true

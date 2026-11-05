@@ -1,0 +1,14 @@
+# runner-up coordinator: hears of jobs for runs-on: arch-kvm and starts each in a fresh KVM VM.
+# Not tied to the graphical session: CI runs while logged out (setup.sh enables linger).
+[Unit]
+Description=runner-up coordinator (GitHub Actions jobs on this machine)
+After=network-online.target
+
+[Service]
+ExecStart=%h/.local/bin/runner-up serve --config %h/.config/runner-up/config.json
+Restart=on-failure
+# stop only the coordinator: running jobs' place runners carry on
+KillMode=process
+
+[Install]
+WantedBy=default.target

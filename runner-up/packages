@@ -1,0 +1,3 @@
+# runner-up: GitHub Actions jobs in a fresh KVM VM per job, on this machine (coordinator + agent)
+github-cli   # its sign-in is runner-up's (gh auth token); no token stored
+qemu-base    # KVM places (qemu-system-x86_64, qemu-img)
