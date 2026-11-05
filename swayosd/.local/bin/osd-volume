@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+# osd-volume [up|down|mute|micmute] — changes volume and shows the swayosd OSD
+case $1 in
+up)      swayosd-client --output-volume 5 ;;
+down)    swayosd-client --output-volume -5 ;;
+mute)    swayosd-client --output-volume mute-toggle ;;
+micmute) swayosd-client --input-volume mute-toggle ;;
+esac

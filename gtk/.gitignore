@@ -1,0 +1,5 @@
+# rendered by theme/.local/bin/theme from the matching .tmpl (or by setup.sh); never edit
+/.config/gtk-3.0/colors.css
+/.config/gtk-3.0/settings.ini
+/.config/gtk-4.0/colors.css
+/.config/gtk-4.0/settings.ini

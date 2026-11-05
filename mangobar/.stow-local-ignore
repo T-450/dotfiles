@@ -1,0 +1,4 @@
+# stow ignores these: package metadata and templates are not part of $HOME
+# (a pattern without / must match the whole file name)
+^/(packages|setup\.sh|reload\.sh|files|README\.md|\.gitignore)$
+.+\.tmpl

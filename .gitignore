@@ -1,21 +1,5 @@
-# theme/theme outputs (rendered from theme/palettes + theme/templates; `theme init` recreates them)
-/theme/current
-/colors.conf
-/foot/colors.ini
-/mako/colors
-/rofi/themes/colors.rasi
-/mangobar/colors.css
-/wlogout/colors.css
-/gtk-3.0/colors.css
-/gtk-4.0/colors.css
-/gtk-3.0/settings.ini
-/gtk-4.0/settings.ini
-/swaylock/config
-/theme/colors.sh
-/swayosd/colors.css
-/greeter/themes/mango.toml
-/greeter/wallpapers/sysc-greet-mango.png
 __pycache__/
-/firefox/userChrome.css
-/fastfetch/config.jsonc
-/theme/out/
+# Claude Code per-machine settings
+.claude/settings.local.json
+# test run output (screenshots, logs)
+/tests/out/

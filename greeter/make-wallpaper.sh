@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Render the greeter wallpaper: a ringed planet on the palette's desktop color (original art).
-# Colors: ../theme/colors.sh (active palette, rendered by theme/theme). Run by `theme install-greeter`.
+# Colors: ../theme/.config/theme/colors.sh (active palette, rendered by theme/theme). Run by `theme install-greeter`.
 # Output: wallpapers/sysc-greet-mango.png (3840x2160; sysc-greet picks it for theme "Mango")
 set -euo pipefail
 cd "$(dirname "$0")"
-. ../theme/colors.sh
+. ../theme/.config/theme/colors.sh
 mkdir -p wallpapers
 W=3840 H=2160 CX=2540 CY=1020 R=430
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT

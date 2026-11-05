@@ -1,0 +1,12 @@
+[Unit]
+Description=Status bar (mangobar)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/mangobar -c %h/.config/mangobar/config.jsonc -s %h/.config/mangobar/style.css
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

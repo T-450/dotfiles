@@ -1,7 +1,0 @@
-#!/usr/bin/bash
-# toggle the bar (runs as systemd user unit mangobar.service)
-if systemctl --user is-active -q mangobar.service; then
-	systemctl --user stop mangobar.service
-else
-	systemctl --user start mangobar.service
-fi

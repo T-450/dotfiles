@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+# mango-monitor: toggle the laptop panel (eDP-1) on/off (super+p)
+
+enable=$(wlr-randr --json | jq --arg name "eDP-1" '.[] | select(.name == $name) | .enabled')
+if [ $enable == "true" ]; then
+    wlr-randr --output eDP-1 --off
+else
+    wlr-randr --output eDP-1 --on
+fi

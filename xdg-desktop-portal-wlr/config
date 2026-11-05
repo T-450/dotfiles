@@ -1,7 +1,0 @@
-# Screen sharing: pick the output with slurp (click a monitor).
-# For a fixed laptop panel without a chooser, use instead:
-#   output_name=eDP-1
-#   chooser_type=none
-[screencast]
-chooser_type=simple
-chooser_cmd=~/.config/mango/scripts/slurp-pick.sh -f %o -or

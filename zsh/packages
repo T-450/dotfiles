@@ -1,0 +1,3 @@
+# zsh with oh-my-zsh (agnoster prompt; its glyphs come from the Nerd Font in fonts/)
+zsh
+git   # oh-my-zsh is a git checkout and updates itself
