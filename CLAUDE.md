@@ -12,7 +12,8 @@ Personal dotfiles for the **mangowm** (0.18.x) Wayland compositor on Arch, on a 
 - So edits in the repo go live right away. Keybindings, unit files and bar config all point at `~/.config/mango/...` paths, for example `~/.config/mango/scripts/*.sh` and `%h/.config/mango/mangobar/...` in `mangobar.service`. Use those paths, not repo-relative ones, when wiring up new scripts.
 - A new top-level config dir only takes effect once it has a `link` line in `link.sh`. A new unit in `systemd/user/` gets picked up by the glob automatically.
 - `system/setup.sh` does the sudo-level work: pacman packages, removing swaync, TLP config and masking power-profiles-daemon, installing the greeter files into `/var/lib/greeter`, `/usr/share/sysc-greet` and `/etc/pacman.d/hooks`. Anything outside `$HOME` belongs here, not in `link.sh`.
-- `installed.txt` is a snapshot of installed packages, for reference only.
+- `installed.txt` is a snapshot of installed packages (`pacman -Q` format: `name version`, sorted), for reference only.
+- **When any new component is installed and configured, add it to `README.md` (Stack table, plus keybindings or a section if it has any) and to `installed.txt` (its `pacman -Q` line, kept sorted) in the same change.**
 
 ## Session architecture (spread across several files)
 

@@ -9,6 +9,8 @@ cliphist 1:0.7.0-2
 dimland-git r40.76c653f-1
 efibootmgr 18-4
 f2fs-tools 1.17.0-1
+fastfetch 2.70.0-1
+firefox 159.0.1-1
 foot 1.28.0-2
 fprintd 1.94.5-2
 fwupd 2.1.9-1
@@ -19,9 +21,11 @@ greetd 0.10.3-2
 grim 1.5.0-2
 grub 2:2.16-1
 gst-plugin-pipewire 1:1.6.10-1
+imagemagick 7.1.2.35-1
 intel-media-driver 26.3.5-1
 intel-ucode 20260925-1
 iwd 3.12-2
+jq 1.8.2-1
 less 1:710-1
 libpulse 17.0+r134+g77d25a1e6-1
 linux 7.2.14.arch1-1
@@ -47,6 +51,7 @@ pipewire-pulse 1:1.6.10-1
 playerctl 2.4.1-5
 polkit-gnome 0.105-12
 power-profiles-daemon 0.30-1
+python 3.14.9-1
 qutebrowser 3.7.0-1
 rofi 2.0.0-1
 slurp 1.5.0-2

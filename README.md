@@ -14,7 +14,7 @@ one blue accent). Colors come from one switchable palette: `theme/theme set <nam
 | terminal | `foot` | `foot/foot.ini` |
 | system info | `fastfetch` | `theme/templates/fastfetch.jsonc` (rendered to `fastfetch/config.jsonc`), `fastfetch/logo.png` |
 | launcher | `rofi` | `rofi/config.rasi`, `rofi/themes/quickinput.rasi` |
-| colors | `theme/theme` (python) | `theme/palettes/*.toml` → every app, see `THEME.md` |
+| colors | `theme/theme` (`python`; `jq` for the Claude/opencode hook, `imagemagick` for greeter art) | `theme/palettes/*.toml` → every app, see `THEME.md` |
 | notifications | `mako` | `mako/config` |
 | lock / idle | `swaylock`, `swayidle`, `dimland-git` | `theme/templates/swaylock`, `systemd/user/swayidle.service` |
 | power menu | `wlogout` | `wlogout/` |
