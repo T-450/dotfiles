@@ -9,6 +9,7 @@ sudo pacman -S --needed \
 	swaylock jq libnotify xdg-user-dirs wev qt6-wayland \
 	python imagemagick \
 	firefox fastfetch \
+	github-cli stow qemu-base \
 	rtkit   # realtime scheduling for PipeWire/WirePlumber (fixes "RTKit error")
 
 echo "==> remove swaync (replaced by mako)"
@@ -56,6 +57,15 @@ sudo install -d -m700 -o greeter -g greeter "$gh/.cache" "$gh/.cache/sysc-greet"
 if ! sudo test -e "$gh/.cache/sysc-greet/preferences"; then
 	jq --arg u "${SUDO_USER:-$USER}" '.username = $u' "$g/preferences.json" |
 		sudo install -m600 -o greeter -g greeter /dev/stdin "$gh/.cache/sysc-greet/preferences"
+fi
+
+echo "==> sshd: loopback + keys only, for runner-up (CI) reaching this machine"
+sudo install -Dm644 "$here/sshd/10-local-only.conf" /etc/ssh/sshd_config.d/10-local-only.conf
+sudo sshd -t
+if [[ $(state sshd.service) != enabled ]]; then
+	sudo systemctl enable --now sshd.service
+else
+	sudo systemctl reload-or-restart sshd.service
 fi
 
 echo "==> user dirs (~/Pictures for screenshots, ~/Downloads for blueman)"
