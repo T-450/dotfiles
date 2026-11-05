@@ -14,6 +14,7 @@ Personal dotfiles for the **mangowm** (0.18.x) Wayland compositor on Arch, on a 
 - `system/setup.sh` does the sudo-level work: pacman packages, removing swaync, TLP config and masking power-profiles-daemon, installing the greeter files into `/var/lib/greeter`, `/usr/share/sysc-greet` and `/etc/pacman.d/hooks`. Anything outside `$HOME` belongs here, not in `link.sh`.
 - `installed.txt` is a snapshot of installed packages (`pacman -Q` format: `name version`, sorted), for reference only.
 - **When any new component is installed and configured, add it to `README.md` (Stack table, plus keybindings or a section if it has any) and to `installed.txt` (its `pacman -Q` line, kept sorted) in the same change.**
+- **Every install and configuration, new or updated, goes through the install scripts (`system/setup.sh` for packages and anything outside `$HOME`, `link.sh` for user config), never as a one-off manual step.** The scripts must stay idempotent (safe to re-run, no duplicate edits, existing state checked before changing it) and reproducible: a clean Arch VM running `system/setup.sh` then `link.sh` must end up with the same working setup. If a step can't be scripted (e.g. an interactive login), document it in `README.md` under Install.
 
 ## Session architecture (spread across several files)
 
