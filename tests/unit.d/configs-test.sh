@@ -39,13 +39,13 @@ exec(open('$cfg/qutebrowser/colors.py').read()); exec(open('$cfg/qutebrowser/con
 " || fail "qutebrowser config.py and colors.py run"
 pass "qutebrowser config runs"
 
-for u in "$cfg"/systemd/user/*.service; do
-	if command -v systemd-analyze >/dev/null; then
+if command -v systemd-analyze >/dev/null; then
+	for u in "$cfg"/systemd/user/*.service; do
 		out=$(systemd-analyze --user verify "$u" 2>&1 | grep -v -e 'Unit .* not found' -e 'is not executable' || true)
 		[[ -z $out ]] || fail "$(basename "$u") verifies" "$out"
-	fi
-done
-pass "user units verify"
+	done
+	pass "user units verify"
+else skip "systemd-analyze not installed"; fi
 
 while IFS= read -r -d '' f; do
 	head -1 "$f" | grep -q bash || continue

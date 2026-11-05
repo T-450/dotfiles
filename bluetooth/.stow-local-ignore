@@ -1,4 +1,6 @@
-# stow ignores these: package metadata and templates are not part of $HOME
-# (a pattern without / must match the whole file name)
-^/(packages|setup\.sh|reload\.sh|files|README\.md|\.gitignore)$
+# stow ignores these: only dot-entries at the package root (.config, .local, .zshrc …) belong in
+# $HOME; everything else there is package metadata (packages, setup.sh, reload.sh, etc/, …).
+# A pattern with / matches the path from the package root; one without, the whole file name.
+^/[^.].*
+^/\.gitignore
 .+\.tmpl

@@ -3,6 +3,8 @@
 [Unit]
 Description=runner-up coordinator (GitHub Actions jobs on this machine)
 After=network-online.target
+# not installed until runner-up/setup.sh ran (it needs `gh auth login`): skip, don't fail
+ConditionFileIsExecutable=%h/.local/bin/runner-up
 
 [Service]
 ExecStart=%h/.local/bin/runner-up serve --config %h/.config/runner-up/config.json

@@ -110,8 +110,8 @@ link() {
 
 # ---------------------------------------------------------------- packages
 # Every <app>/packages (one name per line, # comments). Names in the sync databases go to
-# pacman, the rest to yay (bootstrapped from the AUR's yay-bin when missing). -Syu, never a
-# partial -Sy: Arch doesn't support partial upgrades.
+# pacman, the rest to yay (bootstrapped from the AUR's yay-bin when missing). A full -Syu runs
+# first: Arch doesn't support partial upgrades (-Sy then -S).
 apps() { # every top-level dir that is an app (has packages, setup.sh or .stow-local-ignore)
 	local d name
 	for d in "$repo"/*/; do
@@ -129,13 +129,13 @@ install_packages() {
 		while read -r p; do all+=("$p"); done < <(sed 's/#.*//' "$repo/$a/packages" | tr -s ' \t' '\n' | sed '/^$/d')
 	done
 	((${#all[@]})) || return 0
-	sudo pacman -Sy >/dev/null # refresh the database list only to sort repo vs AUR; -Syu follows
+	sudo pacman -Syu --noconfirm # full upgrade first: never leave refreshed databases without one
 	declare -A sync
 	while read -r p; do sync[$p]=1; done < <(pacman -Slq)
 	for p in $(printf '%s\n' "${all[@]}" | sort -u); do
 		if [[ -n ${sync[$p]:-} ]]; then repo_pkgs+=("$p"); else aur+=("$p"); fi
 	done
-	sudo pacman -Syu --needed --noconfirm "${repo_pkgs[@]}"
+	sudo pacman -S --needed --noconfirm "${repo_pkgs[@]}"
 	((${#aur[@]})) || return 0
 	if ! command -v yay >/dev/null; then
 		local t
@@ -174,14 +174,20 @@ enable_units() {
 	done
 	((${#units[@]})) || return 0
 	systemctl --user daemon-reload
-	systemctl --user enable "${units[@]}" 2>&1 | grep -v '^$' || true
-	# start what isn't running yet; session units only inside a running session (Requisite=)
+	# enable and start only units not enabled yet: a re-run must not restart anything, nor bring
+	# back a bar hidden with waybar-toggle. Session units start only inside a session (Requisite=).
+	local u new=()
+	for u in "${units[@]}"; do
+		[[ $(systemctl --user is-enabled "$u" 2>/dev/null) == enabled ]] || new+=("$u")
+	done
+	((${#new[@]})) || return 0
+	systemctl --user enable "${new[@]}" 2>/dev/null
+	echo "enable  ${new[*]}"
 	if systemctl --user -q is-active graphical-session.target; then
-		systemctl --user start "${units[@]}"
-	else
-		systemctl --user start runner-up.service 2>/dev/null || true
+		systemctl --user start "${new[@]}" || true
+	elif [[ " ${new[*]} " == *" runner-up.service "* ]]; then
+		systemctl --user start runner-up.service || true
 	fi
-	echo "units   ${#units[@]} enabled"
 }
 
 has packages && { say "packages" && install_packages; }

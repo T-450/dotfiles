@@ -19,7 +19,8 @@ enable_system() {
 	local u
 	for u; do
 		[[ $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]] && continue
-		sudo systemctl enable --now "$u" && echo "enable  $u"
+		sudo systemctl enable --now "$u" || return 1
+		echo "enable  $u"
 	done
 }
 
@@ -28,7 +29,8 @@ remove_pkgs() {
 	local p have=()
 	for p; do pacman -Q "$p" &>/dev/null && have+=("$p"); done
 	((${#have[@]})) || return 0
-	sudo pacman -Rns --noconfirm "${have[@]}" && echo "remove  ${have[*]}"
+	sudo pacman -Rns --noconfirm "${have[@]}" || return 1
+	echo "remove  ${have[*]}"
 }
 
 # user_bus: true when a user systemd/dbus session is reachable (not in a bare VM or chroot)

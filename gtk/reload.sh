@@ -9,5 +9,6 @@ if [[ $THEME_VARIANT == light ]]; then
 else
 	scheme=prefer-dark theme=Adwaita-dark
 fi
-gsettings set $gs color-scheme "$scheme"
-gsettings set $gs gtk-theme "$theme"
+set_() { [[ $(gsettings get $gs "$1") == "'$2'" ]] || gsettings set $gs "$1" "$2"; }
+set_ color-scheme "$scheme"
+set_ gtk-theme "$theme"

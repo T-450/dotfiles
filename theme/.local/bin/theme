@@ -624,27 +624,36 @@ def write_palette(slug, meta, v, src_keys, term, ansi, force=False):
 GREETER_HOME = Path("/var/lib/greeter")
 
 
+WALLPAPER = Path("/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png")
+GREETER_STAMP = WALLPAPER.with_suffix(".png.inputs")  # sha256 of what the two files are made from
+
+
 def install_greeter():
+    """Install theme "Mango" + wallpaper for sysc-greet, only when their inputs changed
+    (the wallpaper's star noise differs per run, so outputs can't be compared directly)."""
     if os.geteuid() == 0:
         raise ThemeError("run as your user; it calls sudo itself (art is rendered as you)")
+    import hashlib
     g = REPO / "greeter"
     toml = g / "themes" / "mango.toml"  # rendered from mango.toml.tmpl
     render_all(current(), REPO)  # greeter toml + colors.sh for the wallpaper script
+    colors = REPO / "theme" / ".config" / "theme" / "colors.sh"
+    digest = hashlib.sha256(b"".join(p.read_bytes() for p in (toml, colors, g / "make-wallpaper.sh"))).hexdigest()
+    try:
+        if GREETER_STAMP.read_text().strip() == digest and WALLPAPER.exists():
+            return
+    except OSError:
+        pass
     subprocess.run(["bash", str(g / "make-wallpaper.sh")], check=True)
     wall = g / "wallpapers" / "sysc-greet-mango.png"
-    prefs = GREETER_HOME / ".cache/sysc-greet/preferences"
     script = f"""set -e
 install -Dm644 -o greeter -g greeter {q_sh(toml)} {GREETER_HOME}/.config/sysc-greet/themes/mango.toml
-install -Dm644 {q_sh(wall)} /usr/share/sysc-greet/wallpapers/sysc-greet-mango.png
-# one-time move from the old fixed theme name to the stable "Mango" theme,
-# and remove the files the old setup.sh installed for it
-if [ -f {prefs} ] && grep -q '"theme": *"Dark 2026"' {prefs}; then
-	sed -i 's/"theme": *"Dark 2026"/"theme": "Mango"/' {prefs}
-fi
-rm -f {GREETER_HOME}/.config/sysc-greet/themes/dark-2026.toml /usr/share/sysc-greet/wallpapers/sysc-greet-dark-2026.png
+install -Dm644 {q_sh(wall)} {WALLPAPER}
+echo {digest} > {GREETER_STAMP}
 """
     subprocess.run(["sudo", "sh", "-c", script], check=True)
-    print("greeter: installed Mango theme + wallpaper")
+    print(f"install {GREETER_HOME}/.config/sysc-greet/themes/mango.toml")
+    print(f"install {WALLPAPER}")
 
 
 def q_sh(p):

@@ -19,6 +19,9 @@ mk foot/packages
 mk foot/setup.sh
 mk foot/files/user.js
 mk foot/.gitignore
+mk foot/agent-theme.sh
+mk foot/etc/tlp.d/x.conf
+mk foot/palettes/dark.toml
 mk bar/.config/systemd/user/bar.service
 mk bar/.local/bin/barcmd
 mk zsh/.zshrc
@@ -33,7 +36,7 @@ out=$(run) || fail "fresh home links" "$out"
 	fail "dot-entries, ~/.local/bin and units link" "$(view)"
 [[ -L $HOME/.config/foot/colors.ini && ! -e $HOME/.config/foot/colors.ini.tmpl ]] ||
 	fail "rendered output links, its template doesn't" "$(view)"
-for x in packages setup.sh files .gitignore .stow-local-ignore; do
+for x in packages setup.sh files .gitignore .stow-local-ignore agent-theme.sh etc palettes; do
 	[[ ! -e $HOME/$x ]] || fail "package metadata stays out of the home: $x"
 done
 [[ $(readlink "$HOME/.zshrc") != /* ]] || fail "links are relative"
@@ -60,6 +63,14 @@ out=$(run) || fail "old-layout dir link" "$out"
 	fail "old repo link replaced by a real dir" "$(view)"
 ! compgen -G "$HOME/.config/foot.bak.*" >/dev/null || fail "an old repo link is removed, not backed up"
 pass "an old-layout link into the repo is replaced"
+
+# today's layout, the other shape: an absolute link to an existing dir, here a package root
+rm -r "$HOME/.config/foot" && ln -s "$repo/foot" "$HOME/.config/foot"
+out=$(run) || fail "old-layout link to a package root" "$out"
+[[ -d $HOME/.config/foot && ! -L $HOME/.config/foot && -L $HOME/.config/foot/foot.ini ]] ||
+	fail "a link to a package root is replaced by a real dir" "$(view)"
+[[ ! -e $HOME/.config/foot/packages && ! -e $HOME/.config/foot/.config ]] || fail "no package root content leaks in" "$(view)"
+pass "an old-layout link to an existing package root is replaced"
 
 ln -sfn /etc/hostname "$HOME/.config/foot/foot.ini"
 out=$(run) || fail "foreign link in the way" "$out"
