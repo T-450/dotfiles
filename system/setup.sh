@@ -61,6 +61,7 @@ fi
 
 echo "==> sshd: loopback + keys only, for runner-up (CI) reaching this machine"
 sudo install -Dm644 "$here/sshd/10-local-only.conf" /etc/ssh/sshd_config.d/10-local-only.conf
+sudo ssh-keygen -A   # host keys; `sshd -t` fails without them (normally made on first start)
 sudo sshd -t
 if [[ $(state sshd.service) != enabled ]]; then
 	sudo systemctl enable --now sshd.service
