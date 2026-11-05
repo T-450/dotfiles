@@ -7,6 +7,9 @@ concurrency:
 on:
   push:
   workflow_dispatch:
+defaults:
+  run:
+    shell: bash # = bash -eo pipefail: a failing install.sh must fail the step even through `| tee`
 jobs:
   clean-install:
     runs-on: arch-kvm

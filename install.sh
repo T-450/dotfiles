@@ -122,6 +122,15 @@ apps() { # every top-level dir that is an app (has packages, setup.sh or .stow-l
 	done
 }
 
+retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file must not fail the run
+	local i
+	for i in 1 2 3; do
+		"$@" && return 0
+		((i < 3)) && echo "retry   attempt $i of 3 failed: $*; again in 15s" >&2 && sleep 15
+	done
+	return 1
+}
+
 install_packages() {
 	local a all=() repo_pkgs=() aur=() p
 	for a in $(apps); do
@@ -129,22 +138,22 @@ install_packages() {
 		while read -r p; do all+=("$p"); done < <(sed 's/#.*//' "$repo/$a/packages" | tr -s ' \t' '\n' | sed '/^$/d')
 	done
 	((${#all[@]})) || return 0
-	sudo pacman -Syu --noconfirm # full upgrade first: never leave refreshed databases without one
+	retry sudo pacman -Syu --noconfirm # full upgrade first: never leave refreshed databases without one
 	declare -A sync
 	while read -r p; do sync[$p]=1; done < <(pacman -Slq)
 	for p in $(printf '%s\n' "${all[@]}" | sort -u); do
 		if [[ -n ${sync[$p]:-} ]]; then repo_pkgs+=("$p"); else aur+=("$p"); fi
 	done
-	sudo pacman -S --needed --noconfirm "${repo_pkgs[@]}"
+	retry sudo pacman -S --needed --noconfirm "${repo_pkgs[@]}"
 	((${#aur[@]})) || return 0
 	if ! command -v yay >/dev/null; then
 		local t
 		t=$(mktemp -d)
-		git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$t/yay-bin"
+		retry git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$t/yay-bin"
 		(cd "$t/yay-bin" && makepkg -si --noconfirm)
 		rm -rf -- "$t"
 	fi
-	yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake "${aur[@]}"
+	retry yay -S --needed --noconfirm --answerdiff None --answerclean None --removemake "${aur[@]}"
 }
 
 # ---------------------------------------------------------------- theme, setup, units
