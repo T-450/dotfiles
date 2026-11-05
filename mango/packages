@@ -2,3 +2,4 @@ mangowm
 wlr-randr    # mango-monitor
 wev          # key names for bind.conf
 qt6-wayland
+xorg-xrdb    # monitor.conf: Xft.dpi for XWayland apps (exec_once)

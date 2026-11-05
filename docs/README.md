@@ -31,7 +31,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
 | [gtk](apps/gtk.md) | GTK 3/4 apps: Adwaita, with palette colors through `gtk.css` and the dark/light preference from the palette | — |
 | [mako](apps/mako.md) | Notifications | mako |
-| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland |
+| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland, xorg-xrdb |
 | [opencode](apps/opencode.md) | opencode, with a custom theme rendered from the palette | opencode |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |

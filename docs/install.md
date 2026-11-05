@@ -37,5 +37,5 @@ These can't be scripted, or need you once:
 `base`: `/etc/systemd/zram-generator.conf`, NetworkManager's iwd backend, NetworkManager,
 timesyncd, ufw, fstrim. `thinkpad`: TLP config; removes power-profiles-daemon and thermald.
 `bluetooth`: bluetooth.service. `greeter`: greetd config, sysc-greet theme and profile, a pacman
-hook. `zsh`: login shell. `mako`, `mango`, `waybar`: remove swaync, xorg-xrdb, mangobar-git.
+hook. `zsh`: login shell. `mako`, `waybar`: remove swaync, mangobar-git.
 Each app's page lists its exact files.
