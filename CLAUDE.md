@@ -42,7 +42,8 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
 - **Session daemons are user units** with `PartOf=`/`After=`/`Requisite=graphical-session.target`
   and `WantedBy=graphical-session.target`, in the app's `.config/systemd/user/`. No `exec_once`,
   no `dbus-update-activation-environment`. swaylock stays guarded by `pidof -q swaylock ||` and
-  swayidle keeps `KillMode=process`.
+  swayidle keeps `KillMode=process`. Never `systemctl --user disable`/`reenable` a repo unit:
+  systemd deletes a linked unit file on disable (install.sh --link restores it).
 - Env vars: `mango/.config/mango/env.conf` for mango's children, `mango/.config/environment.d/` for
   units; a variable both need goes in both.
 - Git: work on a branch, merge to `main`, push to `origin` (github.com/T-450/dotfiles, public:

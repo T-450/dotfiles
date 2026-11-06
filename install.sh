@@ -182,8 +182,11 @@ system_files() { # app-relative paths under <app>/root/, templates excluded (the
 
 system_dst() { local rel=${1#*/root/}; printf '%s' "${root%/}/$rel"; }
 
-same_file() { # same_file SRC DST: equal content (reading DST as root only when we can't)
-	if [[ -r $2 ]]; then cmp -s -- "$1" "$2"; else root_test -e "$2" && as_root cmp -s -- "$1" "$2"; fi
+same_file() { # same_file SRC DST: 0 same, 1 differs or missing, 2 can't tell (DST needs root, no sudo)
+	if [[ -r $2 ]]; then cmp -s -- "$1" "$2" && return 0 || return 1; fi
+	# root can look when sudo works without a password or can prompt on your terminal
+	[[ -w $root ]] || sudo -n true 2>/dev/null || (: </dev/tty) 2>/dev/null || return 2
+	root_test -e "$2" && as_root cmp -s -- "$1" "$2" && return 0 || return 1
 }
 
 install_system() {
@@ -247,9 +250,16 @@ check() {
 		out=$(stow_ -n -v "${pkgs[@]}" 2>&1 | grep -E '^LINK:|existing target|cannot stow' || true)
 		[[ -z $out ]] || { echo "home: differs from the repo (install.sh --link fixes it):" && printf '  %s\n' "$out" && bad=1; }
 	fi
+	local unknown=0 rc
 	while IFS= read -r -d '' f; do
-		same_file "$repo/$f" "$(system_dst "$f")" || { echo "system: $(system_dst "$f") differs from $f" && bad=1; }
+		rc=0
+		same_file "$repo/$f" "$(system_dst "$f")" || rc=$?
+		case $rc in
+		1) echo "system: $(system_dst "$f") differs from $f" && bad=1 ;;
+		2) unknown=$((unknown + 1)) ;;
+		esac
 	done < <(system_files)
+	((unknown == 0)) || echo "note: $unknown system file(s) need root to read; not compared (run --check in a terminal)"
 	((bad)) || echo "ok: home and system files match the repo"
 	return "$bad"
 }

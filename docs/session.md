@@ -15,6 +15,10 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 - Logout (super+m) runs `mango-quit`: it stops `graphical-session.target` *before*
   `mmsg dispatch quit`, so units don't die with display errors.
 - The bar toggle (super+h, `waybar-toggle`) starts and stops `waybar.service`.
+- The repo's units are links in `~/.config/systemd/user/`. systemd treats a linked unit file as
+  "linked", and `systemctl --user disable` (or `reenable`) **deletes that link**. Stop units with
+  `systemctl --user stop`; to change which units run, change the repo and run `./install.sh`.
+  If a link went missing, `./install.sh --check` reports it and `./install.sh --link` restores it.
 - `mmsg` is mango's IPC: `mmsg dispatch <action>`, `mmsg get all-monitors|all-devices`.
 
 ## Idle
