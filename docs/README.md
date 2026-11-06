@@ -4,6 +4,7 @@ An Arch Linux desktop on [mangowm](https://github.com/mangowm/mango) (a wlroots 
 from one switchable palette (default: VS Code's **Dark 2026**). Every app has its own folder in this
 repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your home.
 
+- [Get started](onboarding.md): install, check, change the colors, and add a program, step by step
 - [Install](install.md): a fresh Arch install becomes this desktop with one command
 - [Layout](#layout): how an app folder is built, and how to add one
 - [Session](session.md): how the session starts, idles, locks and logs out

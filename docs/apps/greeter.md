@@ -20,7 +20,6 @@ Everything it reads lives under `greeter/root/` and is copied to `/` by `install
 - `/etc/pacman.d/hooks/sysc-greet-mango-profile.hook`
 - `/usr/local/share/sysc-greet/mango.conf`
 - `/usr/share/sysc-greet/ascii_configs/mango.conf`
-- `/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png`
 - `/var/lib/greeter/.cache/sysc-greet/preferences`
 - `/var/lib/greeter/.config/sysc-greet/themes/mango.toml`
 

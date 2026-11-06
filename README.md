@@ -9,5 +9,5 @@ git clone https://github.com/T-450/dotfiles ~/dotfiles
 theme set tokyo-night            # recolor everything (or super+shift+t)
 ```
 
-Documentation: [docs/](docs/README.md): install, every app, session, theming, keybindings,
+New here? Follow [Get started](docs/onboarding.md). Documentation: [docs/](docs/README.md): install, every app, session, theming, keybindings,
 testing. Started from [DreamMaoMao/mango-config](https://github.com/DreamMaoMao/mango-config).

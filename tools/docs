@@ -88,11 +88,18 @@ def system_files(app):
     root = REPO / app / "root"
     if not root.exists():
         return []
+    # only what the repo defines: generated files (render.sh output, gitignored) exist only after
+    # `theme` ran, and the block must read the same on a fresh clone
+    ignored = {l.strip() for l in (REPO / app / ".gitignore").read_text().splitlines()
+               if l.strip() and not l.startswith("#")} if (REPO / app / ".gitignore").exists() else set()
     out = set()
     for p in root.rglob("*"):
         if p.is_file() or p.is_symlink():
             rel = "/" + str(p.relative_to(root))
-            out.add(rel[:-5] if rel.endswith(".tmpl") else rel)
+            if rel.endswith(".tmpl"):
+                out.add(rel[:-5])
+            elif "/root" + rel not in ignored:
+                out.add(rel)
     return sorted(out)
 
 
