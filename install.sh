@@ -169,6 +169,8 @@ link() {
 # differs. Its owner (and that of any dir created for it) is the owner of the nearest existing
 # dir above it: /etc/* stays root's, /var/lib/greeter/* the greeter's. Mode comes from the repo.
 as_root() { if [[ -w $root ]]; then "$@"; else sudo "$@"; fi; }
+# root's view of a path: you may not be allowed to look (/var/lib/greeter is 0700), root always is
+root_test() { test "$@" 2>/dev/null || { [[ ! -w $root ]] && sudo test "$@"; }; }
 
 system_files() { # app-relative paths under <app>/root/, templates excluded (their output is used)
 	local a f
@@ -181,7 +183,7 @@ system_files() { # app-relative paths under <app>/root/, templates excluded (the
 system_dst() { local rel=${1#*/root/}; printf '%s' "${root%/}/$rel"; }
 
 same_file() { # same_file SRC DST: equal content (reading DST as root only when we can't)
-	if [[ -r $2 ]]; then cmp -s -- "$1" "$2"; elif [[ -e $2 ]]; then sudo cmp -s -- "$1" "$2"; else return 1; fi
+	if [[ -r $2 ]]; then cmp -s -- "$1" "$2"; else root_test -e "$2" && as_root cmp -s -- "$1" "$2"; fi
 }
 
 install_system() {
@@ -190,14 +192,14 @@ install_system() {
 		src=$repo/$f dst=$(system_dst "$f")
 		same_file "$src" "$dst" && continue
 		up=$(dirname "$dst")
-		while [[ ! -d $up ]]; do up=$(dirname "$up"); done
-		owner=$(stat -c %U:%G "$up")
+		while ! root_test -d "$up"; do up=$(dirname "$up"); done
+		owner=$(as_root stat -c %U:%G "$up")
 		# create the missing dirs one level at a time, owned like the existing one above them
 		dir=$(dirname "$dst")
-		while [[ ! -d $dir ]]; do
+		while ! root_test -d "$dir"; do
 			missing=$dir
-			while [[ ! -d $(dirname "$missing") ]]; do missing=$(dirname "$missing"); done
-			as_root install -d -o "${owner%:*}" -g "${owner#*:}" -m "$(stat -c %a "$up")" -- "$missing"
+			while ! root_test -d "$(dirname "$missing")"; do missing=$(dirname "$missing"); done
+			as_root install -d -o "${owner%:*}" -g "${owner#*:}" -m "$(as_root stat -c %a "$up")" -- "$missing"
 		done
 		mode=$(stat -L -c %a "$src")
 		as_root install -o "${owner%:*}" -g "${owner#*:}" -m "$mode" -- "$src" "$dst"
