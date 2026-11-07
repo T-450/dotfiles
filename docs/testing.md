@@ -42,5 +42,11 @@ pass "what held"                 # ok - what held
 `install.sh` on the clean VM, runs it again and fails if the second run changes anything, then runs
 `tests/run`. That is the proof that the repo reproduces the desktop from scratch.
 
+The job also prints the toolchain's versions (`mise -C / ls --global`) and runs `tests/run` under
+`mise exec`, so the tests see the toolchain. Auto-install is off there, so a missing tool fails a
+test instead of being installed without the lockfile. The two install steps get the workflow's
+read-only token as `MISE_GITHUB_TOKEN`, so mise's GitHub API calls don't share the anonymous rate
+limit of every VM behind this laptop's IP.
+
 `runs-on: arch-kvm` is the pool label. The coordinator (`runner-up.service`) uses `gh`'s
 sign-in, so `gh auth login` must have run; `runner-up status` shows the place and waiting jobs.

@@ -7,6 +7,8 @@ concurrency:
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: read
 env:
   # identity tags ({{git_name}}, {{git_email}}) for the VM; on a real machine they come from your
   # git config or a prompt
@@ -27,8 +29,14 @@ jobs:
           sudo pacman -Syu --needed --noconfirm git
       - uses: actions/checkout@v5
       - name: bootstrap.sh (fresh machine)
+        env:
+          # mise's GitHub API calls (provenance, release lookups); the anonymous limit is shared by
+          # every VM behind this laptop's IP. Only the steps that install get the token.
+          MISE_GITHUB_TOKEN: ${{ github.token }}
         run: ./bootstrap.sh 2>&1 | tee "$RUNNER_TEMP/first.log"
       - name: install.sh again (idempotent)
+        env:
+          MISE_GITHUB_TOKEN: ${{ github.token }}
         run: |
           ./install.sh 2>&1 | tee "$RUNNER_TEMP/second.log"
           if grep -E '^(install |backup|unlink|prune|enable |gsettings|render |linger|xdg )' "$RUNNER_TEMP/second.log"; then
@@ -36,5 +44,13 @@ jobs:
           fi
       - name: install.sh --check
         run: ./install.sh --check
+      - name: toolchain versions
+        run: mise -C / ls --global --json | jq -S 'map_values(map(.version))'
       - name: tests/run
-        run: tests/run
+        # the step's bash has no zsh hooks: mise exec puts the global tools' absolute bin dirs on
+        # PATH, which survive the tests' scratch HOME. -C changes the working directory, so the
+        # path is absolute. Auto-install off: a missing tool fails instead of installing unlocked.
+        env:
+          MISE_AUTO_INSTALL: "0"
+          MISE_EXEC_AUTO_INSTALL: "0"
+        run: mise -C / exec -- "$PWD/tests/run"
