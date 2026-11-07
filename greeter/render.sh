@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 colors=../theme/.config/theme/colors.sh
 out=root/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png
-stamp=.render-stamp # sha256 of what the wallpaper is made from
+stamp=render.stamp # sha256 of what the wallpaper is made from
 inputs=$(cat "$colors" "$0" | sha256sum | cut -d' ' -f1)
 [[ -f $out && $(cat "$stamp" 2>/dev/null) == "$inputs" ]] && exit 0
 . "$colors"

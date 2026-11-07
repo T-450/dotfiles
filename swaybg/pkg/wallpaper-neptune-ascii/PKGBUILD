@@ -1,0 +1,19 @@
+# The desktop wallpaper's source (swaybg/render.sh): Neptune drawn in ASCII characters, uploaded
+# by Jesseract to wallhaven (https://wallhaven.cc/w/lyje9y; original source unknown). Its license
+# is unknown, so the image is downloaded here and checked against its SHA-256, never committed to
+# this public repo.
+pkgname=wallpaper-neptune-ascii
+pkgver=20260727 # wallhaven upload date
+pkgrel=1
+pkgdesc='Neptune in ASCII characters, 5760x3232 (wallhaven lyje9y)'
+arch=(any)
+url='https://wallhaven.cc/w/lyje9y'
+license=(LicenseRef-unknown)
+options=(!strip !debug)
+source=("neptune-ascii.png::https://w.wallhaven.cc/full/ly/wallhaven-lyje9y.png")
+noextract=(neptune-ascii.png)
+sha256sums=('1df15f7629ba4bb28b841d93ed84fa6f545ac00d2d99a3c6c64e10176ecf07ca')
+
+package() {
+	install -Dm644 neptune-ascii.png "$pkgdir/usr/share/backgrounds/neptune-ascii.png"
+}

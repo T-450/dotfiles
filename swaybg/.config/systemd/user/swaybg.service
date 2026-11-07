@@ -5,9 +5,10 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-# solid desktop color from the active palette (theme/colors.sh, rendered by theme/theme)
+# the wallpaper swaybg/render.sh made for the active palette; the palette's desktop color shows
+# until it loads (theme/colors.sh, rendered by theme)
 EnvironmentFile=%h/.config/theme/colors.sh
-ExecStart=/usr/bin/swaybg -c ${THEME_BG_DESKTOP}
+ExecStart=/usr/bin/swaybg -i %h/.config/swaybg/wallpaper.png -m fill -c ${THEME_BG_DESKTOP}
 Restart=on-failure
 
 [Install]

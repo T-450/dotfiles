@@ -76,8 +76,9 @@ Every later change uses these two checks, so run them once now.
 	theme set tokyo-night
 	```
 
-	You see `tokyo-night: rendered 22 files`. Window borders, waybar, notifications, and the
-	wallpaper change at once. Open a new terminal to see its new colors.
+	You see `tokyo-night: rendered 22 files`. Window borders, waybar, and notifications change at
+	once. The wallpaper stays, because every dark palette uses the same image. Open a new terminal
+	to see its new colors.
 
 3. The login screen lives outside your home, so it changes only when you run
    `./install.sh --system`, which asks for sudo. `theme set` reminds you.

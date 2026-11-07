@@ -43,7 +43,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [rofi](apps/rofi.md) | The launcher (alt+space or super+d) and every menu: clipboard history, theme picker | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (ctrl+alt+a) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
-| [swaybg](apps/swaybg.md) | The wallpaper: a solid `bg_desktop` color from the palette | swaybg |
+| [swaybg](apps/swaybg.md) | The wallpaper: Neptune in ASCII characters on dark palettes, the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
 | [swaylock](apps/swaylock.md) | The lock screen (super+l, and after 5 min idle) | swaylock |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
@@ -70,7 +70,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
     .config/… .local/… .zshrc …   dot-entries: linked into $HOME (stow, one link per file)
     root/…           system files: copied to / (install.sh --system)
     *.tmpl           templates (palette colors, {{user}}, {{home}}), rendered in place, anywhere
-    render.sh        palette art that isn't a template (the greeter wallpaper)
+    render.sh        art made for the palette that isn't a template (the wallpapers)
     reload.sh        recolors the running app after `theme set`
     setup.sh         state that isn't a file: services, gsettings, login shell
     .config/systemd/user/*.service   user units, enabled by install.sh

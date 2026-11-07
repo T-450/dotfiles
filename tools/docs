@@ -58,11 +58,22 @@ def first_comment(path):
     return re.sub(rf"^{re.escape(path.parent.name)}/{re.escape(path.name)}:\s*", "", text)
 
 
+def generated(app):
+    """The paths <app>/.gitignore lists (/-rooted in the app folder): template renders and render.sh
+    output. They exist only after `theme` ran, so the reference blocks, which must read the same on a
+    fresh clone, list a template by its rendered name and leave render.sh output to its script."""
+    f = REPO / app / ".gitignore"
+    if not f.exists():
+        return set()
+    return {l.strip() for l in f.read_text().splitlines() if l.strip() and not l.startswith("#")}
+
+
 def home_files(app):
     """Files stow links into $HOME, as ~/ paths (templates by their rendered name)."""
     root = REPO / app
     if not (root / ".stow-local-ignore").exists():
         return []
+    skip = generated(app)
     out = set()
     for dp, dns, fns in os.walk(root):
         rel = Path(dp).relative_to(root)
@@ -70,8 +81,11 @@ def home_files(app):
             dns[:] = [d for d in dns if d.startswith(".")]
             fns = [f for f in fns if f.startswith(".") and f not in (".gitignore", ".stow-local-ignore")]
         for f in fns:
-            name = f[:-5] if f.endswith(".tmpl") else f
-            out.add("~/" + str(rel / name) if str(rel) != "." else "~/" + name)
+            path = (rel / f).as_posix()
+            if f.endswith(".tmpl"):
+                out.add("~/" + path[:-5])
+            elif "/" + path not in skip:
+                out.add("~/" + path)
     return sorted(out)
 
 
@@ -88,17 +102,14 @@ def system_files(app):
     root = REPO / app / "root"
     if not root.exists():
         return []
-    # only what the repo defines: generated files (render.sh output, gitignored) exist only after
-    # `theme` ran, and the block must read the same on a fresh clone
-    ignored = {l.strip() for l in (REPO / app / ".gitignore").read_text().splitlines()
-               if l.strip() and not l.startswith("#")} if (REPO / app / ".gitignore").exists() else set()
+    skip = generated(app)
     out = set()
     for p in root.rglob("*"):
         if p.is_file() or p.is_symlink():
             rel = "/" + str(p.relative_to(root))
             if rel.endswith(".tmpl"):
                 out.add(rel[:-5])
-            elif "/root" + rel not in ignored:
+            elif "/root" + rel not in skip:
                 out.add(rel)
     return sorted(out)
 

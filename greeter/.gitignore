@@ -2,4 +2,4 @@
 /root/var/lib/greeter/.config/sysc-greet/themes/mango.toml
 /root/var/lib/greeter/.cache/sysc-greet/preferences
 /root/usr/share/sysc-greet/wallpapers/sysc-greet-mango.png
-/.render-stamp
+/render.stamp
