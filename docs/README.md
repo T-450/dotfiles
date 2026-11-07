@@ -35,7 +35,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland, xorg-xrdb |
 | [mise](apps/mise.md) | mise: per-project versions of language runtimes and tools | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad |
-| [opencode](apps/opencode.md) | opencode: its CLI settings and a custom theme rendered from the palette | opencode |
+| [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
@@ -86,7 +86,10 @@ Links are one per file, so apps can keep their own data next to them (qutebrowse
 opencode's password file) without it landing in the repo. A **new file** in an app folder goes live
 after `./install.sh --link`; editing an existing file is live at once. The repo owns every file it
 links: if an app replaces a link with a real file, `install.sh --check` reports it and the next
-`install.sh` backs the file up and restores the link.
+`install.sh` backs the file up and restores the link. An app that saves a settings file by writing a
+new file and renaming it over the old one breaks the link on every save. The repo doesn't link such
+a file. It sets those settings through the app's environment override instead (opencode's
+`cli.json`, set by `OPENCODE_CLI_CONFIG_CONTENT`).
 
 ### Adding or changing an app
 

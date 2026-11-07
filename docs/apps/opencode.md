@@ -1,8 +1,13 @@
 # opencode
 
-opencode: its CLI settings and a custom theme rendered from the palette.
+opencode: a custom theme rendered from the palette.
 
-`~/.config/opencode/cli.json` selects the `mango` theme; `themes/mango.json` is rendered from the palette. `~/.config/opencode/service.json` holds a password: it is opencode's own file, never in the repo (`theme lint` fails if such a file is tracked).
+`themes/mango.json` is rendered from the palette. `OPENCODE_CLI_CONFIG_CONTENT` in
+`mango/.config/mango/env.conf` selects it, because opencode merges that JSON over its
+`~/.config/opencode/cli.json`. The repo doesn't link `cli.json`: opencode saves it by writing
+`cli.json.tmp` and renaming it, which replaces a link with a real file on every settings change.
+`cli.json` and `service.json` are opencode's own files. `service.json` holds a password, so
+`theme lint` fails if it is tracked.
 
 ## Reference
 
@@ -11,7 +16,6 @@ opencode: its CLI settings and a custom theme rendered from the palette.
 
 **Linked into your home** (stow, `install.sh --link`):
 
-- `~/.config/opencode/cli.json`
 - `~/.config/opencode/themes/mango.json`
 
 **Rendered from the palette** (`theme`):
