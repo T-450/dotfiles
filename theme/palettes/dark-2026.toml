@@ -40,7 +40,7 @@ ansi = [
 	"#666666", "#f14c4c", "#23d18b", "#f5f543", "#3b8eea", "#d670d6", "#29b8db", "#e5e5e5",
 ]
 
-[art]  # greeter wallpaper (greeter/make-wallpaper.sh)
+[art]  # greeter wallpaper (greeter/render.sh)
 planet_light = "#7cc4e6"
 planet_dark  = "#0b1f2a"
 ring_outer   = "#e5ba7d"
