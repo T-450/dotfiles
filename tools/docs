@@ -68,12 +68,34 @@ def generated(app):
     return {l.strip() for l in f.read_text().splitlines() if l.strip() and not l.startswith("#")}
 
 
+def stow_ignored(app):
+    """stow's test for an app-relative path, from <app>/.stow-local-ignore: a pattern with / matches
+    the path from the package root, one without a whole file or dir name; a dir's match covers all
+    below it. stow always ignores the ignore file itself."""
+    pats = {r"^/\.stow-local-ignore$"}
+    for line in (REPO / app / ".stow-local-ignore").read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            pats.add(re.sub(r"\s+#.+", "", line).replace(r"\#", "#"))
+    by_path = re.compile("(^|/)(" + "|".join(p for p in pats if "/" in p) + ")(/|$)")
+    names = [p for p in pats if "/" not in p]
+    by_name = re.compile("(" + "|".join(names) + ")") if names else None
+
+    def ignored(path):
+        parts = path.split("/")
+        return any(by_path.search("/" + "/".join(parts[:i + 1])) or (by_name and by_name.fullmatch(part))
+                   for i, part in enumerate(parts))
+    return ignored
+
+
 def home_files(app):
-    """Files stow links into $HOME, as ~/ paths (templates by their rendered name)."""
+    """Files stow links into $HOME, as ~/ paths (templates by their rendered name, which is what
+    stow sees once theme ran)."""
     root = REPO / app
     if not (root / ".stow-local-ignore").exists():
         return []
     skip = generated(app)
+    ignored = stow_ignored(app)
     out = set()
     for dp, dns, fns in os.walk(root):
         rel = Path(dp).relative_to(root)
@@ -83,8 +105,10 @@ def home_files(app):
         for f in fns:
             path = (rel / f).as_posix()
             if f.endswith(".tmpl"):
-                out.add("~/" + path[:-5])
-            elif "/" + path not in skip:
+                path = path[:-5]
+            elif "/" + path in skip:
+                continue
+            if not ignored(path):
                 out.add("~/" + path)
     return sorted(out)
 

@@ -1,0 +1,58 @@
+# Global toolchain (linked to ~/.config/mise/config.toml). Exact versions, URLs and checksums are
+# in mise.lock (and locks/) next to this file in the repo. Bump within channels with
+# `mise upgrade --global`; change a channel here, then `mise -C / lock -g`. Both write through the
+# links into the repo: review with `git diff mise/` and commit.
+[settings]
+lockfile = true
+lockfile_platforms = ["linux-x64"]  # this laptop and the CI VM; nothing else runs these tools
+minimum_release_age = "24h"         # a release must be a day old (mise's documented default)
+# asdf and vfox run third-party plugin shell code; every tool below comes from another backend
+disable_backends = ["asdf", "vfox"]
+# rustup reads rust-toolchain.toml itself, but mise's global rust would override it in a project
+idiomatic_version_file_enable_tools = ["node", "rust"]
+
+[settings.dotnet]
+cli_telemetry_optout = true
+
+[tools]
+# Go
+go = "1.27"
+"go:golang.org/x/tools/gopls" = "0.24"
+"go:github.com/go-delve/delve/cmd/dlv" = "1.27"
+golangci-lint = "2"
+golangci-lint-langserver = "0.0"
+# Rust (rustup underneath; the default profile brings clippy and rustfmt)
+rust = { version = "1.99", components = ["rust-analyzer", "rust-src"] }
+# JavaScript / TypeScript
+node = "26"                                   # active LTS
+pnpm = "12"
+bun = "latest"
+"npm:typescript" = "7"                        # tsc (native)
+"npm:typescript-language-server" = "6"        # bundles TS 6 tsserver: TS 7 has no editor server yet
+biome = "2"
+"npm:vscode-langservers-extracted" = "4"      # vscode-json-language-server
+# Python: uv owns interpreters per project; no global python (the system's stays /usr/bin/python3)
+uv = "0.13"
+ruff = "0.17"
+ty = "0.0"
+# Zig: zls must match zig's minor version
+zig = "0.17"
+zls = "0.17"
+# .NET
+dotnet = "10"
+# only prerelease-shaped versions exist (prereleases are off by default): pin, bump by hand
+"dotnet:roslyn-language-server" = "5.13.0-1.26514.10"
+"github:Samsung/netcoredbg" = "3"
+# Java: OpenJDK's own builds are patched only until the next feature release (March, September)
+java = "openjdk-27"
+gradle = "9"
+# Build systems (C/C++ compilers and meson come from pacman: clang/packages)
+cmake = "4"
+ninja = "1"
+# Shell, config and docs languages
+"npm:bash-language-server" = "5"
+shellcheck = "0.11"
+shfmt = "3"
+tombi = "1"
+"npm:yaml-language-server" = "2"
+marksman = "latest"                           # versions are dates

@@ -33,7 +33,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [helix](apps/helix.md) | Helix, a modal editor (default config; its colors follow the terminal's palette) | helix |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland, xorg-xrdb |
-| [mise](apps/mise.md) | mise: per-project versions of language runtimes and tools | mise |
+| [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad |
 | [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
