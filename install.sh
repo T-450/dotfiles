@@ -17,6 +17,7 @@
 set -euo pipefail
 
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+. "$repo/tools/setup-lib.sh"
 home=$HOME root=/
 phases=() only=() check=
 
@@ -47,15 +48,6 @@ apps() {
 		if ((${#only[@]})) && [[ " ${only[*]} " != *" $name "* ]]; then continue; fi
 		echo "$name"
 	done
-}
-
-retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file must not fail the run
-	local i
-	for i in 1 2 3; do
-		"$@" && return 0
-		((i < 3)) && echo "retry   attempt $i of 3 failed: $*; again in 15s" >&2 && sleep 15
-	done
-	return 1
 }
 
 # ---------------------------------------------------------------- packages

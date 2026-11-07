@@ -77,7 +77,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
     .stow-local-ignore  marks the app as linked; keeps everything but dot-entries out of $HOME
     .gitignore       rendered and generated files
   theme/            the renderer (~/.local/bin/theme) and palettes/
-  tools/            docs (generator/checker), setup-lib.sh, test-home
+  tools/            docs (generator/checker), setup-lib.sh (setup.sh helpers, retry), test-home
   tests/            tests/run + tests/unit.d/*-test.sh
   docs/             you are here
 ```

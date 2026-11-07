@@ -7,8 +7,9 @@ scratch_home
 
 # a fake repo: install.sh + three packages shaped like the real ones
 repo=$TEST_TMP/repo
-mkdir -p "$repo"
+mkdir -p "$repo/tools"
 cp "$ROOT/install.sh" "$repo/"
+cp "$ROOT/tools/setup-lib.sh" "$repo/tools/"
 mk() { mkdir -p "$(dirname "$repo/$1")" && printf '%s\n' "${2:-$1}" >"$repo/$1"; }
 for p in foot bar zsh; do cp "$ROOT/tests/fixtures/stow-local-ignore" "$repo/$p/.stow-local-ignore" 2>/dev/null ||
 	{ mkdir -p "$repo/$p" && cp "$ROOT/tests/fixtures/stow-local-ignore" "$repo/$p/.stow-local-ignore"; }; done
