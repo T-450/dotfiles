@@ -54,7 +54,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)), slimmer and colored from the palette | waybar, pamixer |
 | [wlogout](apps/wlogout.md) | The power menu (super+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset | wlsunset |
-| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (agnoster prompt, git plugin) | zsh, oh-my-zsh-git |
+| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (agnoster prompt, git and mise plugins) | zsh, oh-my-zsh-git |
 <!-- end generated -->
 
 ## Layout

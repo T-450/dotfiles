@@ -1,8 +1,10 @@
 # zsh
 
-The shell: zsh with oh-my-zsh (agnoster prompt, git plugin).
+The shell: zsh with oh-my-zsh (agnoster prompt, git and mise plugins).
 
 oh-my-zsh comes from the AUR package `oh-my-zsh-git` (`/usr/share/oh-my-zsh`, updated with the package; cache in `~/.cache/oh-my-zsh`). `.zshrc` puts `~/.local/bin` first on `PATH`, so this repo's commands (`theme`, `screenshot`, `osd-volume` …) work by name. `setup.sh` makes zsh the login shell.
+
+The `mise` plugin activates [mise](mise.md) in every interactive shell. It puts the toolchain on `PATH`, switches versions when you `cd` into a project that pins them, and adds `mise` completions (cached in `~/.cache/oh-my-zsh/completions`). It adds about 65 ms to each new shell on battery, for two mise runs (`mise activate`, then the first `mise hook-env`). The plugin does nothing when `mise` isn't installed.
 
 ## Reference
 
