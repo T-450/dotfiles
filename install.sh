@@ -8,7 +8,8 @@
 #   link      GNU stow: each <app>'s dot-entries (.config/, .local/, .zshrc …) into $HOME
 #   system    copy each <app>/root/** to /** (sudo; owner = owner of the nearest existing dir)
 #   setup     <app>/setup.sh: state that isn't a file (services, gsettings, login shell)
-#   units     enable every <app>/.config/systemd/user/*.service; start the new ones
+#   units     enable every <app>/.config/systemd/user/*.service; start the new ones, restart the
+#             running ones whose file changed
 # --check     report what differs from the repo (missing links, files in the way, system files);
 #             exit 1 on any difference. Changes nothing.
 # --home DIR / --root DIR  link / copy into DIR instead of $HOME / / (tests).
@@ -225,13 +226,22 @@ enable_units() {
 		echo "skip    units: no user systemd manager (enable them from a login session)"
 		return 0
 	fi
-	local a f u units=() new=()
+	local a f u units=() new=() changed=()
 	for a in $(apps); do
 		for f in "$repo/$a"/.config/systemd/user/*.service; do [[ -e $f ]] && units+=("$(basename "$f")"); done
 	done
 	((${#units[@]})) || return 0
+	# a unit whose file changed since systemd loaded it runs the old command until it restarts
+	for u in "${units[@]}"; do
+		[[ $(systemctl --user show -P NeedDaemonReload "$u" 2>/dev/null) == yes ]] && changed+=("$u")
+	done
 	systemctl --user daemon-reload
-	# enable and start only units not enabled yet: a re-run restarts nothing and doesn't bring back
+	if ((${#changed[@]})); then
+		# try-restart: a stopped unit stays stopped
+		systemctl --user try-restart "${changed[@]}" 2>/dev/null || true
+		echo "restart ${changed[*]}"
+	fi
+	# enable and start only units not enabled yet: a re-run starts nothing and doesn't bring back
 	# a bar hidden with waybar-toggle. Session units refuse to start outside a session (Requisite=).
 	for u in "${units[@]}"; do
 		[[ $(systemctl --user is-enabled "$u" 2>/dev/null) == enabled ]] || new+=("$u")

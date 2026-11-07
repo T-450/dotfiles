@@ -17,7 +17,8 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 - The bar toggle (super+h, `waybar-toggle`) starts and stops `waybar.service`.
 - The repo's units are links in `~/.config/systemd/user/`. systemd treats a linked unit file as
   "linked", and `systemctl --user disable` (or `reenable`) **deletes that link**. Stop units with
-  `systemctl --user stop`; to change which units run, change the repo and run `./install.sh`.
+  `systemctl --user stop`; to change which units run, change the repo and run `./install.sh`. It
+  restarts a running unit whose file changed, so the change applies at once.
   If a link went missing, `./install.sh --check` reports it and `./install.sh --link` restores it.
 - `mmsg` is mango's IPC: `mmsg dispatch <action>`, `mmsg get all-monitors|all-devices`.
 
