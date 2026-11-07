@@ -3,5 +3,7 @@ switch = true
 vt = "next"
 
 [default_session]
-command = "mango -c /etc/greetd/mango-greeter-config.conf -s /etc/greetd/mango-greeter-session.sh"
+# systemd-cat: greetd drops the greeter's output, so a greeter that exits at once (greetd then logs
+# only "greeter exited without creating a session") leaves its error in `journalctl -t greeter`
+command = "systemd-cat -t greeter mango -c /etc/greetd/mango-greeter-config.conf -s /etc/greetd/mango-greeter-session.sh"
 user = "greeter"
