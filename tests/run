@@ -8,10 +8,15 @@ logs=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-tests.XXXXXX")
 files=("$@")
 ((${#files[@]})) || files=("$root"/tests/unit.d/*-test.sh)
 failed=() skipped=()
+# tests work on copies and scratch homes: the checkout, rendered files included, must come out of
+# each file unchanged (the live configs link to those renders)
+checkout() { git -C "$root" ls-files -z -c -o -- ':!plans' 2>/dev/null | (cd "$root" && xargs -0 sha256sum 2>&1) | sha256sum; }
 for f in "${files[@]}"; do
 	name=$(basename "$f" .sh)
+	before=$(checkout)
 	bash "$f" >"$logs/$name.log" 2>&1
 	code=$?
+	[[ $(checkout) == "$before" ]] || { echo "not ok - leaves the checkout unchanged (use a copy)" >>"$logs/$name.log"; code=1; }
 	echo "$code" >"$logs/$name.code"
 	grep -q '# SKIP$' "$logs/$name.log" && skipped+=("$name")
 	if ((code)); then

@@ -36,6 +36,8 @@ scratch_home() {
 	trap 'rm -rf -- "$TEST_TMP"' EXIT
 	export HOME=$TEST_TMP/home
 	mkdir -p "$HOME"
-	# identity tags ({{git_name}} …) come from the environment here, never from a prompt
+	# identity tags ({{git_name}} …) come from the environment here, never from a prompt or a
+	# remote (a repo copy has no .git)
 	export GIT_AUTHOR_NAME=Test GIT_AUTHOR_EMAIL=test@example.invalid
+	export DOTFILES_REPO=https://example.invalid/dotfiles.git
 }

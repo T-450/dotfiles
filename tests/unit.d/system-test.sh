@@ -6,10 +6,14 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 scratch_home
 r=$TEST_TMP/root
 mkdir -p "$r/etc" "$r/usr/share" "$r/usr/local" "$r/var/lib/greeter"
-"$ROOT/theme/.local/bin/theme" init >/dev/null 2>&1 || true # outputs of root/ templates (repo copy)
+# a copy: templates render in place, and {{home}} here is the scratch home, so rendering the
+# checkout itself would point its live configs (runner-up's stateDir) into this temp dir
+repo=$TEST_TMP/repo
+cp -r "$ROOT" "$repo" && rm -rf "$repo/.git"
+out=$("$repo/theme/.local/bin/theme" init 2>&1) || fail "theme init renders the copy" "$out"
 
-out=$("$ROOT/install.sh" --root "$r") || fail "install.sh --root" "$out"
-want=$(cd "$ROOT" && find ./*/root \( -type f -o -type l \) ! -name '*.tmpl' | sed 's|^\./[^/]*/root||' | sort)
+out=$("$repo/install.sh" --root "$r") || fail "install.sh --root" "$out"
+want=$(cd "$repo" && find ./*/root \( -type f -o -type l \) ! -name '*.tmpl' | sed 's|^\./[^/]*/root||' | sort)
 got=$(cd "$r" && find . -type f | sed 's|^\.||' | sort)
 [[ $want == "$got" ]] || fail "every root file is installed, nothing else" "$(diff <(echo "$want") <(echo "$got"))"
 pass "every <app>/root file installed ($(wc -l <<<"$got") files), templates left out"
@@ -18,11 +22,11 @@ pass "every <app>/root file installed ($(wc -l <<<"$got") files), templates left
 	fail "created dirs take the owner of the nearest existing dir"
 pass "created dirs owned like their existing parent"
 
-out=$("$ROOT/install.sh" --root "$r")
+out=$("$repo/install.sh" --root "$r")
 ! grep -q '^install ' <<<"$out" || fail "second run installs nothing" "$out"
 pass "second run is silent"
 
 f=$(find "$r/etc" -type f | head -1)
 echo changed >>"$f"
-if "$ROOT/install.sh" --root "$r" --check >/dev/null 2>&1; then fail "--check reports a changed system file"; fi
+if "$repo/install.sh" --root "$r" --check >/dev/null 2>&1; then fail "--check reports a changed system file"; fi
 pass "--check reports a changed system file"

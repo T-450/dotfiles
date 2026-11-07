@@ -30,6 +30,10 @@ pass "what held"                 # ok - what held
 - `skip "why"` for checks this machine can't run; `require_session` skips the whole file unless a
   live mango session answers `mmsg` (session checks pass in CI's VM only when it starts one).
 - Tests never touch the real home: `scratch_home`, `install.sh --home DIR`, `theme init --to DIR`.
+- Tests never change the checkout either. Templates render in place and your live configs link to
+  those renders, so a test that renders or installs works on a copy (`cp -r "$ROOT"`; see
+  `system-test.sh`). `tests/run` hashes the checkout around each file and fails a file that
+  changed it.
 
 ## CI: a clean machine on every push
 
