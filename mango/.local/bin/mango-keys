@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""mango-keys: every binding in ~/.config/mango/bind.conf as a rofi cheatsheet of keycaps (super+/).
+
+`## Name` lines in bind.conf start a section; a `#: text` line describes the bind below it; other
+binds are described from their action (ACTIONS). Runs of binds that differ only by a tag digit
+collapse into one row (1-9). Colors come from ~/.config/theme/colors.sh (the active palette).
+"""
+import html
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+CONF = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mango/bind.conf"
+COLORS = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "theme/colors.sh"
+
+# mango's dispatchers (github.com/mangowm/mango/wiki/keys): action -> description; {0} is the first argument
+ACTIONS = {
+    "reload_config": "Reload mango's config",
+    "killclient": "Close window",
+    "focusdir": "Focus window {0}",
+    "overcircle": "Overview, then cycle windows",
+    "togglejump": "Overview with jump hints",
+    "focusstack": "Focus next in stack",
+    "focuslast": "Focus previous window",
+    "move_client": "Move window {0}",
+    "exchange_client": "Swap window {0}",
+    "movewin": "Nudge floating window",
+    "resizewin": "Resize floating window",
+    "togglefloating": "Float/tile window",
+    "togglemaximizescreen": "Maximize window",
+    "togglefullscreen": "Fullscreen",
+    "togglefakefullscreen": "Fullscreen inside the tile",
+    "toggleglobal": "Pin window to all tags",
+    "toggleoverlay": "Keep window on top",
+    "minimized": "Minimize window",
+    "restore_minimized": "Restore minimized window",
+    "toggle_scratchpad": "Scratchpad",
+    "switch_layout": "Next layout",
+    "setlayout": "Layout: {0}",
+    "zoom": "Swap with master",
+    "set_proportion": "Scroller width {0}",
+    "switch_proportion_preset": "Cycle scroller widths",
+    "scroller_stack": "Scroller: stack {0}",
+    "dwindle_toggle_split_direction": "Dwindle: flip split",
+    "togglegaps": "Gaps on/off",
+    "view": "Show tag {0}",
+    "toggleview": "Also show tag {0}",
+    "tag": "Move window to tag {0}",
+    "toggletag": "Also put window on tag {0}",
+    "viewtoleft": "Previous tag",
+    "viewtoright": "Next tag",
+    "viewtoleft_have_client": "Previous tag with windows",
+    "viewtoright_have_client": "Next tag with windows",
+    "viewprev_have_client": "Previous tag with windows",
+    "viewnext_have_client": "Next tag with windows",
+    "tagtoleft": "Move window to previous tag",
+    "tagtoright": "Move window to next tag",
+    "focusmon": "Focus monitor {0}",
+    "tagmon": "Move window to monitor {0}",
+    "enteroverview": "Overview",
+    "leaveoverview": "Leave overview",
+}
+# binds whose meaning depends on the first argument
+ACTION_ARGS = {
+    ("incnmaster", "1"): "More master windows", ("incnmaster", "-1"): "Fewer master windows",
+    ("incgaps", "1"): "Wider gaps", ("incgaps", "-1"): "Narrower gaps",
+    ("set_proportion", "1.0"): "Scroller: full width", ("set_proportion", "0.5"): "Scroller: half width",
+    ("moveresize", "curmove"): "Drag window", ("moveresize", "curresize"): "Resize window",
+}
+
+KEYS = {  # how a key name reads on a cap
+    "return": "Enter", "escape": "Esc", "backslash": "\\", "slash": "/", "backspace": "Backspace",
+    "left": "←", "right": "→", "up": "↑", "down": "↓", "tab": "Tab", "space": "Space", "print": "PrtSc",
+    "btn_left": "Left click", "btn_right": "Right click", "btn_middle": "Middle click",
+    "xf86audioraisevolume": "Vol+", "xf86audiolowervolume": "Vol−", "xf86audiomute": "Mute",
+    "xf86audiomicmute": "Mic mute", "xf86monbrightnessup": "Bright+", "xf86monbrightnessdown": "Bright−",
+    "xf86audioplay": "Play", "xf86audionext": "Next", "xf86audioprev": "Prev",
+}
+MODS = {"super": "Super", "ctrl": "Ctrl", "alt": "Alt", "shift": "Shift"}
+CAP_WIDTH = 34  # characters of keycaps before the description, so descriptions line up
+
+
+def palette():
+    """THEME_* variables from the rendered colors.sh."""
+    out = {}
+    for line in COLORS.read_text().splitlines():
+        m = re.match(r'(THEME_\w+)="([^"]*)"', line)
+        if m:
+            out[m[1]] = m[2]
+    return out
+
+
+def parse(text):
+    """Rows of (section, chord, description, search) from bind.conf text."""
+    rows, section, note = [], "", None
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("## "):
+            section, note = line[3:], None
+        elif line.startswith("#: "):
+            note = line[3:]
+        elif m := re.match(r"(bindl?|mousebind|axisbind|gesturebind)=(.*)", line):
+            kind, fields = m[1], [f.strip() for f in m[2].split(",")]
+            if kind == "gesturebind":
+                mods, direction, fingers, action, args = fields[0], fields[1], fields[2], fields[3], fields[4:]
+                chord = [f"{fingers} fingers", {"left": "←", "right": "→", "up": "↑", "down": "↓"}[direction.lower()]]
+            else:
+                mods, key, action, args = fields[0], fields[1], fields[2], fields[3:]
+                if kind == "axisbind":
+                    key = "Wheel " + ("↑" if key.upper() == "UP" else "↓")
+                chord = [MODS[m.lower()] for m in mods.split("+") if m.lower() != "none"] + [KEYS.get(key.lower(), key.upper() if len(key) == 1 else key)]
+            rows.append((section, chord, note or describe(action, [a for a in args if a]), action, args))
+            note = None
+        elif not line.startswith("#"):
+            note = None
+    return collapse(rows)
+
+
+def describe(action, args):
+    if args and (action, args[0]) in ACTION_ARGS:
+        return ACTION_ARGS[(action, args[0])]
+    return ACTIONS.get(action, action.replace("_", " ").capitalize()).format(*(args or [""])).strip()
+
+
+def collapse(rows):
+    """Merge runs that differ only by a digit key whose number is also the action's first arg."""
+    out = []
+    for section, chord, desc, action, args in rows:
+        digit = chord[-1].isdigit() and args and args[0] == chord[-1]
+        prev = out[-1] if out else None
+        if digit and prev and prev[4] and prev[0] == section and prev[3] == action and prev[1][:-1] == chord[:-1]:
+            prev[1][-1] = f"{prev[5]}–{chord[-1]}"
+            prev[2] = re.sub(r"\s*\b\d+$", "", prev[2])
+            continue
+        out.append([section, chord, desc, action, digit, chord[-1]])
+    return [(s, c, d) for s, c, d, *_ in out]
+
+
+def caps(chord, t):
+    """Keycap markup: modifiers as light caps, the key as an accent cap, rounded ends from the Nerd Font."""
+    parts, width = [], 0
+    for i, k in enumerate(chord):
+        last = i == len(chord) - 1
+        bg, fg = (t["THEME_ACCENT"], t["THEME_ACCENT_INK"]) if last else (t["THEME_FG_TEXT"], t["THEME_FG_TEXT_INK"])
+        parts.append(f"<span foreground='{bg}'></span><span background='{bg}' foreground='{fg}' weight='bold'>{html.escape(k)}</span><span foreground='{bg}'></span>")
+        width += len(k) + 2
+        if not last:
+            parts.append(f"<span foreground='{t['THEME_FG_MUTED']}'> + </span>")
+            width += 3
+    return "".join(parts) + " " * max(1, CAP_WIDTH - width)
+
+
+def rows(t):
+    out, section = [], None
+    for sec, chord, desc in parse(CONF.read_text()):
+        if sec != section:
+            section = sec
+            out.append(f"<span foreground='{t['THEME_ACCENT']}' weight='bold'>{html.escape(sec.upper())}</span>\0nonselectable\x1ftrue")
+        plain = " ".join(chord + [desc])
+        out.append(f"{caps(chord, t)}<span font_family='Inter'>{html.escape(desc)}</span>\0meta\x1f{plain}")
+    return out
+
+
+def main():
+    t = palette()
+    entries = rows(t)
+    if "--print" in sys.argv:
+        print("\n".join(re.sub(r"<[^>]+>", "", e.split("\0")[0]) for e in entries))
+        return
+    subprocess.run(["rofi", "-dmenu", "-i", "-markup-rows", "-no-custom", "-p", "keys", "-theme", "keys"],
+                   input="\n".join(entries), text=True, check=False)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,13 +1,14 @@
 # Keybindings
 
-Defined in `mango/.config/mango/bind.conf`.
+Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as keycaps (`mango-keys`, rofi); this page lists the everyday ones.
 
 | keys | action |
 |---|---|
 | alt+return | kitty |
-| alt+space / super+d | rofi launcher |
+| super+d | rofi launcher |
+| super+/ | all keybindings (`mango-keys`) |
 | super+return | firefox |
-| super+v | clipboard history |
+| super+v | clipboard history (Enter copies, Shift+Delete removes) |
 | alt+q / super+shift+q | close window |
 | alt+arrows | focus |
 | super+left/right | previous/next tag |

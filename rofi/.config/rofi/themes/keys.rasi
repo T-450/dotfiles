@@ -1,0 +1,19 @@
+/* mango-keys (super+/): the keybindings as keycaps. Same look as quickinput.rasi, wider, in the
+   mono font so descriptions line up; the caps' colors come from the palette through mango-keys.
+   Colors: colors.rasi, rendered from the active palette by theme. */
+@import "colors.rasi"
+* {
+  background-color: transparent; text-color: @fg; font: "JetBrainsMono Nerd Font 11";
+}
+window { background-color: @bg; border: 1px; border-color: @line; border-radius: 8px; width: 780px; padding: 10px; }
+mainbox { spacing: 8px; }
+inputbar { background-color: @input; border: 1px; border-color: @accent; border-radius: 3px; padding: 6px 8px; spacing: 8px; children: [ prompt, entry ]; }
+prompt { text-color: @muted; font: "Inter 12"; }
+entry { placeholder: "Search keys or actions"; placeholder-color: @placeholder; font: "Inter 12"; }
+listview { lines: 18; spacing: 2px; fixed-height: true; scrollbar: true; }
+scrollbar { handle-color: @inborder; handle-width: 4px; }
+element { padding: 3px 10px; border-radius: 4px; }
+element normal.normal, element alternate.normal { background-color: transparent; text-color: @fg; }
+element selected.normal, element selected.active { background-color: @hover; text-color: @fg; }
+element-text { text-color: inherit; vertical-align: 0.5; }
+element-icon { size: 0; }

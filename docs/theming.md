@@ -71,7 +71,7 @@ Which apps use each role (generated from the templates):
 | `art_ring_outer` | theme |
 | `badge` | mango, mousepad, qutebrowser, theme |
 | `bg_desktop` | claude, firefox, greeter, gtk, mango, mousepad, qutebrowser, swaylock, theme, wlogout |
-| `bg_hover` | claude, firefox, kitty, mousepad, opencode, swayosd, theme, waybar |
+| `bg_hover` | claude, firefox, kitty, mousepad, opencode, rofi, swayosd, theme, waybar |
 | `bg_surface` | claude, firefox, gtk, kitty, mousepad, qutebrowser, rofi, theme, waybar |
 | `bg_widget` | claude, firefox, greeter, gtk, mako, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |

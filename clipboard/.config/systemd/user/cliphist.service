@@ -5,7 +5,8 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/wl-paste --type text --watch /usr/bin/cliphist store
+# every type (text and images), so screenshots and copied images show up in super+v
+ExecStart=/usr/bin/wl-paste --watch /usr/bin/cliphist store
 Restart=on-failure
 
 [Install]

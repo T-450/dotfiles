@@ -42,7 +42,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
 | [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (super+j toggles; files go to `~/video`) | gpu-screen-recorder |
-| [rofi](apps/rofi.md) | The launcher (alt+space or super+d) and every menu: clipboard history, theme picker | rofi |
+| [rofi](apps/rofi.md) | The launcher (super+d) and every menu: keybindings (super+/), clipboard history (super+v), theme picker, night light | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (ctrl+alt+a) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
 | [swaybg](apps/swaybg.md) | The wallpaper: Neptune in ASCII characters on dark palettes, the plain `bg_desktop` color on light ones | swaybg, imagemagick |

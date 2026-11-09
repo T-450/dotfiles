@@ -1,8 +1,8 @@
 # rofi
 
-The launcher (alt+space or super+d) and every menu: clipboard history, theme picker.
+The launcher (super+d) and every menu: keybindings (super+/), clipboard history (super+v), theme picker, night light.
 
-`themes/quickinput.rasi` holds the layout (VS Code's quick input) and imports `colors.rasi`.
+`themes/quickinput.rasi` holds the layout (VS Code's quick input) and imports `colors.rasi`. `themes/keys.rasi` is the same look, wider and in the mono font, for `mango-keys`.
 
 ## Reference
 
@@ -13,9 +13,10 @@ The launcher (alt+space or super+d) and every menu: clipboard history, theme pic
 
 - `~/.config/rofi/config.rasi`
 - `~/.config/rofi/themes/colors.rasi`
+- `~/.config/rofi/themes/keys.rasi`
 - `~/.config/rofi/themes/quickinput.rasi`
 
 **Rendered from the palette** (`theme`):
 
-- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `accent`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`
+- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`
 <!-- end generated -->

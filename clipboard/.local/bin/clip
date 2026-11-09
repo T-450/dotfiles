@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# clip: the clipboard history in rofi (super+v). Enter copies the item back to the clipboard,
+# Shift+Delete removes it, Ctrl+Shift+Delete clears the history. Images show as thumbnails,
+# cached by cliphist id in ~/.cache/cliphist/thumbs (dropped once the item leaves the history).
+set -euo pipefail
+thumbs=${XDG_CACHE_HOME:-$HOME/.cache}/cliphist/thumbs
+mkdir -p "$thumbs"
+image='^\[\[ binary data .* (png|jpe?g|webp|gif|bmp) ([0-9]+x[0-9]+) \]\]$'
+
+rows() {
+	local id preview t
+	declare -A keep=()
+	while IFS=$'\t' read -r id preview; do
+		if [[ $preview =~ $image ]]; then
+			t=$thumbs/$id.png
+			[[ -e $t ]] || cliphist decode "$id" | magick - -thumbnail 64x64 "$t" 2>/dev/null || t=image-x-generic
+			keep[$id.png]=1
+			printf '%s\t%s\0icon\x1f%s\n' "$id" "${BASH_REMATCH[2]} ${BASH_REMATCH[1]} image" "$t"
+		else
+			printf '%s\t%s\n' "$id" "$preview"
+		fi
+	done < <(cliphist list)
+	for t in "$thumbs"/*.png; do
+		[[ -e $t && -z ${keep[${t##*/}]:-} ]] && rm -f "$t"
+	done
+	return 0
+}
+
+while :; do
+	rc=0
+	pick=$(rows | rofi -dmenu -i -p clip -no-custom -show-icons \
+		-display-columns 2 -display-column-separator $'\t' \
+		-kb-delete-entry '' -kb-custom-1 'Shift+Delete' -kb-custom-2 'Control+Shift+Delete' \
+		-mesg 'Enter copy · Shift+Del delete · Ctrl+Shift+Del clear all' \
+		-theme-str 'window { width: 720px; } element-icon { size: 40px; }') || rc=$?
+	case $rc in
+	0) cliphist decode "${pick%%$'\t'*}" | wl-copy && exit 0 ;;
+	10) cliphist delete <<<"$pick" ;;
+	11) cliphist wipe && rm -f "$thumbs"/*.png && exit 0 ;;
+	*) exit 0 ;;
+	esac
+done
