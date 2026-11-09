@@ -48,5 +48,10 @@ test instead of being installed without the lockfile. The two install steps get 
 read-only token as `MISE_GITHUB_TOKEN`, so mise's GitHub API calls don't share the anonymous rate
 limit of every VM behind this laptop's IP.
 
+`toolchain-test.sh` checks on every machine that `config.toml`, `mise.lock` and `locks/` agree. On
+the installed checkout, it also checks that every locked tool is installed, that a clean zsh finds
+each tool in its install directory and not through a shim, that `helix --health` finds every
+language's servers, and that `mise/` has no uncommitted change.
+
 `runs-on: arch-kvm` is the pool label. The coordinator (`runner-up.service`) uses `gh`'s
 sign-in, so `gh auth login` must have run; `runner-up status` shows the place and waiting jobs.
