@@ -12,6 +12,10 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 - Environment for mango's children: `mango/.config/mango/env.conf` (reset on reload; relogin to change).
 - Environment for units: `mango/.config/environment.d/10-wayland.conf` (relogin). A variable both
   need goes in both files.
+- Wayland is the only session (`/usr/share/wayland-sessions/mango.desktop`; no X sessions) and the
+  default backend: GTK, SDL 3 (and SDL 2 through sdl2-compat), Firefox and Electron pick it on
+  their own; Qt gets `QT_QPA_PLATFORM=wayland;xcb`. XWayland stays for X-only programs; Java
+  AWT/Swing is one, and `_JAVA_AWT_WM_NONREPARENTING=1` keeps its windows from staying blank.
 - Logout (super+m) runs `mango-quit`: it stops `graphical-session.target` *before*
   `mmsg dispatch quit`, so units don't die with display errors.
 - The bar toggle (super+h, `waybar-toggle`) starts and stops `waybar.service`.
