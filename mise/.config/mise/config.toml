@@ -50,6 +50,9 @@ gradle = "9"
 # Build systems (C/C++ compilers and meson come from pacman: clang/packages)
 cmake = "4"
 ninja = "1"
+"github:neocmakelsp/neocmakelsp" = "0.12"  # CMake language server (helix)
+# Meson language server (helix); upstream archived 2026-08 at 5.0.4: it still works, nothing replaces it
+"github:JCWasmx86/mesonlsp" = "5"
 # Shell, config and docs languages
 "npm:bash-language-server" = "5"
 shellcheck = "0.11"

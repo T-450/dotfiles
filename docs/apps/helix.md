@@ -8,6 +8,7 @@ mise installs the language servers, formatters and debuggers, except clangd and 
 - TypeScript, TSX, JavaScript, JSX, JSON and JSONC format with biome (`biome lsp-proxy`). typescript-language-server and vscode-json-language-server still give hover, completion and diagnostics, with formatting off.
 - typescript-language-server runs TypeScript 6's tsserver, because TypeScript 7 ships none. `tsc` on `PATH` is TypeScript 7.
 - C# uses roslyn-language-server, TOML uses tombi, YAML uses yaml-language-server, and Markdown uses marksman.
+- CMake uses neocmakelsp; Meson (helix's built-in choice) uses mesonlsp. Both come from mise. mesonlsp's upstream was archived in August 2026 at 5.0.4; it still works, and no other Meson server exists.
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.
 

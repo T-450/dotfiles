@@ -54,6 +54,17 @@ version = "5.13.0-1.26514.10"
 backend = "dotnet:roslyn-language-server"
 specifiers = ["5.13.0-1.26514.10"]
 
+[[tools."github:JCWasmx86/mesonlsp"]]
+version = "5.0.4"
+backend = "github:JCWasmx86/mesonlsp"
+specifiers = ["5"]
+
+[tools."github:JCWasmx86/mesonlsp"."platforms.linux-x64"]
+checksum = "sha256:e6e604773eb40adee31c48a6c00333c1baaba4468acbc18d285da9caef7ac094"
+checksum_source = "mise-versions"
+url = "https://github.com/JCWasmx86/mesonlsp/releases/download/v5.0.4/mesonlsp-x86_64-unknown-linux-musl.zip"
+url_api = "https://api.github.com/repos/JCWasmx86/mesonlsp/releases/assets/507312509"
+
 [[tools."github:Samsung/netcoredbg"]]
 version = "3.2.0-1092"
 backend = "github:Samsung/netcoredbg"
@@ -63,6 +74,16 @@ specifiers = ["3"]
 checksum = "sha256:080eb3b2d2152465f599d3b33d1ee6e747794e11cc0a3773ec689f5e5f2c5afa"
 url = "https://github.com/Samsung/netcoredbg/releases/download/3.2.0-1092/netcoredbg-linux-amd64.tar.gz"
 url_api = "https://api.github.com/repos/Samsung/netcoredbg/releases/assets/457716187"
+
+[[tools."github:neocmakelsp/neocmakelsp"]]
+version = "0.12.0"
+backend = "github:neocmakelsp/neocmakelsp"
+specifiers = ["0.12"]
+
+[tools."github:neocmakelsp/neocmakelsp"."platforms.linux-x64"]
+checksum = "sha256:fae7bf87e114b0748fef5aa8c464b8413a2022925a2a61821bae5e2a9a7fdda2"
+url = "https://github.com/neocmakelsp/neocmakelsp/releases/download/v0.12.0/neocmakelsp-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/neocmakelsp/neocmakelsp/releases/assets/700594594"
 
 [[tools.go]]
 version = "1.27.3"
