@@ -178,7 +178,6 @@ def load_palette(slug, path=None):
         "slug": slug,
         "variant": variant,
         "prefer_dark": "1" if dark else "0",
-        "gtk_theme": "Adwaita-dark" if dark else "Adwaita",
         "color_scheme": "prefer-dark" if dark else "prefer-light",
         "user": getpass.getuser(),  # for system files that name the user (greeter preferences)
         "home": str(Path.home()),   # for configs that need absolute paths (runner-up)

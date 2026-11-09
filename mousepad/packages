@@ -1,1 +1,2 @@
 mousepad
+gspell     # Mousepad's spell-check plugin; without it every start logs a failed plugin load

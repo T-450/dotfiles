@@ -1,0 +1,3 @@
+qt6-base
+qt6-wayland
+qt6-svg      # SVG icon themes (Tela) in Qt apps

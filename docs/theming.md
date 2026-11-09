@@ -51,11 +51,11 @@ Which apps use each role (generated from the templates):
 | `accent` | claude, fastfetch, firefox, greeter, mango, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `ansi0` | foot |
 | `ansi1` | foot |
-| `ansi10` | foot, opencode |
-| `ansi11` | foot, opencode |
-| `ansi12` | foot, opencode |
-| `ansi13` | claude, foot |
-| `ansi14` | foot, opencode |
+| `ansi10` | foot, mousepad, opencode |
+| `ansi11` | foot, mousepad, opencode |
+| `ansi12` | foot, mousepad, opencode |
+| `ansi13` | claude, foot, mousepad |
+| `ansi14` | foot, mousepad, opencode |
 | `ansi15` | foot |
 | `ansi2` | foot |
 | `ansi3` | foot |
@@ -64,44 +64,43 @@ Which apps use each role (generated from the templates):
 | `ansi6` | foot |
 | `ansi7` | foot |
 | `ansi8` | foot |
-| `ansi9` | foot |
+| `ansi9` | foot, mousepad |
 | `art_planet_dark` | theme |
 | `art_planet_light` | theme |
 | `art_ring_inner` | theme |
 | `art_ring_outer` | theme |
-| `badge` | mango, qutebrowser, theme |
-| `bg_desktop` | claude, firefox, greeter, gtk, mango, qutebrowser, swaylock, theme, wlogout |
-| `bg_hover` | claude, firefox, opencode, swayosd, theme, waybar |
-| `bg_surface` | claude, firefox, gtk, qutebrowser, rofi, theme, waybar |
+| `badge` | mango, mousepad, qutebrowser, theme |
+| `bg_desktop` | claude, firefox, greeter, gtk, mango, mousepad, qutebrowser, swaylock, theme, wlogout |
+| `bg_hover` | claude, firefox, mousepad, opencode, swayosd, theme, waybar |
+| `bg_surface` | claude, firefox, gtk, mousepad, qutebrowser, rofi, theme, waybar |
 | `bg_widget` | claude, firefox, greeter, gtk, mako, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
-| `border_inactive` | claude, fastfetch, firefox, mango, opencode, rofi, theme |
-| `error` | claude, fastfetch, greeter, gtk, mako, mango, opencode, qutebrowser, swaylock, theme, waybar |
-| `fg_bright` | fastfetch, firefox, opencode, qutebrowser, theme, waybar |
-| `fg_disabled` | claude, fastfetch, qutebrowser, theme |
-| `fg_editor` | gtk, opencode, theme |
-| `fg_muted` | claude, fastfetch, greeter, opencode, rofi, theme, waybar |
-| `fg_secondary` | claude, firefox, greeter, mako, mango, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
-| `fg_text` | claude, fastfetch, firefox, greeter, gtk, mako, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
+| `border_inactive` | claude, fastfetch, firefox, mango, mousepad, opencode, rofi, theme |
+| `error` | claude, fastfetch, greeter, gtk, mako, mango, mousepad, opencode, qutebrowser, swaylock, theme, waybar |
+| `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme, waybar |
+| `fg_disabled` | claude, fastfetch, mousepad, qutebrowser, theme |
+| `fg_editor` | gtk, mousepad, opencode, theme |
+| `fg_muted` | claude, fastfetch, greeter, mousepad, opencode, rofi, theme, waybar |
+| `fg_secondary` | claude, firefox, greeter, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
+| `fg_text` | claude, fastfetch, firefox, greeter, gtk, mako, mousepad, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `git_email` | git |
 | `git_name` | git |
-| `gtk_theme` | gtk |
 | `home` | helix, runner-up |
-| `link` | claude, foot, greeter, gtk, opencode, qutebrowser, rofi, theme |
-| `name` | claude, fastfetch, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
+| `link` | claude, foot, greeter, gtk, mousepad, opencode, qutebrowser, rofi, theme |
+| `name` | claude, fastfetch, firefox, foot, greeter, gtk, mako, mango, mousepad, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
-| `selection_bg` | claude, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, theme, waybar |
-| `selection_fg` | firefox, foot, gtk, opencode, qutebrowser, rofi, theme, waybar, wlogout |
+| `selection_bg` | claude, firefox, foot, greeter, gtk, mako, mango, mousepad, qutebrowser, rofi, theme, waybar |
+| `selection_fg` | firefox, foot, gtk, mousepad, opencode, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
-| `slug` | fastfetch, firefox, foot, greeter, gtk, mako, mango, rofi, swaylock, swayosd, theme, waybar, wlogout |
+| `slug` | fastfetch, firefox, foot, greeter, gtk, mako, mango, mousepad, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `success` | claude, fastfetch, gtk, opencode, qutebrowser, theme |
 | `term_bg` | claude, foot, opencode, theme |
-| `term_cursor` | foot, theme |
+| `term_cursor` | foot, mousepad, theme |
 | `term_fg` | foot, theme |
 | `user` | greeter |
 | `variant` | claude, foot, qutebrowser, theme |
-| `warning` | claude, fastfetch, greeter, gtk, opencode, qutebrowser, theme, waybar |
+| `warning` | claude, fastfetch, greeter, gtk, mousepad, opencode, qutebrowser, theme, waybar |
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (foot; zsh, vim and
@@ -130,7 +129,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
   before the format). Contrast filters, also chainable: `|ink` turns a background into its text
   color (`bg_desktop` or `fg_bright`, whichever reads better, pushed to WCAG AA 4.5:1), e.g.
   `{{accent|mix:bg_surface:0.3|ink}}`; `|legible:<role>` nudges a foreground until it reads at
-  4.5:1 on that role (syntax colors from the ANSI set on a light palette). Also `{{name}} {{slug}} {{variant}} {{prefer_dark}} {{gtk_theme}} {{color_scheme}}`.
+  4.5:1 on that role (syntax colors from the ANSI set on a light palette). Also `{{name}} {{slug}} {{variant}} {{prefer_dark}} {{color_scheme}}`.
   An unknown role or filter aborts before anything is written; all files are swapped in at once.
 - Reload hooks: every `<app>/reload.sh` runs in parallel after `theme set`, with `THEME_NAME
   THEME_SLUG THEME_VARIANT THEME_ROOT`; a failure shows a critical notification.

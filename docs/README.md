@@ -30,15 +30,16 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [foot](apps/foot.md) | The terminal (alt+return) | foot |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS | git, github-cli |
 | [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
-| [gtk](apps/gtk.md) | GTK 3/4 apps: Adwaita, with palette colors through `gtk.css` and the dark/light preference from the palette | — |
+| [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette) | helix, jdtls, jre-openjdk |
 | [mako](apps/mako.md) | Notifications | mako |
-| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland, xorg-xrdb |
+| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
-| [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad |
+| [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
 | [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
+| [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
 | [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (super+j toggles; files go to `~/video`) | gpu-screen-recorder |
 | [rofi](apps/rofi.md) | The launcher (alt+space or super+d) and every menu: clipboard history, theme picker | rofi |
