@@ -27,9 +27,23 @@ git diff mise/             # review, then commit mise/.config/mise/
 
 All three write through the links into the repo: `config.toml`, `mise.lock` and `locks/`. Commit `mise/.config/mise/`. On every other machine, the next `install.sh` installs the new versions and prunes the old ones.
 
+Java follows OpenJDK's six-month releases. `openjdk-27` gets security updates only until OpenJDK 28 ships in March 2027. Every March and September, move to the new release, such as `mise use -g java@openjdk-28` in March 2027, and commit `mise/.config/mise/`. A project that needs a long-term-support Java pins one in its own `mise.toml`, such as `mise use java@temurin-25`.
+
 ## Use another version in a project
 
 In a project, `mise use node@24` writes a `mise.toml` there. mise asks before it loads a project config it hasn't seen. Run `mise trust` to accept it, then `mise install`. mise also reads `.nvmrc`, `.node-version` and `rust-toolchain.toml`, so a project that pins its version in one of those gets that version inside its directory.
+
+`lockfile = true` is a global setting, so `mise install` in a project also writes a `mise.lock` next to the project's `mise.toml`. Commit it with the project to pin the project's tools the same way.
+
+## Programs started outside a terminal don't see the tools
+
+oh-my-zsh's `mise` plugin puts the tools on `PATH` in zsh, so only programs started from a terminal see them. mango starts from greetd, not from a login shell, so rofi, mango binds and user units don't see the tools. If a GUI program needs them, add `~/.local/share/mise/shims` to `PATH` in both `mango/.config/mango/env.conf` and `mango/.config/environment.d/`.
+
+## What the toolchain costs
+
+- Disk: 5.0 GB, measured on 2026-11-09. `~/.local/share/mise` holds 3.2 GB, `~/.rustup` 1.6 GB, and `~/.cargo` 288 MB.
+- Shell start: mise adds about 67 ms to each interactive zsh start. That is the median of 30 interleaved pairs, measured on battery with the `powersave` governor. Almost all of it is the `mise` process starting, once for `mise activate` and once for the first prompt's `mise hook-env`. No setting in `config.toml` changes it.
+- CI: every run downloads and installs the whole toolchain on a fresh VM. Nothing is cached between runs.
 
 ## Reference
 

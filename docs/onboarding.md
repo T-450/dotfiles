@@ -87,7 +87,9 @@ Every later change uses these two checks, so run them once now.
 
 ## Add a program
 
-Every program is a folder in `~/dotfiles`. Here you add btop, a system monitor.
+Every program is a folder in `~/dotfiles`. Here you add btop, a system monitor. A compiler, language
+runtime, or language server goes in mise's config instead:
+[Update the toolchain](apps/mise.md#update-the-toolchain).
 
 1. Create the folder and declare the package:
 

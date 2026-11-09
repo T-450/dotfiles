@@ -1,6 +1,8 @@
 # git
 
-(what it is, one sentence.)
+git, with the GitHub CLI as the credential helper for GitHub over HTTPS.
+
+`config.tmpl` holds no personal values. Your name and email come from its `git_name` and `git_email` tags, which `theme` fills from your existing git config, else from `GIT_AUTHOR_NAME` and `GIT_AUTHOR_EMAIL`, else by asking once. Run `gh auth login` once before git pushes to GitHub.
 
 ## Reference
 

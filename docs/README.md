@@ -28,7 +28,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
 | [foot](apps/foot.md) | The terminal (alt+return) | foot |
-| [git](apps/git.md) | (what it is, one sentence.) | git, github-cli |
+| [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS | git, github-cli |
 | [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
 | [gtk](apps/gtk.md) | GTK 3/4 apps: Adwaita, with palette colors through `gtk.css` and the dark/light preference from the palette | — |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette) | helix, jdtls, jre-openjdk |
