@@ -12,6 +12,8 @@ mise installs the language servers, formatters and debuggers, except clangd and 
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.
 
+Copy and paste work like in GUI apps: Ctrl+C copies the selection to the system clipboard (`config.toml`; helix's own Ctrl+C, toggle comments, stays on space+c) and kitty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
+
 To check a language, run `helix --health LANG` in a terminal. No language server, formatter or debugger line shows ✘, except javascript's debugger `''`, which is helix's own placeholder. `tests/unit.d/toolchain-test.sh` runs this check for every language.
 
 ## Reference
@@ -21,6 +23,7 @@ To check a language, run `helix --health LANG` in a terminal. No language server
 
 **Linked into your home** (stow, `install.sh --link`):
 
+- `~/.config/helix/config.toml`
 - `~/.config/helix/languages.toml`
 
 **Rendered from the palette** (`theme`):
