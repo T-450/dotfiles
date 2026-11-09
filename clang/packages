@@ -1,0 +1,6 @@
+# C and C++ from Arch: compilers, linker and debugger build and link against this system's glibc and
+# headers, and update with -Syu (mise's only clang is a conda build)
+clang   # compiler, clangd, clang-format, clang-tidy
+lldb    # debugger; lldb-dap is helix's adapter for C, C++, Rust and Zig
+mold    # fast linker (-fuse-ld=mold; Rust: -C link-arg=-fuse-ld=mold)
+meson   # a Python app: Arch rebuilds it when the system Python moves (a uv venv would break)
