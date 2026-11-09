@@ -1,8 +1,10 @@
 # waybar
 
-The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)), slimmer and colored from the palette.
+The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as powerline segments, colored from the palette.
 
-Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view). Center: day, time (calendar tooltip), date. Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), memory, cpu, battery, disk, tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar; `setup.sh` removes `mangobar-git`.
+Segments sit on an accent ramp: the accent at both ends of the bar, blended toward the bar's background inward (`seg_a`, `seg_b`, `seg_c` in `colors.css`), each with its text color from `|ink` so it reads at 4.5:1 on any palette. Every module cuts its own arrow edges out of its background (bar-colored triangles in `style.css`), so there are no separator modules, and a state that recolors a segment (offline, battery or disk low, recording, warm night light) never breaks its edges.
+
+Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and the current layout as an AwesomeWM-style icon (`mango/layout`; `layouts/<name>-symbolic.svg`, one per mango layout, tinted with the segment's text color through `-gtk-recolor`; click for the next layout). Center: day, time (calendar tooltip), date. Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), memory, cpu, battery, disk, night light ([wlsunset](wlsunset.md)), tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar; `setup.sh` removes `mangobar-git`.
 
 ## Reference
 
@@ -14,12 +16,26 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view). Cent
 - `~/.config/systemd/user/waybar.service`
 - `~/.config/waybar/colors.css`
 - `~/.config/waybar/config.jsonc`
+- `~/.config/waybar/layouts/center_tile-symbolic.svg`
+- `~/.config/waybar/layouts/deck-symbolic.svg`
+- `~/.config/waybar/layouts/dwindle-symbolic.svg`
+- `~/.config/waybar/layouts/fair-symbolic.svg`
+- `~/.config/waybar/layouts/grid-symbolic.svg`
+- `~/.config/waybar/layouts/monocle-symbolic.svg`
+- `~/.config/waybar/layouts/right_tile-symbolic.svg`
+- `~/.config/waybar/layouts/scroller-symbolic.svg`
+- `~/.config/waybar/layouts/tile-symbolic.svg`
+- `~/.config/waybar/layouts/vertical_deck-symbolic.svg`
+- `~/.config/waybar/layouts/vertical_fair-symbolic.svg`
+- `~/.config/waybar/layouts/vertical_grid-symbolic.svg`
+- `~/.config/waybar/layouts/vertical_scroller-symbolic.svg`
+- `~/.config/waybar/layouts/vertical_tile-symbolic.svg`
 - `~/.config/waybar/style.css`
 - `~/.local/bin/waybar-toggle`
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_bright`, `fg_muted`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`, `warning`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`, `warning`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

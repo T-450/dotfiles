@@ -1,5 +1,6 @@
-// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar), made slimmer and colored
-// only from the palette (style.css + colors.css). Labels are dimmed with Pango alpha, not colors.
+// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar) as powerline segments on an
+// accent ramp, colored only from the palette (style.css + colors.css). Each module draws its own
+// arrow edges (style.css), so there are no separator modules. Labels are dimmed with Pango alpha.
 {
     "layer": "top",
     "position": "bottom",
@@ -7,22 +8,13 @@
     "spacing": 0,
     "reload_style_on_change": true,
 
-    "modules-left": ["ext/workspaces", "custom/sr"],
-    "modules-center": ["custom/sl", "clock#day", "custom/sl", "clock#time", "custom/sr", "clock#date", "custom/sr"],
+    "modules-left": ["ext/workspaces", "mango/layout"],
+    "modules-center": ["clock#day", "clock#time", "clock#date"],
     "modules-right": [
-        "custom/sl", "network",
-        "custom/sl", "pulseaudio",
-        "custom/sl", "backlight",
-        "custom/sl", "memory",
-        "custom/sl", "cpu",
-        "custom/sl", "battery",
-        "custom/sl", "disk",
-        "custom/sl", "tray", "custom/record", "custom/power"
+        "network", "pulseaudio", "backlight",
+        "memory", "cpu", "battery", "disk",
+        "custom/nightlight", "tray", "custom/record", "custom/power"
     ],
-
-    // thin powerline chevrons between segments (Nerd Font)
-    "custom/sl": { "format": "", "tooltip": false },
-    "custom/sr": { "format": "", "tooltip": false },
 
     // mango tags over ext-workspace-v1; empty tags are "hidden" there, so they stay out
     "ext/workspaces": {
@@ -30,6 +22,14 @@
         "on-click": "activate",
         "ignore-hidden": true,
         "sort-by-id": true
+    },
+
+    // the current layout as an AwesomeWM-style icon: the text is blank, style.css draws
+    // layouts/<name>-symbolic.svg for the symbol class mango reports (mmsg get layouts)
+    "mango/layout": {
+        "format": "  ",
+        "tooltip": false,
+        "on-click": "mmsg dispatch switch_layout"
     },
 
     "clock#day":  { "format": "{:%a}", "tooltip": false },
@@ -74,9 +74,18 @@
     },
     "disk": {
         "interval": 30,
-        "path": "/",
+        "paths": ["/"],
         "states": { "warning": 80, "critical": 90 },
         "format": "<span alpha='55%'>disk</span> {percentage_used}%"
+    },
+    // wlsunset (wlsunset/.local/bin/nightlight): moon = on, sun = off; menu sets mode and temperature
+    "custom/nightlight": {
+        "exec": "~/.local/bin/nightlight status",
+        "return-type": "json",
+        "interval": 60,
+        "signal": 9,
+        "on-click": "~/.local/bin/nightlight toggle",
+        "on-click-right": "~/.local/bin/nightlight menu"
     },
     "tray": { "icon-size": 14, "spacing": 6 },
 

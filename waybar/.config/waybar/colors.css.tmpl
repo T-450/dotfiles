@@ -3,12 +3,18 @@
 @define-color widget  {{bg_widget}};
 @define-color hover   {{bg_hover}};
 @define-color line    {{border_hairline}};
-@define-color linenr  {{fg_muted}};
-@define-color muted   {{fg_secondary}};
 @define-color fg      {{fg_text}};
-@define-color bright  {{fg_bright}};
-@define-color accent  {{accent}};
 @define-color sel     {{selection_bg}};
 @define-color selfg   {{selection_fg}};
+
+/* segments: the accent at the outer ends, blended toward the bar inward; ink = legible text on each */
+@define-color seg_a   {{accent}};
+@define-color ink_a   {{accent|ink}};
+@define-color seg_b   {{accent|mix:bg_surface:0.45}};
+@define-color ink_b   {{accent|mix:bg_surface:0.45|ink}};
+@define-color seg_c   {{accent|mix:bg_surface:0.75}};
+@define-color ink_c   {{accent|mix:bg_surface:0.75|ink}};
 @define-color warn    {{warning}};
+@define-color ink_warn {{warning|ink}};
 @define-color error   {{error}};
+@define-color ink_error {{error|ink}};

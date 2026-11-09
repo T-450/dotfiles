@@ -1,6 +1,8 @@
 # wlsunset
 
-Night light: warmer colors after sunset.
+Night light: warmer colors after sunset, controlled from the bar.
+
+The bar's moon (`nightlight status`) is on, the sun is off. Click toggles it (`nightlight toggle`: stops or starts `wlsunset.service`; off persists across logins through `~/.local/state/nightlight/off`, which the unit's `ConditionPathExists` checks). Right click opens `nightlight menu` (rofi): automatic (warm after sunset), warm now (the segment turns amber), off, and the night temperature (3000-4500 K). The choice is saved in `~/.local/state/nightlight/env`, which the unit reads. wlsunset needs a day temperature above the night one, so "warm now" runs it with day one kelvin above night.
 
 ## Reference
 
@@ -10,6 +12,7 @@ Night light: warmer colors after sunset.
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/systemd/user/wlsunset.service`
+- `~/.local/bin/nightlight`
 
 **User units** (enabled by `install.sh --units`): `wlsunset.service`
 <!-- end generated -->

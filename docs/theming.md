@@ -77,11 +77,11 @@ Which apps use each role (generated from the templates):
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
 | `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
 | `error` | claude, fastfetch, greeter, gtk, mako, mango, mousepad, opencode, qutebrowser, swaylock, theme, waybar |
-| `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme, waybar |
+| `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme |
 | `fg_disabled` | claude, fastfetch, mousepad, qutebrowser, theme |
 | `fg_editor` | gtk, mousepad, opencode, theme |
-| `fg_muted` | claude, fastfetch, greeter, mousepad, opencode, rofi, theme, waybar |
-| `fg_secondary` | claude, firefox, greeter, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
+| `fg_muted` | claude, fastfetch, greeter, mousepad, opencode, rofi, theme |
+| `fg_secondary` | claude, firefox, greeter, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, wlogout |
 | `fg_text` | claude, fastfetch, firefox, greeter, gtk, mako, mousepad, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `git_email` | git |
 | `git_name` | git |

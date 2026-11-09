@@ -53,9 +53,9 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp |
 | [vim](apps/vim.md) | Vim, the fallback editor (no managed config; its colors follow the terminal's palette) | vim |
-| [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)), slimmer and colored from the palette | waybar, pamixer |
+| [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as powerline segments, colored from the palette | waybar, pamixer |
 | [wlogout](apps/wlogout.md) | The power menu (super+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
-| [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset | wlsunset |
+| [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (agnoster prompt, git and mise plugins) | zsh, oh-my-zsh-git |
 <!-- end generated -->
 

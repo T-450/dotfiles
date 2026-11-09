@@ -3,10 +3,15 @@ Description=Night light (wlsunset)
 PartOf=graphical-session.target
 After=graphical-session.target
 Requisite=graphical-session.target
+# `nightlight toggle` (the bar's moon) creates this to keep the night light off across logins
+ConditionPathExists=!%h/.local/state/nightlight/off
 
 [Service]
-# day 6500K = neutral (no tint), night 3500K; sun times from location (America/Sao_Paulo)
-ExecStart=/usr/bin/wlsunset -T 6500 -t 3500 -l -23.5 -L -46.6
+# day 6500K = neutral (no tint); night temperature and mode from `nightlight menu`;
+# sun times from location (America/Sao_Paulo)
+Environment=DAY_TEMP=6500 NIGHT_TEMP=3500
+EnvironmentFile=-%h/.local/state/nightlight/env
+ExecStart=/usr/bin/wlsunset -T ${DAY_TEMP} -t ${NIGHT_TEMP} -l -23.5 -L -46.6
 Restart=on-failure
 
 [Install]

@@ -1,5 +1,7 @@
-/* waybar: flat segments on the status-bar background, VS Code style (accent for focus).
-   Colors: colors.css, rendered from the active palette by theme. */
+/* waybar: powerline segments on an accent ramp (outer ends accent, blending toward the bar).
+   Colors: colors.css, rendered from the active palette by theme.
+   Each segment cuts its own arrow edges out of its background with bar-colored triangles, so a
+   state that recolors one segment (battery low, offline, recording) never breaks its edges. */
 @import "colors.css";
 
 * {
@@ -15,31 +17,207 @@ window#waybar { background: @bar; color: @fg; }
 tooltip { background: @widget; border: 1px solid @line; border-radius: 4px; }
 tooltip label { color: @fg; }
 
+/* segment geometry: 10px arrow edges, the four corner layers of every background-image below */
+#workspaces, #layout, #clock, #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
+#custom-nightlight, #tray, #custom-record, #custom-power {
+    padding: 0 15px;
+    background-repeat: no-repeat;
+    background-size: 10px 50%, 10px 50%, 10px 50%, 10px 50%, 14px 14px;
+    background-position: left top, left bottom, right top, right bottom, center;
+}
+
+#workspaces {
+    background-image:
+        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
+        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+}
+#layout {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+}
+#clock.day {
+    background-image:
+        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, alpha(@bar, 0) 50%, @bar 50%);
+}
+#clock.time {
+    background-image:
+        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+}
+#clock.date {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+}
+#network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
+#custom-nightlight, #tray, #custom-record {
+    background-image:
+        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, alpha(@bar, 0) 50%, @bar 50%);
+}
+#custom-power {
+    background-image:
+        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
+        linear-gradient(alpha(@bar, 0), alpha(@bar, 0));
+}
+
+/* the ramp */
+#workspaces, #clock.time, #custom-nightlight, #tray, #custom-record, #custom-power { background-color: @seg_a; color: @ink_a; }
+#layout, #clock.day, #clock.date, #memory, #cpu, #battery, #disk { background-color: @seg_b; color: @ink_b; }
+#network, #pulseaudio, #backlight { background-color: @seg_c; color: @ink_c; }
+
+/* states recolor their own segment */
+#network.disconnected, #battery.warning, #disk.warning, #custom-nightlight.warm { background-color: @warn; color: @ink_warn; }
+#battery.critical, #disk.critical, #custom-record { background-color: @error; color: @ink_error; }
+#pulseaudio.muted { color: alpha(@ink_c, 0.6); }
+#custom-nightlight.off { color: alpha(@ink_a, 0.7); }
+
+#workspaces { padding-left: 4px; }
 #workspaces button {
     padding: 0 6px;
-    color: @muted;
-    background: transparent;
+    color: alpha(@ink_a, 0.6);
+    background: none;
     box-shadow: none;
     text-shadow: none;
 }
-#workspaces button.active { color: @accent; }
-#workspaces button.urgent { color: @error; }
-#workspaces button:hover  { background: @hover; color: @bright; }
+#workspaces button.active { color: @ink_a; box-shadow: inset 0 -2px @ink_a; }
+#workspaces button.urgent { background: @error; color: @ink_error; }
+#workspaces button:hover { background: alpha(@ink_a, 0.15); color: @ink_a; }
 
-#custom-sl, #custom-sr { color: @line; padding: 0 2px; font-size: 14px; }
+#custom-power { padding-right: 12px; }
+#custom-power:hover, #custom-nightlight:hover { color: alpha(@ink_a, 0.75); }
+#layout:hover { color: alpha(@ink_b, 0.75); }
 
-#clock, #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk, #tray,
-#custom-record, #custom-power { padding: 0 8px; }
-
-#clock.day, #clock.date { color: @muted; }
-#network.disconnected   { color: @warn; }
-#pulseaudio.muted       { color: @linenr; }
-#battery.warning, #disk.warning   { color: @warn; }
-#battery.critical, #disk.critical { color: @error; }
-#battery.charging       { color: @accent; }
-#custom-record          { color: @error; }
-#custom-power           { color: @muted; padding-right: 12px; }
-#custom-power:hover     { color: @bright; }
+/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style) takes the segment text color */
+#layout { min-width: 14px; }
+#layout.T {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/tile-symbolic.svg"));
+}
+#layout.S {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/scroller-symbolic.svg"));
+}
+#layout.G {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/grid-symbolic.svg"));
+}
+#layout.M {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/monocle-symbolic.svg"));
+}
+#layout.K {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/deck-symbolic.svg"));
+}
+#layout.CT {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/center_tile-symbolic.svg"));
+}
+#layout.RT {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/right_tile-symbolic.svg"));
+}
+#layout.VS {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg"));
+}
+#layout.VT {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/vertical_tile-symbolic.svg"));
+}
+#layout.VG {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/vertical_grid-symbolic.svg"));
+}
+#layout.VK {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/vertical_deck-symbolic.svg"));
+}
+#layout.DW {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/dwindle-symbolic.svg"));
+}
+#layout.F {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/fair-symbolic.svg"));
+}
+#layout.VF {
+    background-image:
+        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
+        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
+        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
+        -gtk-recolor(url("layouts/vertical_fair-symbolic.svg"));
+}
 
 menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
 menuitem { color: @fg; }

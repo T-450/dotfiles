@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# nightlight [status|toggle|menu]: wlsunset as the bar's night light.
+#   status  JSON for waybar's custom/nightlight (text, class auto|warm|off, tooltip)
+#   toggle  off <-> on (the last mode); off persists across logins
+#   menu    rofi: automatic / warm now / off, and the night temperature
+# Choices live in ~/.local/state/nightlight/: `env` (MODE, NIGHT_TEMP) is read by wlsunset.service;
+# `off` keeps the unit from starting (ConditionPathExists).
+set -euo pipefail
+state=${XDG_STATE_HOME:-$HOME/.local/state}/nightlight
+env=$state/env
+off=$state/off
+unit=wlsunset.service
+temps=(3000 3500 4000 4500)
+
+MODE=auto NIGHT_TEMP=3500
+[[ -r $env ]] && . "$env"
+
+save() {
+	mkdir -p "$state"
+	printf 'MODE=%s\nNIGHT_TEMP=%s\n# wlsunset needs day > night: "warm" pins day one kelvin above night\nDAY_TEMP=%s\n' \
+		"$MODE" "$NIGHT_TEMP" "$([[ $MODE == warm ]] && echo $((NIGHT_TEMP + 1)) || echo 6500)" >"$env"
+}
+
+refresh() { pkill -RTMIN+9 -x waybar || true; }
+
+turn_on() {
+	rm -f "$off"
+	systemctl --user restart "$unit"
+}
+
+turn_off() {
+	mkdir -p "$state"
+	: >"$off"
+	systemctl --user stop "$unit"
+}
+
+status() {
+	local text class tip
+	if [[ -e $off ]] || ! systemctl --user -q is-active "$unit"; then
+		text=󰖙 class=off tip="Night light off"
+	elif [[ $MODE == warm ]]; then
+		text=󰖔 class=warm tip="Night light warm now (${NIGHT_TEMP} K)"
+	else
+		text=󰖔 class=auto tip="Night light automatic (${NIGHT_TEMP} K after sunset)"
+	fi
+	printf '{"text":"%s","class":"%s","tooltip":"%s\\nclick: on/off · right click: options"}\n' "$text" "$class" "$tip"
+}
+
+menu() {
+	local cur=auto rows=() t pick
+	[[ -e $off ]] && cur=off || cur=$MODE
+	rows+=("󰖔  Automatic: warm after sunset" "󰌵  Warm now" "󰖙  Off")
+	for t in "${temps[@]}"; do rows+=("  Night temperature ${t} K"); done
+	local active
+	case $cur in auto) active=0 ;; warm) active=1 ;; off) active=2 ;; esac
+	for i in "${!temps[@]}"; do [[ ${temps[$i]} == "$NIGHT_TEMP" ]] && active+=",$((i + 3))"; done
+	pick=$(printf '%s\n' "${rows[@]}" | rofi -dmenu -i -no-custom -p "night light" -a "$active" -format i) || exit 0
+	case $pick in
+	0) MODE=auto && save && turn_on ;;
+	1) MODE=warm && save && turn_on ;;
+	2) turn_off ;;
+	*) NIGHT_TEMP=${temps[$((pick - 3))]} && save && { [[ -e $off ]] || turn_on; } ;;
+	esac
+}
+
+case ${1:-status} in
+status) status ;;
+toggle) if [[ -e $off ]] || ! systemctl --user -q is-active "$unit"; then save && turn_on; else turn_off; fi && refresh ;;
+menu) menu && refresh ;;
+*) echo "usage: nightlight [status|toggle|menu]" >&2 && exit 2 ;;
+esac
