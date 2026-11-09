@@ -98,6 +98,20 @@ def mix(a, b, t):
     return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
 
 
+TEXT_CONTRAST = 4.5  # WCAG AA for normal text
+
+
+def pole(bg):
+    """Black or white, whichever reads better on bg."""
+    return max(((0, 0, 0), (255, 255, 255)), key=lambda p: contrast(p, bg))
+
+
+def ink(bg, colors):
+    """Text color for a bg: the palette's dark or light text, whichever reads better, made AA."""
+    fg = max((colors["bg_desktop"], colors["fg_bright"]), key=lambda c: contrast(c, bg))
+    return legible(fg, bg, pole(bg), TEXT_CONTRAST)
+
+
 def flatten(value, over):
     """#rrggbb or #rrggbbaa -> opaque rgb tuple composited over `over`."""
     v = value.strip()
@@ -242,6 +256,14 @@ def apply_filters(name, filters, colors, words, where):
             if not 0 <= amount <= 1:  # also rejects nan/inf
                 raise ThemeError(f"{where}: mix amount must be 0-1, got {t!r}")
             c = mix(c, colors[other], amount)
+        elif op == "ink":
+            if rest:
+                raise ThemeError(f"{where}: ink takes no argument")
+            c = ink(c, colors)
+        elif op == "legible":
+            if rest not in colors:
+                raise ThemeError(f"{where}: legible on unknown role {rest!r}")
+            c = legible(c, colors[rest], pole(colors[rest]), TEXT_CONTRAST)
         elif op in ("hex", "bare", "0x", "rgb", "rgba"):
             if i != len(filters) - 1:
                 raise ThemeError(f"{where}: format filter {op!r} must come last")

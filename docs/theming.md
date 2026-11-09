@@ -127,7 +127,10 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 - Templates: any `<app>/**/NAME.tmpl` renders to `NAME` beside it (listed in `<app>/.gitignore`).
   `{{role}}` → `#rrggbb`. Filters: `|bare` (`rrggbb`), `|hex:88` / `|bare:88` (alpha), `|0x` /
   `|0x:33` (mango `0xRRGGBBAA`), `|rgb` (`r, g, b`), `|rgba:0.9`, `|mix:<role>:<0-1>` (chainable,
-  before the format). Also `{{name}} {{slug}} {{variant}} {{prefer_dark}} {{gtk_theme}} {{color_scheme}}`.
+  before the format). Contrast filters, also chainable: `|ink` turns a background into its text
+  color (`bg_desktop` or `fg_bright`, whichever reads better, pushed to WCAG AA 4.5:1), e.g.
+  `{{accent|mix:bg_surface:0.3|ink}}`; `|legible:<role>` nudges a foreground until it reads at
+  4.5:1 on that role (syntax colors from the ANSI set on a light palette). Also `{{name}} {{slug}} {{variant}} {{prefer_dark}} {{gtk_theme}} {{color_scheme}}`.
   An unknown role or filter aborts before anything is written; all files are swapped in at once.
 - Reload hooks: every `<app>/reload.sh` runs in parallel after `theme set`, with `THEME_NAME
   THEME_SLUG THEME_VARIANT THEME_ROOT`; a failure shows a critical notification.
