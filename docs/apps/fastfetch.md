@@ -1,6 +1,6 @@
 # fastfetch
 
-System summary with a perler-bead Godzilla, drawn as sixel by foot.
+System summary with a perler-bead Godzilla, drawn with kitty's graphics protocol.
 
 `logo.png` came from a photo of the beadwork: cropped to the beads, box-downsampled to one pixel per bead (72x110), reduced to 6 colors, scaled up 6x with nearest-neighbour. Only `config.jsonc` and `logo.png` are linked, so other presets in `~/.config/fastfetch/` stay yours. Run it from an open terminal: started in the instant a window opens, it can read the size before mango tiles the window and stretch the logo.
 

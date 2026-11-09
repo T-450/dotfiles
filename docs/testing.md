@@ -18,7 +18,7 @@ tools/docs --drift              # this machine's packages vs every <app>/package
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
-require_command foot
+require_command kitty
 scratch_home                     # HOME=<fresh dir>, XDG_* unset: nothing reaches the real home
 ...
 pass "what held"                 # ok - what held

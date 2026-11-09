@@ -4,7 +4,7 @@ Defined in `mango/.config/mango/bind.conf`.
 
 | keys | action |
 |---|---|
-| alt+return | foot |
+| alt+return | kitty |
 | alt+space / super+d | rofi launcher |
 | super+return | firefox |
 | super+v | clipboard history |

@@ -111,7 +111,7 @@ runtime, or language server goes in mise's config instead:
 3. Mark the folder as linked into your home:
 
 	```bash
-	cp foot/.stow-local-ignore btop/
+	cp kitty/.stow-local-ignore btop/
 	```
 
 4. Install it. The command upgrades the system, installs btop, and links the config:

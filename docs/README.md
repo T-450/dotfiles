@@ -24,14 +24,14 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
 | [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code |
 | [clipboard](apps/clipboard.md) | Clipboard history (cliphist) and persistence after the source app quits (wl-clip-persist) | wl-clipboard, cliphist, wl-clip-persist |
-| [fastfetch](apps/fastfetch.md) | System summary with a perler-bead Godzilla, drawn as sixel by foot | fastfetch |
+| [fastfetch](apps/fastfetch.md) | System summary with a perler-bead Godzilla, drawn with kitty's graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
-| [foot](apps/foot.md) | The terminal (alt+return) | foot |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS | git, github-cli |
 | [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette) | helix, jdtls, jre-openjdk |
+| [kitty](apps/kitty.md) | The terminal (alt+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |

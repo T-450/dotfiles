@@ -410,7 +410,7 @@ LITERALS = [
     re.compile(r"#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?\b"),
     re.compile(r"\b0x[0-9a-fA-F]{8}\b"),
     re.compile(r"\brgba?\(\s*\d"),
-    re.compile(r"=\s*[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?\s*$"),  # foot/swaylock bare hex
+    re.compile(r"=\s*[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?\s*$"),  # swaylock bare hex
 ]
 # palettes hold the colors; the engine and its tests name some on purpose
 TRANSPARENT = re.compile(r"(?:#|0x)?\b0{8}\b")

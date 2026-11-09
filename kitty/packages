@@ -1,0 +1,2 @@
+kitty
+xdg-terminal-exec   # GLib launches Terminal=true apps through it; its list names kitty
