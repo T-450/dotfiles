@@ -167,6 +167,12 @@ aube = { path = "locks/npm-typescript/7.0.2", digest = "sha256:3d06b3b23564c68cd
 backend = "npm:typescript"
 specifiers = ["7"]
 
+[[tools."npm:typescript"]]
+version = "6.0.3"
+aube = { path = "locks/npm-typescript/6.0.3", digest = "sha256:bfd4f60761264c1fe455bfca4cc3841cabe82be4d3aa7c85d578f29f6a674804" }
+backend = "npm:typescript"
+specifiers = ["6"]
+
 [[tools."npm:typescript-language-server"]]
 version = "6.0.3"
 aube = { path = "locks/npm-typescript-language-server/6.0.3", digest = "sha256:e4cdcc07515542ffa6a9a4f6a23faa66433e1c1b54b110d71fc149e9894775c9" }

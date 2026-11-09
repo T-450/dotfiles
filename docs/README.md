@@ -31,7 +31,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [git](apps/git.md) | (what it is, one sentence.) | git, github-cli |
 | [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
 | [gtk](apps/gtk.md) | GTK 3/4 apps: Adwaita, with palette colors through `gtk.css` and the dark/light preference from the palette | — |
-| [helix](apps/helix.md) | Helix, a modal editor (default config; its colors follow the terminal's palette) | helix |
+| [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette) | helix, jdtls, jre-openjdk |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, qt6-wayland, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |

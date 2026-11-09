@@ -86,7 +86,7 @@ Which apps use each role (generated from the templates):
 | `git_email` | git |
 | `git_name` | git |
 | `gtk_theme` | gtk |
-| `home` | runner-up |
+| `home` | helix, runner-up |
 | `link` | claude, foot, greeter, gtk, opencode, qutebrowser, rofi, theme |
 | `name` | claude, fastfetch, firefox, foot, greeter, gtk, mako, mango, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |

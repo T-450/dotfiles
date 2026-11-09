@@ -1,0 +1,58 @@
+# Language servers the toolchain installs (mise/.config/mise/config.toml, clang/, helix/packages).
+# Helix's built-in lists name more servers than are installed; naming ours keeps --health clean.
+[language-server.roslyn-language-server]
+command = "roslyn-language-server"
+args = ["--stdio", "--autoLoadProjects"]
+
+# TypeScript 7 ships no tsserver, so typescript-language-server runs TypeScript 6's, which mise
+# installs next to 7 (mise/.config/mise/config.toml); `6` is mise's alias for the locked 6.x
+[language-server.typescript-language-server.config.tsserver]
+path = "{{home}}/.local/share/mise/installs/npm-typescript/6/node_modules/typescript/lib"
+
+[language-server.biome]
+command = "biome"
+args = ["lsp-proxy"]
+
+[[language]]
+name = "python"
+language-servers = ["ty", "ruff"]
+
+[[language]]
+name = "typescript"
+language-servers = [{ name = "typescript-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "tsx"
+language-servers = [{ name = "typescript-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "javascript"
+language-servers = [{ name = "typescript-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "jsx"
+language-servers = [{ name = "typescript-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "json"
+language-servers = [{ name = "vscode-json-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "jsonc"
+language-servers = [{ name = "vscode-json-language-server", except-features = ["format"] }, "biome"]
+
+[[language]]
+name = "c-sharp"
+language-servers = ["roslyn-language-server"]
+
+[[language]]
+name = "toml"
+language-servers = ["tombi"]
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
+
+[[language]]
+name = "markdown"
+language-servers = ["marksman"]

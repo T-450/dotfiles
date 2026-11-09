@@ -1,1 +1,3 @@
 helix
+jdtls                  # AUR: Java language server; no mise backend ships it (Eclipse's file names are timestamped)
+jre-openjdk            # jdtls's runtime: jdtls needs java-runtime>=21, which the headless JRE does not provide; without this yay picks jdk-openjdk

@@ -27,8 +27,9 @@ rust = { version = "1.99", components = ["rust-analyzer", "rust-src"] }
 node = "26"                                   # active LTS
 pnpm = "12"
 bun = "latest"
-"npm:typescript" = "7"                        # tsc (native)
-"npm:typescript-language-server" = "6"        # bundles TS 6 tsserver: TS 7 has no editor server yet
+# 7 is first on PATH (tsc); 6 is the tsserver typescript-language-server runs (TS 7 ships none)
+"npm:typescript" = ["7", "6"]
+"npm:typescript-language-server" = "6"
 biome = "2"
 "npm:vscode-langservers-extracted" = "4"      # vscode-json-language-server
 # Python: uv owns interpreters per project; no global python (the system's stays /usr/bin/python3)
