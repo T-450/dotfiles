@@ -74,7 +74,7 @@ Which apps use each role (generated from the templates):
 | `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
 | `error` | claude, fastfetch, gtk, mako, mango, mousepad, opencode, qutebrowser, swaylock, theme, waybar |
 | `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme |
-| `fg_disabled` | claude, mousepad, qutebrowser, theme |
+| `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |
 | `fg_editor` | gtk, mousepad, opencode, theme |
 | `fg_muted` | claude, fastfetch, mousepad, opencode, rofi, theme |
 | `fg_secondary` | claude, firefox, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, wlogout |

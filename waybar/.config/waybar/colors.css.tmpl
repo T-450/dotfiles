@@ -6,10 +6,14 @@
 @define-color sel     {{selection_bg}};
 @define-color selfg   {{selection_fg}};
 
-/* segments: every accent role of the palette, its purple and a raised surface (agnoster's dark
-   segment); ink_* = legible text on each */
+/* segments: neutrals (a raised surface, agnoster's dark segment, a grey and a white) serve the
+   static modules, the palette's accents and its purple the live ones; ink_* = legible text on each */
 @define-color raised  {{bg_hover}};
 @define-color ink_raised  {{bg_hover|ink}};
+@define-color grey    {{fg_disabled}};
+@define-color ink_grey    {{fg_disabled|ink}};
+@define-color white   {{fg_text}};
+@define-color ink_white   {{fg_text|ink}};
 @define-color purple  {{ansi13}};
 @define-color ink_purple  {{ansi13|ink}};
 @define-color accent  {{accent}};

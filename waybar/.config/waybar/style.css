@@ -1,5 +1,7 @@
-/* waybar: powerline segments in the agnoster style, each on one of the palette's accents
-   (colors.css). Arrows are drawn in 13px edge columns (transparent borders painted by
+/* waybar: powerline segments in the agnoster style (colors.css). Segments of live values (network,
+   audio, backlight, battery, memory, disk, cpu, night light) take the palette's accents and change
+   with their state; static ones (workspaces, layout, clock, tray, record, power) take its neutrals
+   (raised, grey, white). Arrows are drawn in 13px edge columns (transparent borders painted by
    edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by one of them,
    which paints both colors: GTK repaints only the widget that changed, so a column shared by two
    overlapping widgets would lose one side's half on the other's update.
@@ -51,7 +53,7 @@ menuitem:hover { color: @selfg; background: @sel; }
 #workspaces {
     padding-left: 4px;
     background-image: none, -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
-    background-color: @purple; -gtk-icon-palette: error @purple, success @raised; color: @ink_purple;
+    background-color: @white; -gtk-icon-palette: error @white, success @raised; color: @ink_white;
 }
 #layout {
     background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
@@ -61,17 +63,17 @@ menuitem:hover { color: @selfg; background: @sel; }
 /* the clock, a diamond */
 #clock.day {
     background-image: -gtk-recolor(url("edges/tip-left-symbolic.svg")), none, none;
-    background-color: @badge; -gtk-icon-palette: error @badge; color: @ink_badge;
+    background-color: @raised; -gtk-icon-palette: error @raised; color: @ink_raised;
 }
 #clock.time {
     background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
                       -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
-    background-color: @warn; -gtk-icon-palette: error @warn, warning @badge, success @badge;
-    color: @ink_warn;
+    background-color: @white; -gtk-icon-palette: error @white, warning @raised, success @raised;
+    color: @ink_white;
 }
 #clock.date {
     background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
-    background-color: @badge; -gtk-icon-palette: error @badge; color: @ink_badge;
+    background-color: @raised; -gtk-icon-palette: error @raised; color: @ink_raised;
 }
 
 /* right group, pointing left */
@@ -102,12 +104,14 @@ menuitem:hover { color: @selfg; background: @sel; }
 #custom-nightlight {
     background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
                       -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
-    background-color: @raised; -gtk-icon-palette: error @raised, warning @purple, success @error;
+    background-color: @raised; -gtk-icon-palette: error @raised, warning @purple, success @grey;
     color: @ink_raised;
 }
 /* the tray, the recording dot and power are one block, so the night light's arrow fits whichever
-   of them shows first (the tray hides when empty, the dot while not recording) */
-#tray, #custom-record, #custom-power { background-color: @error; color: @ink_error; }
+   of them shows first (the tray hides when empty, the dot while not recording); the dot is red
+   because it only shows while recording */
+#tray, #custom-record, #custom-power { background-color: @grey; color: @ink_grey; }
+#custom-record { color: @error; }
 #custom-power { padding-right: 12px; }
 
 /* states recolor their own segment and both of its arrows */
@@ -131,7 +135,7 @@ menuitem:hover { color: @selfg; background: @sel; }
     color: @ink_error;
 }
 #custom-nightlight.warm {
-    background-color: @warn; -gtk-icon-palette: error @warn, warning @purple, success @error;
+    background-color: @warn; -gtk-icon-palette: error @warn, warning @purple, success @grey;
     color: @ink_warn;
 }
 #pulseaudio.muted { color: mix(@ink_raised, @raised, 0.4); }
@@ -140,16 +144,16 @@ menuitem:hover { color: @selfg; background: @sel; }
 
 #workspaces button {
     padding: 0 6px;
-    color: mix(@ink_purple, @purple, 0.25);
+    color: mix(@ink_white, @white, 0.4);
     background: none;
     box-shadow: none;
     text-shadow: none;
 }
-#workspaces button.active { color: @ink_purple; box-shadow: inset 0 -2px @ink_purple; }
+#workspaces button.active { color: @ink_white; box-shadow: inset 0 -2px @ink_white; }
 #workspaces button.urgent { background: @error; color: @ink_error; }
-#workspaces button:hover { background: alpha(@ink_purple, 0.15); color: @ink_purple; }
+#workspaces button:hover { background: alpha(@ink_white, 0.15); color: @ink_white; }
 
-#custom-power:hover { color: mix(@ink_error, @error, 0.3); }
+#custom-power:hover { color: mix(@ink_grey, @grey, 0.3); }
 #custom-nightlight:hover { color: mix(@ink_raised, @raised, 0.3); }
 
 /* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's white */
