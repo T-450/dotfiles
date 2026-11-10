@@ -82,6 +82,12 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mise | `mise` | 2026.11.5-2 |
 | mousepad | `mousepad` | 0.7.0-1 |
 | mousepad | `gspell` | 1.14.5-1 |
+| mpv | `mpv` | 1:0.41.0-7 |
+| mpv | `mpv-mpris` | 1.3-1 |
+| mpv | `yt-dlp` | 2026.10.26-1 |
+| mpv | `mpv-uosc` | 5.13.0-1 |
+| mpv | `mpv-thumbfast-git` | r132.0f711de-1 |
+| mpv | `libva-utils` | 2.24.0-1 |
 | opencode | `opencode` | 2.2.6-1 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |

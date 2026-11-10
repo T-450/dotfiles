@@ -38,6 +38,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
+| [mpv](apps/mpv.md) | mpv, the video and audio player, with the uosc on-screen interface in the palette's colors | mpv, mpv-mpris, yt-dlp, mpv-uosc, mpv-thumbfast-git, libva-utils |
 | [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [plymouth](apps/plymouth.md) | The boot and shutdown splash: Plymouth with the `i_use_arch_btw` theme (AUR) | plymouth, plymouth-i_use_arch_btw-git |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |

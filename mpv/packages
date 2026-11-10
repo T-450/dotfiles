@@ -1,0 +1,6 @@
+mpv
+mpv-mpris          # playerctl, so the media keys drive mpv
+yt-dlp
+mpv-uosc           # AUR: the on-screen UI
+mpv-thumbfast-git  # AUR: seekbar thumbnails for uosc
+libva-utils        # vainfo: check hardware decoding
