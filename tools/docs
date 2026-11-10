@@ -99,6 +99,7 @@ def home_files(app):
     out = set()
     for dp, dns, fns in os.walk(root):
         rel = Path(dp).relative_to(root)
+        dns[:] = [d for d in dns if f"/{(rel / d).as_posix()}/" not in skip]  # a generated dir (`/dir/`)
         if rel == Path("."):
             dns[:] = [d for d in dns if d.startswith(".")]
             fns = [f for f in fns if f.startswith(".") and f not in (".gitignore", ".stow-local-ignore")]
