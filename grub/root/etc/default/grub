@@ -3,7 +3,8 @@
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR="Arch"
-# splash: the Plymouth boot splash (plymouth/) shows only when the kernel is asked for it
+# for kernels GRUB boots itself (10_linux); a unified kernel image (UKI) carries its own command line,
+# where plymouth/ adds splash (root/etc/cmdline.d)
 GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet splash"
 GRUB_CMDLINE_LINUX=""
 GRUB_PRELOAD_MODULES="part_gpt part_msdos"
@@ -13,5 +14,8 @@ GRUB_TERMINAL_INPUT=console
 GRUB_GFXMODE=1920x1080x32,auto
 GRUB_GFXPAYLOAD_LINUX=keep
 GRUB_DISABLE_RECOVERY=true
+# no menu entry per firmware boot slot (31_efi_bootnext: Setup, diagnostics, USB, PXE ...); the
+# firmware's own menu stays one entry away (UEFI Firmware Settings)
+GRUB_DISABLE_BOOTNEXT=true
 # ThinkPad-style, dark (pkg/grub-theme-lenovo-thinkpad-efi); on the ESP, beside grub.cfg
 GRUB_THEME="/boot/grub/themes/lenovo-thinkpad-efi-dark/theme.txt"

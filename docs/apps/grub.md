@@ -12,8 +12,11 @@ download and never into this repo. The package installs the theme to
 the partition it boots from rather than from the f2fs root.
 
 `root/etc/default/grub` replaces grub's own file: this machine's settings plus `GRUB_THEME`,
-`GRUB_GFXMODE=1920x1080x32,auto` (the panel's mode) and `splash` on the kernel command line for
-[plymouth](plymouth.md). `setup.sh` runs `grub-mkconfig -o /boot/grub/grub.cfg` only when that
+`GRUB_GFXMODE=1920x1080x32,auto` (the panel's mode), `splash` on the kernel command line for
+[plymouth](plymouth.md) (kernels GRUB boots itself; the UKIs this machine boots carry their own),
+and `GRUB_DISABLE_BOOTNEXT=true`. GRUB 2.16's `31_efi_bootnext` would add a menu entry per firmware
+boot slot (27 on this T14: Setup, diagnostics, USB, PXE and old installs); the menu keeps Arch and
+UEFI Firmware Settings, which opens the firmware's own menu. `setup.sh` runs `grub-mkconfig -o /boot/grub/grub.cfg` only when that
 file or the theme package changed. Their sha256 is kept in `grub-cfg.stamp` (gitignored), and
 grub-mkconfig checks the new file before it replaces the old one. A machine without
 `/boot/grub/grub.cfg` boots with another loader and is skipped.
