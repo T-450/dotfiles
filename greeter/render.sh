@@ -50,6 +50,6 @@ magick -size ${W}x${H} xc:"$THEME_BG_DESKTOP" \
   "$tmp/ring_back.png" -compose over -composite \
   "$tmp/planet.png" -geometry +$((CX-R))+$((CY-R)) -compose over -composite \
   "$tmp/ring_front.png" -compose over -composite \
-  -depth 8 "$out"
+  -depth 8 -define png:exclude-chunks=date,time "$out" # no timestamps: same palette, same bytes
 echo "$inputs" >"$stamp"
 echo "render  greeter/$out"
