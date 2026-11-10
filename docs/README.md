@@ -48,7 +48,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [rofi](apps/rofi.md) | The launcher (super+d) and every menu: keybindings (super+/), clipboard history (super+v), theme picker, night light | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (ctrl+alt+a) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
-| [swaybg](apps/swaybg.md) | The wallpaper: Neptune in ASCII characters on dark palettes, the plain `bg_desktop` color on light ones | swaybg, imagemagick |
+| [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
 | [swaylock](apps/swaylock.md) | The lock screen (super+l, and after 5 min idle) | swaylock |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
@@ -57,6 +57,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
 | [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as powerline segments, colored from the palette | waybar, pamixer |
+| [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
 | [wlogout](apps/wlogout.md) | The power menu (super+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (agnoster prompt, git and mise plugins) | zsh, oh-my-zsh-git |

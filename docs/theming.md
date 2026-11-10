@@ -146,7 +146,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | rofi | `@import "colors.rasi"` in `themes/quickinput.rasi` | next launch |
 | mako | `include=~/.config/mako/colors` | `makoctl reload` (hook) |
 | swaylock | whole `config` rendered (no include support) | next lock |
-| swaybg | `~/.config/swaybg/wallpaper.png` (`swaybg/render.sh`: the image on dark palettes, the desktop color on light ones) | swaybg restart (hook) |
+| swaybg | `~/.config/swaybg/wallpaper.png` (`swaybg/render.sh`: the image on dark palettes, the desktop color on light ones), shown unless a waypaper pick replaced it | swaybg restart (hook) |
 | slurp | `~/.config/theme/colors.sh` | next use |
 | qutebrowser | `config.source("colors.py")` | `:config-source` in a running browser (hook) |
 | Firefox | `chrome/userChrome.css` in the profile | restart Firefox |

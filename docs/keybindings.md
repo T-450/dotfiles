@@ -19,6 +19,7 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | super+l | lock |
 | super+escape | power menu |
 | super+shift+t | theme picker (rofi, `theme pick`) |
+| super+w | wallpaper picker (waypaper; a pick stays across logins and `theme set`) |
 | ctrl+alt+\\ / ctrl+alt+backspace | restore last / dismiss all notifications |
 | ctrl+alt+shift+\\ | toggle do-not-disturb |
 | super+h | toggle the bar (waybar) |

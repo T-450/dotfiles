@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# wallpaper-set FILE: make FILE the wallpaper, now and at every login. Points
+# ~/.local/state/wallpaper/current, which swaybg.service shows, at FILE and restarts swaybg.
+# waypaper runs it after each pick (its post_command, set by waypaper/setup.sh).
+set -euo pipefail
+file=${1:-}
+[[ -f $file ]] || { echo "usage: wallpaper-set FILE ('$file' is not a file; the wallpaper stays)" >&2; exit 1; }
+state=$HOME/.local/state/wallpaper
+mkdir -p "$state"
+# -s keeps a link's own path: a pick of ~/.config/swaybg/wallpaper.png then follows `theme set`,
+# which renders a new file there
+ln -sfn -- "$(realpath -s -- "$file")" "$state/current"
+systemctl --user restart swaybg.service

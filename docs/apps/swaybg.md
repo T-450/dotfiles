@@ -1,13 +1,18 @@
 # swaybg
 
-The wallpaper: Neptune in ASCII characters on dark palettes, the plain `bg_desktop` color on light ones.
+The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
 
 The image is [lyje9y on wallhaven](https://wallhaven.cc/w/lyje9y), uploaded by Jesseract. Its
 original source and license are unknown, so the repo never holds it.
 `pkg/wallpaper-neptune-ascii/PKGBUILD` downloads it, checks its SHA-256, and installs it to
 `/usr/share/backgrounds/neptune-ascii.png`. `render.sh` scales it to 3840x2160, the largest output,
-as `~/.config/swaybg/wallpaper.png`. `swaybg.service` shows that file with `-m fill` over the
-palette's desktop color, and `theme set` restarts it.
+as `~/.config/swaybg/wallpaper.png`.
+
+`swaybg.service` shows `~/.local/state/wallpaper/current` with `-m fill` over the palette's desktop
+color, and `theme set` restarts it. That link is the current wallpaper: `wallpaper-set FILE`
+points it at FILE and restarts swaybg ([waypaper](waypaper.md) runs it after each pick), and
+`setup.sh` points it back at `wallpaper.png` when it is missing or its file is gone. It lives in
+`~/.local/state`, outside the repo, so a pick survives logins and `theme set`.
 
 The image passes the readability checks for every dark palette: the 15% of it that shows through
 an unfocused window keeps `fg_muted` text at 4.5:1 or better. It suits none of the light palettes.
@@ -22,8 +27,11 @@ an unfocused window keeps `fg_muted` text at 4.5:1 or better. It suits none of t
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/systemd/user/swaybg.service`
+- `~/.local/bin/wallpaper-set`
 
 **User units** (enabled by `install.sh --units`): `swaybg.service`
+
+**`setup.sh`** (run by `install.sh --setup`): swaybg.service shows ~/.local/state/wallpaper/current, a link that wallpaper-set points at each pick. When it is missing, or its file is gone, it goes back to the palette's own wallpaper, ~/.config/swaybg/wallpaper.png (render.sh).
 
 **`render.sh`** (run by `theme` after rendering): the desktop wallpaper, .config/swaybg/wallpaper.png (linked into your home). Dark palettes get Neptune in ASCII (pkg/wallpaper-neptune-ascii) at 3840x2160, the largest output; the near-black image suits every dark palette as it is. Light palettes get their plain desktop color. Run by `theme` after rendering templates; remade only when its inputs changed.
 
