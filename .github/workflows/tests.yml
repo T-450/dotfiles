@@ -39,7 +39,7 @@ jobs:
           MISE_GITHUB_TOKEN: ${{ github.token }}
         run: |
           ./install.sh 2>&1 | tee "$RUNNER_TEMP/second.log"
-          if grep -E '^(install |backup|unlink|prune|enable |gsettings|render |linger|xdg )' "$RUNNER_TEMP/second.log"; then
+          if grep -E '^(install |backup|unlink|prune|enable |gsettings|render |linger|xdg |rebuild )' "$RUNNER_TEMP/second.log"; then
             echo "::error::the second run changed something"; exit 1
           fi
       - name: install.sh --check

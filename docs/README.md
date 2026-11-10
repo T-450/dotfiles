@@ -38,6 +38,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
 | [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
+| [plymouth](apps/plymouth.md) | The boot and shutdown splash: Plymouth with the `i_use_arch_btw` theme (AUR) | plymouth, plymouth-i_use_arch_btw-git |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
@@ -75,7 +76,8 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
     *.tmpl           templates (palette colors, {{user}}, {{home}}), rendered in place, anywhere
     render.sh        art made for the palette that isn't a template (the wallpapers)
     reload.sh        recolors the running app after `theme set`
-    setup.sh         state that isn't a file: services, gsettings, login shell
+    setup.sh         state that isn't a file: services, gsettings, login shell; boot images,
+                     rebuilt when their inputs change
     .config/systemd/user/*.service   user units, enabled by install.sh
     .stow-local-ignore  marks the app as linked; keeps everything but dot-entries out of $HOME
     .gitignore       rendered and generated files

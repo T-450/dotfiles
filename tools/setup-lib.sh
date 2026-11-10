@@ -1,6 +1,6 @@
 # tools/setup-lib.sh: helpers for <app>/setup.sh and install.sh (sourced): enable_system,
-# user_bus, retry. A helper that changes state checks it first and acts (and prints) only on a
-# difference, so a second run is silent.
+# user_bus, retry, when_changed. A helper that changes state checks it first and acts (and prints)
+# only on a difference, so a second run is silent.
 # Usage in a setup.sh:  . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 set -euo pipefail
 # Ctrl+C ends the run. yay and pacman catch SIGINT and exit 1, so without this bash can't tell an
@@ -28,4 +28,17 @@ retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file mus
 		((i < 3)) && echo "retry   attempt $i of 3 failed: $*; again in 15s" >&2 && sleep 15
 	done
 	return 1
+}
+
+# when_changed STAMP CMD...: run CMD when the inputs on stdin (file contents, `pacman -Q` lines)
+# hash differently from the last run that succeeded, whose sha256 STAMP holds. A failed CMD leaves
+# STAMP as it was, so the next run tries again. bash ignores set -e inside a tested command, so CMD
+# chains its steps with &&.
+when_changed() {
+	local stamp=$1 sum
+	shift
+	sum=$(sha256sum | cut -d' ' -f1)
+	[[ $(cat -- "$stamp" 2>/dev/null) == "$sum" ]] && return 0
+	"$@" || return
+	echo "$sum" >"$stamp"
 }
