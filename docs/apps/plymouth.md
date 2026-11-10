@@ -6,11 +6,17 @@ It shows between the GRUB menu and the login screen, and again at shutdown and r
 the boot messages behind it. It takes three things: the `plymouth` hook in the initramfs, right
 after `udev` (`root/etc/mkinitcpio.conf.d/plymouth.conf`, a drop-in that leaves
 `/etc/mkinitcpio.conf` as installed), the theme in `/etc/plymouth/plymouthd.conf`, and `splash`
-on the kernel command line ([grub](grub.md)). greetd already starts after the splash ends
+on the kernel command line. This machine boots unified kernel images (UKIs: mkinitcpio's presets
+write `/boot/EFI/Linux/*.efi`, which GRUB lists with its `uki` command), and a UKI carries its own
+command line: `/etc/kernel/cmdline` (this machine's `root=`), then `/etc/cmdline.d/*.conf`, where
+`root/etc/cmdline.d/plymouth.conf` adds `quiet loglevel=3 splash`. Kernels GRUB boots itself get
+`splash` from `/etc/default/grub` ([grub](grub.md)). greetd already starts after the splash ends
 (`After=plymouth-quit-wait.service`).
 
 `setup.sh` rebuilds the images with `mkinitcpio -P` only when their inputs changed: the
-mkinitcpio config, `plymouthd.conf`, and the installed versions of both packages. Their sha256
+mkinitcpio config, `plymouthd.conf`, the kernel command line files, and the installed versions of
+both packages. When the presets build UKIs but `/etc/kernel/cmdline` is missing, it stops instead:
+the drop-in alone would leave the images without `root=`. Their sha256
 is kept in `initramfs.stamp` (gitignored). A failed build leaves the stamp alone, so the next
 `install.sh` tries again. pacman's own mkinitcpio hook covers kernel and plymouth upgrades but
 not the theme's.
@@ -22,8 +28,9 @@ not the theme's.
 
 **System files** (`plymouth/root/`, copied by `install.sh --system`):
 
+- `/etc/cmdline.d/plymouth.conf`
 - `/etc/mkinitcpio.conf.d/plymouth.conf`
 - `/etc/plymouth/plymouthd.conf`
 
-**`setup.sh`** (run by `install.sh --setup`): rebuild the initramfs images (mkinitcpio -P) when what goes into them changed: the mkinitcpio config (root/ adds the plymouth hook), plymouthd.conf (the theme) or the plymouth and theme packages. pacman's mkinitcpio hook misses a theme upgrade (/usr/share/plymouth/themes).
+**`setup.sh`** (run by `install.sh --setup`): rebuild the initramfs images (mkinitcpio -P) when what goes into them changed: the mkinitcpio config (root/ adds the plymouth hook), plymouthd.conf (the theme), the kernel command line a UKI embeds (/etc/kernel/cmdline, root/ adds splash in /etc/cmdline.d) or the plymouth and theme packages. pacman's mkinitcpio hook misses a theme upgrade (/usr/share/plymouth/themes).
 <!-- end generated -->
