@@ -3,6 +3,9 @@
 # difference, so a second run is silent.
 # Usage in a setup.sh:  . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 set -euo pipefail
+# Ctrl+C ends the run. yay and pacman catch SIGINT and exit 1, so without this bash can't tell an
+# interrupt from a failure and retry() would run them again.
+trap 'echo "interrupted" >&2; exit 130' INT
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 
 # enable_system UNIT...: enable (and start) system units not enabled yet
