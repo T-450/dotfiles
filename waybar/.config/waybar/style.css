@@ -1,15 +1,17 @@
-/* waybar: powerline segments in the agnoster style (colors.css). Segments of live values (network,
-   audio, backlight, battery, memory, disk, cpu, night light) take the palette's accents and change
-   with their state; static ones (workspaces, layout, clock, tray, record, power) take its neutrals
-   (raised, grey, white). Arrows are drawn in 13px edge columns (transparent borders painted by
+/* waybar: the right-hand live modules (network, audio, backlight, battery, memory, disk, cpu, night
+   light) plus the tray, record and power are agnoster-style powerline segments (colors.css). The
+   live ones take the palette's accents and change with their state; the tray, record and power take
+   its grey. Blue backgrounds carry white text (selection_fg). The workspaces, the layout icon and
+   the clock are flat squared dwm-style cells with no arrows: tags on the bar itself, the selected
+   one a blue block, then the layout and the clock's day, time and date as separate blocks.
+   Powerline arrows are drawn in 13px edge columns (transparent borders painted by
    edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by one of them,
    which paints both colors: GTK repaints only the widget that changed, so a column shared by two
    overlapping widgets would lose one side's half on the other's update.
    The edge SVGs are recolored through -gtk-icon-palette: error = the segment's own color,
    warning = its left neighbor's, success = its right neighbor's.
-     tip-left/tip-right   own arrow into the bar
+     tip-left             own arrow into the bar
      own-left             own arrow pointing left over the left neighbor's color
-     own-right            own arrow pointing right over the right neighbor's color
      host-right           the right neighbor's arrow pointing left over the own color
    A segment whose color changes with its state (network, battery, disk, night light) owns both of
    its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart. */
@@ -32,7 +34,7 @@ menuitem { color: @fg; }
 menuitem:hover { color: @selfg; background: @sel; }
 
 /* geometry: the last background layer is none so background-color stays between the columns */
-#workspaces, #layout, #clock, #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
+#network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
 #custom-nightlight, #tray, #custom-record, #custom-power {
     padding: 0 6px;
     border-style: solid;
@@ -44,37 +46,54 @@ menuitem:hover { color: @selfg; background: @sel; }
     background-size: 13px 100%;
     background-position: left, right;
 }
-#clock.day { border-left-width: 13px; }
-#workspaces, #layout, #clock.date { border-right-width: 13px; }
 #backlight { border-left-width: 13px; }
-#clock.time, #network, #battery, #disk, #custom-nightlight { border-width: 0 13px; }
+#network, #battery, #disk, #custom-nightlight { border-width: 0 13px; }
 
-/* left group, pointing right */
-#workspaces {
-    padding-left: 4px;
-    background-image: none, -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
-    background-color: @white; -gtk-icon-palette: error @white, success @raised; color: @ink_white;
+/* left group and clock: flat squared dwm-style cells, no edge columns */
+#workspaces { padding: 0; background: transparent; color: @fg; }
+#workspaces button {
+    min-width: 26px;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: @fg;
+    box-shadow: none;
+    text-shadow: none;
 }
+#workspaces button.active { background: @sel; color: @selfg; }
+#workspaces button.urgent { background: @error; color: @ink_error; }
+#workspaces button:hover:not(.active) { background: @raised; color: @fg; }
+
+/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's text color */
 #layout {
-    background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
-    background-color: @raised; -gtk-icon-palette: error @raised;
+    min-width: 26px;
+    padding: 0;
+    background-color: transparent;
+    color: @fg;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto;
 }
+#layout:hover { color: mix(@fg, @bar, 0.3); }
+#layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
+#layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
+#layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
+#layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")); }
+#layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")); }
+#layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")); }
+#layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")); }
+#layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")); }
+#layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")); }
+#layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")); }
+#layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")); }
+#layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")); }
+#layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
+#layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
-/* the clock, a diamond */
-#clock.day {
-    background-image: -gtk-recolor(url("edges/tip-left-symbolic.svg")), none, none;
-    background-color: @raised; -gtk-icon-palette: error @raised; color: @ink_raised;
-}
-#clock.time {
-    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
-                      -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
-    background-color: @white; -gtk-icon-palette: error @white, warning @raised, success @raised;
-    color: @ink_white;
-}
-#clock.date {
-    background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
-    background-color: @raised; -gtk-icon-palette: error @raised; color: @ink_raised;
-}
+/* the clock: day, time and date as three flat cells */
+#clock { padding: 0 10px; }
+#clock.day, #clock.date { background-color: @raised; color: @ink_raised; }
+#clock.time { background-color: @white; color: @ink_white; }
 
 /* right group, pointing left */
 #network {
@@ -142,40 +161,5 @@ menuitem:hover { color: @selfg; background: @sel; }
 /* dimmed with mix(), not alpha(): GTK3 applies the text color's alpha to the recolored edges too */
 #custom-nightlight.off { color: mix(@ink_raised, @raised, 0.4); }
 
-#workspaces button {
-    padding: 0 6px;
-    color: mix(@ink_white, @white, 0.4);
-    background: none;
-    box-shadow: none;
-    text-shadow: none;
-}
-#workspaces button.active { color: @ink_white; box-shadow: inset 0 -2px @ink_white; }
-#workspaces button.urgent { background: @error; color: @ink_error; }
-#workspaces button:hover { background: alpha(@ink_white, 0.15); color: @ink_white; }
-
 #custom-power:hover { color: mix(@ink_grey, @grey, 0.3); }
 #custom-nightlight:hover { color: mix(@ink_raised, @raised, 0.3); }
-
-/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's white */
-#layout {
-    min-width: 14px;
-    color: @ink_raised;
-    background-size: 13px 100%, 13px 100%, auto;
-    background-position: left, right, center;
-    background-clip: border-box, border-box, border-box, padding-box;
-}
-#layout:hover { color: mix(@ink_raised, @raised, 0.3); }
-#layout.T  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/tile-symbolic.svg")), none; }
-#layout.S  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/scroller-symbolic.svg")), none; }
-#layout.G  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/grid-symbolic.svg")), none; }
-#layout.M  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/monocle-symbolic.svg")), none; }
-#layout.K  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/deck-symbolic.svg")), none; }
-#layout.CT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/center_tile-symbolic.svg")), none; }
-#layout.RT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/right_tile-symbolic.svg")), none; }
-#layout.VS { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), none; }
-#layout.VT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), none; }
-#layout.VG { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), none; }
-#layout.VK { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), none; }
-#layout.DW { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/dwindle-symbolic.svg")), none; }
-#layout.F  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/fair-symbolic.svg")), none; }
-#layout.VF { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")), none; }

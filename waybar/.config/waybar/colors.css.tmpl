@@ -3,11 +3,13 @@
 @define-color widget  {{bg_widget}};
 @define-color line    {{border_hairline}};
 @define-color fg      {{fg_text}};
-@define-color sel     {{selection_bg}};
+@define-color sel     {{selection_bg|legible:selection_fg}};
 @define-color selfg   {{selection_fg}};
 
-/* segments: neutrals (a raised surface, agnoster's dark segment, a grey and a white) serve the
-   static modules, the palette's accents and its purple the live ones; ink_* = legible text on each */
+/* segments: neutrals (a raised surface, a grey and a white) serve the static modules, the palette's
+   accents and its purple the live ones; ink_* = legible text on each. Blues carry white text
+   (selection_fg), each darkened only as far as white needs; disk's accent is mixed toward the
+   desktop first so it stays distinct from memory's badge beside it. */
 @define-color raised  {{bg_hover}};
 @define-color ink_raised  {{bg_hover|ink}};
 @define-color grey    {{fg_disabled}};
@@ -16,12 +18,12 @@
 @define-color ink_white   {{fg_text|ink}};
 @define-color purple  {{ansi13}};
 @define-color ink_purple  {{ansi13|ink}};
-@define-color accent  {{accent}};
-@define-color ink_accent  {{accent|ink}};
-@define-color link    {{link}};
-@define-color ink_link    {{link|ink}};
-@define-color badge   {{badge}};
-@define-color ink_badge   {{badge|ink}};
+@define-color accent  {{accent|mix:bg_desktop:0.4|legible:selection_fg}};
+@define-color ink_accent  {{selection_fg}};
+@define-color link    {{link|legible:selection_fg}};
+@define-color ink_link    {{selection_fg}};
+@define-color badge   {{badge|legible:selection_fg}};
+@define-color ink_badge   {{selection_fg}};
 @define-color success {{success}};
 @define-color ink_success {{success|ink}};
 @define-color warn    {{warning}};
