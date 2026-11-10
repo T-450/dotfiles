@@ -54,7 +54,7 @@ Which apps use each role (generated from the templates):
 | `ansi10` | kitty, mousepad, opencode |
 | `ansi11` | kitty, mousepad, opencode |
 | `ansi12` | kitty, mousepad, opencode |
-| `ansi13` | claude, kitty, mousepad, waybar |
+| `ansi13` | claude, fastfetch, kitty, mousepad, waybar |
 | `ansi14` | kitty, mousepad, opencode |
 | `ansi15` | kitty |
 | `ansi2` | kitty |
@@ -78,7 +78,7 @@ Which apps use each role (generated from the templates):
 | `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
 | `error` | claude, fastfetch, greeter, gtk, mako, mango, mousepad, opencode, qutebrowser, swaylock, theme, waybar |
 | `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme |
-| `fg_disabled` | claude, fastfetch, mousepad, qutebrowser, theme |
+| `fg_disabled` | claude, mousepad, qutebrowser, theme |
 | `fg_editor` | gtk, mousepad, opencode, theme |
 | `fg_muted` | claude, fastfetch, greeter, mousepad, opencode, rofi, theme |
 | `fg_secondary` | claude, firefox, greeter, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, wlogout |

@@ -1,0 +1,18 @@
+# The fastfetch logo's source (fastfetch/render.sh): an illustration of Godzilla breathing fire
+# into a starry sky, as pinned on Pinterest (artist uncredited there). Its license is unknown, so
+# it is downloaded here and checked against its SHA-256, never committed to this public repo.
+pkgname=godzilla-starry-sky-art
+pkgver=1
+pkgrel=1
+pkgdesc='Godzilla breathing fire into a starry sky, 1200x2400 (Pinterest)'
+arch=(any)
+url='https://i.pinimg.com/1200x/9b/b0/51/9bb0517724fab67d2fb13df5a7f0b727.jpg'
+license=(LicenseRef-unknown)
+options=(!strip !debug)
+source=("art.jpg::$url")
+noextract=(art.jpg)
+sha256sums=('e25a265dfb4421b6e2780ec2501f32b25bb2cd13028e35db4a19a605aa67edc6')
+
+package() {
+	install -Dm644 art.jpg "$pkgdir/usr/share/$pkgname/art.jpg"
+}
