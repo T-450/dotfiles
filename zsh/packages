@@ -1,3 +1,3 @@
-# zsh with oh-my-zsh (agnoster prompt; its glyphs come from the Nerd Font in fonts/)
+# zsh with oh-my-zsh (cdimascio's lambda prompt, built in pkg/)
 zsh
 oh-my-zsh-git   # AUR: /usr/share/oh-my-zsh

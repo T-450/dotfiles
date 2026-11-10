@@ -1,0 +1,20 @@
+# The prompt (zsh/.zshrc, ZSH_THEME): cdimascio's lambda theme for oh-my-zsh, which no repo or
+# AUR package ships. Built from upstream's last commit, pinned. It goes into oh-my-zsh's custom
+# themes dir, where ZSH_THEME finds it by name.
+pkgname=zsh-theme-cdimascio-lambda
+_commit=b03ef9433bd04ba637f3edce3a5a78926fdcc043
+pkgver=20200425 # commit date
+pkgrel=1
+pkgdesc="cdimascio's lambda prompt for oh-my-zsh"
+arch=(any)
+url='https://github.com/cdimascio/lambda-zsh-theme'
+license=(MIT)
+depends=(oh-my-zsh-git)
+source=("$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz")
+sha256sums=('8c066838c8206a9599e00ef5132920f7de2888f71815ef99c523b795e05791c9')
+
+package() {
+	cd "lambda-zsh-theme-$_commit"
+	install -Dm644 -t "$pkgdir/usr/share/oh-my-zsh/custom/themes" cdimascio-lambda.zsh-theme
+	install -Dm644 -t "$pkgdir/usr/share/licenses/$pkgname" LICENSE
+}
