@@ -1,0 +1,17 @@
+# GRUB's settings (grub/). This file replaces grub's own, whose comments describe each key.
+# grub/setup.sh regenerates /boot/grub/grub.cfg when it changes.
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="Arch"
+# splash: the Plymouth boot splash (plymouth/) shows only when the kernel is asked for it
+GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet splash"
+GRUB_CMDLINE_LINUX=""
+GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TERMINAL_INPUT=console
+# the theme is drawn for 1920x1080, the panel's mode; auto if the firmware doesn't offer it
+GRUB_GFXMODE=1920x1080x32,auto
+GRUB_GFXPAYLOAD_LINUX=keep
+GRUB_DISABLE_RECOVERY=true
+# ThinkPad-style, dark (pkg/grub-theme-lenovo-thinkpad-efi); on the ESP, beside grub.cfg
+GRUB_THEME="/boot/grub/themes/lenovo-thinkpad-efi-dark/theme.txt"

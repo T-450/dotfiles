@@ -1,0 +1,45 @@
+# The GRUB theme (grub/root/etc/default/grub): the boot menu of new ThinkPads, redrawn by
+# AlexanderKh, dark, at scale 1.5 for full HD. Built from a pinned commit. The Lenovo and ThinkPad
+# logos are Lenovo's, so they come with that download and never into this public repo.
+pkgname=grub-theme-lenovo-thinkpad-efi
+_commit=ef7d7bc8c5edccf2c5e2de450d54fb6287bd3552
+pkgver=20241223 # commit date
+pkgrel=1
+pkgdesc='Lenovo ThinkPad EFI GRUB theme, dark, scale 1.5 (full HD)'
+arch=(any)
+url='https://github.com/AlexanderKh/lenovo-thinkpad-efi-grub-theme'
+# own work MIT; Roboto Apache-2.0; Terminus TTF OFL-1.1; icon packs CC-BY-3.0, WTFPL and one "free
+# for commercial use"; the logos are Lenovo's (THIRD_PARTY_ASSETS.txt)
+license=(MIT Apache-2.0 OFL-1.1 CC-BY-3.0 WTFPL LicenseRef-free-for-commercial-use LicenseRef-Lenovo-logos)
+depends=(grub)
+makedepends=(grub imagemagick gettext librsvg)
+options=(!strip !debug)
+source=("$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz")
+sha256sums=('3ab4195350a678447cf61d78a42303b3f5a37065b2d945432ce113a6d716eeae')
+
+prepare() {
+	cd "lenovo-thinkpad-efi-grub-theme-$_commit"
+	sed -i '/^# ZIP for distribution/,$d' build.sh # a zip for its releases; pacman packs the files
+}
+
+build() {
+	cd "lenovo-thinkpad-efi-grub-theme-$_commit"
+	# build.sh draws the logos and icons with svgexport (npm, headless Chrome), as
+	# `svgexport IN OUT W:H` where W or H may be empty (keep the aspect ratio); rsvg-convert does it
+	svgexport() {
+		local w=${3%%:*} h=${3#*:}
+		rsvg-convert ${w:+-w "$w"} ${h:+-h "$h"} -o "$2" "$1"
+	}
+	convert() { magick "$@"; } # ImageMagick 7's convert warns on every call that it is deprecated
+	export -f svgexport convert
+	bash -e ./build.sh 1.5 d # -e: build.sh doesn't stop on a failed step; the build must
+}
+
+package() {
+	cd "lenovo-thinkpad-efi-grub-theme-$_commit/build/Lenovo Thinkpad EFI 1.5x-dark"
+	# on the ESP beside grub.cfg, so GRUB reads it from the partition it boots from, not from the
+	# f2fs root
+	install -d "$pkgdir/boot/grub/themes"
+	cp -r lenovo-thinkpad-efi "$pkgdir/boot/grub/themes/lenovo-thinkpad-efi-dark"
+	install -Dm644 -t "$pkgdir/usr/share/licenses/$pkgname" LICENSE.txt THIRD_PARTY_ASSETS.txt
+}
