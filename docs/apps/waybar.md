@@ -2,9 +2,11 @@
 
 The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as powerline segments, colored from the palette.
 
-Segments sit on an accent ramp: the accent at both ends of the bar, blended toward the bar's background inward (`seg_a`, `seg_b`, `seg_c` in `colors.css`), each with its text color from `|ink` so it reads at 4.5:1 on any palette. Every module cuts its own arrow edges out of its background (bar-colored triangles in `style.css`), so there are no separator modules, and a state that recolors a segment (offline, battery or disk low, recording, warm night light) never breaks its edges.
+Segments are agnoster-style arrows, each on one of the palette's colors: its accents (`accent`, `link`, `badge`, `success`, `warning`, `error`), its purple (`ansi13`, the workspaces) and a raised surface (`bg_hover`, agnoster's dark segment). Text comes from `|ink`, so it reads at 4.5:1 on any palette; the layout icon is the palette's white. No two neighbors share a color in Dark 2026 (Light 2026 defines accent, badge and link as one blue, so memory and disk merge there).
 
-Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and the current layout as an AwesomeWM-style icon (`mango/layout`; `layouts/<name>-symbolic.svg`, one per mango layout, tinted with the segment's text color through `-gtk-recolor`; click for the next layout). Center: day, time (calendar tooltip), date. Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), memory, cpu, battery, disk, night light ([wlsunset](wlsunset.md)), tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar; `setup.sh` removes `mangobar-git`.
+The arrows are 13px edge columns painted by `edges/<name>-symbolic.svg`, recolored through `-gtk-icon-palette` (`error` is the segment's color, `warning` and `success` its left and right neighbors'). Each boundary is one column owned by one segment, which paints both colors: waybar repaints only the module that changed, so a column shared by two overlapping modules loses half its arrow whenever the other updates. A segment that changes color with its state (offline, battery or disk low, warm night light) owns both of its arrows, and `config.jsonc` keeps those four apart, so no state ever leaves a stale arrow. The tray, the recording dot and power form one block in the error color, so the arrow before it fits whichever of them shows. Dimmed text (muted, night light off, inactive tags) uses `mix()`, never `alpha()`: GTK3 applies the text color's alpha to the recolored edges too.
+
+Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and the current layout as an AwesomeWM-style icon (`mango/layout`; `layouts/<name>-symbolic.svg`, one per mango layout, tinted through `-gtk-recolor`; click for the next layout). Center: day, time (calendar tooltip), date. Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), battery, memory, disk, cpu, night light ([wlsunset](wlsunset.md)), tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar; `setup.sh` removes `mangobar-git`.
 
 ## Reference
 
@@ -16,6 +18,11 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and t
 - `~/.config/systemd/user/waybar.service`
 - `~/.config/waybar/colors.css`
 - `~/.config/waybar/config.jsonc`
+- `~/.config/waybar/edges/host-right-symbolic.svg`
+- `~/.config/waybar/edges/own-left-symbolic.svg`
+- `~/.config/waybar/edges/own-right-symbolic.svg`
+- `~/.config/waybar/edges/tip-left-symbolic.svg`
+- `~/.config/waybar/edges/tip-right-symbolic.svg`
 - `~/.config/waybar/layouts/center_tile-symbolic.svg`
 - `~/.config/waybar/layouts/deck-symbolic.svg`
 - `~/.config/waybar/layouts/dwindle-symbolic.svg`
@@ -35,7 +42,7 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and t
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`, `warning`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `ansi13`, `badge`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

@@ -54,7 +54,7 @@ Which apps use each role (generated from the templates):
 | `ansi10` | kitty, mousepad, opencode |
 | `ansi11` | kitty, mousepad, opencode |
 | `ansi12` | kitty, mousepad, opencode |
-| `ansi13` | claude, kitty, mousepad |
+| `ansi13` | claude, kitty, mousepad, waybar |
 | `ansi14` | kitty, mousepad, opencode |
 | `ansi15` | kitty |
 | `ansi2` | kitty |
@@ -69,7 +69,7 @@ Which apps use each role (generated from the templates):
 | `art_planet_light` | theme |
 | `art_ring_inner` | theme |
 | `art_ring_outer` | theme |
-| `badge` | mango, mousepad, qutebrowser, theme |
+| `badge` | mango, mousepad, qutebrowser, theme, waybar |
 | `bg_desktop` | claude, firefox, greeter, gtk, mango, mousepad, qutebrowser, swaylock, theme, wlogout |
 | `bg_hover` | claude, firefox, kitty, mousepad, opencode, rofi, swayosd, theme, waybar |
 | `bg_surface` | claude, firefox, gtk, kitty, mousepad, qutebrowser, rofi, theme, waybar |
@@ -86,7 +86,7 @@ Which apps use each role (generated from the templates):
 | `git_email` | git |
 | `git_name` | git |
 | `home` | helix, runner-up |
-| `link` | claude, greeter, gtk, kitty, mousepad, opencode, qutebrowser, rofi, theme |
+| `link` | claude, greeter, gtk, kitty, mousepad, opencode, qutebrowser, rofi, theme, waybar |
 | `name` | claude, fastfetch, firefox, greeter, gtk, kitty, mako, mango, mousepad, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
@@ -94,7 +94,7 @@ Which apps use each role (generated from the templates):
 | `selection_fg` | firefox, gtk, kitty, mousepad, opencode, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
 | `slug` | fastfetch, firefox, greeter, gtk, kitty, mako, mango, mousepad, rofi, swaylock, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, opencode, qutebrowser, theme |
+| `success` | claude, fastfetch, gtk, opencode, qutebrowser, theme, waybar |
 | `term_bg` | claude, kitty, opencode, theme |
 | `term_cursor` | kitty, mousepad, theme |
 | `term_fg` | kitty, theme |

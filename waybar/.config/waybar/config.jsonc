@@ -1,6 +1,6 @@
-// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar) as powerline segments on an
-// accent ramp, colored only from the palette (style.css + colors.css). Each module draws its own
-// arrow edges (style.css), so there are no separator modules. Labels are dimmed with Pango alpha.
+// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar) as powerline segments, each on
+// one of the palette's accents and split by thin chevrons (style.css, colors.css). Each module draws
+// its own arrow edges (style.css + edges/), so there are no separator modules.
 {
     "layer": "top",
     "position": "bottom",
@@ -10,9 +10,11 @@
 
     "modules-left": ["ext/workspaces", "mango/layout"],
     "modules-center": ["clock#day", "clock#time", "clock#date"],
+    // network, battery, disk and the night light change color with their state; none of them sit
+    // side by side, so each owns both of its arrows (style.css)
     "modules-right": [
-        "network", "pulseaudio", "backlight",
-        "memory", "cpu", "battery", "disk",
+        "network", "pulseaudio", "backlight", "battery",
+        "memory", "disk", "cpu",
         "custom/nightlight", "tray", "custom/record", "custom/power"
     ],
 
@@ -58,12 +60,12 @@
     },
     "memory": {
         "interval": 5,
-        "format": "<span alpha='55%'>mem</span> {percentage}%",
+        "format": "mem {percentage}%",
         "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
     },
     "cpu": {
         "interval": 5,
-        "format": "<span alpha='55%'>cpu</span> {usage}%"
+        "format": "cpu {usage}%"
     },
     "battery": {
         "states": { "warning": 30, "critical": 15 },
@@ -76,7 +78,7 @@
         "interval": 30,
         "paths": ["/"],
         "states": { "warning": 80, "critical": 90 },
-        "format": "<span alpha='55%'>disk</span> {percentage_used}%"
+        "format": "disk {percentage_used}%"
     },
     // wlsunset (wlsunset/.local/bin/nightlight): moon = on, sun = off; menu sets mode and temperature
     "custom/nightlight": {

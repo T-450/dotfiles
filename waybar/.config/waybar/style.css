@@ -1,7 +1,16 @@
-/* waybar: powerline segments on an accent ramp (outer ends accent, blending toward the bar).
-   Colors: colors.css, rendered from the active palette by theme.
-   Each segment cuts its own arrow edges out of its background with bar-colored triangles, so a
-   state that recolors one segment (battery low, offline, recording) never breaks its edges. */
+/* waybar: powerline segments in the agnoster style, each on one of the palette's accents
+   (colors.css). Arrows are drawn in 13px edge columns (transparent borders painted by
+   edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by one of them,
+   which paints both colors: GTK repaints only the widget that changed, so a column shared by two
+   overlapping widgets would lose one side's half on the other's update.
+   The edge SVGs are recolored through -gtk-icon-palette: error = the segment's own color,
+   warning = its left neighbor's, success = its right neighbor's.
+     tip-left/tip-right   own arrow into the bar
+     own-left             own arrow pointing left over the left neighbor's color
+     own-right            own arrow pointing right over the right neighbor's color
+     host-right           the right neighbor's arrow pointing left over the own color
+   A segment whose color changes with its state (network, battery, disk, night light) owns both of
+   its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart. */
 @import "colors.css";
 
 * {
@@ -16,209 +25,153 @@ window#waybar { background: @bar; color: @fg; }
 
 tooltip { background: @widget; border: 1px solid @line; border-radius: 4px; }
 tooltip label { color: @fg; }
+menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
+menuitem { color: @fg; }
+menuitem:hover { color: @selfg; background: @sel; }
 
-/* segment geometry: 10px arrow edges, the four corner layers of every background-image below */
+/* geometry: the last background layer is none so background-color stays between the columns */
 #workspaces, #layout, #clock, #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
 #custom-nightlight, #tray, #custom-record, #custom-power {
-    padding: 0 15px;
+    padding: 0 6px;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0;
+    background-origin: border-box;
+    background-clip: border-box, border-box, padding-box;
     background-repeat: no-repeat;
-    background-size: 10px 50%, 10px 50%, 10px 50%, 10px 50%, 14px 14px;
-    background-position: left top, left bottom, right top, right bottom, center;
+    background-size: 13px 100%;
+    background-position: left, right;
 }
+#clock.day { border-left-width: 13px; }
+#workspaces, #layout, #clock.date { border-right-width: 13px; }
+#backlight { border-left-width: 13px; }
+#clock.time, #network, #battery, #disk, #custom-nightlight { border-width: 0 13px; }
 
+/* left group, pointing right */
 #workspaces {
-    background-image:
-        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
-        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+    padding-left: 4px;
+    background-image: none, -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
+    background-color: @purple; -gtk-icon-palette: error @purple, success @raised; color: @ink_purple;
 }
 #layout {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+    background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
+    background-color: @raised; -gtk-icon-palette: error @raised;
 }
+
+/* the clock, a diamond */
 #clock.day {
-    background-image:
-        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, alpha(@bar, 0) 50%, @bar 50%);
+    background-image: -gtk-recolor(url("edges/tip-left-symbolic.svg")), none, none;
+    background-color: @badge; -gtk-icon-palette: error @badge; color: @ink_badge;
 }
 #clock.time {
-    background-image:
-        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
+    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
+                      -gtk-recolor(url("edges/own-right-symbolic.svg")), none;
+    background-color: @warn; -gtk-icon-palette: error @warn, warning @badge, success @badge;
+    color: @ink_warn;
 }
 #clock.date {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%);
-}
-#network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
-#custom-nightlight, #tray, #custom-record {
-    background-image:
-        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, alpha(@bar, 0) 50%, @bar 50%);
-}
-#custom-power {
-    background-image:
-        linear-gradient(to top left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom left, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(alpha(@bar, 0), alpha(@bar, 0)),
-        linear-gradient(alpha(@bar, 0), alpha(@bar, 0));
+    background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), none;
+    background-color: @badge; -gtk-icon-palette: error @badge; color: @ink_badge;
 }
 
-/* the ramp */
-#workspaces, #clock.time, #custom-nightlight, #tray, #custom-record, #custom-power { background-color: @seg_a; color: @ink_a; }
-#layout, #clock.day, #clock.date, #memory, #cpu, #battery, #disk { background-color: @seg_b; color: @ink_b; }
-#network, #pulseaudio, #backlight { background-color: @seg_c; color: @ink_c; }
+/* right group, pointing left */
+#network {
+    background-image: -gtk-recolor(url("edges/tip-left-symbolic.svg")),
+                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
+    background-color: @success; -gtk-icon-palette: error @success, success @raised; color: @ink_success;
+}
+#pulseaudio { background-color: @raised; color: @ink_raised; }
+#backlight {
+    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")), none, none;
+    background-color: @link; -gtk-icon-palette: error @link, warning @raised; color: @ink_link;
+}
+#battery {
+    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
+                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
+    background-color: @success; -gtk-icon-palette: error @success, warning @link, success @badge;
+    color: @ink_success;
+}
+#memory { background-color: @badge; color: @ink_badge; }
+#disk {
+    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
+                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
+    background-color: @accent; -gtk-icon-palette: error @accent, warning @badge, success @purple;
+    color: @ink_accent;
+}
+#cpu { background-color: @purple; color: @ink_purple; }
+#custom-nightlight {
+    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
+                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
+    background-color: @raised; -gtk-icon-palette: error @raised, warning @purple, success @error;
+    color: @ink_raised;
+}
+/* the tray, the recording dot and power are one block, so the night light's arrow fits whichever
+   of them shows first (the tray hides when empty, the dot while not recording) */
+#tray, #custom-record, #custom-power { background-color: @error; color: @ink_error; }
+#custom-power { padding-right: 12px; }
 
-/* states recolor their own segment */
-#network.disconnected, #battery.warning, #disk.warning, #custom-nightlight.warm { background-color: @warn; color: @ink_warn; }
-#battery.critical, #disk.critical, #custom-record { background-color: @error; color: @ink_error; }
-#pulseaudio.muted { color: alpha(@ink_c, 0.6); }
-#custom-nightlight.off { color: alpha(@ink_a, 0.7); }
+/* states recolor their own segment and both of its arrows */
+#network.disconnected {
+    background-color: @warn; -gtk-icon-palette: error @warn, success @raised; color: @ink_warn;
+}
+#battery.warning {
+    background-color: @warn; -gtk-icon-palette: error @warn, warning @link, success @badge;
+    color: @ink_warn;
+}
+#battery.critical {
+    background-color: @error; -gtk-icon-palette: error @error, warning @link, success @badge;
+    color: @ink_error;
+}
+#disk.warning {
+    background-color: @warn; -gtk-icon-palette: error @warn, warning @badge, success @purple;
+    color: @ink_warn;
+}
+#disk.critical {
+    background-color: @error; -gtk-icon-palette: error @error, warning @badge, success @purple;
+    color: @ink_error;
+}
+#custom-nightlight.warm {
+    background-color: @warn; -gtk-icon-palette: error @warn, warning @purple, success @error;
+    color: @ink_warn;
+}
+#pulseaudio.muted { color: mix(@ink_raised, @raised, 0.4); }
+/* dimmed with mix(), not alpha(): GTK3 applies the text color's alpha to the recolored edges too */
+#custom-nightlight.off { color: mix(@ink_raised, @raised, 0.4); }
 
-#workspaces { padding-left: 4px; }
 #workspaces button {
     padding: 0 6px;
-    color: alpha(@ink_a, 0.6);
+    color: mix(@ink_purple, @purple, 0.25);
     background: none;
     box-shadow: none;
     text-shadow: none;
 }
-#workspaces button.active { color: @ink_a; box-shadow: inset 0 -2px @ink_a; }
+#workspaces button.active { color: @ink_purple; box-shadow: inset 0 -2px @ink_purple; }
 #workspaces button.urgent { background: @error; color: @ink_error; }
-#workspaces button:hover { background: alpha(@ink_a, 0.15); color: @ink_a; }
+#workspaces button:hover { background: alpha(@ink_purple, 0.15); color: @ink_purple; }
 
-#custom-power { padding-right: 12px; }
-#custom-power:hover, #custom-nightlight:hover { color: alpha(@ink_a, 0.75); }
-#layout:hover { color: alpha(@ink_b, 0.75); }
+#custom-power:hover { color: mix(@ink_error, @error, 0.3); }
+#custom-nightlight:hover { color: mix(@ink_raised, @raised, 0.3); }
 
-/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style) takes the segment text color */
-#layout { min-width: 14px; }
-#layout.T {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/tile-symbolic.svg"));
+/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's white */
+#layout {
+    min-width: 14px;
+    color: @ink_raised;
+    background-size: 13px 100%, 13px 100%, auto;
+    background-position: left, right, center;
+    background-clip: border-box, border-box, border-box, padding-box;
 }
-#layout.S {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/scroller-symbolic.svg"));
-}
-#layout.G {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/grid-symbolic.svg"));
-}
-#layout.M {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/monocle-symbolic.svg"));
-}
-#layout.K {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/deck-symbolic.svg"));
-}
-#layout.CT {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/center_tile-symbolic.svg"));
-}
-#layout.RT {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/right_tile-symbolic.svg"));
-}
-#layout.VS {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg"));
-}
-#layout.VT {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/vertical_tile-symbolic.svg"));
-}
-#layout.VG {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/vertical_grid-symbolic.svg"));
-}
-#layout.VK {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/vertical_deck-symbolic.svg"));
-}
-#layout.DW {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/dwindle-symbolic.svg"));
-}
-#layout.F {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/fair-symbolic.svg"));
-}
-#layout.VF {
-    background-image:
-        linear-gradient(to bottom left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top left, alpha(@bar, 0) 50%, @bar 50%),
-        linear-gradient(to top right, @bar 50%, alpha(@bar, 0) 50%),
-        linear-gradient(to bottom right, @bar 50%, alpha(@bar, 0) 50%),
-        -gtk-recolor(url("layouts/vertical_fair-symbolic.svg"));
-}
-
-menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
-menuitem { color: @fg; }
-menuitem:hover { color: @selfg; background: @sel; }
+#layout:hover { color: mix(@ink_raised, @raised, 0.3); }
+#layout.T  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/tile-symbolic.svg")), none; }
+#layout.S  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/scroller-symbolic.svg")), none; }
+#layout.G  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/grid-symbolic.svg")), none; }
+#layout.M  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/monocle-symbolic.svg")), none; }
+#layout.K  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/deck-symbolic.svg")), none; }
+#layout.CT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/center_tile-symbolic.svg")), none; }
+#layout.RT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/right_tile-symbolic.svg")), none; }
+#layout.VS { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), none; }
+#layout.VT { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), none; }
+#layout.VG { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), none; }
+#layout.VK { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), none; }
+#layout.DW { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/dwindle-symbolic.svg")), none; }
+#layout.F  { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/fair-symbolic.svg")), none; }
+#layout.VF { background-image: none, -gtk-recolor(url("edges/tip-right-symbolic.svg")), -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")), none; }
