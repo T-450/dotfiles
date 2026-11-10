@@ -27,7 +27,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [fastfetch](apps/fastfetch.md) | System summary beside Godzilla breathing fire into a starry sky, drawn with kitty's graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
-| [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS | git, github-cli |
+| [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS and delta for diffs | git, github-cli, git-delta |
 | [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |

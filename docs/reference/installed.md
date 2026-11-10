@@ -65,6 +65,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | fonts | `ttf-terminus-nerd` | 3.5.1-2 |
 | git | `git` | 2.56.0-2 |
 | git | `github-cli` | 2.103.3-1 |
+| git | `git-delta` | 0.20.1-1 |
 | greeter | `greetd` | 0.10.3-2 |
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | gtk | `gtk3` | 1:3.24.52-2 |

@@ -1,2 +1,3 @@
 git
 github-cli   # credential helper for GitHub over HTTPS
+git-delta    # pager for git diff/log/show

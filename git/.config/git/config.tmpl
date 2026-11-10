@@ -10,3 +10,12 @@
 [credential "https://gist.github.com"]
 	helper =
 	helper = !/usr/bin/gh auth git-credential
+# diffs, logs and `git add -p` through delta (git/packages), in the terminal's ANSI colors so they
+# follow the palette; n and N jump between files
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	syntax-theme = ansi
