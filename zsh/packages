@@ -1,3 +1,12 @@
 # zsh with oh-my-zsh (cdimascio's lambda prompt, built in pkg/)
 zsh
-oh-my-zsh-git   # AUR: /usr/share/oh-my-zsh
+oh-my-zsh-git            # AUR: /usr/share/oh-my-zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-completions
+fzf
+fzf-tab                  # AUR
+zoxide
+eza
+bat
+fd

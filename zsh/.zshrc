@@ -80,9 +80,18 @@ ZSH_THEME="cdimascio-lambda"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git mise)
+plugins=(git mise node docker)
 
 source $ZSH/oh-my-zsh.sh
+
+# the tools from zsh/packages. fzf-tab turns the completion menu into fzf, so it loads after compinit
+# (oh-my-zsh runs it) and before plugins that wrap the line editor's widgets; syntax highlighting
+# wraps them all, so it loads last. eza, bat and fd are plain commands.
+source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/fzf/key-bindings.zsh # ctrl+r history, ctrl+t files, alt+c directories
+eval "$(zoxide init zsh)"              # z NAME jumps to a directory you use often
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 
@@ -110,5 +119,5 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+alias zc="helix ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"

@@ -153,3 +153,12 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | wlsunset | `wlsunset` | 0.4.0-1 |
 | zsh | `zsh` | 5.9.2-1 |
 | zsh | `oh-my-zsh-git` | r8003.b509b1c6e-1 |
+| zsh | `zsh-autosuggestions` | 0.7.1-1 |
+| zsh | `zsh-syntax-highlighting` | 0.8.0-2 |
+| zsh | `zsh-completions` | 0.36.0-1 |
+| zsh | `fzf` | 0.74.5-1 |
+| zsh | `fzf-tab` | 1.3.0-2 |
+| zsh | `zoxide` | 0.10.0-1 |
+| zsh | `eza` | 0.23.5-2 |
+| zsh | `bat` | 0.26.1-3 |
+| zsh | `fd` | 10.5.0-3 |

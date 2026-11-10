@@ -62,7 +62,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
 | [wlogout](apps/wlogout.md) | The power menu (super+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
-| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt, git and mise plugins) | zsh, oh-my-zsh-git |
+| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd |
 <!-- end generated -->
 
 ## Layout
