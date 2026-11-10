@@ -189,7 +189,7 @@ def index_block():
         if page.exists():
             m = re.search(r"^# .*\n\n(.+)$", page.read_text(), re.M)
             what = m.group(1).split(". ")[0].rstrip(".") if m else ""
-        pk = ", ".join(n for n, _ in packages(a)) or "—"
+        pk = ", ".join(n for n, _ in packages(a)) or "-"
         rows.append(f"| [{a}](apps/{a}.md) | {what} | {pk} |")
     return "\n".join(rows) + "\n"
 
