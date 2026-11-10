@@ -1,0 +1,27 @@
+# The Tela icon theme in its standard color only: Tela, Tela-dark and Tela-light (19k files).
+# icons/render.sh recolors it to the palette. The AUR tela-icon-theme installs all 45 colors
+# (287k files), and makepkg's debug pass alone spends about 40 silent minutes walking them.
+pkgname=tela-icon-theme-standard
+_tag=2026-07-07
+pkgver=${_tag//-/.}
+pkgrel=1
+pkgdesc='Tela icon theme, standard color (Tela, Tela-dark, Tela-light)'
+arch=(any)
+url='https://github.com/vinceliuice/Tela-icon-theme'
+license=(GPL-3.0-or-later)
+depends=(gtk-update-icon-cache hicolor-icon-theme)
+conflicts=(tela-icon-theme)
+options=(!strip !debug)
+source=("tela-icon-theme-$_tag.tar.gz::$url/archive/$_tag.tar.gz")
+sha256sums=('6b8c28f637067a15551459ab90e6720c5aba1215b777b6f1f506fea188a1ddf9')
+
+prepare() {
+	cd "Tela-icon-theme-$_tag"
+	sed -i '/gtk-update-icon-cache/d' install.sh # pacman's hook builds the caches
+}
+
+package() {
+	cd "Tela-icon-theme-$_tag"
+	install -d "$pkgdir/usr/share/icons"
+	./install.sh -d "$pkgdir/usr/share/icons" standard
+}

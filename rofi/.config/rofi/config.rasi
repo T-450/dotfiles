@@ -1,6 +1,7 @@
 configuration {
     modi: "drun,run";
     show-icons: true;
+    icon-theme: "Tela-mango"; // icons/render.sh; rofi doesn't follow GTK's setting on Wayland
     sort: true;
     sorting-method: "fzf";
     matching: "fuzzy";

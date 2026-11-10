@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gtk/setup.sh: icons, cursor and fonts for GTK apps, and the palette's dark/light preference
+# gtk/setup.sh: icons (Tela-mango), cursor and fonts for GTK apps, and the palette's dark/light preference
 # (gtk/reload.sh, also run by `theme set`). Needs a dbus session; skipped without one.
 . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 if ! user_bus; then
@@ -8,7 +8,7 @@ if ! user_bus; then
 fi
 gs=org.gnome.desktop.interface
 want() { [[ $(gsettings get $gs "$1") == "'$2'" ]] || { gsettings set $gs "$1" "$2" && echo "gsettings $1 $2"; }; }
-want icon-theme Adwaita
+want icon-theme Tela-mango # icons/render.sh: Tela in the palette's accent
 want cursor-theme Adwaita
 want font-name 'Inter 11'
 want monospace-font-name 'JetBrainsMono Nerd Font 11'

@@ -1,6 +1,6 @@
 # gtk
 
-GTK 3 and 4 apps: Adwaita, dark or light from the palette's variant, with palette colors through `gtk.css`.
+GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css`.
 
 `gtk-theme` stays `Adwaita` in GSettings and `settings.ini`. GTK 3 reads the name from GSettings over `settings.ini`, and no `Adwaita-dark` theme is installed (its dark variant is built into GTK), so naming it made GTK 3 fall back to light Adwaita. Dark comes from `color-scheme` (GSettings, which the settings portal hands to GTK 4, Qt and Firefox) and `gtk-application-prefer-dark-theme`; `reload.sh` sets both on `theme set`.
 
@@ -27,7 +27,7 @@ GTK reads `gtk.css` once per process, so only apps started after `theme set` get
 - `gtk/.config/gtk-4.0/colors.css.tmpl` → `gtk/.config/gtk-4.0/colors.css`: `bg_desktop`, `bg_surface`, `bg_widget`, `error`, `fg_editor`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 - `gtk/.config/gtk-4.0/settings.ini.tmpl` → `gtk/.config/gtk-4.0/settings.ini`: `name`, `prefer_dark`, `slug`
 
-**`setup.sh`** (run by `install.sh --setup`): icons, cursor and fonts for GTK apps, and the palette's dark/light preference (gtk/reload.sh, also run by `theme set`). Needs a dbus session; skipped without one.
+**`setup.sh`** (run by `install.sh --setup`): icons (Tela-mango), cursor and fonts for GTK apps, and the palette's dark/light preference (gtk/reload.sh, also run by `theme set`). Needs a dbus session; skipped without one.
 
 **`reload.sh`** (run by `theme set`): tell GTK, the settings portal (Qt, Firefox) and GTK4 about the variant gtk-theme stays Adwaita: GTK3 reads it from GSettings over settings.ini, and "Adwaita-dark" is not installed, so GTK3 fell back to light Adwaita. Its built-in dark variant comes from color-scheme. GTK reads gtk.css (and its colors.css) once per process, so only apps started after a switch get the new colors.
 <!-- end generated -->
