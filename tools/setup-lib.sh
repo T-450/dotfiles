@@ -1,6 +1,6 @@
 # tools/setup-lib.sh: helpers for <app>/setup.sh and install.sh (sourced): enable_system,
-# user_bus, retry, when_changed. A helper that changes state checks it first and acts (and prints)
-# only on a difference, so a second run is silent.
+# user_bus, default_app, retry, when_changed. A helper that changes state checks it first and acts
+# (and prints) only on a difference, so a second run is silent.
 # Usage in a setup.sh:  . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 set -euo pipefail
 # Ctrl+C ends the run. yay and pacman catch SIGINT and exit 1, so without this bash can't tell an
@@ -20,6 +20,18 @@ enable_system() {
 
 # user_bus: true when a user systemd/dbus session is reachable (not in a bare VM or chroot)
 user_bus() { systemctl --user show-environment &>/dev/null; }
+
+# default_app DESKTOP TYPE...: make DESKTOP (an installed .desktop file) the default for each MIME
+# type that has another default (~/.config/mimeapps.list, through GLib like every app reads it)
+default_app() {
+	local desktop=$1 t n=0
+	shift
+	for t; do
+		[[ $(gio mime "$t" 2>/dev/null | head -1) == *": $desktop" ]] && continue
+		gio mime "$t" "$desktop" >/dev/null && n=$((n + 1))
+	done
+	((n == 0)) || echo "default $desktop for $n type(s)"
+}
 
 retry() { # retry CMD...: up to 3 attempts; a mirror that stalls on one file must not fail the run
 	local i

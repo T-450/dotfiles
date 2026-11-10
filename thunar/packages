@@ -1,0 +1,21 @@
+thunar
+thunar-archive-plugin     # extract/compress from the context menu (backend: xarchiver)
+thunar-media-tags-plugin
+thunar-volman             # automount removable media while Thunar runs
+tumbler                   # thumbnails, with the loaders below
+ffmpegthumbnailer
+poppler-glib
+libgsf
+libgepub
+libopenraw
+libheif
+gvfs                      # trash, network locations
+gvfs-mtp
+gvfs-gphoto2
+gvfs-afc
+gvfs-smb
+gvfs-nfs
+udisks2
+xarchiver                 # the only archiver, so the archive plugin never asks which one
+7zip
+unrar

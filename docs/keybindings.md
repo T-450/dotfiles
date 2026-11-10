@@ -8,6 +8,7 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | super+d | rofi launcher |
 | super+/ | all keybindings (`mango-keys`) |
 | super+return | firefox |
+| super+f | thunar (file manager; GTK apps open floating at 720x480) |
 | super+v | clipboard history (Enter copies, Shift+Delete removes) |
 | alt+q / super+shift+q | close window |
 | alt+arrows | focus |

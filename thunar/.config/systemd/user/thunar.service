@@ -1,0 +1,19 @@
+[Unit]
+# Same name as the package's unit, which D-Bus activates for org.freedesktop.FileManager1
+# ("show in folder"); this one adds the session dependencies and starts with the session, so
+# windows open at once and removable media mount (thunar-volman runs only while Thunar does).
+Description=File manager daemon (Thunar)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.xfce.FileManager
+ExecStart=/usr/bin/thunar --daemon
+# programs opened from Thunar live in this unit's cgroup: a restart must not kill them
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
