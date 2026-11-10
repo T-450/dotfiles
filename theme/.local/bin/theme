@@ -420,12 +420,16 @@ LINT_SKIP = ("theme/palettes/", "theme/.local/bin/theme", "tests/")
 # personal data: an email address or a path into someone's home (use {{git_email}} / {{home}} / ~)
 PERSONAL = [re.compile(r"[\w.+-]+@[\w-]+\.(?!invalid\b)[a-z]{2,}\b", re.I), re.compile(r"(?<![\w.-])/home/[a-z_][\w-]*")]
 SECRETS = re.compile(r"(^|/)(service\.json|auth\.json|hosts\.yml|.*\.key|id_[a-z0-9]+)$")
+# an API token pasted into a tracked file, by its vendor's prefix (opencode, Anthropic, OpenAI,
+# GitHub, GitLab, Slack, Hugging Face, AWS, Google); it belongs in ~/.zshrc.local or the app's state
+TOKENS = re.compile(r"\b(?:oc_sk_|sk-ant-|sk-proj-|gh[pousr]_|github_pat_|glpat-|xox[abposr]-|hf_)[A-Za-z0-9_-]{20,}"
+                    r"|\bAKIA[0-9A-Z]{16}\b|\bAIza[0-9A-Za-z_-]{35}\b")
 
 
 def lint():
     files = subprocess.run(["git", "-C", str(REPO), "ls-files", "-z", "-co", "--exclude-standard"],
                            capture_output=True, text=True, check=True).stdout.split("\0")
-    hits = 0
+    hits = tokens = 0
     for f in files:
         if not f:
             continue
@@ -442,10 +446,13 @@ def lint():
             if not f.startswith(PERSONAL_SKIP) and any(p.search(line) for p in PERSONAL):
                 print(f"{f}:{n}: personal data (use a tag, see IDENTITY in theme): {line.strip()}")
                 hits += 1
+            if TOKENS.search(line):  # the line itself stays unprinted: it holds the secret
+                print(f"{f}:{n}: looks like an API token; keep it out of the repo (~/.zshrc.local)")
+                tokens += 1
     where = ", ".join(LINT_SKIP)
     print(f"{hits} finding(s): color literals outside {where}, or personal data" if hits else
           f"ok: no color literals outside {where}, no personal data")
-    bad = 0
+    bad = tokens
     for f in files:
         if f and SECRETS.search(f):
             print(f"{f}: looks like a secret; keep it out of the repo (gitignore it)")
