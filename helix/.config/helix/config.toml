@@ -1,5 +1,7 @@
-# helix: default keys and theme, plus GUI-style copy. The selection goes to the system clipboard
-# with Ctrl+C (helix's own Ctrl+C toggles comments, which space+c also does); kitty's Ctrl+V pastes.
+# helix: default keys and VS Code's Dark+ theme (built in), plus GUI-style copy. The selection goes
+# to the system clipboard with Ctrl+C (helix's own Ctrl+C toggles comments, which space+c also
+# does); kitty's Ctrl+V pastes.
+theme = "dark_plus"
 [keys.normal]
 C-c = "yank_to_clipboard"
 

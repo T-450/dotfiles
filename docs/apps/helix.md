@@ -1,6 +1,6 @@
 # helix
 
-Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette).
+Helix, a modal editor set up for every language in the toolchain (default keys; VS Code's Dark+ theme, built into helix, with its own colors rather than the palette's).
 
 mise installs the language servers, formatters and debuggers, except clangd and jdtls, which pacman installs. Start helix from a terminal, because only zsh puts mise's tools on `PATH` ([mise](mise.md#programs-started-outside-a-terminal-dont-see-the-tools)). `languages.toml` names a server only where helix's built-in choice is not the one installed:
 
