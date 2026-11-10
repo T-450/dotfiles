@@ -54,7 +54,7 @@ Which apps use each role (generated from the templates):
 | `ansi10` | kitty, mousepad, opencode |
 | `ansi11` | kitty, mousepad, opencode |
 | `ansi12` | kitty, mousepad, opencode |
-| `ansi13` | claude, fastfetch, kitty, mousepad, waybar |
+| `ansi13` | claude, kitty, mousepad, waybar |
 | `ansi14` | kitty, mousepad, opencode |
 | `ansi15` | kitty |
 | `ansi2` | kitty |

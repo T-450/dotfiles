@@ -4,7 +4,7 @@ System summary beside Godzilla breathing fire into a starry sky, drawn with kitt
 
 `render.sh` (run by `theme`) makes `logo.png` from the illustration (`pkg/godzilla-starry-sky-art`: its license is unknown, so it is downloaded and checked by SHA-256, never committed). It crops to the breath, the head and the claws and keeps the art's own deep blues, which sit in a dark terminal. A slightly widened Lanczos filter keeps the fine linework from aliasing into noise, and the image is scaled to exactly the logo's 26x17 cells at kitty's 10x22 px cells (font_size 12), so kitty draws it 1:1 with rounded corners. Change the font size and the logo needs new numbers in both `render.sh` and `config.jsonc.tmpl`. The logo spans the title down to the color dots, with a blank row above and below.
 
-The summary uses the palette: your user name in the accent, system keys in the accent and hardware keys in the palette's purple (as on the bar), usage bars in its success, warning and error colors. Memory, disk and battery show one bar plus their numbers, so even a quarter-screen kitty (79 columns) fits every line; a narrower one clips lines (`disableLinewrap`) instead of wrapping them under the logo. Only `config.jsonc` and `logo.png` are linked, so other presets in `~/.config/fastfetch/` stay yours. Run it from an open terminal: started in the instant a window opens, it can read the size before mango tiles the window and stretch the logo.
+The summary uses the palette: your user name in the accent, system keys in the accent and hardware keys in the palette's gold (`warning`), usage bars in its success, warning and error colors. Memory, disk and battery show one bar plus their numbers, so even a quarter-screen kitty (79 columns) fits every line; a narrower one clips lines (`disableLinewrap`) instead of wrapping them under the logo. Only `config.jsonc` and `logo.png` are linked, so other presets in `~/.config/fastfetch/` stay yours. Run it from an open terminal: started in the instant a window opens, it can read the size before mango tiles the window and stretch the logo.
 
 ## Reference
 
@@ -19,7 +19,7 @@ The summary uses the palette: your user name in the accent, system keys in the a
 
 **Rendered from the palette** (`theme`):
 
-- `fastfetch/.config/fastfetch/config.jsonc.tmpl` → `fastfetch/.config/fastfetch/config.jsonc`: `accent`, `ansi13`, `border_inactive`, `error`, `fg_bright`, `fg_muted`, `fg_text`, `name`, `slug`, `success`, `warning`
+- `fastfetch/.config/fastfetch/config.jsonc.tmpl` → `fastfetch/.config/fastfetch/config.jsonc`: `accent`, `border_inactive`, `error`, `fg_bright`, `fg_muted`, `fg_text`, `name`, `slug`, `success`, `warning`
 
 **`render.sh`** (run by `theme` after rendering): the logo, .config/fastfetch/logo.png (linked into your home). Godzilla from pkg/godzilla-starry-sky-art, cropped to the breath, the head and the claws, in its own colors (deep blues that sit in a dark terminal). Lanczos-scaled to exactly the logo's 26x17 cells in config.jsonc at kitty's 10x22 px cells (font_size 12), so kitty draws it 1:1, with rounded corners. Run by `theme` after rendering templates; remade only when its inputs changed. ART=file reads the illustration from file.
 <!-- end generated -->
