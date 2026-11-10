@@ -1,21 +1,25 @@
-/* waybar: the right-hand live modules (network, audio, backlight, battery, memory, disk, cpu, night
-   light) plus the tray, record and power are agnoster-style powerline segments (colors.css). The
-   live ones take the palette's accents and change with their state; the tray, record and power take
-   its grey. Blue backgrounds carry white text (selection_fg). The left corner and the clock are
-   20px pills floating on the bar (3px above and below, fully rounded, no arrows): the Arch logo,
-   the tags (occupied ones dim text, the selected one a wider blue pill in bold), the layout icon,
-   and the clock as one pill in one color, its time in bold.
-   Powerline arrows are drawn in 13px edge columns (transparent borders painted by
-   edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by one of them,
-   which paints both colors: GTK repaints only the widget that changed, so a column shared by two
-   overlapping widgets would lose one side's half on the other's update.
+/* waybar: everything on the bar is a 20px shape floating 3px off its top and bottom edges.
+   The left corner and the clock are fully rounded pills with no arrows: the Arch logo, the tags
+   (occupied ones dim text, the selected one a wider blue pill in bold), the layout icon, and the
+   clock as one pill in one color, its time in bold.
+   The right-hand modules (network, audio, backlight, battery, memory, disk, cpu, night light, then
+   the tray, record and power) are one agnoster-style powerline ribbon of the same height
+   (colors.css): it starts with an arrow tip and ends in the pills' rounded cap, as far from the
+   screen edge as the logo. The live modules take the palette's accents and change with their state;
+   the tray, record and power take its grey. Blue backgrounds carry white text (selection_fg).
+   Powerline arrows are 10x20 chevrons (45 degrees) drawn in 10px edge columns (transparent borders
+   painted by edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by
+   one of them, which paints both colors: GTK repaints only the widget that changed, so a column
+   shared by two overlapping widgets would lose one side's half on the other's update.
    The edge SVGs are recolored through -gtk-icon-palette: error = the segment's own color,
    warning = its left neighbor's, success = its right neighbor's.
      tip-left             own arrow into the bar
      own-left             own arrow pointing left over the left neighbor's color
      host-right           the right neighbor's arrow pointing left over the own color
    A segment whose color changes with its state (network, battery, disk, night light) owns both of
-   its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart. */
+   its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart.
+   Nothing but a column's owner may change a segment's background, so hover never does: it draws an
+   underline in the segment's own text color instead, which holds in every state. */
 @import "colors.css";
 
 * {
@@ -34,21 +38,25 @@ menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
 menuitem { color: @fg; }
 menuitem:hover { color: @selfg; background: @sel; }
 
-/* geometry: the last background layer is none so background-color stays between the columns */
+/* geometry: the last background layer is none so background-color stays between the columns.
+   Every arrow points left, so at text height a segment's own color reaches 10px further on its
+   left than on its right: the smaller left padding evens the two sides out. */
 #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
 #custom-nightlight, #tray, #custom-record, #custom-power {
-    padding: 0 6px;
+    margin: 3px 0;
+    padding: 0 9px 0 4px;
     border-style: solid;
     border-color: transparent;
     border-width: 0;
     background-origin: border-box;
     background-clip: border-box, border-box, padding-box;
     background-repeat: no-repeat;
-    background-size: 13px 100%;
+    background-size: 10px 100%;
     background-position: left, right;
+    transition: box-shadow 150ms ease;
 }
-#backlight { border-left-width: 13px; }
-#network, #battery, #disk, #custom-nightlight { border-width: 0 13px; }
+#backlight { border-left-width: 10px; }
+#network, #battery, #disk, #custom-nightlight { border-width: 0 10px; }
 
 /* left group and clock: 20px pills on the bar (26px - 2 x 3px margin, radius = half the height).
    State changes fade; GTK3 has no transforms, so the selected tag grows through min-width. */
@@ -144,10 +152,11 @@ menuitem:hover { color: @selfg; background: @sel; }
 }
 /* the tray, the recording dot and power are one block, so the night light's arrow fits whichever
    of them shows first (the tray hides when empty, the dot while not recording); the dot is red
-   because it only shows while recording */
+   because it only shows while recording. Power closes the ribbon with the pills' rounded end. */
 #tray, #custom-record, #custom-power { background-color: @grey; color: @ink_grey; }
-#custom-record { color: @error; }
-#custom-power { padding-right: 12px; }
+#tray, #custom-record { padding-right: 6px; }
+#custom-record { color: @rec; }
+#custom-power { margin-right: 6px; padding-right: 10px; border-radius: 0 10px 10px 0; }
 
 /* states recolor their own segment and both of its arrows */
 #network.disconnected {
@@ -173,9 +182,10 @@ menuitem:hover { color: @selfg; background: @sel; }
     background-color: @warn; -gtk-icon-palette: error @warn, warning @purple, success @grey;
     color: @ink_warn;
 }
-#pulseaudio.muted { color: mix(@ink_raised, @raised, 0.4); }
-/* dimmed with mix(), not alpha(): GTK3 applies the text color's alpha to the recolored edges too */
-#custom-nightlight.off { color: mix(@ink_raised, @raised, 0.4); }
+/* dimmed with a mixed color (colors.css), not alpha(): GTK3 applies the text color's alpha to the
+   recolored edges too */
+#pulseaudio.muted, #custom-nightlight.off { color: @faint_raised; }
 
-#custom-power:hover { color: mix(@ink_grey, @grey, 0.3); }
-#custom-nightlight:hover { color: mix(@ink_raised, @raised, 0.3); }
+/* the clickable segments underline on hover, in their text color */
+#network:hover, #pulseaudio:hover, #custom-nightlight:hover, #custom-record:hover,
+#custom-power:hover { box-shadow: inset 0 -2px currentColor; }

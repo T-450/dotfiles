@@ -12,11 +12,14 @@
 /* segments: neutrals (a raised surface and a grey) serve the static modules, the palette's
    accents and its purple the live ones; ink_* = legible text on each. Blues carry white text
    (selection_fg), each darkened only as far as white needs; disk's accent is mixed toward the
-   desktop first so it stays distinct from memory's badge beside it. */
+   desktop first so it stays distinct from memory's badge beside it. faint_raised = dimmed text
+   (muted, night light off) and rec = the recording dot's red, both kept legible on their segment. */
 @define-color raised  {{bg_hover}};
 @define-color ink_raised  {{bg_hover|ink}};
+@define-color faint_raised {{bg_hover|ink|mix:bg_hover:0.4|legible:bg_hover}};
 @define-color grey    {{fg_disabled}};
 @define-color ink_grey    {{fg_disabled|ink}};
+@define-color rec     {{error|legible:fg_disabled}};
 @define-color purple  {{ansi13}};
 @define-color ink_purple  {{ansi13|ink}};
 @define-color accent  {{accent|mix:bg_desktop:0.4|legible:selection_fg}};
