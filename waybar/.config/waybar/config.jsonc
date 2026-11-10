@@ -8,7 +8,7 @@
     "spacing": 0,
     "reload_style_on_change": true,
 
-    "modules-left": ["ext/workspaces", "mango/layout"],
+    "modules-left": ["custom/arch", "ext/workspaces", "mango/layout"],
     "modules-center": ["clock#day", "clock#time", "clock#date"],
     // network, battery, disk and the night light change color with their state; none of them sit
     // side by side, so each owns both of its arrows (style.css)
@@ -17,6 +17,14 @@
         "memory", "disk", "cpu",
         "custom/nightlight", "tray", "custom/record", "custom/power"
     ],
+
+    // the Arch logo: the text is blank, style.css draws arch-symbolic.svg; opens the launcher that
+    // mango binds to super+d
+    "custom/arch": {
+        "format": "  ",
+        "tooltip-format": "Applications (super+d)",
+        "on-click": "rofi -show drun"
+    },
 
     // mango tags over ext-workspace-v1; empty tags are "hidden" there, so they stay out
     "ext/workspaces": {
@@ -34,9 +42,10 @@
         "on-click": "mmsg dispatch switch_layout"
     },
 
+    // one pill in style.css: "Tue 14:32 10 Nov"
     "clock#day":  { "format": "{:%a}", "tooltip": false },
     "clock#time": { "format": "{:%H:%M}", "tooltip-format": "<tt>{calendar}</tt>" },
-    "clock#date": { "format": "{:%m-%d}", "tooltip": false },
+    "clock#date": { "format": "{:%d %b}", "tooltip": false },
 
     "network": {
         "format-wifi": "󰤨 {essid}",

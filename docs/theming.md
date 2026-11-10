@@ -77,7 +77,7 @@ Which apps use each role (generated from the templates):
 | `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |
 | `fg_editor` | gtk, mousepad, opencode, theme |
 | `fg_muted` | claude, fastfetch, mousepad, opencode, rofi, theme |
-| `fg_secondary` | claude, firefox, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, wlogout |
+| `fg_secondary` | claude, firefox, kitty, mako, mango, mousepad, opencode, qutebrowser, rofi, swaylock, theme, waybar, wlogout |
 | `fg_text` | claude, fastfetch, firefox, gtk, mako, mousepad, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `git_email` | git |
 | `git_name` | git |

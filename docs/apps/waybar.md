@@ -2,13 +2,13 @@
 
 The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as powerline segments, colored from the palette.
 
-The right-hand modules are agnoster-style powerline segments; the workspaces, layout and clock are flat, squared dwm-style cells with no arrows. Modules showing a live value keep colored segments: network, volume, brightness, battery, memory, disk, cpu and night light use the palette's accents (`accent`, `link`, `badge`, `success`, `warning`, `error`) and its purple (`ansi13`), and change with their state. Blue backgrounds (`link`, `badge`, `accent`, and the selected tag's `selection_bg`) carry white text (`selection_fg`), each blue darkened only as far as white needs (`|legible`); disk's accent is mixed toward `bg_desktop` first so it stays distinct from memory's badge beside it. The static modules use neutrals: the clock's time is white (`fg_text`), its day and date a raised surface (`bg_hover`), and the tray, recording dot and power a grey (`fg_disabled`). Other text comes from `|ink`, so it reads at 4.5:1 on any palette. No two neighbors share a color in Dark 2026 (Light 2026 defines accent, badge and link as one blue, so memory and disk merge there).
+The right-hand modules are agnoster-style powerline segments; the Arch logo, the workspaces, the layout icon and the clock are 20px fully rounded pills floating on the bar, with no arrows. Modules showing a live value keep colored segments: network, volume, brightness, battery, memory, disk, cpu and night light use the palette's accents (`accent`, `link`, `badge`, `success`, `warning`, `error`) and its purple (`ansi13`), and change with their state. Blue backgrounds (`link`, `badge`, `accent`, and the selected tag's `selection_bg`) carry white text (`selection_fg`), each blue darkened only as far as white needs (`|legible`); disk's accent is mixed toward `bg_desktop` first so it stays distinct from memory's badge beside it. The static modules use neutrals: the clock a raised surface (`bg_hover`), and the tray, recording dot and power a grey (`fg_disabled`). Other text comes from `|ink`, so it reads at 4.5:1 on any palette. No two neighbors share a color in Dark 2026 (Light 2026 defines accent, badge and link as one blue, so memory and disk merge there).
 
-The tags sit on the bar itself, dwm style: the selected one is a `selection_bg` block, urgent ones `error`, hover a raised block. The layout icon is a squared cell in the palette's text color, and the clock is three flat cells (day, time, date).
+The left corner starts with the Arch logo (`arch-symbolic.svg`, the official silhouette without its notches, tinted `accent` through `-gtk-recolor`). The tags follow on the bar itself: an occupied tag is dim text (`fg_secondary`), the selected one a wider `selection_bg` pill in bold, an urgent one an `error` pill; the selected tag grows through `min-width`, since GTK3 CSS has no transforms. The layout icon is in the palette's text color. Hovering the logo, a tag or the layout icon raises a `bg_hover` pill behind it, and state changes fade over 150ms. The clock is three modules (day, time, date) drawn as one pill in one color, the day and the date carrying its rounded ends; only the bold weight sets the time apart.
 
 The arrows of the right-hand segments are 13px edge columns painted by `edges/<name>-symbolic.svg`, recolored through `-gtk-icon-palette` (`error` is the segment's color, `warning` and `success` its left and right neighbors'). Each boundary is one column owned by one segment, which paints both colors: waybar repaints only the module that changed, so a column shared by two overlapping modules loses half its arrow whenever the other updates. A segment that changes color with its state (offline, battery or disk low, warm night light) owns both of its arrows, and `config.jsonc` keeps those four apart, so no state ever leaves a stale arrow. The tray, the recording dot (red, since it only shows while recording) and power form one grey block, so the arrow before it fits whichever of them shows. Dimmed text (muted, night light off) uses `mix()`, never `alpha()`: GTK3 applies the text color's alpha to the recolored edges too.
 
-Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and the current layout as an AwesomeWM-style icon (`mango/layout`; `layouts/<name>-symbolic.svg`, one per mango layout, tinted through `-gtk-recolor`; click for the next layout). Center: day, time (calendar tooltip), date. Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), battery, memory, disk, cpu, night light ([wlsunset](wlsunset.md)), tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar.
+Left: the Arch logo (`custom/arch`; click opens the launcher, `rofi -show drun`, as super+d does), mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and the current layout as an AwesomeWM-style icon (`mango/layout`; `layouts/<name>-symbolic.svg`, one per mango layout, tinted through `-gtk-recolor`; click for the next layout). Center: day, time (calendar tooltip), date (`Tue 14:32 10 Nov`). Right: network (click: speeds), volume (click mutes, scroll ±2%), brightness (scroll), battery, memory, disk, cpu, night light ([wlsunset](wlsunset.md)), tray, recording indicator, power menu (right-click: do-not-disturb). super+h hides it (`waybar-toggle` stops the unit). It replaced mangobar.
 
 ## Reference
 
@@ -18,6 +18,7 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and t
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/systemd/user/waybar.service`
+- `~/.config/waybar/arch-symbolic.svg`
 - `~/.config/waybar/colors.css`
 - `~/.config/waybar/config.jsonc`
 - `~/.config/waybar/edges/host-right-symbolic.svg`
@@ -42,7 +43,7 @@ Left: mango tags (`ext/workspaces`; empty tags stay hidden, click to view) and t
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `ansi13`, `badge`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_disabled`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `ansi13`, `badge`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_disabled`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

@@ -1,9 +1,10 @@
 /* waybar: the right-hand live modules (network, audio, backlight, battery, memory, disk, cpu, night
    light) plus the tray, record and power are agnoster-style powerline segments (colors.css). The
    live ones take the palette's accents and change with their state; the tray, record and power take
-   its grey. Blue backgrounds carry white text (selection_fg). The workspaces, the layout icon and
-   the clock are flat squared dwm-style cells with no arrows: tags on the bar itself, the selected
-   one a blue block, then the layout and the clock's day, time and date as separate blocks.
+   its grey. Blue backgrounds carry white text (selection_fg). The left corner and the clock are
+   20px pills floating on the bar (3px above and below, fully rounded, no arrows): the Arch logo,
+   the tags (occupied ones dim text, the selected one a wider blue pill in bold), the layout icon,
+   and the clock as one pill in one color, its time in bold.
    Powerline arrows are drawn in 13px edge columns (transparent borders painted by
    edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by one of them,
    which paints both colors: GTK repaints only the widget that changed, so a column shared by two
@@ -49,32 +50,45 @@ menuitem:hover { color: @selfg; background: @sel; }
 #backlight { border-left-width: 13px; }
 #network, #battery, #disk, #custom-nightlight { border-width: 0 13px; }
 
-/* left group and clock: flat squared dwm-style cells, no edge columns */
-#workspaces { padding: 0; background: transparent; color: @fg; }
-#workspaces button {
-    min-width: 26px;
+/* left group and clock: 20px pills on the bar (26px - 2 x 3px margin, radius = half the height).
+   State changes fade; GTK3 has no transforms, so the selected tag grows through min-width. */
+#custom-arch, #layout, #workspaces button {
+    margin: 3px 2px;
     padding: 0;
-    border-radius: 0;
-    background: none;
-    color: @fg;
-    box-shadow: none;
-    text-shadow: none;
+    border-radius: 10px;
+    transition: background-color 150ms ease, color 150ms ease, min-width 150ms ease;
 }
-#workspaces button.active { background: @sel; color: @selfg; }
-#workspaces button.urgent { background: @error; color: @ink_error; }
-#workspaces button:hover:not(.active) { background: @raised; color: @fg; }
 
-/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's text color */
-#layout {
+/* the Arch logo (arch-symbolic.svg) opens the launcher; an icon cell like the layout's */
+#custom-arch, #layout {
     min-width: 26px;
-    padding: 0;
     background-color: transparent;
-    color: @fg;
     background-repeat: no-repeat;
     background-position: center;
     background-size: auto;
 }
-#layout:hover { color: mix(@fg, @bar, 0.3); }
+#custom-arch {
+    margin-left: 6px;
+    color: @logo;
+    background-image: -gtk-recolor(url("arch-symbolic.svg"));
+}
+#custom-arch:hover, #layout:hover { background-color: @raised; }
+
+/* tags: only occupied ones show (config.jsonc), so dim text = occupied, the blue pill = selected */
+#workspaces { margin: 0 2px; padding: 0; background: transparent; }
+#workspaces button {
+    min-width: 20px;
+    background: none;
+    color: @dim;
+    box-shadow: none;
+    text-shadow: none;
+}
+#workspaces button:hover { background: @raised; color: @ink_raised; }
+#workspaces button.active { min-width: 34px; background: @sel; color: @selfg; font-weight: bold; }
+#workspaces button.urgent { background: @error; color: @ink_error; font-weight: bold; }
+
+/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's text color */
+#layout { color: @fg; }
 #layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
 #layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
 #layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
@@ -90,10 +104,12 @@ menuitem:hover { color: @selfg; background: @sel; }
 #layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
 #layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
-/* the clock: day, time and date as three flat cells */
-#clock { padding: 0 10px; }
-#clock.day, #clock.date { background-color: @raised; color: @ink_raised; }
-#clock.time { background-color: @white; color: @ink_white; }
+/* the clock: day, time and date are three modules drawn as one pill in one color (the day and the
+   date carry the rounded ends); only the weight sets the time apart */
+#clock { margin: 3px 0; padding: 0 5px; background-color: @raised; color: @ink_raised; }
+#clock.day  { padding-left: 12px; border-radius: 10px 0 0 10px; }
+#clock.time { font-weight: bold; }
+#clock.date { padding-right: 12px; border-radius: 0 10px 10px 0; }
 
 /* right group, pointing left */
 #network {
