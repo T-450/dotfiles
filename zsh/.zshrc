@@ -112,6 +112,3 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# machine-local settings and secrets (API keys) live outside this public repo
-[[ -r ~/.zshrc.local ]] && source ~/.zshrc.local

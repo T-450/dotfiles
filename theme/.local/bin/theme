@@ -409,7 +409,7 @@ LINT_SKIP = ("theme/palettes/", "theme/.local/bin/theme", "tests/")
 PERSONAL = [re.compile(r"[\w.+-]+@[\w-]+\.(?!invalid\b)[a-z]{2,}\b", re.I), re.compile(r"(?<![\w.-])/home/[a-z_][\w-]*")]
 SECRETS = re.compile(r"(^|/)(service\.json|auth\.json|hosts\.yml|.*\.key|id_[a-z0-9]+)$")
 # an API token pasted into a tracked file, by its vendor's prefix (opencode, Anthropic, OpenAI,
-# GitHub, GitLab, Slack, Hugging Face, AWS, Google); it belongs in ~/.zshrc.local or the app's state
+# GitHub, GitLab, Slack, Hugging Face, AWS, Google); it belongs in the app's own credential store
 TOKENS = re.compile(r"\b(?:oc_sk_|sk-ant-|sk-proj-|gh[pousr]_|github_pat_|glpat-|xox[abposr]-|hf_)[A-Za-z0-9_-]{20,}"
                     r"|\bAKIA[0-9A-Z]{16}\b|\bAIza[0-9A-Za-z_-]{35}\b")
 
@@ -435,7 +435,7 @@ def lint():
                 print(f"{f}:{n}: personal data (use a tag, see IDENTITY in theme): {line.strip()}")
                 hits += 1
             if TOKENS.search(line):  # the line itself stays unprinted: it holds the secret
-                print(f"{f}:{n}: looks like an API token; keep it out of the repo (~/.zshrc.local)")
+                print(f"{f}:{n}: looks like an API token; keep it out of the repo (in the app's own credential store)")
                 tokens += 1
     where = ", ".join(LINT_SKIP)
     print(f"{hits} finding(s): color literals outside {where}, or personal data" if hits else
