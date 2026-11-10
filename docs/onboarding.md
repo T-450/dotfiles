@@ -24,7 +24,7 @@ archinstall's minimal profile is enough.
 
 	The run ends with the `==> units` step.
 
-3. Reboot. The login screen is sysc-greet with the "Mango" theme. Log in to start mango, with
+3. Reboot. The login screen is sysc-greet, stock. Log in to start mango, with
    waybar at the bottom.
 
 ## Check that it matches the repo

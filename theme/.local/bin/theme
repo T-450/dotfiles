@@ -16,7 +16,6 @@ Reload hooks (<app>/reload.sh) must not leave background processes holding stdou
 The active palette's name is kept in $XDG_STATE_HOME/theme/current.
 Stdlib only, so it runs on a bare Arch install with just `python`.
 """
-import getpass
 import hashlib
 import json
 import os
@@ -44,7 +43,6 @@ ROLES = [
     "error", "warning", "success", "shadow",
 ]
 TERMINAL = ["fg", "bg", "cursor"]
-ART = ["planet_light", "planet_dark", "ring_outer", "ring_inner"]
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
@@ -149,7 +147,7 @@ def load_palette(slug, path=None):
     variant = meta.get("variant")
     if variant not in ("dark", "light"):
         raise ThemeError(f"{path.name}: meta.variant must be 'dark' or 'light'")
-    colors, term, art = data.get("colors", {}), data.get("terminal", {}), data.get("art", {})
+    colors, term = data.get("colors", {}), data.get("terminal", {})
     missing = [r for r in ROLES if r not in colors] + [f"terminal.{k}" for k in TERMINAL if k not in term]
     if missing:
         raise ThemeError(f"{path.name}: missing {', '.join(missing)}")
@@ -162,15 +160,6 @@ def load_palette(slug, path=None):
         v[f"term_{k}"] = rgb(term[k], f"{path.name} terminal.{k}")
     for i, c in enumerate(ansi):
         v[f"ansi{i}"] = rgb(c, f"{path.name} terminal.ansi[{i}]")
-    # greeter art is optional: imported palettes get it derived from their roles
-    derived = {
-        "planet_light": mix(v["link"], (255, 255, 255), 0.3),
-        "planet_dark": mix(v["bg_desktop"], v["accent"], 0.15),
-        "ring_outer": v["warning"],
-        "ring_inner": mix(v["warning"], v["bg_desktop"], 0.2),
-    }
-    for k in ART:
-        v[f"art_{k}"] = rgb(art[k], f"{path.name} art.{k}") if k in art else derived[k]
 
     dark = variant == "dark"
     words = {
@@ -179,7 +168,6 @@ def load_palette(slug, path=None):
         "variant": variant,
         "prefer_dark": "1" if dark else "0",
         "color_scheme": "prefer-dark" if dark else "prefer-light",
-        "user": getpass.getuser(),  # for system files that name the user (greeter preferences)
         "home": str(Path.home()),   # for configs that need absolute paths (runner-up)
     }
     return v, words
@@ -345,7 +333,7 @@ def render_all(slug, dest_root):
 
 
 def run_generators():
-    """<app>/render.sh: art made from the palette that isn't a template (e.g. the greeter wallpaper).
+    """<app>/render.sh: art made from the palette that isn't a template (e.g. the swaybg wallpaper).
     Each is quiet when its output is already current."""
     for g in sorted(REPO.glob("*/render.sh")):
         if os.access(g, os.X_OK):
@@ -760,7 +748,7 @@ def main(argv):
             ok = run_hooks(words)
             notify("Theme", words["name"])
             if system_digest() != before:  # files outside $HOME need root: they apply on the next run
-                notify("Theme: login screen", "updates on the next `install.sh --system` (sudo)")
+                notify("Theme: system files", "apply on the next `install.sh --system` (sudo)")
                 print("system files changed: run `install.sh --system` to apply them (sudo)")
             return 0 if ok else 1
     elif cmd == "pick":

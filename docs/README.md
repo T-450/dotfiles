@@ -28,7 +28,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS | git, github-cli |
-| [greeter](apps/greeter.md) | The login screen: greetd running sysc-greet in a small mango session, themed "Mango" from the active palette | greetd, sysc-greet-mango, sysclet, imagemagick |
+| [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys and theme; its colors follow the terminal's palette) | helix, jdtls, jre-openjdk |
@@ -75,7 +75,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
     pkg/<name>/PKGBUILD  a program that isn't packaged anywhere, built with makepkg
     .config/… .local/… .zshrc …   dot-entries: linked into $HOME (stow, one link per file)
     root/…           system files: copied to / (install.sh --system)
-    *.tmpl           templates (palette colors, {{user}}, {{home}}), rendered in place, anywhere
+    *.tmpl           templates (palette colors, {{home}}), rendered in place, anywhere
     render.sh        art made for the palette that isn't a template (the wallpapers)
     reload.sh        recolors the running app after `theme set`
     setup.sh         state that isn't a file: services, gsettings, login shell; boot images,

@@ -160,9 +160,9 @@ link() {
 # ---------------------------------------------------------------- system (<app>/root -> /)
 # Copies, not links: system services can't read your home. A file is installed only when it
 # differs. Its owner (and that of any dir created for it) is the owner of the nearest existing
-# dir above it: /etc/* stays root's, /var/lib/greeter/* the greeter's. Mode comes from the repo.
+# dir above it: /etc/* stays root's, /var/lib/<service>/* the service user's. Mode comes from the repo.
 as_root() { if [[ -w $root ]]; then "$@"; else sudo "$@"; fi; }
-# root's view of a path: you may not be allowed to look (/var/lib/greeter is 0700), root always is
+# root's view of a path: you may not be allowed to look (a service's /var/lib dir is often 0700), root always is
 root_test() { test "$@" 2>/dev/null || { [[ ! -w $root ]] && sudo test "$@"; }; }
 
 system_files() { # app-relative paths under <app>/root/, templates excluded (their output is used)

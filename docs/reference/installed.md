@@ -67,8 +67,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | git | `github-cli` | 2.103.3-1 |
 | greeter | `greetd` | 0.10.3-2 |
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
-| greeter | `sysclet` | 0.3.0-1 |
-| greeter | `imagemagick` | 7.1.2.35-1 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `helix` | 25.07.1-2 |

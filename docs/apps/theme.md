@@ -2,7 +2,7 @@
 
 The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps.
 
-See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, light-2026, tokyo-night, catppuccin-mocha). Besides the color roles, templates can use `{{user}}` and `{{home}}` (for configs that need them, like the greeter's preferences and runner-up's state dir).
+See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, light-2026, tokyo-night, catppuccin-mocha). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
 
 ## Reference
 
@@ -16,5 +16,5 @@ See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, li
 
 **Rendered from the palette** (`theme`):
 
-- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `art_planet_dark`, `art_planet_light`, `art_ring_inner`, `art_ring_outer`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `warning`
+- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `warning`
 <!-- end generated -->

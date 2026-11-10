@@ -5,11 +5,13 @@ set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 scratch_home
 r=$TEST_TMP/root
-mkdir -p "$r/etc" "$r/usr/share" "$r/usr/local" "$r/var/lib/greeter"
+mkdir -p "$r/etc" "$r/usr/share" "$r/usr/local" "$r/var/lib/fixture"
 # a copy: templates render in place, and {{home}} here is the scratch home, so rendering the
 # checkout itself would point its live configs (runner-up's stateDir) into this temp dir
 repo=$TEST_TMP/repo
 cp -r "$ROOT" "$repo" && rm -rf "$repo/.git"
+# a root file two dirs below an existing one, to see who owns the dirs install creates
+mkdir -p "$repo/greeter/root/var/lib/fixture/.cache" && echo x >"$repo/greeter/root/var/lib/fixture/.cache/f"
 out=$("$repo/theme/.local/bin/theme" init 2>&1) || fail "theme init renders the copy" "$out"
 
 out=$("$repo/install.sh" --root "$r") || fail "install.sh --root" "$out"
@@ -18,7 +20,7 @@ got=$(cd "$r" && find . -type f | sed 's|^\.||' | sort)
 [[ $want == "$got" ]] || fail "every root file is installed, nothing else" "$(diff <(echo "$want") <(echo "$got"))"
 pass "every <app>/root file installed ($(wc -l <<<"$got") files), templates left out"
 
-[[ $(stat -c %U "$r/var/lib/greeter/.cache") == "$(stat -c %U "$r/var/lib/greeter")" ]] ||
+[[ $(stat -c %U "$r/var/lib/fixture/.cache") == "$(stat -c %U "$r/var/lib/fixture")" ]] ||
 	fail "created dirs take the owner of the nearest existing dir"
 pass "created dirs owned like their existing parent"
 
