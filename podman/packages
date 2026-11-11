@@ -1,3 +1,4 @@
 podman          # rootless containers; its Docker-compatible API is podman.socket (podman/setup.sh)
 podman-docker   # the docker command (runs podman); /etc/containers/nodocker silences its banner
 podman-compose  # the compose provider, pinned in containers.conf.d/50-compose.conf
+podman-desktop  # GUI for containers, images and pods on the same podman (decline its onboarding downloads)

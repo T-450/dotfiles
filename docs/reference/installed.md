@@ -96,6 +96,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | podman | `podman` | 6.2.0-1 |
 | podman | `podman-docker` | 6.2.0-1 |
 | podman | `podman-compose` | 1.6.0-1 |
+| podman | `podman-desktop` | 1.29.3-1 |
 | polkit | `polkit-gnome` | 0.105-12 |
 | portals | `xdg-desktop-portal` | 1.22.1-2 |
 | portals | `xdg-desktop-portal-gtk` | 1.15.3-2 |
