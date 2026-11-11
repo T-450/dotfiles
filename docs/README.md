@@ -33,7 +33,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys; VS Code's Dark+ theme, built into helix, with its own colors rather than the palette's) | helix, jdtls, jre-openjdk |
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
-| [kitty](apps/kitty.md) | The terminal (alt+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
+| [kitty](apps/kitty.md) | The terminal (alt+return) and the dropdown terminal (alt+esc), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
@@ -60,7 +60,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
 | [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as pills and a powerline ribbon, colored from the palette | waybar, pamixer |
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
-| [wlogout](apps/wlogout.md) | The power menu (super+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
+| [wlogout](apps/wlogout.md) | The power menu (super+shift+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd |
 <!-- end generated -->

@@ -1,6 +1,8 @@
 # kitty
 
-The terminal (alt+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim).
+The terminal (alt+return) and the dropdown terminal (alt+esc), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim).
+
+The dropdown is a kitty window with the class `kitty-dropdown`, shown and hidden by mango's `toggle_named_scratchpad` (`mango/.config/mango/bind.conf`, rule in `rule.conf`). The first alt+esc starts it; after that alt+esc shows or hides the same shell, so history and running jobs survive. It floats against the top edge of whatever tag you view, 80% of the screen wide and half as tall, and alt+q closes it like any window. kitty's own quick-access kitten is not used: it is a layer surface mango never selects, so alt+q while it was open closed whichever window mango had selected instead, even one on another tag.
 
 Copy and paste work like in GUI apps:
 

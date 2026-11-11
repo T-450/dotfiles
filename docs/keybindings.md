@@ -5,6 +5,7 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | keys | action |
 |---|---|
 | alt+return | kitty |
+| alt+esc | dropdown terminal: the one persistent shell, on the top edge of whatever tag you view; alt+esc again hides it and it keeps running (also alt+caps, since Caps Lock is Escape) |
 | super+d | rofi launcher |
 | super+/ | all keybindings (`mango-keys`) |
 | super+return | firefox |
@@ -18,7 +19,7 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | ctrl+alt+a / Print | screenshot region / full (clipboard + ~/Pictures/Screenshots) |
 | super+j | toggle screen recording (~/video) |
 | super+l | lock |
-| super+escape | power menu |
+| super+shift+escape | power menu (not super+escape: a slip from alt+esc must not open it, since its keys act at once) |
 | super+shift+t | theme picker (rofi, `theme pick`) |
 | super+w | wallpaper picker (waypaper; a pick stays across logins and `theme set`) |
 | ctrl+alt+\\ / ctrl+alt+backspace | restore last / dismiss all notifications |
