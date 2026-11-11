@@ -78,6 +78,8 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
   <app>/            one folder per program; every part is optional, every app uses the same ones:
     packages         pacman/AUR packages (one per line, # comments)
     pkg/<name>/PKGBUILD  a program that isn't packaged anywhere, built with makepkg
+    keys/FINGERPRINT.asc  a public key a PKGBUILD's validpgpkeys names (AUR or pkg/), imported
+                     before builds so a fresh install never waits on a public keyserver
     .config/… .local/… .zshrc …   dot-entries: linked into $HOME (stow, one link per file)
     root/…           system files: copied to / (install.sh --system)
     *.tmpl           templates (palette colors, {{home}}), rendered in place, anywhere

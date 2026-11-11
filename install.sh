@@ -3,7 +3,8 @@
 #            [--only APP...] [--home DIR] [--root DIR]
 # Build this desktop from the repo. Idempotent: a second run changes nothing. Every app folder
 # is handled the same way, by these phases (no flag = all, in this order):
-#   packages  <app>/packages: pacman (repo) or yay (AUR); <app>/pkg/*/PKGBUILD: makepkg
+#   packages  <app>/packages: pacman (repo) or yay (AUR); <app>/pkg/*/PKGBUILD: makepkg;
+#             <app>/keys/FINGERPRINT.asc: signing keys those builds verify, imported first
 #   theme     render every <app>/**/*.tmpl and run <app>/render.sh (theme init)
 #   link      GNU stow: each <app>'s dot-entries (.config/, .local/, .zshrc …) into $HOME
 #   system    copy each <app>/root/** to /** (sudo; owner = owner of the nearest existing dir)
@@ -54,6 +55,24 @@ apps() {
 # Names in the sync databases go to pacman, the rest to yay (yay-bin is built from the AUR when
 # missing). A full -Syu runs first: Arch doesn't support partial upgrades. Local PKGBUILDs (for
 # programs neither repo nor AUR packages) are built when their version isn't installed.
+# A PKGBUILD that lists validpgpkeys has makepkg check its sources against those keys, which yay
+# would otherwise fetch from a public keyserver on every fresh install: when the keyservers are
+# down, the install fails. So an app keeps such keys as <app>/keys/FINGERPRINT.asc (the public
+# key, checked against a signed release when added), imported into your keyring before any build.
+import_keys() {
+	local a f fpr
+	for a in $(apps); do
+		for f in "$repo/$a"/keys/*.asc; do
+			[[ -e $f ]] || continue
+			fpr=$(basename -- "$f" .asc)
+			gpg --batch --list-keys "$fpr" &>/dev/null && continue
+			gpg --batch --import "$f" 2>/dev/null
+			# the file must hold the key its name promises
+			gpg --batch --list-keys "$fpr" &>/dev/null || { echo "install.sh: $f does not hold key $fpr" >&2 && return 1; }
+			echo "import  pgp key $fpr ($a)"
+		done
+	done
+}
 install_packages() {
 	local a all=() repo_pkgs=() aur=() p
 	for a in $(apps); do
@@ -61,6 +80,7 @@ install_packages() {
 		while read -r p; do all+=("$p"); done < <(sed 's/#.*//' "$repo/$a/packages" | tr -s ' \t' '\n' | sed '/^$/d')
 	done
 	retry sudo pacman -Syu --noconfirm
+	import_keys
 	declare -A sync
 	while read -r p; do sync[$p]=1; done < <(pacman -Slq)
 	for p in $(printf '%s\n' "${all[@]}" | sort -u); do
