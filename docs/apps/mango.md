@@ -2,7 +2,7 @@
 
 The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands.
 
-`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+r). `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+p); `mango-keys` shows every binding as a rofi cheatsheet (super+/), read from `bind.conf`: `## ` lines are its sections and a `#: ` line describes the bind below it. Caps Lock is Escape.
+`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+r). Tiled windows have no gaps (`gap_*=0` in `config.conf`): they meet edge to edge, like tmux or Neovim panes, and the border marks the focused one. There are no gap keybindings. `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+p); `mango-keys` shows every binding as a rofi cheatsheet (super+/), read from `bind.conf`: `## ` lines are its sections and a `#: ` line describes the bind below it. Caps Lock is Escape.
 
 ## Reference
 

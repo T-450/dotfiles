@@ -44,7 +44,6 @@ ACTIONS = {
     "switch_proportion_preset": "Cycle scroller widths",
     "scroller_stack": "Scroller: stack {0}",
     "dwindle_toggle_split_direction": "Dwindle: flip split",
-    "togglegaps": "Gaps on/off",
     "view": "Show tag {0}",
     "toggleview": "Also show tag {0}",
     "tag": "Move window to tag {0}",
@@ -65,7 +64,6 @@ ACTIONS = {
 # binds whose meaning depends on the first argument
 ACTION_ARGS = {
     ("incnmaster", "1"): "More master windows", ("incnmaster", "-1"): "Fewer master windows",
-    ("incgaps", "1"): "Wider gaps", ("incgaps", "-1"): "Narrower gaps",
     ("set_proportion", "1.0"): "Scroller: full width", ("set_proportion", "0.5"): "Scroller: half width",
     ("moveresize", "curmove"): "Drag window", ("moveresize", "curresize"): "Resize window",
 }
