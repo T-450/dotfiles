@@ -33,7 +33,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys; VS Code's Dark+ theme, built into helix, with its own colors rather than the palette's) | helix, jdtls, jre-openjdk |
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
-| [kitty](apps/kitty.md) | The terminal (alt+return) and the dropdown terminal (alt+esc), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
+| [kitty](apps/kitty.md) | The terminal (alt+return), the dropdown terminal (alt+esc) and the floating terminal (alt+shift+t), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
