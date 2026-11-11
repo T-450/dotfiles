@@ -2,7 +2,9 @@
 
 The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands.
 
-`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+r). Tiled windows have no gaps (`gap_*=0` in `config.conf`): they meet edge to edge, like tmux or Neovim panes, and the border marks the focused one. There are no gap keybindings. `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+p); `mango-keys` shows every binding as a rofi cheatsheet (super+/), read from `bind.conf`: `## ` lines are its sections and a `#: ` line describes the bind below it. Caps Lock is Escape.
+`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+r). Tiled windows have no gaps (`gap_*=0` in `config.conf`): they meet edge to edge, like tmux or Neovim panes. There are no gap keybindings.
+
+Borders are drawn like tmux's pane lines: 1px, square corners, a grey line (`border_inactive` mixed toward `fg_muted`) on every window and green (`success`) on the focused one, so two panes meet at a 2px seam that is half green next to the focused pane. Green is used by no other state, so focus never shares a color with maximized (`accent`), scratchpad (`badge` mixed toward `fg_bright`), urgent (`error`), global or overlay windows. A lone window has no border (`no_border_when_single=1`). Every window is fully opaque (`unfocused_opacity=1.0`): the border alone marks focus. The tab bar follows the same rule (1px, square, green focused tab). `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+p); `mango-keys` shows every binding as a rofi cheatsheet (super+/), read from `bind.conf`: `## ` lines are its sections and a `#: ` line describes the bind below it. Caps Lock is Escape.
 
 ## Reference
 
@@ -25,7 +27,7 @@ The compositor (mangowm 0.18): config, keybindings, window rules, the session en
 
 **Rendered from the palette** (`theme`):
 
-- `mango/.config/mango/colors.conf.tmpl` → `mango/.config/mango/colors.conf`: `accent`, `badge`, `bg_desktop`, `border_inactive`, `error`, `fg_secondary`, `name`, `selection_bg`, `shadow`, `slug`
+- `mango/.config/mango/colors.conf.tmpl` → `mango/.config/mango/colors.conf`: `accent`, `badge`, `bg_desktop`, `bg_surface`, `border_inactive`, `error`, `fg_bright`, `fg_secondary`, `name`, `selection_bg`, `shadow`, `slug`, `success`
 
 **`reload.sh`** (run by `theme set`): reload mango so colors.conf applies Outside a mango session (no IPC socket) there is nothing to reload.
 <!-- end generated -->

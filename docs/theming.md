@@ -68,12 +68,12 @@ Which apps use each role (generated from the templates):
 | `badge` | mango, mousepad, qutebrowser, theme, waybar |
 | `bg_desktop` | claude, firefox, gtk, mango, mousepad, mpv, qutebrowser, swaylock, theme, wlogout |
 | `bg_hover` | claude, firefox, kitty, mousepad, opencode, rofi, swayosd, theme, waybar |
-| `bg_surface` | claude, firefox, gtk, kitty, mousepad, qutebrowser, rofi, theme, waybar |
+| `bg_surface` | claude, firefox, gtk, kitty, mango, mousepad, qutebrowser, rofi, theme, waybar |
 | `bg_widget` | claude, firefox, gtk, mako, mpv, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
 | `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
 | `error` | claude, fastfetch, gtk, mako, mango, mousepad, mpv, opencode, qutebrowser, swaylock, theme, waybar |
-| `fg_bright` | fastfetch, firefox, mousepad, opencode, qutebrowser, theme |
+| `fg_bright` | fastfetch, firefox, mango, mousepad, opencode, qutebrowser, theme |
 | `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |
 | `fg_editor` | gtk, mousepad, opencode, theme |
 | `fg_muted` | claude, fastfetch, mousepad, opencode, rofi, theme |
@@ -90,7 +90,7 @@ Which apps use each role (generated from the templates):
 | `selection_fg` | firefox, gtk, kitty, mousepad, opencode, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
 | `slug` | fastfetch, firefox, gtk, kitty, mako, mango, mousepad, mpv, rofi, swaylock, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, mpv, opencode, qutebrowser, theme, waybar |
+| `success` | claude, fastfetch, gtk, mango, mpv, opencode, qutebrowser, theme, waybar |
 | `term_bg` | claude, kitty, opencode, theme |
 | `term_cursor` | kitty, mousepad, theme |
 | `term_fg` | kitty, theme |
