@@ -93,6 +93,9 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | opencode | `opencode` | 2.2.7-1 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |
+| podman | `podman` | 6.2.0-1 |
+| podman | `podman-docker` | 6.2.0-1 |
+| podman | `podman-compose` | 1.6.0-1 |
 | polkit | `polkit-gnome` | 0.105-12 |
 | portals | `xdg-desktop-portal` | 1.22.1-2 |
 | portals | `xdg-desktop-portal-gtk` | 1.15.3-2 |

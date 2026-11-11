@@ -42,6 +42,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [mpv](apps/mpv.md) | mpv, the video and audio player, with the uosc on-screen interface in the palette's colors | mpv, mpv-mpris, yt-dlp, mpv-uosc, mpv-thumbfast-git, libva-utils |
 | [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [plymouth](apps/plymouth.md) | The boot and shutdown splash: Plymouth with the `i_use_arch_btw` theme (AUR) | plymouth, plymouth-i_use_arch_btw-git |
+| [podman](apps/podman.md) | Containers without a root daemon: rootless Podman behind the `docker` command (podman-docker), `docker compose` through podman-compose, and a Docker-compatible API socket for testcontainers and devcontainers | podman, podman-docker, podman-compose |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |

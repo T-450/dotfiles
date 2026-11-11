@@ -60,3 +60,5 @@ shfmt = "3"
 tombi = "1"
 "npm:yaml-language-server" = "2"
 marksman = "latest"                           # versions are dates
+# Containers: devcontainer up/exec on rootless podman (podman/: the docker command and DOCKER_HOST)
+"npm:@devcontainers/cli" = "0"

@@ -173,6 +173,15 @@ specifiers = ["26"]
 checksum = "sha256:5848553868b402d3fabb5b09270649977780a390f832155721025a08b5104455"
 url = "https://nodejs.org/dist/v26.13.0/node-v26.13.0-linux-x64.tar.gz"
 
+[[tools."npm:@devcontainers/cli"]]
+version = "0.90.0"
+aube = { path = "locks/npm-devcontainers-cli/0.90.0", digest = "sha256:8a8a9e59feed6f3c786e90fcb8b436fec9cf4fa84a33211fc5998570a65501e2" }
+backend = "npm:@devcontainers/cli"
+specifiers = ["0"]
+
+[tools."npm:@devcontainers/cli".provenance]
+repository = "github.com/devcontainers/cli"
+
 [[tools."npm:bash-language-server"]]
 version = "5.8.1"
 aube = { path = "locks/npm-bash-language-server/5.8.1", digest = "sha256:04a8ed32e542efcdb8eec68c26ea939f6758453310d97b30d314da36841ef79f" }

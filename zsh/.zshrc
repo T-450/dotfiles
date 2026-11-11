@@ -1,5 +1,10 @@
 # ~/.local/bin: this repo's commands (theme, screenshot, osd-*, ...), linked there by install.sh
 export PATH=$HOME/.local/bin:$PATH
+# Docker API clients that skip the docker command (testcontainers, the devcontainer CLI, SDKs) talk
+# to rootless podman's socket (podman/setup.sh enables it). Owned by podman/, set here rather than in
+# mango's env.conf: every such client starts from a shell, and zsh expands the per-user runtime dir.
+# An explicit DOCKER_HOST wins.
+export DOCKER_HOST=${DOCKER_HOST:-unix://$XDG_RUNTIME_DIR/podman/podman.sock}
 
 # Path to your Oh My Zsh installation.
 # oh-my-zsh from the oh-my-zsh-git package (zsh/packages); it updates with the package, not itself,
