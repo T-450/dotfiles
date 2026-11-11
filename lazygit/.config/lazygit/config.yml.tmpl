@@ -1,0 +1,42 @@
+# lazygit: rendered by theme from the active palette (theme set); edit this .tmpl, not config.yml.
+# Written in lazygit 0.66's schema (git.diffRenderers, not the older paging/pagers keys), so lazygit
+# has no deprecated key to migrate and never rewrites the linked file. Colors are quoted: an
+# unquoted " #" starts a YAML comment. Only theme tokens appear here: theme would consume lazygit's
+# own double-brace template variables too, so the palette's variant is written out instead.
+gui:
+  # the palette's variant (dark/light): lazygit and delta then never have to ask the terminal
+  colorScheme: {{variant}}
+  nerdFontsVersion: "3"
+  # square single lines, like the windows' tmux-style borders (mango) and the dropdown
+  border: single
+  theme:
+    # the focused panel takes the focused window's green; the rest the window grid's grey
+    activeBorderColor:
+      - "{{success}}"
+      - bold
+    inactiveBorderColor:
+      - "{{border_inactive|mix:fg_muted:0.2}}"
+    searchingActiveBorderColor:
+      - "{{warning}}"
+      - bold
+    optionsTextColor:
+      - "{{link}}"
+    selectedLineBgColor:
+      - "{{bg_hover}}"
+    cherryPickedCommitFgColor:
+      - "{{badge|ink}}"
+    cherryPickedCommitBgColor:
+      - "{{badge}}"
+    markedBaseCommitFgColor:
+      - "{{warning|ink}}"
+    markedBaseCommitBgColor:
+      - "{{warning}}"
+    unstagedChangesColor:
+      - "{{error}}"
+git:
+  # delta (git/packages) in the palette's variant; its syntax theme (ansi) comes from git's config
+  diffRenderers:
+    - command: delta --{{variant}} --paging=never
+os:
+  # `e` opens the file in helix (Arch names the binary helix, not hx)
+  editPreset: helix

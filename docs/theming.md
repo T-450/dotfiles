@@ -65,14 +65,14 @@ Which apps use each role (generated from the templates):
 | `ansi7` | kitty |
 | `ansi8` | kitty |
 | `ansi9` | kitty, mousepad |
-| `badge` | mango, mousepad, qutebrowser, theme, waybar |
+| `badge` | lazygit, mango, mousepad, qutebrowser, theme, waybar |
 | `bg_desktop` | claude, firefox, gtk, mango, mousepad, mpv, qutebrowser, swaylock, theme, wlogout |
-| `bg_hover` | claude, firefox, kitty, mousepad, opencode, rofi, swayosd, theme, waybar |
+| `bg_hover` | claude, firefox, kitty, lazygit, mousepad, opencode, rofi, swayosd, theme, waybar |
 | `bg_surface` | claude, firefox, gtk, kitty, mango, mousepad, qutebrowser, rofi, theme, waybar |
 | `bg_widget` | claude, firefox, gtk, mako, mpv, opencode, qutebrowser, rofi, swayosd, theme, waybar, wlogout |
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
-| `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
-| `error` | claude, fastfetch, gtk, mako, mango, mousepad, mpv, opencode, qutebrowser, swaylock, theme, waybar |
+| `border_inactive` | claude, fastfetch, firefox, kitty, lazygit, mango, mousepad, opencode, rofi, theme |
+| `error` | claude, fastfetch, gtk, lazygit, mako, mango, mousepad, mpv, opencode, qutebrowser, swaylock, theme, waybar |
 | `fg_bright` | fastfetch, firefox, mango, mousepad, opencode, qutebrowser, theme, waybar |
 | `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |
 | `fg_editor` | gtk, mousepad, opencode, theme |
@@ -82,7 +82,7 @@ Which apps use each role (generated from the templates):
 | `git_email` | git |
 | `git_name` | git |
 | `home` | helix, runner-up |
-| `link` | claude, gtk, kitty, mousepad, mpv, opencode, qutebrowser, rofi, theme, waybar |
+| `link` | claude, gtk, kitty, lazygit, mousepad, mpv, opencode, qutebrowser, rofi, theme, waybar |
 | `name` | claude, fastfetch, firefox, gtk, kitty, mako, mango, mousepad, mpv, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
@@ -90,12 +90,12 @@ Which apps use each role (generated from the templates):
 | `selection_fg` | firefox, gtk, kitty, mousepad, opencode, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
 | `slug` | fastfetch, firefox, gtk, kitty, mako, mango, mousepad, mpv, rofi, swaylock, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, mango, mpv, opencode, qutebrowser, theme, waybar |
+| `success` | claude, fastfetch, gtk, lazygit, mango, mpv, opencode, qutebrowser, theme, waybar |
 | `term_bg` | claude, kitty, opencode, theme |
 | `term_cursor` | kitty, mousepad, theme |
 | `term_fg` | kitty, theme |
-| `variant` | claude, qutebrowser, theme |
-| `warning` | claude, fastfetch, gtk, kitty, mousepad, opencode, qutebrowser, theme, waybar |
+| `variant` | claude, lazygit, qutebrowser, theme |
+| `warning` | claude, fastfetch, gtk, kitty, lazygit, mousepad, opencode, qutebrowser, theme, waybar |
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (kitty; zsh, vim and
@@ -144,6 +144,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | qutebrowser | `config.source("colors.py")` | `:config-source` in a running browser (hook) |
 | Firefox | `chrome/userChrome.css` in the profile | restart Firefox |
 | fastfetch | `config.jsonc` rendered (keys, title, bars, separators); the logo keeps its colors | next run |
+| lazygit | `config.yml` rendered (borders, selection, cherry-pick and rebase marks; `colorScheme` and delta's `--dark`/`--light` from `variant`) | next start |
 | zsh, vim, helix | terminal ANSI colors (kitty) | at once (kitty reloads) |
 | Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session |
 | opencode | `~/.config/opencode/themes/mango.json` (linked), selected in the linked `cli.json`; code uses the terminal ANSI hues | next start |

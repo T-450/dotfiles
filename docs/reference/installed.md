@@ -38,8 +38,8 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `xdg-user-dirs` | 0.20-1 |
 | base | `stow` | 2.4.1-1 |
 | base | `python` | 3.14.10-1 |
-| bluetooth | `bluez` | 5.87-2 |
-| bluetooth | `bluez-utils` | 5.87-2 |
+| bluetooth | `bluez` | 5.88-1 |
+| bluetooth | `bluez-utils` | 5.88-1 |
 | bluetooth | `blueman` | 2.4.6-2 |
 | clang | `clang` | 23.1.4-1 |
 | clang | `lldb` | 23.1.4-1 |
@@ -50,7 +50,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clipboard | `cliphist` | 1:0.7.0-2 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
 | fastfetch | `fastfetch` | 2.71.0-1 |
-| firefox | `firefox` | 159.0.1-1 |
+| firefox | `firefox` | 160.0-1 |
 | fonts | `inter-font` | 4.1-1 |
 | fonts | `ttf-jetbrains-mono-nerd` | 3.5.1-2 |
 | fonts | `noto-fonts` | 1:2026.11.01-1 |
@@ -63,7 +63,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | fonts | `ttf-nerd-fonts-symbols` | 3.5.1-1 |
 | fonts | `ttf-nerd-fonts-symbols-mono` | 3.5.1-1 |
 | fonts | `ttf-terminus-nerd` | 3.5.1-2 |
-| git | `git` | 2.56.0-2 |
+| git | `git` | 2.56.1-1 |
 | git | `github-cli` | 2.103.3-1 |
 | git | `git-delta` | 0.20.1-1 |
 | greeter | `greetd` | 0.10.3-2 |
@@ -75,6 +75,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | helix | `jre-openjdk` | 27.0.1.0.3.u1-1 |
 | kitty | `kitty` | 0.50.0-1 |
 | kitty | `xdg-terminal-exec` | 0.14.4-1 |
+| lazygit | `lazygit` | 0.66.3-1 |
 | mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.5-1 |
 | mango | `wlr-randr` | 0.5.0-1 |
@@ -89,7 +90,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mpv | `mpv-uosc` | 5.13.0-1 |
 | mpv | `mpv-thumbfast-git` | r132.0f711de-1 |
 | mpv | `libva-utils` | 2.24.0-1 |
-| opencode | `opencode` | 2.2.6-1 |
+| opencode | `opencode` | 2.2.7-1 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |
 | polkit | `polkit-gnome` | 0.105-12 |
@@ -102,7 +103,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | qt | `qt6-svg` | 6.12.0-1 |
 | qutebrowser | `qutebrowser` | 3.7.0-1 |
 | recorder | `gpu-screen-recorder` | 6.1.7-1 |
-| rofi | `rofi` | 2.0.0-1 |
+| rofi | `rofi` | 2.1.1-1 |
 | runner-up | `github-cli` | 2.103.3-1 |
 | runner-up | `qemu-base` | 11.1.3-1 |
 | screenshot | `grim` | 1.5.0-2 |
@@ -118,7 +119,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | tealdeer | `tealdeer` | 1.9.1-1 |
 | theme | `python` | 3.14.10-1 |
 | theme | `jq` | 1.8.2-1 |
-| thinkpad | `intel-ucode` | 20260925-1 |
+| thinkpad | `intel-ucode` | 20261110-1 |
 | thinkpad | `sof-firmware` | 2026.09.2-1 |
 | thinkpad | `intel-media-driver` | 26.3.5-1 |
 | thinkpad | `vulkan-intel` | 1:26.2.6-1 |
