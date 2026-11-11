@@ -9,7 +9,8 @@ curl -fsSL https://raw.githubusercontent.com/T-450/dotfiles/main/bootstrap.sh | 
 `bootstrap.sh` installs git and the GitHub CLI, clones this repo to `~/dotfiles`, asks once for
 the GitHub sign-in (runner-up, the CI coordinator, serves jobs through it; skip it and runner-up
 stays off), then runs `install.sh`. Log out and back in (or reboot into greetd) and the desktop is
-there. Nothing else is manual.
+there. One sign-in is left for when you want it: `sbx login` (your Docker account) before the
+first AI-agent sandbox, with its one-time `sbx policy init` ([sbx](apps/sbx.md)). Nothing else is manual.
 
 ## install.sh
 

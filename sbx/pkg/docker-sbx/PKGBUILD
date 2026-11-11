@@ -1,0 +1,36 @@
+# Docker Sandboxes (sbx) isn't packaged for Arch (repo or AUR); Docker ships .deb/.rpm and a static
+# tarball. This installs the tarball, checked against the release's published SHA-256, in the
+# layout its own install.sh uses (bin/ + libexec/), under /usr/lib/docker-sbx: sbx finds its shims,
+# VM kernel and root filesystems at ../libexec from its resolved path, so /usr/bin/sbx is a link.
+# Its install.sh also adds an AppArmor profile where AppArmor is active; Arch doesn't enable it.
+# The download has no version in its name, so it is saved as $pkgname-$pkgver.tar.gz (a new
+# pkgver is then a new file, not a stale cached one). Bump pkgver + sha256sums together.
+pkgname=docker-sbx
+pkgver=0.53.0
+pkgrel=1
+pkgdesc='Docker Sandboxes: run coding agents in isolated microVMs (sbx)'
+arch=(x86_64)
+url='https://github.com/docker/sbx-releases'
+license=(LicenseRef-Docker-Proprietary)
+depends=(glibc gcc-libs)
+options=(!strip !debug)
+source=("$pkgname-$pkgver.tar.gz::$url/releases/download/v$pkgver/DockerSandboxes-linux-amd64.tar.gz")
+sha256sums=('a8e171ed331e2485ff8d46978d7bf9e74929769acacb6759c15a0a665a3b7bb2')
+
+package() {
+	cd docker-sbx
+	local lib=/usr/lib/docker-sbx
+	install -Dm755 sbx "$pkgdir$lib/bin/sbx"
+	local f
+	for f in docker-docklet containerd-shim-nerdbox-v1 containerd-shim-nerdbox-gpu-v1 mkfs.erofs mkfs.ext4; do
+		install -Dm755 "$f" "$pkgdir$lib/libexec/$f"
+	done
+	for f in nerdbox-kernel-* nerdbox-rootfs-*.erofs sailor-rootfs-*.erofs; do
+		install -Dm644 "$f" "$pkgdir$lib/libexec/$f"
+	done
+	install -Dm755 libsailor.so "$pkgdir$lib/libexec/lib/libsailor.so"
+	install -d "$pkgdir/usr/bin"
+	ln -s "$lib/bin/sbx" "$pkgdir/usr/bin/sbx"
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+	install -Dm644 THIRD-PARTY-NOTICES "$pkgdir/usr/share/licenses/$pkgname/THIRD-PARTY-NOTICES"
+}
