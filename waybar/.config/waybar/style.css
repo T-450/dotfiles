@@ -1,30 +1,39 @@
-/* waybar: everything on the bar is a 20px shape floating 3px off its top and bottom edges.
-   The left corner and the clock are fully rounded pills with no arrows: the Arch logo, the tags
-   (occupied ones dim text, the selected one a wider blue pill in bold), the layout icon, and the
-   clock as one pill in one color, its time in bold.
+/* waybar, "split chevrons" (after Dusky's 17_boxy_h: every module a block of its own
+   with the bar showing between them; here the blocks stay one powerline ribbon).
+   Geometry: bar height 36px (config.jsonc), shapes 26px tall floating 5px off the bar's top and
+   bottom edges, radius 13px (half the height), base text 13px, emphasis in extra bold (800).
+   The left corner: the Arch logo, the tags (occupied ones dim text 8px apart; the selected one
+   bright extra-bold text over a 3px accent-to-violet gradient line that grows from the center, a
+   hovered one a half-width line) and the layout icon. The clock is one raised pill drawn by three
+   modules, its time in extra bold.
    The right-hand modules (network, audio, backlight, battery, memory, disk, cpu, night light, then
    the tray, record and power) are one agnoster-style powerline ribbon of the same height
    (colors.css): it starts with an arrow tip and ends in the pills' rounded cap, as far from the
    screen edge as the logo. The live modules take the palette's accents and change with their state;
    the tray, record and power take its grey. Blue backgrounds carry white text (selection_fg).
-   Powerline arrows are 10x20 chevrons (45 degrees) drawn in 10px edge columns (transparent borders
-   painted by edges/NAME-symbolic.svg). Each boundary between two segments is ONE column owned by
-   one of them, which paints both colors: GTK repaints only the widget that changed, so a column
-   shared by two overlapping widgets would lose one side's half on the other's update.
+   Powerline arrows are 13x26 chevrons (45 degrees) behind a 3px slit, drawn in 16px edge columns
+   (transparent borders painted by edges/NAME-symbolic.svg at 16x26). The slit is an unpainted
+   part of the column, so the opaque bar shows through it: no fourth color and no alpha. Each
+   boundary between two segments is ONE column owned by one of them, which paints both colors: GTK
+   repaints only the widget that changed, so a column shared by two overlapping widgets would lose
+   one side's half on the other's update.
    The edge SVGs are recolored through -gtk-icon-palette: error = the segment's own color,
    warning = its left neighbor's, success = its right neighbor's.
      tip-left             own arrow into the bar
-     own-left             own arrow pointing left over the left neighbor's color
-     host-right           the right neighbor's arrow pointing left over the own color
+     own-left             own arrow pointing left, the slit, the left neighbor's notched end
+     host-right           the right neighbor's arrow pointing left, the slit, the own notched end
    A segment whose color changes with its state (network, battery, disk, night light) owns both of
    its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart.
-   Nothing but a column's owner may change a segment's background, so hover never does: it draws an
-   underline in the segment's own text color instead, which holds in every state. */
+   Nothing but a column's owner may change a segment's background, so hover never does: it draws a
+   3px underline in the segment's own text color instead (the tags' line), which holds in every
+   state. The free-standing pills (logo, layout) get a 2px outer ring that stays inside their own
+   margins. */
 @import "colors.css";
 
 * {
     font-family: "JetBrainsMono Nerd Font";
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: normal;
     min-height: 0;
     border: none;
     border-radius: 0;
@@ -38,65 +47,92 @@ menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
 menuitem { color: @fg; }
 menuitem:hover { color: @selfg; background: @sel; }
 
-/* geometry: the last background layer is none so background-color stays between the columns.
-   Every arrow points left, so at text height a segment's own color reaches 10px further on its
-   left than on its right: the smaller left padding evens the two sides out. */
+/* ribbon geometry: 26px segments (36px bar - 2 x 5px margin), 0 side margin, 16px edge columns
+   (transparent borders painted by edges/NAME-symbolic.svg at 16x26, their natural size). The last
+   background layer is none so background-color stays between the columns.
+   Every arrow points left, so at text height a segment's own color reaches 13px further on
+   its left than on its right: the smaller left padding evens the two sides out. */
 #network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
 #custom-nightlight, #tray, #custom-record, #custom-power {
-    margin: 3px 0;
-    padding: 0 9px 0 4px;
+    margin: 5px 0;
+    padding: 0 9px 0 3px;
     border-style: solid;
     border-color: transparent;
     border-width: 0;
     background-origin: border-box;
     background-clip: border-box, border-box, padding-box;
     background-repeat: no-repeat;
-    background-size: 10px 100%;
+    background-size: 16px 100%;
     background-position: left, right;
     transition: box-shadow 150ms ease;
 }
-#backlight { border-left-width: 10px; }
-#network, #battery, #disk, #custom-nightlight { border-width: 0 10px; }
+/* the ribbon keeps 12px off the clock: a network name longer than max-length (config.jsonc) ends
+   in an ellipsis and gives way first, so the clock stays centered */
+.modules-right { margin-left: 12px; }
+#backlight { border-left-width: 16px; }
+#network, #battery, #disk, #custom-nightlight { border-width: 0 16px; }
 
-/* left group and clock: 20px pills on the bar (26px - 2 x 3px margin, radius = half the height).
-   State changes fade; GTK3 has no transforms, so the selected tag grows through min-width. */
-#custom-arch, #layout, #workspaces button {
-    margin: 3px 2px;
+/* left group: 26px shapes on the bar (36px - 2 x 5px margin, radius = half the height) */
+#custom-arch, #layout {
+    margin: 5px 3px;
     padding: 0;
-    border-radius: 10px;
-    transition: background-color 150ms ease, color 150ms ease, min-width 150ms ease;
+    border-radius: 13px;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 
 /* the Arch logo (arch-symbolic.svg) opens the launcher; an icon cell like the layout's */
 #custom-arch, #layout {
-    min-width: 26px;
+    min-width: 34px;
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
     background-size: auto;
 }
 #custom-arch {
-    margin-left: 6px;
+    margin-left: 8px;
     color: @logo;
     background-image: -gtk-recolor(url("arch-symbolic.svg"));
 }
-#custom-arch:hover, #layout:hover { background-color: @raised; }
+#layout { color: @fg; }
+/* hover: a raised pill and a 2px ring inside the pill's own margin */
+#custom-arch:hover, #layout:hover { background-color: @raised; box-shadow: 0 0 0 2px @glow; }
 
-/* tags: only occupied ones show (config.jsonc), so dim text = occupied, the blue pill = selected */
-#workspaces { margin: 0 2px; padding: 0; background: transparent; }
+/* tags: only occupied ones show (config.jsonc), so dim text = occupied. Every tag carries the
+   gradient line at zero width; hovering and selecting animate background-size (GTK3 cannot fade
+   from no image to a gradient), so the line grows from the center. The selected tag also widens
+   through min-width, since GTK3 has no transforms. */
+#workspaces { margin: 0 3px; padding: 0; background: transparent; }
 #workspaces button {
-    min-width: 20px;
-    background: none;
+    margin: 5px 4px;
+    padding: 0;
+    min-width: 26px;
+    border-radius: 0;
+    background-color: transparent;
+    background-image: linear-gradient(to right, @line1, @line2);
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 0% 3px;
     color: @dim;
     box-shadow: none;
     text-shadow: none;
+    transition: color 150ms ease, min-width 150ms ease, background-size 200ms ease;
 }
-#workspaces button:hover { background: @raised; color: @ink_raised; }
-#workspaces button.active { min-width: 34px; background: @sel; color: @selfg; font-weight: bold; }
-#workspaces button.urgent { background: @error; color: @ink_error; font-weight: bold; }
+#workspaces button:hover { background-size: 50% 3px; color: @fg; }
+#workspaces button.active {
+    min-width: 40px;
+    background-size: 100% 3px;
+    color: @strong;
+    font-weight: 800;
+}
+#workspaces button.urgent {
+    border-radius: 13px;
+    background-image: none;
+    background-color: @error;
+    color: @ink_error;
+    font-weight: 800;
+}
 
-/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style), in the palette's text color */
-#layout { color: @fg; }
+/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style) */
 #layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
 #layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
 #layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
@@ -112,12 +148,13 @@ menuitem:hover { color: @selfg; background: @sel; }
 #layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
 #layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
+
 /* the clock: day, time and date are three modules drawn as one pill in one color (the day and the
    date carry the rounded ends); only the weight sets the time apart */
-#clock { margin: 3px 0; padding: 0 5px; background-color: @raised; color: @ink_raised; }
-#clock.day  { padding-left: 12px; border-radius: 10px 0 0 10px; }
-#clock.time { font-weight: bold; }
-#clock.date { padding-right: 12px; border-radius: 0 10px 10px 0; }
+#clock { margin: 5px 0; padding: 0 6px; background-color: @raised; color: @ink_raised; }
+#clock.day  { padding-left: 17px; border-radius: 13px 0 0 13px; }
+#clock.time { font-weight: 800; }
+#clock.date { padding-right: 17px; border-radius: 0 13px 13px 0; }
 
 /* right group, pointing left */
 #network {
@@ -150,13 +187,14 @@ menuitem:hover { color: @selfg; background: @sel; }
     background-color: @raised; -gtk-icon-palette: error @raised, warning @purple, success @grey;
     color: @ink_raised;
 }
-/* the tray, the recording dot and power are one block, so the night light's arrow fits whichever
+/* the tray, the recording dot and power are one block, so the night light's edge fits whichever
    of them shows first (the tray hides when empty, the dot while not recording); the dot is red
-   because it only shows while recording. Power closes the ribbon with the pills' rounded end. */
+   because it only shows while recording. Power closes the ribbon with the pills' rounded end
+   (radius 13px = half of 26px), as far from the screen edge as the logo. */
 #tray, #custom-record, #custom-power { background-color: @grey; color: @ink_grey; }
-#tray, #custom-record { padding-right: 6px; }
+#tray, #custom-record { padding-right: 8px; }
 #custom-record { color: @rec; }
-#custom-power { margin-right: 6px; padding-right: 10px; border-radius: 0 10px 10px 0; }
+#custom-power { margin-right: 8px; padding-right: 12px; border-radius: 0 13px 13px 0; }
 
 /* states recolor their own segment and both of its arrows */
 #network.disconnected {
@@ -186,6 +224,6 @@ menuitem:hover { color: @selfg; background: @sel; }
    recolored edges too */
 #pulseaudio.muted, #custom-nightlight.off { color: @faint_raised; }
 
-/* the clickable segments underline on hover, in their text color */
+/* the clickable segments underline on hover, in their text color, as thick as the tags' line */
 #network:hover, #pulseaudio:hover, #custom-nightlight:hover, #custom-record:hover,
-#custom-power:hover { box-shadow: inset 0 -2px currentColor; }
+#custom-power:hover { box-shadow: inset 0 -3px currentColor; }

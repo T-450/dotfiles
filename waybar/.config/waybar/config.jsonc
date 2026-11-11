@@ -1,11 +1,11 @@
-// waybar: cjbassi's layout (github.com/cjbassi/config, .config/waybar): pills on the left and in the
+// waybar (split chevrons): cjbassi's layout (github.com/cjbassi/config, .config/waybar): pills on the left and in the
 // center, one powerline ribbon on the right, each segment on one of the palette's accents (style.css,
 // colors.css). Each module draws its own arrow edges (style.css + edges/), so there are no separator
 // modules. Percentages are padded to two digits ({:2}) so a segment keeps its width below 10%.
 {
     "layer": "top",
     "position": "bottom",
-    "height": 26,
+    "height": 36,
     "spacing": 0,
     "reload_style_on_change": true,
 
@@ -53,6 +53,8 @@
         "format-ethernet": "󰈀 {ifname}",
         "format-disconnected": "󰤭 offline",
         "format-alt": "󰇚 {bandwidthDownBytes} 󰕒 {bandwidthUpBytes}",
+        // a long SSID ends in an ellipsis, so the ribbon can never reach the centered clock
+        "max-length": 24,
         "tooltip-format": "{ifname} {ipaddr}/{cidr}"
     },
     "pulseaudio": {
@@ -99,13 +101,14 @@
         "on-click": "~/.local/bin/nightlight toggle",
         "on-click-right": "~/.local/bin/nightlight menu"
     },
-    "tray": { "icon-size": 14, "spacing": 6 },
+    "tray": { "icon-size": 16, "spacing": 8 },
 
     // gpurecord prints a line only while recording, and pokes signal 8 on start/stop
     "custom/record": {
         "exec": "~/.local/bin/gpurecord status",
         "signal": 8,
-        "format": "{}",
+        // the icon alone (gpurecord prints "󰨜 recording"): the word would cost the ribbon 78px
+        "format": "󰨜",
         "on-click": "~/.local/bin/gpurecord"
     },
     "custom/power": {

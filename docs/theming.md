@@ -73,7 +73,7 @@ Which apps use each role (generated from the templates):
 | `border_hairline` | firefox, mako, opencode, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
 | `border_inactive` | claude, fastfetch, firefox, kitty, mango, mousepad, opencode, rofi, theme |
 | `error` | claude, fastfetch, gtk, mako, mango, mousepad, mpv, opencode, qutebrowser, swaylock, theme, waybar |
-| `fg_bright` | fastfetch, firefox, mango, mousepad, opencode, qutebrowser, theme |
+| `fg_bright` | fastfetch, firefox, mango, mousepad, opencode, qutebrowser, theme, waybar |
 | `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |
 | `fg_editor` | gtk, mousepad, opencode, theme |
 | `fg_muted` | claude, fastfetch, mousepad, opencode, rofi, theme |
