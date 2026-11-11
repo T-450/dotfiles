@@ -35,11 +35,8 @@
 @define-color error   {{error}};
 @define-color ink_error   {{error|ink}};
 
-/* v5 Split chevrons. strong = the selected tag's text, glow = the hover ring (accent mixed into the
-   bar, opaque). line1, line2 = the selected tag's gradient line, both legible on the bar: the
-   second stop is accent mixed toward the terminal's magenta, so the gradient is not flat where
-   the palette's blues are one color (light-2026). */
+/* split chevrons. strong = the selected tag's text, glow = the hover ring (accent mixed into the
+   bar, opaque), dots = the selected tag's dotted line (accent, legible on the bar it sits on). */
 @define-color strong  {{fg_bright|legible:bg_surface}};
 @define-color glow    {{accent|mix:bg_surface:0.35}};
-@define-color line1   {{accent|legible:bg_surface}};
-@define-color line2   {{accent|mix:ansi13:0.55|legible:bg_surface}};
+@define-color dots    {{accent|legible:bg_surface}};

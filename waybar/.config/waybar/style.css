@@ -3,8 +3,8 @@
    Geometry: bar height 36px (config.jsonc), shapes 26px tall floating 5px off the bar's top and
    bottom edges, radius 13px (half the height), base text 13px, emphasis in extra bold (800).
    The left corner: the Arch logo, the tags (occupied ones dim text 8px apart; the selected one
-   bright extra-bold text over a 3px accent-to-violet gradient line that grows from the center, a
-   hovered one a half-width line) and the layout icon. The clock is one raised pill drawn by three
+   bright extra-bold text over a 3px dotted accent line that grows from the center, a hovered one a
+   half-width line) and the layout icon. The clock is one raised pill drawn by three
    modules, its time in extra bold.
    The right-hand modules (network, audio, backlight, battery, memory, disk, cpu, night light, then
    the tray, record and power) are one agnoster-style powerline ribbon of the same height
@@ -98,9 +98,11 @@ menuitem:hover { color: @selfg; background: @sel; }
 #custom-arch:hover, #layout:hover { background-color: @raised; box-shadow: 0 0 0 2px @glow; }
 
 /* tags: only occupied ones show (config.jsonc), so dim text = occupied. Every tag carries the
-   gradient line at zero width; hovering and selecting animate background-size (GTK3 cannot fade
-   from no image to a gradient), so the line grows from the center. The selected tag also widens
-   through min-width, since GTK3 has no transforms. */
+   dotted line (3px dots 3px apart, one solid color) at zero width; hovering and selecting animate
+   background-size (GTK3 cannot fade from no image to one), so the line grows from the center. The
+   gaps are transparent, so the bar shows through them. Widths are whole dots, so no line ends in
+   a sliver: 15px (3 dots) on hover, 39px (7 dots) selected. The selected tag also widens through
+   min-width (40px), since GTK3 has no transforms. */
 #workspaces { margin: 0 3px; padding: 0; background: transparent; }
 #workspaces button {
     margin: 5px 4px;
@@ -108,19 +110,19 @@ menuitem:hover { color: @selfg; background: @sel; }
     min-width: 26px;
     border-radius: 0;
     background-color: transparent;
-    background-image: linear-gradient(to right, @line1, @line2);
+    background-image: repeating-linear-gradient(to right, @dots 0px, @dots 3px, transparent 3px, transparent 6px);
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: 0% 3px;
+    background-size: 0px 3px;
     color: @dim;
     box-shadow: none;
     text-shadow: none;
     transition: color 150ms ease, min-width 150ms ease, background-size 200ms ease;
 }
-#workspaces button:hover { background-size: 50% 3px; color: @fg; }
+#workspaces button:hover { background-size: 15px 3px; color: @fg; }
 #workspaces button.active {
     min-width: 40px;
-    background-size: 100% 3px;
+    background-size: 39px 3px;
     color: @strong;
     font-weight: 800;
 }
