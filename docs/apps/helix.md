@@ -1,6 +1,6 @@
 # helix
 
-Helix, a modal editor set up for every language in the toolchain (default keys; VS Code's Dark+ theme, built into helix, with its own colors rather than the palette's).
+Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (two named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's).
 
 mise installs the language servers, formatters and debuggers, except clangd and jdtls, which pacman installs. Start helix from a terminal, because only zsh puts mise's tools on `PATH` ([mise](mise.md#programs-started-outside-a-terminal-dont-see-the-tools)). `languages.toml` names a server only where helix's built-in choice is not the one installed:
 
@@ -12,7 +12,36 @@ mise installs the language servers, formatters and debuggers, except clangd and 
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.
 
-Copy and paste work like in GUI apps: Ctrl+C copies the selection to the system clipboard (`config.toml`; helix's own Ctrl+C, toggle comments, stays on space+c) and kitty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
+## Keys
+
+Helix keeps its own grammar: select first, then act (`w d`, not Vim's `d w`). Keys for Vim and AstroNvim habits are added only where helix 25.07 binds nothing, so every helix key still does what helix's docs and `:tutor` say, with two named exceptions:
+
+- **Ctrl+C** copies the selection to the system clipboard (helix's own Ctrl+C, toggle comments, stays on `space c`); kitty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
+- **`$`** goes to the line end, as in Vim. The command it replaces, `shell_keep_pipe` (keep the selections whose shell command succeeds), moves to **Alt+$**.
+
+| Key | Does | AstroNvim | Helix's own key |
+|---|---|---|---|
+| `$` / `0` / `^` | line end / line start / first non-blank (select mode extends) | `$` `0` `^` | `gl` / `gh` / `gs` |
+| `C-h` `C-j` `C-k` `C-l` | focus the split to the left / below / above / right | same | `C-w h/j/k/l` |
+| `]b` / `[b` | next / previous buffer | same | `gn` / `gp` |
+| `space l a` `r` `f` | code action, rename, format | `<leader>la` `lr` `lf` | `space a`, `space r`, `=` |
+| `space l s` `S` | document / workspace symbols | `<leader>ls` | `space s` `space S` |
+| `space l d` `D` | file / workspace diagnostics | `<leader>lD` | `space d` `space D` |
+| `space l h` / `R` | signature help / restart the language servers | `<leader>lh` / `lR` | `:lsp-restart` |
+| `space u w` `n` `i` `h` `d` `c` `z` | toggle soft wrap, relative numbers, indent guides, inlay hints, end-of-line diagnostics, auto-completion, whitespace | `<leader>uw` `un` `ui` `uh` `ud` `uc` | `:toggle` |
+| `space t t` / `f` / `l` | a kitty (tiled / floating) or lazygit in helix's working directory | `<leader>th` `tf` `tl` | none |
+| `space q` / `Q` | quit the split / quit helix | `<leader>q` / `Q` | `:q` / `:qa` |
+| `space n` | new scratch buffer | `<leader>n` | `:new` |
+
+Unchanged on purpose, because helix uses those keys: `space e` (file explorer, the same key as AstroNvim's), `space f` `b` `d` `g` (pickers), `space c` (comment), `space w` (window menu), `space G` (debugger). `space x` stays free for gj1118's file tree. Operators (`dd`, `yy`, `cc`) are not ported: they would make helix's `d`, `y`, `c` wait for a second key. `space ?` searches every command by name.
+
+`space t` asks mango to start the window (`mmsg dispatch spawn`), so it is a new window and not a child of helix's terminal, which mango would swallow.
+
+mango's Alt keys reach mango before helix, which hides four helix commands: Alt+s (split selection on newlines), Alt+e (end of the parent syntax node), Alt+x (shrink to line bounds) and Alt+a (select all siblings). Run them from `space ?` by name. Alt+o/i/p/n (expand, shrink, previous, next syntax node) stay helix's, so Alt+arrows, which mango also takes, lose nothing.
+
+## Diagnostics and debugging
+
+Diagnostics show at the end of their line from hints up (`end-of-line-diagnostics`), and in full under the cursor's line from warnings up (`[editor.inline-diagnostics]`), so a half-screen tile stays readable; `space u d` hides the end-of-line ones. Debugging uses helix's built-in templates for the debuggers mise installs (delve for Go, netcoredbg for C#; lldb-dap for Rust, C and C++ from `clang/`): `space G`.
 
 To check a language, run `helix --health LANG` in a terminal. No language server, formatter or debugger line shows ✘, except javascript's debugger `''`, which is helix's own placeholder. `tests/unit.d/toolchain-test.sh` runs this check for every language.
 

@@ -98,8 +98,8 @@ Which apps use each role (generated from the templates):
 | `warning` | claude, fastfetch, gtk, kitty, lazygit, mousepad, opencode, qutebrowser, theme, waybar |
 <!-- end generated -->
 
-`[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (kitty; zsh, vim and
-helix follow kitty). VS Code themes rarely set ANSI colors, so the importer falls
+`[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (kitty; zsh and vim
+follow kitty; helix uses its built-in `dark_plus` theme, see [helix](apps/helix.md)). VS Code themes rarely set ANSI colors, so the importer falls
 back to VS Code's own defaults (`terminalColorRegistry.ts`). `meta.variant` (`dark`/`light`) drives GTK `color-scheme` and `prefer-dark` (Qt and Firefox follow
 `color-scheme` through the settings portal).
 
@@ -145,7 +145,8 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | Firefox | `chrome/userChrome.css` in the profile | restart Firefox |
 | fastfetch | `config.jsonc` rendered (keys, title, bars, separators); the logo keeps its colors | next run |
 | lazygit | `config.yml` rendered (borders, selection, cherry-pick and rebase marks; `colorScheme` and delta's `--dark`/`--light` from `variant`) | next start |
-| zsh, vim, helix | terminal ANSI colors (kitty) | at once (kitty reloads) |
+| zsh, vim | terminal ANSI colors (kitty) | at once (kitty reloads) |
+| helix | its built-in `dark_plus` theme, not the palette | never (fixed) |
 | Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session |
 | opencode | `~/.config/opencode/themes/mango.json` (linked), selected in the linked `cli.json`; code uses the terminal ANSI hues | next start |
 

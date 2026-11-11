@@ -31,7 +31,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
-| [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain (default keys; VS Code's Dark+ theme, built into helix, with its own colors rather than the palette's) | helix, jdtls, jre-openjdk |
+| [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (two named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's) | helix, jdtls, jre-openjdk |
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
 | [kitty](apps/kitty.md) | The terminal (alt+return), the dropdown terminal (alt+esc) and the floating terminal (alt+shift+t), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | kitty, xdg-terminal-exec |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
