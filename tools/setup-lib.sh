@@ -8,13 +8,22 @@ set -euo pipefail
 trap 'echo "interrupted" >&2; exit 130' INT
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 
-# enable_system UNIT...: enable (and start) system units not enabled yet
+# enable_system UNIT...: enable (and start) system units not enabled yet. A unit that can't start
+# because this run's pacman -Syu upgraded the kernel away (its modules are gone until the reboot
+# into the new one; ufw needs netfilter's) stays enabled, so that boot starts it; its journal tail
+# shows why. Any other failure to start stops the run.
 enable_system() {
 	local u
 	for u; do
 		[[ $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]] && continue
-		sudo systemctl enable --now "$u" || return 1
-		echo "enable  $u"
+		if sudo systemctl enable --now "$u"; then
+			echo "enable  $u"
+		elif [[ ! -d /usr/lib/modules/$(uname -r) && $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]]; then
+			sudo journalctl -b -u "$u" -n 5 --no-pager >&2 || true
+			echo "enable  $u (starts at the next boot: the running kernel $(uname -r) was upgraded away)"
+		else
+			return 1
+		fi
 	done
 }
 
