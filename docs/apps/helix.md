@@ -1,6 +1,6 @@
 # helix
 
-Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (two named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's).
+Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's).
 
 Helix here is [gj1118's fork](https://github.com/gj1118/helix): upstream helix (its release 26.09.02 reports itself as `helix 25.07.1`) with merged pull requests for icons, inline git blame, breadcrumbs, code folding, a command-line popup and notifications; its sidebar file tree is on master after that release and comes with the next tag. Neither Arch nor the AUR packages a pinned release, so `pkg/helix-gj1118/PKGBUILD` installs the release tarball (a prebuilt binary and a runtime with 301 compiled grammars), checked against its published SHA-256, in Arch's own layout: `/usr/lib/helix-gj1118/hx` beside `runtime/`, `/usr/bin/helix` a link, the desktop file and completions renamed `hx` to `helix`. It replaces Arch's `helix` (`provides`/`conflicts`). It went in after a day of editing C#, TypeScript and Go showed no regression from its open issue [#94](https://github.com/gj1118/helix/issues/94) (completion and fuzzy matching). Its version is the PKGBUILD's `pkgver` (`docs/reference/installed.md` lists only `packages` entries). To move to a newer tag, bump `pkgver` and every sha256 together, then check `helix --health` and the keys below against the new keymap.
 
@@ -18,16 +18,20 @@ Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` rende
 
 ## Keys
 
-Helix keeps its own grammar: select first, then act (`w d`, not Vim's `d w`). Keys for Vim and AstroNvim habits are added only where helix 25.07 binds nothing, so every helix key still does what helix's docs and `:tutor` say, with two named exceptions:
+Helix keeps its own grammar: select first, then act (`w d`, not Vim's `d w`). Keys for Vim and AstroNvim habits are added only where helix (gj1118's 26.09.02, checked against its keymap) binds nothing, so every helix key still does what helix's docs and `:tutor` say, with four named exceptions:
 
 - **Ctrl+C** copies the selection to the system clipboard (helix's own Ctrl+C, toggle comments, stays on `space c`); kitty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
 - **`$`** goes to the line end, as in Vim. The command it replaces, `shell_keep_pipe` (keep the selections whose shell command succeeds), moves to **Alt+$**.
+- **Ctrl+j/k** focus the split below/above (AstroNvim). The fork moves lines with them; moving lines goes to **Alt+j/k**, AstroNvim's own keys for it.
+- **`space l`** is the LSP group (AstroNvim). The fork searches within the file there; that moves to **`space o`** (`space L`, its fuzzy variant, stays).
 
 | Key | Does | AstroNvim | Helix's own key |
 |---|---|---|---|
 | `$` / `0` / `^` | line end / line start / first non-blank (select mode extends) | `$` `0` `^` | `gl` / `gh` / `gs` |
 | `C-h` `C-j` `C-k` `C-l` | focus the split to the left / below / above / right | same | `C-w h/j/k/l` |
 | `]b` / `[b` | next / previous buffer | same | `gn` / `gp` |
+| `A-j` / `A-k` | move the line or selection down / up | same | (the fork's `C-j`/`C-k`) |
+| `space o` | search within the file | `<leader>f/`-ish | (the fork's `space l`) |
 | `space l a` `r` `f` | code action, rename, format | `<leader>la` `lr` `lf` | `space a`, `space r`, `=` |
 | `space l s` `S` | document / workspace symbols | `<leader>ls` | `space s` `space S` |
 | `space l d` `D` | file / workspace diagnostics | `<leader>lD` | `space d` `space D` |
@@ -42,6 +46,18 @@ Unchanged on purpose, because helix uses those keys: `space e` (file explorer, t
 `space t` asks mango to start the window (`mmsg dispatch spawn`), so it is a new window and not a child of helix's terminal, which mango would swallow.
 
 mango's Alt keys reach mango before helix, which hides four helix commands: Alt+s (split selection on newlines), Alt+e (end of the parent syntax node), Alt+x (shrink to line bounds) and Alt+a (select all siblings). Run them from `space ?` by name. Alt+o/i/p/n (expand, shrink, previous, next syntax node) stay helix's, so Alt+arrows, which mango also takes, lose nothing.
+
+## The fork's options
+
+The end of `config.toml` turns on gj1118's options (stock helix rejects them: going back means reverting them, see above), all checked in a running helix:
+
+- **Breadcrumb** (`[editor.breadcrumb]`): the file name and the symbols around the cursor above the text, such as `setup-lib.sh >  enable_system`. Only the file name, since the full path crowds a half-screen tile.
+- **Inline blame** (`[editor.inline-blame]`): who last changed the cursor's line, at its end (`T-450, 6 days ago • Reproducible install: …`), fetched in the background as the file opens (`auto-fetch`; otherwise it waits for `space B`).
+- **Command line as a popup** (`[editor.cmdline] style = "popup"`): `:` opens a rounded box in the middle, noice.nvim style.
+- **Icons** (`[icons.mime]`, `[icons.kind]`, JetBrains Mono Nerd Font): in the buffer picker, the breadcrumb and completion. 26.09.02's file picker and `space e` explorer don't draw them; the sidebar file tree of the next tag does.
+- **Rounded corners and rainbow brackets** (`rounded-corners`, `rainbow-brackets` under `[editor]`).
+
+Left at the fork's defaults: the welcome screen and popup notifications (both on), and folding (`z f`/`z F`/`z A-f`, the fork's own keys). Not used: gradient picker borders, which take hex colors (the repo writes no color literals, and helix's colors come from `dark_plus`, not the palette).
 
 ## Diagnostics and debugging
 

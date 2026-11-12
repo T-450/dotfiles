@@ -1,10 +1,12 @@
 # helix: VS Code's Dark+ theme (built in), diagnostics shown inline, and keys added for Vim and
 # AstroNvim habits without changing helix's own (selection first: select, then act). Every added
-# key was free in helix 25.07's keymap, except two named ones:
+# key was free in the keymap of helix (gj1118's 26.09.02), except four named ones:
 # - Ctrl+C copies the selection to the system clipboard (helix's own Ctrl+C toggles comments, which
 #   space+c also does); kitty's Ctrl+V pastes.
 # - $ goes to the line end, as in Vim; the command it replaces (keep selections whose shell command
 #   succeeds) moves to Alt+$.
+# - Ctrl+j/k move between splits (AstroNvim); the fork's move-lines goes to Alt+j/k.
+# - space l is the LSP group (AstroNvim); the fork's search-in-file goes to space o.
 # The table of every added key is in docs/apps/helix.md.
 theme = "dark_plus"
 
@@ -12,9 +14,38 @@ theme = "dark_plus"
 # a diagnostic at the end of its line (hints and up); warnings and errors also in full under the
 # cursor's line, which leaves a half-screen tile readable elsewhere
 end-of-line-diagnostics = "hint"
+# gj1118's fork only (checked against 26.09.02; stock helix rejects these keys, so going back to
+# it means reverting them): rounded popups and pickers, nested brackets in alternating colors
+rounded-corners = true
+rainbow-brackets = true
 
 [editor.inline-diagnostics]
 cursor-line = "warning"
+
+# --- gj1118's fork only (checked against 26.09.02) ---
+# who last changed the cursor's line, at its end
+[editor.inline-blame]
+show = "cursor-line"
+# fetch it in the background as the file opens; otherwise it waits for space B
+auto-fetch = true
+
+# the file name and the symbols around the cursor (function, impl, ...) above the text; the full
+# path would crowd a half-screen tile
+[editor.breadcrumb]
+enable = true
+path = "file"
+
+# the command line as a popup in the middle (noice.nvim style), not on the bottom line
+[editor.cmdline]
+style = "popup"
+
+# file-type icons in pickers and the explorer, kind icons in completion (JetBrains Mono Nerd Font)
+[icons.mime]
+enabled = true
+
+[icons.kind]
+enabled = true
+# --- end of fork-only options ---
 
 [keys.normal]
 C-c = "yank_to_clipboard"
@@ -31,6 +62,10 @@ C-k = "jump_view_up"
 C-l = "jump_view_right"
 "]" = { b = "goto_next_buffer" }
 "[" = { b = "goto_previous_buffer" }
+# gj1118's fork moves lines with Ctrl+j/k; those are split navigation here, so moving lines goes to
+# Alt+j/k, AstroNvim's own keys for it
+A-j = "move_lines_down"
+A-k = "move_lines_up"
 
 # AstroNvim's leader groups, on space keys helix leaves free (space x stays free for gj1118's
 # file tree)
@@ -38,6 +73,9 @@ C-l = "jump_view_right"
 q = ":quit"
 Q = ":quit-all"
 n = ":new"
+# gj1118's fork searches within the file on space l, the LSP group here; it moves to space o
+# (space L, its fuzzy variant, stays)
+o = "local_search_grep"
 
 [keys.normal.space.l]
 a = "code_action"
@@ -72,3 +110,5 @@ C-c = "yank_to_clipboard"
 "A-$" = "shell_keep_pipe"
 "0" = "extend_to_line_start"
 "^" = "extend_to_first_nonwhitespace"
+A-j = "move_lines_down"
+A-k = "move_lines_up"
