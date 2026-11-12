@@ -19,7 +19,7 @@ sudo only where something must change. Every app folder goes through the same ph
 
 | phase | does |
 |---|---|
-| `--packages` | `<app>/packages`: repo packages with pacman (after a full `-Syu`), AUR ones with yay (yay-bin built first if missing); `<app>/pkg/*/PKGBUILD`: built with makepkg when that version isn't installed |
+| `--packages` | `<app>/packages`: repo packages with pacman (after a full `-Syu`), AUR ones with yay (yay-bin built first if missing); `<app>/pkg/*/PKGBUILD`: built with makepkg when that version isn't installed (build-only dependencies are removed again, as yay's for the AUR) |
 | `--theme` | `theme init`: renders every `*.tmpl` from the active palette, runs every `render.sh` |
 | `--link` | GNU stow links each app's dot-entries (`.config/`, `.local/`, `.zshrc` …) into `$HOME`, one link per file. A real file in the way is moved to `<name>.bak.<timestamp>`; old links into the repo are replaced; links to removed files are pruned |
 | `--system` | copies each `<app>/root/**` to `/**` when it differs (sudo); owner = owner of the nearest existing directory |

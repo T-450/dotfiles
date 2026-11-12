@@ -107,7 +107,9 @@ install_packages() {
 			[[ $(pacman -Q "$name" 2>/dev/null) == "$name $ver" ]] && continue
 			build=$(mktemp -d)
 			cp -r "$(dirname "$pb")/." "$build"
-			(cd "$build" && retry makepkg -si --noconfirm --needed)
+			# --rmdeps: the build-only tools (makedepends) it installs go again, as yay --removemake
+			# does for the AUR
+			(cd "$build" && retry makepkg -si --rmdeps --noconfirm --needed)
 			rm -rf -- "$build"
 		done
 	done
