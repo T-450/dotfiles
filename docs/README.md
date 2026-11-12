@@ -12,6 +12,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 - [Keybindings](keybindings.md)
 - [Testing and CI](testing.md): `tests/run`, the clean-install VM on runner-up
 - [Installed versions](reference/installed.md) on the reference machine
+- [Designs](designs/): design records for larger changes (mango animations)
 
 ## Apps
 
