@@ -29,5 +29,5 @@ GTK reads `gtk.css` once per process, so only apps started after `theme set` get
 
 **`setup.sh`** (run by `install.sh --setup`): icons (Tela-mango), cursor and fonts for GTK apps, and the palette's dark/light preference (gtk/reload.sh, also run by `theme set`). Needs a dbus session; skipped without one.
 
-**`reload.sh`** (run by `theme set`): tell GTK, the settings portal (Qt, Firefox) and GTK4 about the variant gtk-theme stays Adwaita: GTK3 reads it from GSettings over settings.ini, and "Adwaita-dark" is not installed, so GTK3 fell back to light Adwaita. Its built-in dark variant comes from color-scheme. GTK reads gtk.css (and its colors.css) once per process, so only apps started after a switch get the new colors.
+**`reload.sh`** (run by `theme set`): tell GTK, the settings portal (Qt, Firefox) and GTK4 about the variant. gtk-theme stays Adwaita: GTK3 reads it from GSettings over settings.ini, and "Adwaita-dark" is not installed, so GTK3 fell back to light Adwaita. Its built-in dark variant comes from color-scheme. GTK reads gtk.css (and its colors.css) once per process, so only apps started after a switch get the new colors.
 <!-- end generated -->

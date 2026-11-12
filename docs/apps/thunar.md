@@ -21,4 +21,6 @@ The plugins and helpers come from `packages`: archives through the context menu 
 **User units** (enabled by `install.sh --units`): `thunar.service`
 
 **`setup.sh`** (run by `install.sh --setup`): Thunar's settings (xfconf, which saves by rename, so not a linked file), automount, and Thunar/xarchiver as the default folder and archive apps. xfconf needs a dbus session; skipped without one.
+
+**`reload.sh`** (run by `theme set`): restart the Thunar daemon so its windows get the new colors. GTK reads gtk.css once per process and every Thunar window belongs to the daemon, so only a restart recolors it. A restart closes Thunar's windows and stops their copies: with one open, or when mango can't say, the hook leaves the daemon alone and says so.
 <!-- end generated -->

@@ -21,4 +21,6 @@ opencode: a custom theme rendered from the palette.
 **Rendered from the palette** (`theme`):
 
 - `opencode/.config/opencode/themes/mango.json.tmpl` → `opencode/.config/opencode/themes/mango.json`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi14`, `bg_hover`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `selection_fg`, `success`, `term_bg`, `warning`
+
+**`reload.sh`** (run by `theme set`): ask for a restart when opencode is running. opencode reads its theme only at startup.
 <!-- end generated -->

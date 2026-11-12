@@ -19,4 +19,6 @@ The profile has a fixed name: `profiles.ini` and `installs.ini` (linked) declare
 **Rendered from the palette** (`theme`):
 
 - `firefox/.config/mozilla/firefox/default-release/chrome/userChrome.css.tmpl` → `firefox/.config/mozilla/firefox/default-release/chrome/userChrome.css`: `accent`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_bright`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`
+
+**`reload.sh`** (run by `theme set`): ask for a restart when Firefox is running. Firefox reads userChrome.css only at startup, so a running browser keeps the old colors.
 <!-- end generated -->

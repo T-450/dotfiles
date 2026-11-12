@@ -17,4 +17,6 @@ Claude Code: its settings and a custom theme rendered from the palette. Also the
 **Rendered from the palette** (`theme`):
 
 - `claude/.claude/themes/mango.json.tmpl` → `claude/.claude/themes/mango.json`: `accent`, `ansi13`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_disabled`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `success`, `term_bg`, `variant`, `warning`
+
+**`reload.sh`** (run by `theme set`): ask for a restart when Claude Code is running. Claude Code reads its theme only when a session starts.
 <!-- end generated -->

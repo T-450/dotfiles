@@ -31,5 +31,5 @@ Every animation lasts 150 ms (9 frames at 60 Hz) on one curve, a quadratic ease-
 
 - `mango/.config/mango/colors.conf.tmpl` → `mango/.config/mango/colors.conf`: `accent`, `badge`, `bg_desktop`, `bg_surface`, `border_inactive`, `error`, `fg_bright`, `fg_secondary`, `name`, `selection_bg`, `shadow`, `slug`, `success`
 
-**`reload.sh`** (run by `theme set`): reload mango so colors.conf applies Outside a mango session (no IPC socket) there is nothing to reload.
+**`reload.sh`** (run by `theme set`): reload mango so colors.conf applies. Outside a mango session (no IPC socket) there is nothing to reload.
 <!-- end generated -->

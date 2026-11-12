@@ -138,22 +138,23 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | mango | `source=./colors.conf` | reload (`mango/reload.sh`) |
 | kitty | `include colors.conf` | open windows reload (`kitty/reload.sh`, SIGUSR1) |
 | waybar | `@import "colors.css"` | `systemctl --user reload waybar` (`waybar/reload.sh`) |
-| wlogout, swayosd, GTK 3/4 | `@import "colors.css"` | swayosd restart (hook); wlogout next launch; GTK: apps started after the switch (GTK reads gtk.css once per process) |
+| wlogout, swayosd, GTK 3/4 | `@import "colors.css"` | swayosd restart (hook); wlogout next launch; GTK: apps started after the switch (GTK reads gtk.css once per process). The Thunar daemon, which owns every Thunar window, restarts when none is open (`thunar/reload.sh`); otherwise a notification asks to close them and set the theme again |
 | rofi | `@import "colors.rasi"` in `themes/quickinput.rasi` | next launch |
 | mako | `include=~/.config/mako/colors` | `makoctl reload` (hook) |
 | swaylock | whole `config` rendered (no include support) | next lock |
 | swaybg | `~/.config/swaybg/wallpaper.png` (`swaybg/render.sh`: the image on dark palettes, the desktop color on light ones), shown unless a waypaper pick replaced it | swaybg restart (hook) |
 | slurp | `~/.config/theme/colors.sh` | next use |
 | qutebrowser | `config.source("colors.py")` | `:config-source` in a running browser (hook) |
-| Firefox | `chrome/userChrome.css` in the profile | restart Firefox |
+| Firefox | `chrome/userChrome.css` in the profile | restart Firefox (`firefox/reload.sh` says so while it runs) |
 | fastfetch | `config.jsonc` rendered (keys, title, bars, separators); the logo keeps its colors | next run |
 | lazygit | `config.yml` rendered (borders, selection, cherry-pick and rebase marks; `colorScheme` and delta's `--dark`/`--light` from `variant`) | next start |
 | zsh, vim | terminal ANSI colors (kitty) | at once (kitty reloads) |
 | helix | its built-in `dark_plus` theme, not the palette | never (fixed) |
-| Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session |
-| opencode | `~/.config/opencode/themes/mango.json` (linked), selected in the linked `cli.json`; code uses the terminal ANSI hues | next start |
+| Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session (`claude/reload.sh` says so while one runs) |
+| opencode | `~/.config/opencode/themes/mango.json` (linked), selected in the linked `cli.json`; code uses the terminal ANSI hues | next start (`opencode/reload.sh` says so while it runs) |
 
 To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore`, an include
-line in its config, and a `reload.sh` if it can reload live.
+line in its config, and a `reload.sh`: one that reloads it live, or, for an app that reads its colors
+only at startup, one that sends a notification while it runs.
 
 Fonts: Inter (UI), JetBrains Mono Nerd Font (mono). They are not part of the palette.
