@@ -4,7 +4,7 @@ Thunar, the file manager (super+f), with thumbnails, archives, network places an
 
 Super+F opens it, as a 720x480 floating window like the other GTK apps (mango's `rule.conf`). `thunar.service` runs it as a daemon from the start of the session, so windows open at once, "show in folder" from other apps reaches it (it owns `org.freedesktop.FileManager1`), and thunar-volman can mount removable drives and media as they are plugged in (it works only while Thunar runs).
 
-The plugins and helpers come from `packages`: archives through the context menu (thunar-archive-plugin with xarchiver, the only archiver, so it never asks which one), media tags, tumbler thumbnails for video, PDF, office, e-book, RAW and HEIF files, and gvfs for the trash, phones (MTP, gphoto2, AFC) and network shares (SMB, NFS). "Open Terminal Here" opens kitty (`~/.config/xfce4/helpers.rc`).
+The plugins and helpers come from `packages`: archives through the context menu (thunar-archive-plugin with xarchiver, the only archiver, so it never asks which one), media tags, tumbler thumbnails for video, PDF, office, e-book, RAW and HEIF files, and gvfs for the trash, phones (MTP, gphoto2, AFC) and network shares (SMB, NFS). "Open Terminal Here" opens Ghostty in that folder (`~/.config/xfce4/helpers.rc`).
 
 `setup.sh` makes Thunar the default for folders and xarchiver the default for every archive type it handles, and sets Thunar's preferences in xfconf (which saves by renaming its file, so the repo can't link it): delete in the context menu, middle click opens a tab, ISO dates, item counts and thumbnails only for local files, and automount for drives and media. Without a session bus (a bare VM) it sets the defaults and skips xfconf.
 

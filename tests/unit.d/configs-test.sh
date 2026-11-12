@@ -15,12 +15,12 @@ if command -v mango >/dev/null; then
 	pass "mango -p"
 else skip "mango not installed"; fi
 
-if command -v kitty >/dev/null; then
-	# kitty's own loader: an unknown key prints a line, a bad value raises
-	out=$(kitty +runpy 'from kitty.config import load_config; import sys; load_config(sys.argv[-1])' \
-		"$cfg/kitty/kitty.conf" 2>&1) && [[ -z $out ]] || fail "kitty config parses" "$out"
-	pass "kitty config loads cleanly"
-else skip "kitty not installed"; fi
+if command -v ghostty >/dev/null; then
+	# ghostty's own loader (config.ghostty, its colors.ghostty and tabs.css): prints each bad line.
+	# Through a pipe: ghostty truncates a file it is given as stdout.
+	out=$(ghostty +validate-config 2>&1 </dev/null | cat) && [[ -z $out ]] || fail "ghostty config parses" "$out"
+	pass "ghostty config loads cleanly"
+else skip "ghostty not installed"; fi
 
 for f in "$cfg/waybar/config.jsonc" "$cfg/fastfetch/config.jsonc"; do
 	python3 - "$f" <<'PY' || fail "$f is valid JSONC"

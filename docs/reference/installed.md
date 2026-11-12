@@ -64,6 +64,8 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | fonts | `ttf-nerd-fonts-symbols` | 3.5.1-1 |
 | fonts | `ttf-nerd-fonts-symbols-mono` | 3.5.1-1 |
 | fonts | `ttf-terminus-nerd` | 3.5.1-2 |
+| ghostty | `ghostty` | 1.4.0-1 |
+| ghostty | `xdg-terminal-exec` | 0.14.4-1 |
 | git | `git` | 2.56.1-1 |
 | git | `github-cli` | 2.103.3-1 |
 | git | `git-delta` | 0.20.1-1 |
@@ -73,8 +75,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.0.3.u1-1 |
-| kitty | `kitty` | 0.50.0-1 |
-| kitty | `xdg-terminal-exec` | 0.14.4-1 |
 | lazygit | `lazygit` | 0.66.3-1 |
 | mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.5-1 |

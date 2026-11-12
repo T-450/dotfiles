@@ -2,7 +2,7 @@
 
 Vim, the fallback editor (its colors follow the terminal's palette).
 
-`.vimrc` keeps vim's `defaults.vim` (a user vimrc would otherwise skip it) and connects the clipboard: Arch's vim is built without X11 or Wayland, so a clipboard provider (`:h clipboard-providers`) runs `wl-copy`/`wl-paste` for the `+` and `*` registers, and `clipboard=unnamedplus` makes plain `y` and `p` use the system clipboard. In kitty, Ctrl+V pastes as well; visual-block mode is Ctrl+Shift+Alt+V (or Ctrl+Q).
+`.vimrc` keeps vim's `defaults.vim` (a user vimrc would otherwise skip it) and connects the clipboard: Arch's vim is built without X11 or Wayland, so a clipboard provider (`:h clipboard-providers`) runs `wl-copy`/`wl-paste` for the `+` and `*` registers, and `clipboard=unnamedplus` makes plain `y` and `p` use the system clipboard. In Ghostty, Ctrl+V pastes as well; visual-block mode is Ctrl+Shift+Alt+V (or Ctrl+Q).
 
 ## Reference
 

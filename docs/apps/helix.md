@@ -22,7 +22,7 @@ Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` rende
 
 Helix keeps its own grammar: select first, then act (`w d`, not Vim's `d w`). Keys for Vim and AstroNvim habits are added only where helix (gj1118's fork at 2610b17, checked against its keymap) binds nothing, so every helix key still does what helix's docs and `:tutor` say, with four named exceptions:
 
-- **Ctrl+C** copies the selection to the system clipboard (helix's own Ctrl+C, toggle comments, stays on `space c`); kitty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
+- **Ctrl+C** copies the selection to the system clipboard (helix's own Ctrl+C, toggle comments, stays on `space c`); Ghostty's Ctrl+V pastes. `space y`/`space p` still use the clipboard too.
 - **`$`** goes to the line end, as in Vim. The command it replaces, `shell_keep_pipe` (keep the selections whose shell command succeeds), moves to **Alt+$**.
 - **Ctrl+j/k** focus the split below/above (AstroNvim). The fork moves lines with them; moving lines goes to **Alt+j/k**, AstroNvim's own keys for it.
 - **`space l`** is the LSP group (AstroNvim). The fork searches within the file there; that moves to **`space o`** (`space L`, its fuzzy variant, stays).
@@ -39,7 +39,7 @@ Helix keeps its own grammar: select first, then act (`w d`, not Vim's `d w`). Ke
 | `space l d` `D` | file / workspace diagnostics | `<leader>lD` | `space d` `space D` |
 | `space l h` / `R` | signature help / restart the language servers | `<leader>lh` / `lR` | `:lsp-restart` |
 | `space u w` `n` `i` `h` `d` `c` `z` | toggle soft wrap, relative numbers, indent guides, inlay hints, end-of-line diagnostics, auto-completion, whitespace | `<leader>uw` `un` `ui` `uh` `ud` `uc` | `:toggle` |
-| `space t t` / `f` / `l` | a kitty (tiled / floating) or lazygit in helix's working directory | `<leader>th` `tf` `tl` | none |
+| `space t t` / `f` / `l` | a Ghostty (tiled / floating) or lazygit in helix's working directory | `<leader>th` `tf` `tl` | none |
 | `space q` / `Q` | quit the split / quit helix | `<leader>q` / `Q` | `:q` / `:qa` |
 | `space n` | new scratch buffer | `<leader>n` | `:new` |
 

@@ -1,0 +1,53 @@
+# ghostty, the terminal (alt+return; the alt+esc dropdown and the alt+shift+t float are ghosttys too).
+# Colors: colors.ghostty and tabs.css, rendered from the active palette by theme;
+# `theme set` reloads every open window (ghostty/reload.sh sends SIGUSR2).
+config-file = colors.ghostty
+
+font-family = JetBrainsMono Nerd Font
+font-size   = 12
+# text as kitty, the terminal before Ghostty, drew it, pixel for pixel: linear glyph blending
+# (Ghostty's default, linear-corrected, draws it lighter) and 10x22 px cells (Ghostty's own line
+# height for this font is 21 px). fastfetch's logo is sized for these cells.
+alpha-blending     = linear
+adjust-cell-height = 1
+
+# one process per window, like any other app: each window starts in the directory it was launched
+# from (Thunar's "Open Terminal Here"; a single instance opens new windows in ~) and has its own
+# pid, which mango's swallowing (is_term) needs to find the window a program was started from
+gtk-single-instance = false
+# start in the launcher's directory even when Ghostty guesses it came from a desktop launcher
+# (its default there is ~)
+working-directory   = inherit
+
+window-padding-x      = 14
+window-padding-y      = 12
+window-decoration     = none
+confirm-close-surface = false
+# no size overlay (mango resizes tiled windows whenever another opens or closes) and no toasts
+# ("Copied to clipboard" on every Ctrl+C, "Reloaded the configuration" on every `theme set`)
+resize-overlay    = never
+app-notifications = false
+
+cursor-style            = block
+mouse-hide-while-typing = true
+scrollback-limit-lines  = 10000
+
+# the bell asks for attention (mango marks the window urgent) and is otherwise silent; no bell
+# emoji in the title
+bell-features = no-audio,no-system,attention,no-title
+
+# tabs (ctrl+shift+t) on top, shown only while there are two or more (window-show-tab-bar's
+# default): fixed-width instead of filling the bar, no shadow under it, and drawn by tabs.css
+gtk-wide-tabs     = false
+gtk-toolbar-style = flat
+gtk-custom-css    = tabs.css
+
+# GUI-style clipboard: select, then Ctrl+C copies (and clears the selection, so the next Ctrl+C
+# interrupts again); with no selection Ctrl+C is ^C as always (performable: the bind only fires
+# when there is something to copy). Ctrl+V pastes; a literal ^V (vim block select, zsh
+# quoted-insert) moves to Ctrl+Shift+Alt+V. Selecting also fills the primary selection (middle
+# click), as in every other app.
+selection-clear-on-copy = true
+keybind = performable:ctrl+c=copy_to_clipboard
+keybind = ctrl+v=paste_from_clipboard
+keybind = ctrl+shift+alt+v=text:\x16

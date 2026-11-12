@@ -1,2 +1,3 @@
 # rendered by theme/.local/bin/theme from the matching .tmpl; never edit
-/.config/kitty/colors.conf
+/.config/ghostty/colors.ghostty
+/.config/ghostty/tabs.css

@@ -2,7 +2,7 @@
 # AstroNvim habits without changing helix's own (selection first: select, then act). Every added
 # key was free in the keymap of helix (gj1118's fork at 2610b17), except four named ones:
 # - Ctrl+C copies the selection to the system clipboard (helix's own Ctrl+C toggles comments, which
-#   space+c also does); kitty's Ctrl+V pastes.
+#   space+c also does); Ghostty's Ctrl+V pastes.
 # - $ goes to the line end, as in Vim; the command it replaces (keep selections whose shell command
 #   succeeds) moves to Alt+$.
 # - Ctrl+j/k move between splits (AstroNvim); the fork's move-lines goes to Alt+j/k.
@@ -112,9 +112,9 @@ z = ":toggle whitespace.render all none"
 # Terminals and lazygit in helix's working directory. mango starts them (mmsg), so they are new
 # windows, not children of this terminal that it would swallow.
 [keys.normal.space.t]
-t = ':sh mmsg dispatch "spawn,kitty --directory $PWD" >/dev/null'
-f = ':sh mmsg dispatch "spawn,kitty --class kitty-float --directory $PWD" >/dev/null'
-l = ':sh mmsg dispatch "spawn,kitty --directory $PWD -e lazygit" >/dev/null'
+t = ':sh mmsg dispatch "spawn,ghostty --working-directory=$PWD" >/dev/null'
+f = ':sh mmsg dispatch "spawn,ghostty --class=com.mitchellh.ghostty-float --working-directory=$PWD" >/dev/null'
+l = ':sh mmsg dispatch "spawn,ghostty --working-directory=$PWD -e lazygit" >/dev/null'
 
 [keys.select]
 C-c = "yank_to_clipboard"

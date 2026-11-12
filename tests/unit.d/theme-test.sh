@@ -30,7 +30,7 @@ pass "--to renders without touching the active palette"
 
 # an unknown role must abort before anything is written (in a copy of the repo)
 cp -r "$ROOT" "$TEST_TMP/repo" && rm -rf "$TEST_TMP/repo/.git"
-echo 'x={{no_such_role}}' >"$TEST_TMP/repo/kitty/bad.conf.tmpl"
+echo 'x={{no_such_role}}' >"$TEST_TMP/repo/ghostty/bad.conf.tmpl"
 rm -rf "$out"
 if "$TEST_TMP/repo/theme/.local/bin/theme" init dark-2026 --to "$out" >/dev/null 2>&1; then
 	fail "an unknown role is an error"

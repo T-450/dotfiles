@@ -1,2 +1,2 @@
 # Thunar's "Open Terminal Here" (exo reads this when xfce4-settings is absent)
-TerminalEmulator=kitty
+TerminalEmulator=ghostty

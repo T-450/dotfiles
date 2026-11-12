@@ -4,9 +4,9 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 
 | keys | action |
 |---|---|
-| alt+return | kitty |
+| alt+return | Ghostty |
 | alt+esc | dropdown terminal: the one persistent shell, on the top edge of whatever tag you view; alt+esc again hides it and it keeps running (also alt+caps, since Caps Lock is Escape) |
-| alt+shift+t | floating terminal: a new 800x600 kitty, centered; alt+q closes it |
+| alt+shift+t | floating terminal: a new 800x600 Ghostty, centered; alt+q closes it |
 | super+d | rofi launcher |
 | super+/ | all keybindings (`mango-keys`) |
 | super+return | firefox |
