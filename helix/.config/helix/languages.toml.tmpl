@@ -60,3 +60,11 @@ language-servers = ["marksman"]
 [[language]]
 name = "cmake"
 language-servers = ["neocmakelsp"]
+
+# prettier formats markdown's tables and lists; prose keeps its wrapping and fenced code stays as
+# written. Manual (`space l f`), not on save.
+[[language]]
+name = "markdown"
+language-servers = ["marksman"]
+auto-format = false
+formatter = { command = "prettier", args = ["--parser", "markdown", "--prose-wrap", "preserve", "--embedded-language-formatting", "off"] }

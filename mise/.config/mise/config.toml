@@ -60,6 +60,7 @@ shfmt = "3"
 tombi = "1"
 "npm:yaml-language-server" = "2"
 yamlfmt = "0"                                 # yaml formatter (helix-gj1118 formats yaml with it)
+"npm:prettier" = "3"                          # markdown formatter (helix-gj1118 formats markdown with it)
 marksman = "latest"                           # versions are dates
 # Containers: devcontainer up/exec on rootless podman (podman/: the docker command and DOCKER_HOST)
 "npm:@devcontainers/cli" = "0"

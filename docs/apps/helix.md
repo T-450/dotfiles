@@ -8,12 +8,12 @@ Helix here is [gj1118's fork](https://github.com/gj1118/helix): upstream helix (
 
 On a machine that has Arch's `helix`, swap once by hand: `sudo pacman -Rns helix`, then `./install.sh` (its makepkg runs with `--noconfirm`, which would refuse to remove the conflicting package). A fresh install never has Arch's `helix`. To go back: `sudo pacman -Rdd helix-gj1118 && sudo pacman -S helix`, then revert the fork's commits (`config.toml` without the fork's options loads on stock helix) and `./install.sh`.
 
-mise installs the language servers, formatters and debuggers (and yamlfmt, which the fork formats yaml with), except clangd and jdtls, which pacman installs. Start helix from a terminal, because only zsh puts mise's tools on `PATH` ([mise](mise.md#programs-started-outside-a-terminal-dont-see-the-tools)). `languages.toml` names a server only where helix's built-in choice is not the one installed:
+mise installs the language servers, formatters and debuggers (yamlfmt for YAML, prettier for Markdown), except clangd and jdtls, which pacman installs. Start helix from a terminal, because only zsh puts mise's tools on `PATH` ([mise](mise.md#programs-started-outside-a-terminal-dont-see-the-tools)). `languages.toml` names a server only where helix's built-in choice is not the one installed:
 
 - Python uses ty and ruff.
 - TypeScript, TSX, JavaScript, JSX, JSON and JSONC format with biome (`biome lsp-proxy`). typescript-language-server and vscode-json-language-server still give hover, completion and diagnostics, with formatting off.
 - typescript-language-server runs TypeScript 6's tsserver, because TypeScript 7 ships none. `tsc` on `PATH` is TypeScript 7.
-- C# uses roslyn-language-server, TOML uses tombi, YAML uses yaml-language-server, and Markdown uses marksman.
+- C# uses roslyn-language-server, TOML uses tombi, YAML uses yaml-language-server, and Markdown uses marksman. Markdown formats with prettier on `space l f` (tables and lists; prose wrapping and fenced code stay as written).
 - CMake uses neocmakelsp; Meson (helix's built-in choice) uses mesonlsp. Both come from mise. mesonlsp's upstream was archived in August 2026 at 5.0.4; it still works, and no other Meson server exists.
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.

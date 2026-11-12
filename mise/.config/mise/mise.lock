@@ -191,6 +191,12 @@ specifiers = ["5"]
 [tools."npm:bash-language-server".provenance]
 repository = "github.com/bash-lsp/bash-language-server"
 
+[[tools."npm:prettier"]]
+version = "3.10.0"
+aube = { path = "locks/npm-prettier/3.10.0", digest = "sha256:4a8ffcbe0fa762d5b63896a68f95d220ee86f3fcfad3ff60e902752c99ef8677" }
+backend = "npm:prettier"
+specifiers = ["3"]
+
 [[tools."npm:typescript"]]
 version = "7.0.2"
 aube = { path = "locks/npm-typescript/7.0.2", digest = "sha256:3d06b3b23564c68cdad7815c356edb1506fab1c42bfb8c54234134fd9650ec17" }
