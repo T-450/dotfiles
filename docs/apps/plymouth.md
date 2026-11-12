@@ -32,5 +32,5 @@ not the theme's.
 - `/etc/mkinitcpio.conf.d/plymouth.conf`
 - `/etc/plymouth/plymouthd.conf`
 
-**`setup.sh`** (run by `install.sh --setup`): rebuild the initramfs images (mkinitcpio -P) when what goes into them changed: the mkinitcpio config (root/ adds the plymouth hook), plymouthd.conf (the theme), the kernel command line a UKI embeds (/etc/kernel/cmdline, root/ adds splash in /etc/cmdline.d) or the plymouth and theme packages. pacman's mkinitcpio hook misses a theme upgrade (/usr/share/plymouth/themes).
+**`setup.sh`** (run by `install.sh --setup`): rebuild the initramfs images (mkinitcpio -P) when what goes into them changed: the mkinitcpio config (root/ adds the plymouth hook), plymouthd.conf (the theme), vconsole.conf (the keymap and consolefont hooks embed it; base/root/), the kernel command line a UKI embeds (/etc/kernel/cmdline, root/ adds splash in /etc/cmdline.d) or the plymouth and theme packages. pacman's mkinitcpio hook misses a theme upgrade (/usr/share/plymouth/themes).
 <!-- end generated -->

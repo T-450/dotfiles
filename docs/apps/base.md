@@ -2,7 +2,7 @@
 
 The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs.
 
-archinstall installs most of it; it is declared so a clean install and `tools/docs --drift` agree. NetworkManager uses iwd for Wi-Fi; zram swap compresses with zstd (both files in `base/root/etc/`).
+archinstall installs most of it; it is declared so a clean install and `tools/docs --drift` agree. NetworkManager uses iwd for Wi-Fi; zram swap compresses with zstd; `vconsole.conf` sets the console keymap and font, which the initramfs embeds (all in `base/root/etc/`).
 
 The firewall is on: `base/root/etc/ufw/ufw.conf` sets `ENABLED=yes` (Arch ships `no`, which leaves `ufw.service` running with no rules) and Arch's own `/etc/default/ufw` drops incoming and allows outgoing traffic. Nothing listens for the network by default, so nothing is opened; a port a container publishes is filtered like any other (publish to `127.0.0.1` unless another machine needs it). Open one with `sudo ufw allow <port>/tcp`; check with `sudo ufw status verbose`. On a fresh install whose first `pacman -Syu` upgrades the kernel, ufw (which needs the running kernel's netfilter modules, deleted by the upgrade) can't start until the reboot into the new kernel; `setup.sh` leaves it enabled and that boot starts it (`enable_system` in `tools/setup-lib.sh` does this for any unit). In CI the guest's firewall would come on mid-job, which is safe: runner-up drives the job over one SSH session opened before it, and ufw keeps established connections.
 
@@ -16,6 +16,7 @@ The firewall is on: `base/root/etc/ufw/ufw.conf` sets `ENABLED=yes` (Arch ships 
 - `/etc/NetworkManager/conf.d/wifi_backend.conf`
 - `/etc/systemd/zram-generator.conf`
 - `/etc/ufw/ufw.conf`
+- `/etc/vconsole.conf`
 
 **`setup.sh`** (run by `install.sh --setup`): system services this desktop relies on, and the XDG user dirs (~/Pictures for screenshots, ~/Downloads for blueman).
 <!-- end generated -->
