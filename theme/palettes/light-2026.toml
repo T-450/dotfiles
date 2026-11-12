@@ -1,4 +1,6 @@
 # Imported with `theme import-*` from vscode:https://raw.githubusercontent.com/microsoft/vscode/main/extensions/theme-defaults/themes/2026-light.json
+# Except: selection_bg, selection_fg and the whole [terminal] section come from the light-2026
+# Ghostty theme (github.com/dark-2026-theme/nvim, themes/light-2026.conf); re-importing loses them.
 
 [meta]
 name = "2026 Light"
@@ -20,8 +22,8 @@ fg_bright       = "#202020"  # list.activeSelectionForeground
 fg_disabled     = "#bbbbbb"  # disabledForeground
 accent          = "#0069cc"  # focusBorder (alpha dropped)
 badge           = "#0069cc"  # badge.background
-selection_bg    = "#0069cc"  # quickInputList.focusBackground
-selection_fg    = "#ffffff"  # quickInputList.focusForeground
+selection_bg    = "#c2daf5"  # light-2026 Ghostty selection-background
+selection_fg    = "#202020"  # light-2026 Ghostty selection-foreground
 link            = "#0069cc"  # textLink.foreground
 error           = "#ad0707"  # errorForeground
 warning         = "#667309"  # list.warningForeground
@@ -29,10 +31,11 @@ success         = "#587c0c"  # gitDecoration.addedResourceForeground
 shadow          = "#000000"  # constant
 
 [terminal]
-fg     = "#3b3b3b"
-bg     = "#fafafd"
-cursor = "#202020"
+# light-2026 Ghostty theme: foreground, background, cursor-color, palette 0-15
+fg     = "#202020"
+bg     = "#ffffff"
+cursor = "#0069cc"
 ansi = [
-	"#000000", "#cd3131", "#107c10", "#949800", "#0451a5", "#bc05bc", "#0598bc", "#555555",
-	"#666666", "#f14c4c", "#14ce14", "#b5ba00", "#3b8eea", "#d670d6", "#29b8db", "#a5a5a5",
+	"#f0f1f2", "#cf222e", "#116329", "#953800", "#0550ae", "#8250df", "#116329", "#202020",
+	"#999999", "#cf222e", "#116329", "#953800", "#0550ae", "#8250df", "#116329", "#ffffff",
 ]
