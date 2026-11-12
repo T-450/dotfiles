@@ -25,6 +25,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
 | [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code, claude-desktop |
 | [clipboard](apps/clipboard.md) | Clipboard history (cliphist) and persistence after the source app quits (wl-clip-persist) | wl-clipboard, cliphist, wl-clip-persist |
+| [desktop-vm](apps/desktop-vm.md) | A hand-run QEMU/KVM VM that boots this repo's desktop from the working tree and shows what CI cannot: the boot, the greeter and the session on a screen, without touching your live session | edk2-ovmf, qemu-hw-display-virtio-gpu-gl, qemu-hw-display-virtio-vga-gl, qemu-ui-egl-headless |
 | [fastfetch](apps/fastfetch.md) | System summary beside Godzilla breathing fire into a starry sky, drawn by Ghostty through the kitty graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |

@@ -2,7 +2,7 @@
 
 CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM.
 
-runner-up and the Arch cloud image its VMs boot aren't Arch packages, so `pkg/` holds a PKGBUILD for each, pinned to a release and its SHA-256. The coordinator (`runner-up.service`, running while logged out thanks to linger) uses `gh`'s sign-in (it stays off until `gh auth login`, which `bootstrap.sh` asks for) and serves `T-450/dotfiles` on pool `arch-kvm`: one place of 4 cores / 6 GB, keeping 4 cores / 8 GB for you. `runner-up status` shows the place. See [Testing and CI](../testing.md).
+runner-up and the Arch cloud image its VMs boot aren't Arch packages, so `pkg/` holds a PKGBUILD for each, pinned to a release and its SHA-256. The coordinator (`runner-up.service`, running while logged out thanks to linger) uses `gh`'s sign-in (it stays off until `gh auth login`, which `bootstrap.sh` asks for) and serves `T-450/dotfiles` on pool `arch-kvm`: one place of 4 cores / 6 GB, keeping 4 cores / 8 GB for you. `runner-up status` shows the place. See [Testing and CI](../testing.md). While [desktop-vm](desktop-vm.md) runs, it stops the coordinator and starts it again afterwards; a job already running finishes first.
 
 ## Reference
 

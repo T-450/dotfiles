@@ -50,6 +50,10 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clipboard | `wl-clipboard` | 1:2.3.0-1 |
 | clipboard | `cliphist` | 1:0.7.0-2 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
+| desktop-vm | `edk2-ovmf` | 202608-1 |
+| desktop-vm | `qemu-hw-display-virtio-gpu-gl` | 11.1.3-1 |
+| desktop-vm | `qemu-hw-display-virtio-vga-gl` | 11.1.3-1 |
+| desktop-vm | `qemu-ui-egl-headless` | 11.1.3-1 |
 | fastfetch | `fastfetch` | 2.71.0-1 |
 | firefox | `firefox` | 160.0-1 |
 | fonts | `inter-font` | 4.1-1 |

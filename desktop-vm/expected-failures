@@ -1,0 +1,5 @@
+# desktop-vm/expected-failures: units a session check may find failed, one unit name per line,
+# `# reason` after the name (on the same line or a `#` line above it). A failed unit that is not
+# listed here fails `desktop-vm check`.
+#
+# None yet beyond this header: they are found by running it.

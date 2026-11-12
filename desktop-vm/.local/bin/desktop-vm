@@ -1,0 +1,1160 @@
+#!/usr/bin/env python3
+"""desktop-vm: boot this repo's desktop in a QEMU/KVM VM, on a screen, without touching yours.
+
+usage: desktop-vm base                  build the base disk (cloud image + bootstrap.sh + install.sh)
+       desktop-vm shot [FILE]           one VNC frame to PNG (default: <run>/shot-NN.png)
+       desktop-vm keys QCODE...         QMP send-key (e.g. ret, ctrl-alt-f2)
+       desktop-vm type TEXT             one key per character
+       desktop-vm exec [--user] CMD     run in the guest (root, or the user in the session env)
+       desktop-vm status                unit state, run directory, base age and staleness
+       desktop-vm down                  stop the VM (QMP quit; the unit ends, CI comes back)
+
+       desktop-vm wait-ci               internal (unit ExecStartPre): wait for runner-up's VMs
+       desktop-vm restore-ci            internal (unit ExecStopPost): restart runner-up if it ran
+
+The base boots runner-up's Arch cloud image under OVMF, cloud-init seeds the user, and the working
+tree is delivered as a git bundle over HTTP (10.0.2.2). State (base.qcow2, base-vars.fd, base.json,
+runs/) lives in $XDG_STATE_HOME/desktop-vm; sockets and the `run` link in $XDG_RUNTIME_DIR/desktop-vm.
+Stdlib only, so it runs on a bare Arch install with just `python`.
+"""
+import base64
+import hashlib
+import http.server
+import json
+import os
+import re
+import shlex
+import socket
+import struct
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+import uuid
+import zlib
+from datetime import datetime, timezone
+from pathlib import Path
+
+# installed as ~/.local/bin/desktop-vm -> <repo>/desktop-vm/.local/bin/desktop-vm
+REPO = Path(__file__).resolve().parents[3]
+# the transient unit calls this command by its absolute path, so it must not be a shell string
+THIS = str(Path(__file__).resolve())
+
+# the guest user is the host user (cloud-init makes the image's first user uid 1000); the guest is
+# reachable only from this host, so the password is a constant, not a secret
+USER = os.environ.get("USER") or "arch"
+PASSWORD = "desktopvm"
+GUEST_UID = 1000
+GUEST_TMP = "/var/tmp/desktop-vm"
+CI_ENV = ["CI=1", "GIT_AUTHOR_NAME=CI", "GIT_AUTHOR_EMAIL=ci@example.invalid"]
+
+OVMF_CODE = "/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+OVMF_VARS = "/usr/share/edk2/x64/OVMF_VARS.4m.fd"
+UNIT = "desktop-vm"
+CI_UNIT = "runner-up.service"
+IMAGE_PKG = "runner-up-arch-image"
+# tests.yml's idempotency check: the second install must print none of these
+CHANGED = re.compile(r"^(install |backup|unlink|prune|enable |gsettings|render |linger|xdg |rebuild |config |link |mkdir )")
+# a removed non-comment line here means install.sh cannot undo a change
+PACKAGES = ":(glob)**/packages"
+ALIVE = ("active", "activating", "reloading")
+# a unit in one of these states still owns its disk and its sockets
+BUSY = ALIVE + ("deactivating",)
+
+SEED_USER_DATA = """#cloud-config
+users:
+  - name: {user}
+    groups: [wheel, video, input]
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    plain_text_passwd: {password}
+"""
+
+
+class VmError(Exception):
+    pass
+
+
+# ---------------------------------------------------------------- host plumbing
+
+def host(argv, timeout=None):
+    """Run a host command (argument list, never a shell) and return stdout, or raise VmError."""
+    try:
+        p = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        raise VmError(f"{argv[0]}: {e}") from None
+    if p.returncode != 0:
+        why = p.stderr.strip() or p.stdout.strip() or f"exit {p.returncode}"
+        raise VmError(f"{' '.join(argv)}: {why}")
+    return p.stdout
+
+
+def git(*args, env=None):
+    argv = ["git", "-C", str(REPO), *args]
+    try:
+        p = subprocess.run(argv, capture_output=True, text=True, env=env)
+    except OSError as e:
+        raise VmError(f"git {args[0]}: {e}") from None
+    if p.returncode != 0:
+        raise VmError(f"git {args[0]}: {p.stderr.strip() or f'exit {p.returncode}'}")
+    return p.stdout
+
+
+def q(s):
+    """Quote one string for the guest's shell (guest commands run through bash -lc)."""
+    return shlex.quote(str(s))
+
+
+def state_dir():
+    base = os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state"
+    return Path(base) / "desktop-vm"
+
+
+def runtime_dir():
+    rt = os.environ.get("XDG_RUNTIME_DIR")
+    if not rt:
+        raise VmError("XDG_RUNTIME_DIR is not set (run this from your session, not root)")
+    return Path(rt) / "desktop-vm"
+
+
+def prepare_runtime():
+    rt = runtime_dir()
+    rt.mkdir(mode=0o700, parents=True, exist_ok=True)
+    os.chmod(rt, 0o700)
+    return rt
+
+
+def current_run():
+    link = runtime_dir() / "run"
+    try:
+        return Path(os.path.realpath(link, strict=True))
+    except OSError:
+        raise VmError("no run directory yet (no VM has been started from this session)") from None
+
+
+def new_run(kind):
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    run = state_dir() / "runs" / f"{stamp}-{kind}"
+    run.mkdir(parents=True, exist_ok=False)
+    link = prepare_runtime() / "run"
+    if link.is_symlink() or link.exists():
+        link.unlink()
+    link.symlink_to(run)
+    return run
+
+
+def service_state(name):
+    try:
+        p = subprocess.run(["systemctl", "--user", "show", "--property=ActiveState", "--value", name],
+                           capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.TimeoutExpired):
+        return "unknown"
+    return p.stdout.strip() or "unknown"
+
+
+def unit_alive():
+    return service_state(UNIT) in ALIVE
+
+
+def wait_unit_end(timeout):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if service_state(UNIT) not in BUSY:
+            return
+        time.sleep(1)
+    raise VmError(f"unit {UNIT} is still active after {timeout}s (see: systemctl --user status {UNIT})")
+
+
+def image_version():
+    try:
+        p = subprocess.run(["pacman", "-Q", IMAGE_PKG], capture_output=True, text=True)
+    except OSError as e:
+        raise VmError(f"pacman: {e}") from None
+    if p.returncode != 0:
+        raise VmError(f"{IMAGE_PKG} is not installed (it provides the cloud image)")
+    return p.stdout.split()[-1]
+
+
+def place():
+    """The first provider: kvm place in runner-up's config: cores, memory and the image to boot."""
+    cfg = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "runner-up" / "config.json"
+    try:
+        data = json.loads(cfg.read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        raise VmError(f"{cfg}: {e}") from None
+    for machine in data.get("machines", []):
+        for p in machine.get("places", []):
+            if p.get("provider") == "kvm":
+                missing = [k for k in ("cores", "memoryMB", "diskGB", "image") if k not in p]
+                if missing:
+                    raise VmError(f"{cfg}: kvm place misses {', '.join(missing)}")
+                if not Path(p["image"]).is_file():
+                    raise VmError(f"{cfg}: image {p['image']} does not exist (is {IMAGE_PKG} installed?)")
+                return p
+    raise VmError(f"{cfg}: no provider: kvm place")
+
+
+def github_token():
+    """gh's token for mise's GitHub API calls. Never printed, never written: only the guest env."""
+    try:
+        p = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, timeout=15)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return p.stdout.strip() if p.returncode == 0 and p.stdout.strip() else None
+
+
+# ---------------------------------------------------------------- QMP
+
+class Qmp:
+    """QEMU monitor over the unix socket; events are skipped, errors become VmError."""
+
+    def __init__(self, path, timeout=30):
+        self.sock = socket.socket(socket.AF_UNIX)
+        self.sock.settimeout(timeout)
+        try:
+            self.sock.connect(str(path))
+        except OSError as e:
+            self.sock.close()
+            raise VmError(f"QMP {path}: {e} (is the VM running?)") from None
+        self.f = self.sock.makefile("rwb")
+        self._read()  # greeting
+        self.command("qmp_capabilities")
+
+    def _read(self):
+        line = self.f.readline()
+        if not line:
+            raise VmError("QMP: connection closed")
+        r = json.loads(line)
+        if "error" in r:
+            raise VmError(f"QMP: {r['error'].get('desc', r['error'])}")
+        return r.get("return")
+
+    def command(self, name, arguments=None):
+        msg = {"execute": name}
+        if arguments is not None:
+            msg["arguments"] = arguments
+        self.f.write(json.dumps(msg).encode() + b"\n")
+        self.f.flush()
+        while True:
+            line = self.f.readline()
+            if not line:
+                raise VmError(f"QMP: connection closed during {name}")
+            r = json.loads(line)
+            if "event" in r:
+                continue
+            if "error" in r:
+                raise VmError(f"QMP {name}: {r['error'].get('desc', r['error'])}")
+            return r.get("return")
+
+    def close(self):
+        try:
+            self.f.close()
+        finally:
+            self.sock.close()
+
+
+# ---------------------------------------------------------------- QGA
+
+class Qga:
+    """Guest agent over virtio-serial. Syncs with guest-sync-delimited after a 0xff flush byte, so a
+    stale reply from an earlier connection can never be read as this command's answer."""
+
+    def __init__(self, path, timeout=30):
+        self.sock = socket.socket(socket.AF_UNIX)
+        self.sock.settimeout(timeout)
+        try:
+            self.sock.connect(str(path))
+        except OSError as e:
+            self.sock.close()
+            raise VmError(f"QGA {path}: {e} (is the VM running?)") from None
+        self.f = self.sock.makefile("rwb")
+        self._sync(timeout)
+
+    def _sync(self, timeout):
+        sync = int(time.time() * 1000) & ((1 << 30) - 1)
+        self.f.write(b"\xff")
+        self.f.write(json.dumps({"execute": "guest-sync-delimited",
+                                 "arguments": {"id": sync}}).encode() + b"\n")
+        self.f.flush()
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            line = self.f.readline()
+            if not line:
+                raise VmError("QGA: connection closed during guest-sync-delimited")
+            line = line.lstrip(b"\xff").strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if r.get("return") == sync:
+                return
+        raise VmError("QGA: no answer to guest-sync-delimited")
+
+    def command(self, name, arguments=None):
+        msg = {"execute": name}
+        if arguments is not None:
+            msg["arguments"] = arguments
+        self.f.write(json.dumps(msg).encode() + b"\n")
+        self.f.flush()
+        while True:
+            line = self.f.readline()
+            if not line:
+                raise VmError(f"QGA: connection closed during {name}")
+            line = line.lstrip(b"\xff").strip()
+            if not line:
+                continue
+            r = json.loads(line)
+            if "event" in r:
+                continue
+            if "error" in r:
+                raise VmError(f"QGA {name}: {r['error'].get('desc', r['error'])}")
+            return r.get("return")
+
+    def send(self, name, arguments=None):
+        """For commands that never answer on success (guest-shutdown)."""
+        msg = {"execute": name}
+        if arguments is not None:
+            msg["arguments"] = arguments
+        self.f.write(json.dumps(msg).encode() + b"\n")
+        self.f.flush()
+
+    def close(self):
+        try:
+            self.f.close()
+        finally:
+            self.sock.close()
+
+
+def wait_qga(rt, timeout=300):
+    """The socket exists as soon as QEMU starts; the agent answers only after the guest booted."""
+    deadline = time.monotonic() + timeout
+    last = "no socket"
+    announced = False
+    while time.monotonic() < deadline:
+        if service_state(UNIT) not in BUSY:
+            raise VmError(f"unit {UNIT} ended before the guest agent answered "
+                          f"(see: systemctl --user status {UNIT})")
+        if not announced:
+            print(f"base: waiting for the guest agent (up to {timeout}s)")
+            announced = True
+        try:
+            return Qga(rt / "qga.sock", timeout=5)
+        except (VmError, OSError) as e:
+            last = str(e)
+            time.sleep(1)
+    raise VmError(f"guest agent did not answer within {timeout}s ({last})")
+
+
+# ---------------------------------------------------------------- guest commands
+
+class Guest:
+    """Commands through QGA. Long ones write a guest log file (a 1 GB install.sh must not stream
+    through the agent) and are polled with guest-exec-status; the log is copied to the run dir."""
+
+    def __init__(self, qga, run=None):
+        self.qga = qga
+        self.run = run
+
+    @staticmethod
+    def shell(cmd, user, uid):
+        if not user:
+            return ["/bin/bash", "-lc", cmd]
+        # runuser drops HOME/SHELL/USER/LOGNAME/PATH like su, so set what the guest needs; the CI
+        # identity is here too (theme renders it into the guest's git config), never the token
+        env = [f"HOME=/home/{USER}", f"XDG_RUNTIME_DIR=/run/user/{uid}",
+               f"DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{uid}/bus", *CI_ENV]
+        return ["/usr/bin/runuser", "-u", USER, "--", "/usr/bin/env", *env, "/bin/bash", "-lc", cmd]
+
+    def exec(self, argv, env=None, capture=False):
+        args = {"path": argv[0], "arg": list(argv[1:]), "capture-output": capture}
+        if env:
+            args["env"] = list(env)
+        return self.qga.command("guest-exec", args)["pid"]
+
+    def wait(self, pid, timeout):
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            st = self.qga.command("guest-exec-status", {"pid": pid})
+            if st.get("exited"):
+                return st
+            time.sleep(0.5)
+        raise VmError(f"guest command still running after {timeout}s")
+
+    def output(self, cmd, user=False, uid=GUEST_UID, env=None, timeout=120):
+        """Short command: capture stdout/stderr. Returns (exitcode, stdout, stderr)."""
+        pid = self.exec(self.shell(cmd, user, uid), env=env, capture=True)
+        st = self.wait(pid, timeout)
+        out = base64.b64decode(st.get("out-data", "")).decode(errors="replace")
+        err = base64.b64decode(st.get("err-data", "")).decode(errors="replace")
+        return st.get("exitcode", -1), out, err
+
+    def check(self, cmd, user=False, uid=GUEST_UID, env=None, timeout=120):
+        code, out, err = self.output(cmd, user, uid, env, timeout)
+        if code != 0:
+            why = (err.strip() or out.strip() or f"exit {code}").splitlines()[-1]
+            raise VmError(f"guest command failed ({code}): {cmd.splitlines()[0][:80]}: {why}")
+        return out
+
+    def read_file(self, path):
+        handle = self.qga.command("guest-file-open", {"path": path, "mode": "r"})  # a bare int
+        chunks = []
+        try:
+            while True:
+                r = self.qga.command("guest-file-read", {"handle": handle, "count": 1 << 20})
+                data = base64.b64decode(r.get("buf-b64", ""))
+                if not data:
+                    break
+                chunks.append(data)
+        finally:
+            self.qga.command("guest-file-close", {"handle": handle})
+        return b"".join(chunks)
+
+    def logged(self, name, cmd, user=False, uid=GUEST_UID, env=None, timeout=10800):
+        """Long command: output to /var/tmp/desktop-vm/<name>.log in the guest, then to the run dir.
+        Returns its exit code; never raises on a non-zero command (the caller decides)."""
+        if self.run is None:
+            raise VmError("guest log needs a run directory")
+        glog = f"{GUEST_TMP}/{name}.log"
+        self.check(f"mkdir -p {GUEST_TMP} && chmod 1777 {GUEST_TMP} && rm -f {q(glog)}")
+        pid = self.exec(self.shell(f"{cmd} > {q(glog)} 2>&1", user, uid), env=env)
+        try:
+            st = self.wait(pid, timeout)
+        except VmError:
+            try:  # keep what the guest wrote before the timeout
+                (self.run / f"{name}.log").write_bytes(self.read_file(glog))
+            except VmError:
+                pass
+            raise
+        (self.run / f"{name}.log").write_bytes(self.read_file(glog))
+        return st.get("exitcode", -1)
+
+
+# ---------------------------------------------------------------- VNC framebuffer
+
+def _rx(sock, n):
+    data = bytearray()
+    while len(data) < n:
+        chunk = sock.recv(n - len(data))
+        if not chunk:
+            raise VmError("VNC: connection closed")
+        data += chunk
+    return bytes(data)
+
+
+def vnc_grab(path):
+    """One full frame over RFB 3.8 (no auth, raw encoding). QMP screendump has no surface under
+    egl-headless; the VNC framebuffer shows every stage (OVMF, GRUB, console, mango)."""
+    s = socket.socket(socket.AF_UNIX)
+    s.settimeout(30)
+    try:
+        s.connect(str(path))
+    except OSError as e:
+        s.close()
+        raise VmError(f"VNC {path}: {e} (is the VM running?)") from None
+    try:
+        rx = lambda n: _rx(s, n)
+        rx(12)
+        s.sendall(b"RFB 003.008\n")
+        types = rx(rx(1)[0])
+        if 1 not in types:
+            raise VmError(f"VNC: no None auth (server offers {list(types)})")
+        s.sendall(b"\x01")
+        if struct.unpack(">I", rx(4))[0]:
+            raise VmError("VNC: auth failed")
+        s.sendall(b"\x01")
+        w, h = struct.unpack(">HH", rx(4))
+        rx(16)
+        rx(struct.unpack(">I", rx(4))[0])
+        # 32bpp little endian, true colour, BGRX
+        s.sendall(struct.pack(">B3xBBBBHHHBBB3x", 0, 32, 24, 0, 1, 255, 255, 255, 16, 8, 0))
+        s.sendall(struct.pack(">BxHi", 2, 1, 0))  # SetEncodings: one encoding, Raw
+        s.sendall(struct.pack(">BBHHHH", 3, 0, 0, 0, w, h))  # full, non-incremental update
+        fb = bytearray(w * h * 4)
+        while True:
+            kind = rx(1)[0]
+            if kind == 0:
+                rx(1)
+                count = struct.unpack(">H", rx(2))[0]
+                for _ in range(count):
+                    x, y, rw, rh, enc = struct.unpack(">HHHHi", rx(12))
+                    if enc == -223:  # DesktopSize: the next update is the new size
+                        w, h = rw, rh
+                        fb = bytearray(w * h * 4)
+                        continue
+                    if enc != 0:
+                        raise VmError(f"VNC: unsupported encoding {enc}")
+                    data = rx(rw * rh * 4)
+                    for row in range(rh):
+                        off = ((y + row) * w + x) * 4
+                        fb[off:off + rw * 4] = data[row * rw * 4:(row + 1) * rw * 4]
+                break
+            if kind == 1:  # SetColourMapEntries
+                rx(5)
+                rx(6 * struct.unpack(">H", rx(2))[0])
+            elif kind == 2:  # Bell
+                continue
+            elif kind == 3:  # ServerCutText
+                rx(3)
+                rx(struct.unpack(">I", rx(4))[0])
+            else:
+                raise VmError(f"VNC: unknown message {kind}")
+    finally:
+        s.close()
+    # PNG rows: filter byte 0, then RGB (the framebuffer is BGRX)
+    raw = bytearray((w * 3 + 1) * h)
+    for row in range(h):
+        dst = row * (w * 3 + 1)
+        raw[dst] = 0
+        src = row * w * 4
+        for x in range(w):
+            raw[dst + 1 + x * 3] = fb[src + x * 4 + 2]
+            raw[dst + 2 + x * 3] = fb[src + x * 4 + 1]
+            raw[dst + 3 + x * 3] = fb[src + x * 4]
+    return w, h, bytes(raw)
+
+
+def write_png(path, w, h, raw):
+    def chunk(tag, data):
+        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data))
+
+    png = (b"\x89PNG\r\n\x1a\n"
+           + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+           + chunk(b"IDAT", zlib.compress(raw, 6))
+           + chunk(b"IEND", b""))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(png)
+
+
+# ---------------------------------------------------------------- HTTP (seed + tree bundle)
+
+class _Quiet(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+
+class HttpServer:
+    """127.0.0.1:<random> in a thread; the guest reaches it as 10.0.2.2:<port> (QEMU user network)."""
+
+    def __init__(self, directory):
+        handler = lambda *a, **k: _Quiet(*a, directory=str(directory), **k)
+        self.httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        self.port = self.httpd.server_address[1]
+        self.thread = threading.Thread(target=self.httpd.serve_forever, daemon=True)
+
+    def __enter__(self):
+        self.thread.start()
+        return self
+
+    def __exit__(self, *exc):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+
+
+# ---------------------------------------------------------------- working tree delivery
+
+def delivery_commit():
+    """A commit of the working tree (HEAD plus tracked and untracked non-ignored files), built in a
+    temporary index: the user's index, stash and files are never touched."""
+    fd, index = tempfile.mkstemp(prefix="desktop-vm-index.")
+    os.close(fd)
+    os.unlink(index)  # git wants to create the index itself
+    env = dict(os.environ, GIT_INDEX_FILE=index,
+               GIT_AUTHOR_NAME="desktop-vm", GIT_AUTHOR_EMAIL="desktop-vm@localhost",
+               GIT_COMMITTER_NAME="desktop-vm", GIT_COMMITTER_EMAIL="desktop-vm@localhost")
+    try:
+        git("read-tree", "HEAD", env=env)
+        git("add", "-A", env=env)
+        tree = git("write-tree", env=env).strip()
+        return git("commit-tree", tree, "-p", "HEAD", "-m", "desktop-vm: working tree", env=env).strip()
+    finally:
+        if os.path.exists(index):
+            os.unlink(index)
+
+
+def write_bundle(commit, dest):
+    git("update-ref", "refs/desktop-vm/tree", commit)
+    try:
+        git("bundle", "create", str(dest), "refs/desktop-vm/tree")
+    finally:
+        git("update-ref", "-d", "refs/desktop-vm/tree")
+
+
+def deliver(guest, run, www, port, uid):
+    commit = delivery_commit()
+    write_bundle(commit, www / "tree.bundle")
+    script = f"""set -e
+mkdir -p ~/dotfiles
+cd ~/dotfiles
+[ -d .git ] || git init -q
+curl -fsSo /tmp/tree.bundle http://10.0.2.2:{port}/tree.bundle
+git fetch -q /tmp/tree.bundle refs/desktop-vm/tree:refs/desktop-vm/tree
+git checkout -q -f -B main refs/desktop-vm/tree
+git clean -fdq
+git remote get-url origin >/dev/null 2>&1 || git remote add origin https://github.com/T-450/dotfiles.git
+"""
+    code = guest.logged("deliver", script, user=True, uid=uid, timeout=600)
+    if code != 0:
+        raise VmError(f"delivering the working tree failed (exit {code}); see {run}/deliver.log")
+    return commit
+
+
+# ---------------------------------------------------------------- QEMU and the transient unit
+
+def hardware_args(p, disk, vars_file, rt, run):
+    """The QEMU argument list. The hardware profile is this list with paths, ports, C and M removed."""
+    return [
+        "qemu-system-x86_64", "-name", UNIT,
+        "-machine", "q35,accel=kvm", "-cpu", "host", "-smp", str(p["cores"]), "-m", str(p["memoryMB"]),
+        "-drive", f"if=pflash,format=raw,readonly=on,file={OVMF_CODE}",
+        "-drive", f"if=pflash,format=raw,file={vars_file}",
+        "-drive", f"if=virtio,format=qcow2,file={disk}",
+        "-netdev", "user,id=net0", "-device", "virtio-net-pci,netdev=net0",
+        "-device", "virtio-vga-gl,xres=1920,yres=1080", "-display", "egl-headless",
+        "-vnc", f"unix:{rt}/vnc.sock",
+        "-serial", f"file:{run}/serial.log",
+        "-qmp", f"unix:{rt}/qmp.sock,server=on,wait=off",
+        "-chardev", f"socket,path={rt}/qga.sock,server=on,wait=off,id=qga0",
+        "-device", "virtio-serial",
+        "-device", "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0",
+    ]
+
+
+def profile_hash(p):
+    """Hash of the hardware profile: transport, paths, port, cores and memory do not count, an image
+    or base built for other devices does."""
+    args = hardware_args(p, "<disk>", "<vars>", "<rt>", "<run>")
+    clean, i = [], 0
+    while i < len(args):
+        arg = args[i]
+        if arg in ("-smp", "-m"):
+            clean += [arg, "<count>"]
+            i += 2
+        elif arg in ("-serial", "-vnc", "-qmp", "-chardev"):
+            i += 2
+        else:
+            clean.append(re.sub(r"(file|path)=[^,]*", r"\1=<path>", arg))
+            i += 1
+    return hashlib.sha256("\n".join(clean).encode()).hexdigest()
+
+
+def start_unit(p, argv):
+    """systemd-run, so QEMU outlives the CLI and CI gets out of the way for exactly as long as the
+    VM lives (Conflicts= stops the coordinator; ExecStopPost restores it if it was active)."""
+    rt = prepare_runtime()
+    for name in ("qmp.sock", "qga.sock", "vnc.sock"):
+        try:
+            (rt / name).unlink()
+        except FileNotFoundError:
+            pass
+    (rt / "ci-was-active").write_text("yes\n" if service_state(CI_UNIT) == "active" else "no\n")
+    unit = [
+        "systemd-run", "--user", f"--unit={UNIT}", "--collect",
+        f"--property=Conflicts={CI_UNIT}", f"--property=After={CI_UNIT}",
+        "--property=TimeoutStartSec=infinity",
+        f"--property=ExecStartPre={THIS} wait-ci",
+        f"--property=ExecStopPost={THIS} restore-ci",
+        f"--property=MemoryMax={int(p['memoryMB']) + 1024}M",
+        f"--property=RuntimeMaxSec=4h", "--", *argv,
+    ]
+    try:
+        host(unit)
+    except VmError:
+        try:
+            (rt / "ci-was-active").unlink()
+        except FileNotFoundError:
+            pass
+        raise
+
+
+def stop_vm(timeout=180):
+    """QMP quit, then wait for the unit (and so restore-ci) to finish."""
+    try:
+        qmp = Qmp(runtime_dir() / "qmp.sock")
+        qmp.command("quit")
+        qmp.close()
+    except VmError:
+        pass  # already gone: the unit state below is the truth
+    wait_unit_end(timeout)
+
+
+# ---------------------------------------------------------------- base
+
+def cmd_base(argv):
+    if argv:
+        raise VmError("usage: desktop-vm base")
+    if unit_alive():
+        raise VmError(f"{UNIT} is already running; `desktop-vm down` first")
+    p = place()
+    version = image_version()
+    state = state_dir()
+    state.mkdir(parents=True, exist_ok=True)
+    rt = prepare_runtime()
+    run = new_run("base")
+    disk, vars_file = run / "build.qcow2", run / "vars.fd"
+    www = rt / "www"
+    www.mkdir(parents=True, exist_ok=True)
+    (www / "meta-data").write_text(f"instance-id: desktop-vm-{uuid.uuid4().hex}\nlocal-hostname: desktop-vm\n")
+    (www / "user-data").write_text(SEED_USER_DATA.format(user=USER, password=PASSWORD))
+
+    print(f"base: {p['image']} -> {disk} ({p['diskGB']}G overlay)")
+    print(f"base: run directory {run}")
+    try:
+        host(["qemu-img", "create", "-q", "-f", "qcow2", "-b", str(p["image"]), "-F", "qcow2",
+              str(disk), f"{p['diskGB']}G"])
+        vars_file.write_bytes(Path(OVMF_VARS).read_bytes())
+        with HttpServer(www) as http:
+            argv = hardware_args(p, disk, vars_file, rt, run)
+            argv += ["-smbios", f"type=1,serial=ds=nocloud;s=http://10.0.2.2:{http.port}/"]
+            print(f"base: starting {UNIT}; runner-up stops, a running job finishes first")
+            start_unit(p, argv)
+            qga = wait_qga(rt)
+            guest = Guest(qga, run)
+            try:
+                build_base(p, version, run, guest, www, http.port)
+            finally:
+                qga.close()
+    except (VmError, OSError) as e:
+        print(f"desktop-vm: base failed: {e}", file=sys.stderr)
+        print(f"desktop-vm: disk kept: {disk}", file=sys.stderr)
+        print(f"desktop-vm: run directory: {run}", file=sys.stderr)
+        try:
+            stop_vm(60)
+        except VmError:
+            pass
+        return 1
+    except BaseException:
+        # a bug or ^C must not leave the VM running and CI paused
+        print(f"desktop-vm: base aborted; disk kept: {disk}", file=sys.stderr)
+        try:
+            stop_vm(60)
+        except VmError:
+            pass
+        raise
+    return 0
+
+
+def guest_uid(guest):
+    _, out, _ = guest.output(f"id -u {q(USER)}")
+    try:
+        return int(out.strip())
+    except ValueError:
+        raise VmError(f"guest user {USER} does not exist (cloud-init seed failed)") from None
+
+
+def build_base(p, version, run, guest, www, port):
+    # 0 = done, 2 = done with recoverable errors (cloud-init "degraded"): both mean the seed ran
+    code, out, err = guest.output("cloud-init status --wait", timeout=900)
+    if code not in (0, 2):
+        raise VmError(f"cloud-init did not finish (exit {code}): {(err.strip() or out.strip())[-300:]}")
+    _, long, lerr = guest.output("cloud-init status --long", timeout=120)
+    (run / "cloud-init.log").write_text(long or lerr)
+    uid = guest_uid(guest)
+    guest.check(f"loginctl enable-linger {q(USER)}", timeout=120)
+    # the user manager comes up asynchronously; install.sh's systemctl --user calls need its bus
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        code, _, _ = guest.output(f"test -S /run/user/{uid}/bus")
+        if code == 0:
+            break
+        time.sleep(1)
+    else:
+        raise VmError(f"/run/user/{uid}/bus did not appear within 60s after enabling linger")
+    # the image's sync databases are weeks old: -S without -y can 404; curl comes with pacman
+    code = guest.logged("packages", "pacman -Syu --needed --noconfirm git", timeout=1800)
+    if code != 0:
+        raise VmError(f"installing git failed (exit {code}); see {run}/packages.log")
+
+    commit = deliver(guest, run, www, port, uid)
+    print(f"base: delivered {commit}")
+
+    env = list(CI_ENV)
+    token = github_token()
+    if token:
+        env.append(f"MISE_GITHUB_TOKEN={token}")  # guest env only: never a file, never printed
+    print("base: bootstrap.sh (install-1.log)")
+    code = guest.logged("install-1", "cd ~/dotfiles && ./bootstrap.sh", user=True, uid=uid,
+                        env=env, timeout=14400)
+    if code != 0:
+        raise VmError(f"bootstrap.sh failed (exit {code}); see {run}/install-1.log")
+
+    print("base: install.sh again (install-2.log)")
+    code = guest.logged("install-2", "cd ~/dotfiles && ./install.sh", user=True, uid=uid,
+                        env=env, timeout=14400)
+    if code != 0:
+        raise VmError(f"install.sh failed (exit {code}); see {run}/install-2.log")
+    changed = [l for l in (run / "install-2.log").read_text(errors="replace").splitlines()
+               if CHANGED.match(l)]
+    if changed:
+        raise VmError("install.sh changed something on its second run; "
+                      f"first lines: {changed[:3]} (see {run}/install-2.log)")
+
+    print("base: install.sh --check (check-install.log)")
+    code = guest.logged("check-install", "cd ~/dotfiles && ./install.sh --check", user=True, uid=uid,
+                        env=CI_ENV, timeout=1800)
+    if code != 0:
+        raise VmError(f"install.sh --check failed (exit {code}); see {run}/check-install.log")
+
+    guest.check("touch /etc/cloud/cloud-init.disabled && sync", timeout=120)
+    print("base: shutting down")
+    guest.qga.send("guest-shutdown", {"mode": "powerdown"})
+    wait_unit_end(300)
+
+    state = state_dir()
+    tmp_disk, tmp_vars = state / "base.qcow2.tmp", state / "base-vars.fd.tmp"
+    host(["qemu-img", "convert", "-O", "qcow2", str(run / "build.qcow2"), str(tmp_disk)])
+    tmp_vars.write_bytes((run / "vars.fd").read_bytes())
+    meta = {"image": version, "profile": profile_hash(p), "commit": commit,
+            "built": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    tmp_json = state / "base.json.tmp"
+    tmp_json.write_text(json.dumps(meta, indent=2) + "\n")
+    os.replace(tmp_disk, state / "base.qcow2")
+    os.replace(tmp_vars, state / "base-vars.fd")
+    os.replace(tmp_json, state / "base.json")
+    git("update-ref", "refs/desktop-vm/base", commit)
+    for f in (run / "build.qcow2", run / "vars.fd"):
+        f.unlink()
+    print(f"base: wrote {state / 'base.qcow2'} (image {version}, commit {commit[:12]})")
+    print(f"base: logs in {run}")
+
+
+# ---------------------------------------------------------------- status
+
+def base_meta():
+    path = state_dir() / "base.json"
+    try:
+        return json.loads(path.read_text())
+    except FileNotFoundError:
+        return None
+    except (OSError, json.JSONDecodeError) as e:
+        raise VmError(f"{path}: {e}") from None
+
+
+def parse_built(meta):
+    try:
+        return datetime.strptime(meta["built"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (KeyError, ValueError):
+        try:
+            return datetime.fromtimestamp((state_dir() / "base.qcow2").stat().st_mtime, timezone.utc)
+        except OSError:
+            return None
+
+
+def human_age(seconds):
+    minutes = int(seconds // 60)
+    if minutes < 60:
+        return f"{minutes}m"
+    hours = minutes // 60
+    if hours < 48:
+        return f"{hours}h {minutes % 60}m"
+    return f"{hours // 24}d {hours % 24}h"
+
+
+def irreversible(base_commit, new_commit):
+    """Changes install.sh cannot undo, so the base must be rebuilt (design.md, stale rules)."""
+    reasons = []
+    for line in git("diff", "--name-status", base_commit, new_commit).splitlines():
+        cols = line.split("\t")
+        status, paths = cols[0], cols[1:]
+        for path in paths:
+            if path.endswith("/setup.sh"):
+                reasons.append(f"{path} changed (install.sh cannot re-run a setup)")
+            elif "/root/" in f"/{path}" and status[0] in "DR":
+                reasons.append(f"{path} removed or renamed (system files are copied, not undone)")
+            elif "/.config/systemd/user/" in f"/{path}" and status[0] == "D":
+                reasons.append(f"{path} removed (a user unit install.sh would not delete)")
+    removed, added = [], []
+    for line in git("diff", "-U0", base_commit, new_commit, "--", PACKAGES).splitlines():
+        if line.startswith(("---", "+++")):
+            continue
+        if line.startswith("-"):
+            names = removed
+        elif line.startswith("+"):
+            names = added
+        else:
+            continue
+        body = line[1:].split("#", 1)[0].strip()  # a comment change is not a package change
+        if body:
+            names.extend(body.split())
+    lost = sorted(set(removed) - set(added))
+    if lost:
+        reasons.append(f"package(s) removed from */packages: {', '.join(lost)}")
+    return reasons
+
+
+def staleness(meta):
+    if not meta:
+        return ["no base yet (run `desktop-vm base`)"]
+    if "built" not in meta:
+        return ["base.json is unreadable (run `desktop-vm base`)"]
+    reasons = []
+    try:
+        now_version = image_version()
+    except VmError as e:
+        now_version = None
+        reasons.append(str(e))
+    if now_version and meta.get("image") != now_version:
+        reasons.append(f"image version differs (base {meta.get('image')}, now {now_version})")
+    try:
+        current_profile = profile_hash(place())
+    except VmError:
+        current_profile = None  # no runner-up config: the profile cannot be compared
+    if current_profile and meta.get("profile") != current_profile:
+        reasons.append("hardware profile differs (the QEMU command changed)")
+    built = parse_built(meta)
+    if built and (datetime.now(timezone.utc) - built).total_seconds() > 7 * 86400:
+        reasons.append(f"built {human_age((datetime.now(timezone.utc) - built).total_seconds())} ago (over 7 days)")
+    base_commit = meta.get("commit", "")
+    try:
+        git("rev-parse", "--verify", "refs/desktop-vm/base")
+        reachable = True
+    except VmError:
+        reachable = False
+        reasons.append("refs/desktop-vm/base is missing")
+    if reachable and base_commit:
+        try:
+            reasons += irreversible(base_commit, delivery_commit())
+        except VmError as e:
+            reasons.append(f"cannot compare the base commit: {e}")
+    return reasons
+
+
+def cmd_status(argv):
+    if argv:
+        raise VmError("usage: desktop-vm status")
+    print(f"unit: {'active' if unit_alive() else service_state(UNIT)}")
+    try:
+        print(f"run: {current_run()}")
+    except VmError:
+        print("run: none")
+    meta = base_meta()
+    if not meta:
+        print(f"base: none ({state_dir() / 'base.qcow2'})")
+        return 0
+    built = parse_built(meta)
+    age = f", {human_age((datetime.now(timezone.utc) - built).total_seconds())} old" if built else ""
+    print(f"base: {state_dir() / 'base.qcow2'} (image {meta.get('image', '?')}, "
+          f"commit {str(meta.get('commit', '?'))[:12]}{age})")
+    reasons = staleness(meta)
+    for reason in reasons:
+        print(f"stale: {reason}")
+    if not reasons:
+        print("base: fresh")
+    return 0
+
+
+# ---------------------------------------------------------------- other subcommands
+
+def next_shot(run):
+    used = [int(m.group(1)) for p in run.glob("shot-*.png")
+            if (m := re.fullmatch(r"shot-(\d+)\.png", p.name))]
+    return run / f"shot-{max(used, default=0) + 1:02d}.png"
+
+
+def cmd_shot(argv):
+    if len(argv) > 1:
+        raise VmError("usage: desktop-vm shot [FILE]")
+    run = current_run()
+    path = Path(argv[0]).expanduser() if argv else next_shot(run)
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    w, h, raw = vnc_grab(runtime_dir() / "vnc.sock")
+    write_png(path, w, h, raw)
+    print(path)
+    return 0
+
+
+def send_key(qmp, qcodes):
+    qmp.command("send-key", {"keys": [{"type": "qcode", "data": k} for k in qcodes]})
+    time.sleep(0.05)
+
+
+# US keyboard: QEMU qcodes, one per printable ASCII character
+PLAIN = {
+    " ": "spc", "-": "minus", "=": "equal", "[": "bracket_left", "]": "bracket_right",
+    "\\": "backslash", ";": "semicolon", "'": "apostrophe", "`": "grave_accent", ",": "comma",
+    ".": "dot", "/": "slash", "\n": "ret", "\t": "tab",
+}
+SHIFTED = {
+    "!": "1", "@": "2", "#": "3", "$": "4", "%": "5", "^": "6", "&": "7", "*": "8", "(": "9",
+    ")": "0", "_": "minus", "+": "equal", "{": "bracket_left", "}": "bracket_right",
+    "|": "backslash", ":": "semicolon", '"': "apostrophe", "~": "grave_accent", "<": "comma",
+    ">": "dot", "?": "slash",
+}
+
+
+def type_qcodes(text):
+    for ch in text:
+        if ch.isascii() and ch.isalpha():
+            yield ["shift", ch.lower()] if ch.isupper() else [ch.lower()]
+        elif ch in SHIFTED:
+            yield ["shift", SHIFTED[ch]]
+        elif ch in PLAIN:
+            yield [PLAIN[ch]]
+        elif ch.isdigit():
+            yield [ch]
+        else:
+            raise VmError(f"cannot type {ch!r} over QMP send-key")
+
+
+def cmd_keys(argv):
+    if not argv:
+        raise VmError("usage: desktop-vm keys QCODE...")
+    qmp = Qmp(runtime_dir() / "qmp.sock")
+    try:
+        for combo in argv:
+            send_key(qmp, combo.split("-"))
+    finally:
+        qmp.close()
+    return 0
+
+
+def cmd_type(argv):
+    if len(argv) != 1:
+        raise VmError("usage: desktop-vm type TEXT")
+    qmp = Qmp(runtime_dir() / "qmp.sock")
+    try:
+        for qcodes in type_qcodes(argv[0]):
+            send_key(qmp, qcodes)
+    finally:
+        qmp.close()
+    return 0
+
+
+def cmd_exec(argv):
+    user = False
+    if argv and argv[0] == "--user":
+        user, argv = True, argv[1:]
+    if not argv:
+        raise VmError("usage: desktop-vm exec [--user] CMD")
+    qga = Qga(runtime_dir() / "qga.sock")
+    try:
+        guest = Guest(qga)
+        uid = guest_uid(guest) if user else GUEST_UID
+        code, out, err = guest.output(" ".join(argv), user=user, uid=uid)
+    finally:
+        qga.close()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    return code
+
+
+def cmd_down(argv):
+    if argv:
+        raise VmError("usage: desktop-vm down")
+    if service_state(UNIT) not in ALIVE and not (runtime_dir() / "qmp.sock").exists():
+        raise VmError("no VM is running")
+    stop_vm()
+    print("desktop-vm: stopped")
+    return 0
+
+
+# ---------------------------------------------------------------- internal: CI turn-taking
+
+def runner_up_vms():
+    """PIDs of runner-up's VMs, from /proc (never pkill/pgrep -f: a pattern can match the caller)."""
+    pids = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+            continue
+        try:
+            raw = (entry / "cmdline").read_bytes()
+        except OSError:
+            continue
+        argv = [a.decode(errors="replace") for a in raw.split(b"\0") if a]
+        if not argv or Path(argv[0]).name != "qemu-system-x86_64":
+            continue
+        for i, arg in enumerate(argv):
+            if arg == "-name" and i + 1 < len(argv) and argv[i + 1].startswith("runner-up-"):
+                pids.append(int(entry.name))
+                break
+            if arg.startswith("-name") and "runner-up-" in arg:
+                pids.append(int(entry.name))
+                break
+    return pids
+
+
+def cmd_wait_ci(argv):
+    """ExecStartPre: Conflicts= already stopped the coordinator, but a job that was running keeps
+    its VM. Wait for those to finish so two desktops never share the laptop."""
+    if argv:
+        raise VmError("usage: desktop-vm wait-ci")
+    announced = False
+    while True:
+        pids = runner_up_vms()
+        if not pids:
+            return 0
+        if not announced:
+            print(f"wait-ci: runner-up VM(s) still running: {' '.join(map(str, pids))}; waiting")
+            announced = True
+        time.sleep(2)
+
+
+def cmd_restore_ci(argv):
+    """ExecStopPost: bring the coordinator back only if it was active when this VM started."""
+    if argv:
+        raise VmError("usage: desktop-vm restore-ci")
+    marker = runtime_dir() / "ci-was-active"
+    try:
+        was = marker.read_text().strip()
+    except OSError:
+        return 0
+    try:
+        marker.unlink()
+    except OSError:
+        pass
+    if was != "yes":
+        return 0
+    try:
+        # --no-block: this ExecStopPost is part of the stop job that starting the conflicting
+        # runner-up.service would have to wait for, so a blocking start would deadlock
+        p = subprocess.run(["systemctl", "--user", "start", "--no-block", CI_UNIT],
+                           capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        raise VmError(f"{CI_UNIT} did not start: {e}") from None
+    if p.returncode != 0:
+        raise VmError(f"{CI_UNIT} did not start: {p.stderr.strip() or f'exit {p.returncode}'}")
+    print(f"restore-ci: started {CI_UNIT}")
+    return 0
+
+
+# ---------------------------------------------------------------- cli
+
+COMMANDS = {
+    "base": cmd_base,
+    "shot": cmd_shot,
+    "keys": cmd_keys,
+    "type": cmd_type,
+    "exec": cmd_exec,
+    "status": cmd_status,
+    "down": cmd_down,
+    "wait-ci": cmd_wait_ci,
+    "restore-ci": cmd_restore_ci,
+}
+
+
+def main(argv):
+    cmd, args = (argv[0], argv[1:]) if argv else ("help", [])
+    if cmd in ("help", "-h", "--help"):
+        print(__doc__.strip())
+        return 0
+    if cmd not in COMMANDS:
+        raise VmError(f"unknown command {cmd!r} (see `desktop-vm --help`)")
+    return COMMANDS[cmd](args)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except VmError as e:
+        print(f"desktop-vm: {e}", file=sys.stderr)
+        sys.exit(1)
+    except KeyboardInterrupt:
+        print("desktop-vm: interrupted", file=sys.stderr)
+        sys.exit(130)
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as e:
+        print(f"desktop-vm: {e}", file=sys.stderr)
+        sys.exit(1)

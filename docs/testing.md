@@ -55,3 +55,10 @@ language's servers, and that `mise/` has no uncommitted change.
 
 `runs-on: arch-kvm` is the pool label. The coordinator (`runner-up.service`) uses `gh`'s
 sign-in, so `gh auth login` must have run; `runner-up status` shows the place and waiting jobs.
+
+## Seeing the desktop: desktop-vm
+
+`desktop-vm base` builds this desktop in a QEMU/KVM VM from the working tree: `bootstrap.sh` and a
+second `install.sh` plus `--check` as in CI, with a VNC screen and a keyboard (`shot`, `keys`, `type`,
+`exec`) and the guest logs kept in its run directory. It pauses the coordinator while it runs, so the
+two never share the laptop. See [desktop-vm](apps/desktop-vm.md).

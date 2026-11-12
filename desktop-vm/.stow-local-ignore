@@ -1,0 +1,6 @@
+# stow ignores these: only dot-entries at the package root (.config, .local, .zshrc …) belong in
+# $HOME; everything else there is package metadata (packages, expected-failures, etc/ …).
+# A pattern with / matches the path from the package root; one without, the whole file name.
+^/[^.].*
+^/\.gitignore
+.+\.tmpl
