@@ -129,6 +129,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `fprintd` | 1.94.5-2 |
 | thinkpad | `fwupd` | 2.1.9-1 |
 | thinkpad | `tlp` | 1.10.2-1 |
+| thinkpad | `powertop` | 2.16.1-1 |
 | thunar | `thunar` | 4.20.10-1 |
 | thunar | `thunar-archive-plugin` | 0.6.0-1 |
 | thunar | `thunar-media-tags-plugin` | 0.6.0-1 |

@@ -58,7 +58,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
-| [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp |
+| [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp, powertop |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+f), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
 | [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as pills and a powerline ribbon, colored from the palette | waybar, pamixer |

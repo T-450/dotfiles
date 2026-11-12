@@ -6,3 +6,4 @@ vulkan-intel
 fprintd
 fwupd
 tlp
+powertop   # diagnostic only; never --auto-tune: TLP owns the tunables
