@@ -23,7 +23,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, ufw, less, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python |
 | [bluetooth](apps/bluetooth.md) | BlueZ and the Blueman tray applet | bluez, bluez-utils, blueman |
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
-| [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code |
+| [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code, claude-desktop |
 | [clipboard](apps/clipboard.md) | Clipboard history (cliphist) and persistence after the source app quits (wl-clip-persist) | wl-clipboard, cliphist, wl-clip-persist |
 | [fastfetch](apps/fastfetch.md) | System summary beside Godzilla breathing fire into a starry sky, drawn with kitty's graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |

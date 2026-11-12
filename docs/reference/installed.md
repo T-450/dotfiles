@@ -46,6 +46,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clang | `mold` | 3.0.0-4 |
 | clang | `meson` | 1.12.1-2 |
 | claude | `claude-code` | 2.1.322-1 |
+| claude | `claude-desktop` | 5.1231.2-1 |
 | clipboard | `wl-clipboard` | 1:2.3.0-1 |
 | clipboard | `cliphist` | 1:0.7.0-2 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
