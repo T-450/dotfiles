@@ -105,7 +105,11 @@ install_packages() {
 			name=$(awk -F' = ' '/^pkgname = /{print $2; exit}' <<<"$info")
 			ver=$(awk -F' = ' '/^\tepoch = /{e=$2":"} /^\tpkgver = /{v=$2} /^\tpkgrel = /{r=$2} END{print e v "-" r}' <<<"$info")
 			[[ $(pacman -Q "$name" 2>/dev/null) == "$name $ver" ]] && continue
-			build=$(mktemp -d)
+			# on disk, as yay builds in ~/.cache/yay: /tmp is RAM (half of it, and a per-user quota),
+			# which a build like helix-gj1118's (grammar sources and cargo's output, several GB)
+			# outgrows on a small machine
+			mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}"
+			build=$(mktemp -d -p "${XDG_CACHE_HOME:-$HOME/.cache}" makepkg.XXXXXX)
 			cp -r "$(dirname "$pb")/." "$build"
 			# --rmdeps: the build-only tools (makedepends) it installs go again, as yay --removemake
 			# does for the AUR
