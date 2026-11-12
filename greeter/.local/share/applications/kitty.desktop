@@ -1,0 +1,9 @@
+[Desktop Entry]
+# kitty is installed only because the login screen runs in it (sysc-greet-mango depends on it).
+# This entry masks the packaged one: Hidden drops it from the launcher and from GLib's file and URL
+# handlers; Exec=false is what xdg-open, which ignores Hidden and takes the first entry it finds,
+# runs instead of kitty. The terminal is Ghostty.
+Type=Application
+Name=kitty
+Exec=false
+Hidden=true
