@@ -1,6 +1,6 @@
 # wlogout
 
-The power menu (super+shift+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown.
+The power menu (super+shift+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color: mango draws no blur, so a translucent background would show the windows behind it.
 
 Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits on super+shift+escape rather than super+escape: alt+esc opens the dropdown terminal, and a slip to super+esc followed by typing would otherwise log out or shut down. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
 

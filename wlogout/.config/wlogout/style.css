@@ -9,7 +9,7 @@ window {
     font-family: "Inter", sans-serif;
     font-size: 12pt;
     color: @fg;
-    background-color: alpha(@desktop, 0.92);
+    background-color: @desktop;
 }
 
 button {
