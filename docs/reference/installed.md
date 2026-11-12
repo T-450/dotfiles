@@ -70,7 +70,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
-| helix | `helix` | 25.07.1-2 |
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.0.3.u1-1 |
 | kitty | `kitty` | 0.50.0-1 |
@@ -102,7 +101,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | portals | `xdg-desktop-portal-gtk` | 1.15.3-2 |
 | portals | `xdg-desktop-portal-wlr` | 0.8.4-1 |
 | portals | `gnome-keyring` | 1:51.1-1 |
-| qt | `qt6-base` | 6.12.0-4 |
+| qt | `qt6-base` | 6.12.0-5 |
 | qt | `qt6-wayland` | 6.12.0-1 |
 | qt | `qt6-svg` | 6.12.0-1 |
 | qutebrowser | `qutebrowser` | 3.7.0-1 |

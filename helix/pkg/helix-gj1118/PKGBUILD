@@ -1,0 +1,41 @@
+# Helix as gj1118's fork (github.com/gj1118/helix): upstream helix plus merged pull requests (icons,
+# inline git blame, breadcrumbs, folding, a command-line popup, ...). Neither Arch nor the AUR
+# packages a pinned release of it, so this installs the release tarball (prebuilt binary and
+# runtime with compiled grammars), checked against the release's published SHA-256, in Arch's own
+# helix layout: /usr/lib/<pkg>/hx beside runtime/, which helix finds next to its resolved path,
+# and /usr/bin/helix a link. The desktop file and completions are renamed hx -> helix, as Arch
+# does. Downloads are saved with the version in their name (a new pkgver is a new file, not a
+# stale cached one). Bump pkgver and every sha256sum together.
+pkgname=helix-gj1118
+pkgver=26.09.02
+pkgrel=1
+pkgdesc="A post-modern modal text editor (gj1118's fork: explorer, blame, breadcrumbs, folding)"
+arch=(x86_64)
+url='https://github.com/gj1118/helix'
+license=(MPL-2.0)
+depends=(glibc gcc-libs)
+provides=(helix)
+conflicts=(helix)
+options=(!strip !debug)
+source=("$pkgname-$pkgver.tar.xz::$url/releases/download/$pkgver/helix-$pkgver-x86_64-linux.tar.xz"
+	"$pkgname-$pkgver-Helix.desktop::https://raw.githubusercontent.com/gj1118/helix/$pkgver/contrib/Helix.desktop"
+	"$pkgname-$pkgver-helix.png::https://raw.githubusercontent.com/gj1118/helix/$pkgver/contrib/helix.png")
+sha256sums=('03df5d919540359971c940df7318e62c9225b0e888c1ca537b6d06e8dd5f0653'
+	'436d5547045061340a4f90d060935d1bf1be89a62381f307fd2408100a96b244'
+	'ea8caa7833c06cbb86fdefa69a9b93f2c81a397c44e77a5bcbc6266a23690c58')
+
+package() {
+	local src="helix-$pkgver-x86_64-linux" lib="/usr/lib/$pkgname"
+	install -Dm755 "$src/hx" "$pkgdir$lib/hx"
+	cp -r --no-preserve=ownership "$src/runtime" "$pkgdir$lib/runtime"
+	install -d "$pkgdir/usr/bin"
+	ln -s "$lib/hx" "$pkgdir/usr/bin/helix"
+	sed -e 's/^TryExec=hx$/TryExec=helix/' -e 's/^Exec=hx /Exec=helix /' "$pkgname-$pkgver-Helix.desktop" |
+		install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/Helix.desktop"
+	install -Dm644 "$pkgname-$pkgver-helix.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/helix.png"
+	local c="$src/contrib/completion"
+	sed -e 's/_hx/_helix/g' -e 's/\bhx\b/helix/g' "$c/hx.zsh" | install -Dm644 /dev/stdin "$pkgdir/usr/share/zsh/site-functions/_helix"
+	sed -e 's/_hx/_helix/g' -e 's/\bhx\b/helix/g' "$c/hx.bash" | install -Dm644 /dev/stdin "$pkgdir/usr/share/bash-completion/completions/helix"
+	sed -e 's/\bhx\b/helix/g' "$c/hx.fish" | install -Dm644 /dev/stdin "$pkgdir/usr/share/fish/vendor_completions.d/helix.fish"
+	install -Dm644 "$src/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
