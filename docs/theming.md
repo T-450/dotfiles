@@ -13,7 +13,10 @@ theme lint                 # no color literals; rendered files gitignored; no se
 ```
 
 The default palette is **Dark 2026**, from VS Code's
-`microsoft/vscode` → `extensions/theme-defaults/themes/2026-dark.json`.
+`microsoft/vscode` → `extensions/theme-defaults/themes/2026-dark.json`. Its terminal colors
+(`[terminal]`: foreground, background, cursor, ANSI 0-15) and `selection_bg` come from the
+dark-2026 Ghostty theme instead (`github.com/dark-2026-theme/nvim`, `themes/dark-2026.conf`), so
+re-importing it from VS Code drops them.
 
 ## Roles
 

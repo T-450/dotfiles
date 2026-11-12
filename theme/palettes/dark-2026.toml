@@ -1,6 +1,8 @@
 # VS Code "2026 Dark": microsoft/vscode extensions/theme-defaults/themes/2026-dark.json
 # (include chain dark_vs -> dark_plus -> dark_modern -> 2026-dark). The comment on each
 # role is the VS Code key it comes from; `theme import-vscode` uses the same mapping.
+# Except: selection_bg and the whole [terminal] section come from the dark-2026 Ghostty theme
+# (github.com/dark-2026-theme/nvim, themes/dark-2026.conf); re-importing from VS Code loses them.
 
 [meta]
 name = "Dark 2026"
@@ -22,7 +24,7 @@ fg_bright       = "#ededed"  # list.activeSelectionForeground
 fg_disabled     = "#555555"  # disabledForeground
 accent          = "#3994bc"  # focusBorder without its alpha (= tab.activeBorderTop)
 badge           = "#307e9f"  # badge.background
-selection_bg    = "#297aa0"  # quickInputList.focusBackground
+selection_bg    = "#276782"  # dark-2026 Ghostty selection-background
 selection_fg    = "#ffffff"  # quickInputList.focusForeground
 link            = "#48a0c7"  # textLink.foreground
 error           = "#f48771"  # errorForeground
@@ -31,11 +33,11 @@ success         = "#73c991"  # gitDecoration.addedResourceForeground
 shadow          = "#000000"  # (constant)
 
 [terminal]
-fg     = "#cccccc"  # terminal.foreground
-bg     = "#191a1b"  # terminal.background
-cursor = "#bfbfbf"  # terminalCursor.foreground
-# ansi 0-15: VS Code's built-in dark defaults (terminalColorRegistry.ts)
+# dark-2026 Ghostty theme: foreground, background, cursor-color, palette 0-15
+fg     = "#bbbebf"
+bg     = "#121314"
+cursor = "#bbbebf"
 ansi = [
-	"#000000", "#cd3131", "#0dbc79", "#e5e510", "#2472c8", "#bc3fbc", "#11a8cd", "#e5e5e5",
-	"#666666", "#f14c4c", "#23d18b", "#f5f543", "#3b8eea", "#d670d6", "#29b8db", "#e5e5e5",
+	"#202122", "#ff7b72", "#7ee787", "#cd9731", "#79c0ff", "#d2a8ff", "#4ec9b0", "#bbbebf",
+	"#555555", "#ffa198", "#91eb99", "#ffa657", "#a5d6ff", "#b267e6", "#71d4c0", "#ffffff",
 ]
