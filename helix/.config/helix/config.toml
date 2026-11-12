@@ -15,8 +15,9 @@ theme = "dark_plus"
 # cursor's line, which leaves a half-screen tile readable elsewhere
 end-of-line-diagnostics = "hint"
 # gj1118's fork only (checked against 26.09.02; stock helix rejects these keys, so going back to
-# it means reverting them): rounded popups and pickers, nested brackets in alternating colors
-rounded-corners = true
+# it means reverting them): square popups and pickers, like mango's square window borders;
+# nested brackets in alternating colors
+rounded-corners = false
 rainbow-brackets = true
 
 [editor.inline-diagnostics]

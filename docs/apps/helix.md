@@ -53,9 +53,9 @@ The end of `config.toml` turns on gj1118's options (stock helix rejects them: go
 
 - **Breadcrumb** (`[editor.breadcrumb]`): the file name and the symbols around the cursor above the text, such as `setup-lib.sh >  enable_system`. Only the file name, since the full path crowds a half-screen tile.
 - **Inline blame** (`[editor.inline-blame]`): who last changed the cursor's line, at its end (`T-450, 6 days ago • Reproducible install: …`), fetched in the background as the file opens (`auto-fetch`; otherwise it waits for `space B`).
-- **Command line as a popup** (`[editor.cmdline] style = "popup"`): `:` opens a rounded box in the middle, noice.nvim style.
+- **Command line as a popup** (`[editor.cmdline] style = "popup"`): `:` opens a box in the middle, noice.nvim style.
 - **Icons** (`[icons.mime]`, `[icons.kind]`, JetBrains Mono Nerd Font): in the buffer picker, the breadcrumb and completion. 26.09.02's file picker and `space e` explorer don't draw them; the sidebar file tree of the next tag does.
-- **Rounded corners and rainbow brackets** (`rounded-corners`, `rainbow-brackets` under `[editor]`).
+- **Square corners and rainbow brackets** (`rounded-corners = false`, `rainbow-brackets` under `[editor]`): popups and pickers keep square corners, like mango's window borders.
 
 Left at the fork's defaults: the welcome screen and popup notifications (both on), and folding (`z f`/`z F`/`z A-f`, the fork's own keys). Not used: gradient picker borders, which take hex colors (the repo writes no color literals, and helix's colors come from `dark_plus`, not the palette).
 
