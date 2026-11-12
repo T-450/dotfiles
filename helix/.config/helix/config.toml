@@ -1,6 +1,6 @@
 # helix: VS Code's Dark+ theme (built in), diagnostics shown inline, and keys added for Vim and
 # AstroNvim habits without changing helix's own (selection first: select, then act). Every added
-# key was free in the keymap of helix (gj1118's 26.09.02), except four named ones:
+# key was free in the keymap of helix (gj1118's fork at 2610b17), except four named ones:
 # - Ctrl+C copies the selection to the system clipboard (helix's own Ctrl+C toggles comments, which
 #   space+c also does); kitty's Ctrl+V pastes.
 # - $ goes to the line end, as in Vim; the command it replaces (keep selections whose shell command
@@ -14,7 +14,7 @@ theme = "dark_plus"
 # a diagnostic at the end of its line (hints and up); warnings and errors also in full under the
 # cursor's line, which leaves a half-screen tile readable elsewhere
 end-of-line-diagnostics = "hint"
-# gj1118's fork only (checked against 26.09.02; stock helix rejects these keys, so going back to
+# gj1118's fork only (checked against 2610b17; stock helix rejects these keys, so going back to
 # it means reverting them): square popups and pickers, like mango's square window borders;
 # nested brackets in alternating colors
 rounded-corners = false
@@ -22,8 +22,16 @@ rainbow-brackets = true
 
 [editor.inline-diagnostics]
 cursor-line = "warning"
+# gj1118's fork only: it draws these lines under the code only when asked (since 2610b17)
+show-virtual-lines = true
 
-# --- gj1118's fork only (checked against 26.09.02) ---
+# --- gj1118's fork only (checked against 2610b17) ---
+# the file tree (space x; space X floats it): dotfiles shown, since this repo's files live under
+# .config/, and the current file selected as it opens (neo-tree's follow-current-file)
+[editor.explorer]
+show-hidden = true
+auto-reveal = true
+
 # who last changed the cursor's line, at its end
 [editor.inline-blame]
 show = "cursor-line"
@@ -41,6 +49,10 @@ path = "file"
 style = "popup"
 
 # file-type icons in pickers and the explorer, kind icons in completion (JetBrains Mono Nerd Font)
+# notification popups (top right) take their corners from here, not from rounded-corners
+[editor.notifications.border]
+radius = 0
+
 [icons.mime]
 enabled = true
 
@@ -68,8 +80,7 @@ C-l = "jump_view_right"
 A-j = "move_lines_down"
 A-k = "move_lines_up"
 
-# AstroNvim's leader groups, on space keys helix leaves free (space x stays free for gj1118's
-# file tree)
+# AstroNvim's leader groups, on space keys helix leaves free
 [keys.normal.space]
 q = ":quit"
 Q = ":quit-all"

@@ -1,41 +1,69 @@
-# Helix as gj1118's fork (github.com/gj1118/helix): upstream helix plus merged pull requests (icons,
-# inline git blame, breadcrumbs, folding, a command-line popup, ...). Neither Arch nor the AUR
-# packages a pinned release of it, so this installs the release tarball (prebuilt binary and
-# runtime with compiled grammars), checked against the release's published SHA-256, in Arch's own
-# helix layout: /usr/lib/<pkg>/hx beside runtime/, which helix finds next to its resolved path,
-# and /usr/bin/helix a link. The desktop file and completions are renamed hx -> helix, as Arch
-# does. Downloads are saved with the version in their name (a new pkgver is a new file, not a
-# stale cached one). Bump pkgver and every sha256sum together.
+# Helix as gj1118's fork (github.com/gj1118/helix): upstream helix plus merged pull requests (a
+# sidebar file tree, icons, inline git blame, breadcrumbs, folding, a command-line popup, ...).
+# Neither Arch nor the AUR packages it, and its file tree came after its last release (26.09.02),
+# so this builds a pinned master commit from source, the way Arch builds helix: the commit's
+# tarball (checked by SHA-256), cargo with the locked dependencies, and helix's build script, which
+# fetches every tree-sitter grammar at the git revision languages.toml pins and compiles it.
+# Installed in Arch's helix layout: /usr/lib/<pkg>/hx beside runtime/, which helix finds next to
+# its resolved path, and /usr/bin/helix a link. The desktop file and completions are renamed
+# hx -> helix, as Arch does. explorer-shift-keys.patch makes the file tree's uppercase keys (G, H,
+# R, A) work: it ignored every key that carried SHIFT, which a typed uppercase letter does. To move
+# to another commit: _commit, pkgver (26.09.02.r<commits since the tag>.g<short hash>) and the
+# tarball's sha256sum together; drop the patch once the fork has the fix (proposed as
+# github.com/gj1118/helix/pull/104; the patch then fails to apply).
 pkgname=helix-gj1118
-pkgver=26.09.02
+_commit=2610b17609de15a1f1a944a6f16a1ffd5160fa2e
+pkgver=26.09.02.r57.g2610b17
 pkgrel=1
-pkgdesc="A post-modern modal text editor (gj1118's fork: explorer, blame, breadcrumbs, folding)"
+pkgdesc="A post-modern modal text editor (gj1118's fork: file tree, blame, breadcrumbs, folding)"
 arch=(x86_64)
 url='https://github.com/gj1118/helix'
 license=(MPL-2.0)
-depends=(glibc gcc-libs)
+depends=(glibc libgcc libstdc++ hicolor-icon-theme)
+makedepends=(cargo git)
 provides=(helix)
 conflicts=(helix)
-options=(!strip !debug)
-source=("$pkgname-$pkgver.tar.xz::$url/releases/download/$pkgver/helix-$pkgver-x86_64-linux.tar.xz"
-	"$pkgname-$pkgver-Helix.desktop::https://raw.githubusercontent.com/gj1118/helix/$pkgver/contrib/Helix.desktop"
-	"$pkgname-$pkgver-helix.png::https://raw.githubusercontent.com/gj1118/helix/$pkgver/contrib/helix.png")
-sha256sums=('03df5d919540359971c940df7318e62c9225b0e888c1ca537b6d06e8dd5f0653'
-	'436d5547045061340a4f90d060935d1bf1be89a62381f307fd2408100a96b244'
-	'ea8caa7833c06cbb86fdefa69a9b93f2c81a397c44e77a5bcbc6266a23690c58')
+# !lto as in Arch's helix (makepkg's LTO flags for the grammars' C); !debug: no helix-gj1118-debug
+options=(!lto !debug)
+source=("$pkgname-$_commit.tar.gz::$url/archive/$_commit.tar.gz"
+	explorer-shift-keys.patch)
+sha256sums=('71b343068b6dbc7e9af75747b4816e8fffefc648892072acb53b20f6e88e0e64'
+	'671924d5181b3dcd94aeae4e0cf2a591fc249448fba02e0896dd0869c041c57c')
+
+prepare() {
+	cd "helix-$_commit"
+	patch -Np1 -i ../explorer-shift-keys.patch
+	# the fork pins rust 1.90.0 for rustup; its own release deletes this file and builds with the
+	# toolchain at hand, as does this (pacman's cargo, or rustup's when it comes first in PATH)
+	rm rust-toolchain.toml
+	cargo fetch --locked --target "$(rustc --print host-tuple)"
+}
+
+build() {
+	cd "helix-$_commit"
+	# the grammars' compiled asserts keep their source paths; this keeps the build directory out
+	export CFLAGS+=" -ffile-prefix-map=$srcdir=." CXXFLAGS+=" -ffile-prefix-map=$srcdir=."
+	cargo build --frozen --release
+}
 
 package() {
-	local src="helix-$pkgver-x86_64-linux" lib="/usr/lib/$pkgname"
-	install -Dm755 "$src/hx" "$pkgdir$lib/hx"
-	cp -r --no-preserve=ownership "$src/runtime" "$pkgdir$lib/runtime"
+	cd "helix-$_commit"
+	local lib="/usr/lib/$pkgname"
+	install -Dm755 target/release/hx "$pkgdir$lib/hx"
 	install -d "$pkgdir/usr/bin"
 	ln -s "$lib/hx" "$pkgdir/usr/bin/helix"
-	sed -e 's/^TryExec=hx$/TryExec=helix/' -e 's/^Exec=hx /Exec=helix /' "$pkgname-$pkgver-Helix.desktop" |
+	# runtime: the queries, themes and tutor, and the compiled grammars without their sources
+	install -d "$pkgdir$lib/runtime/grammars"
+	cp -r --no-preserve=ownership runtime/queries runtime/themes "$pkgdir$lib/runtime"
+	install -Dm644 runtime/tutor -t "$pkgdir$lib/runtime"
+	find runtime/grammars -maxdepth 1 -type f -name '*.so' -exec install -Dm755 {} -t "$pkgdir$lib/runtime/grammars" \;
+	sed -e 's/^TryExec=hx$/TryExec=helix/' -e 's/^Exec=hx /Exec=helix /' contrib/Helix.desktop |
 		install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/Helix.desktop"
-	install -Dm644 "$pkgname-$pkgver-helix.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/helix.png"
-	local c="$src/contrib/completion"
+	install -Dm644 contrib/Helix.appdata.xml -t "$pkgdir/usr/share/metainfo"
+	install -Dm644 contrib/helix.png -t "$pkgdir/usr/share/icons/hicolor/256x256/apps"
+	local c=contrib/completion
 	sed -e 's/_hx/_helix/g' -e 's/\bhx\b/helix/g' "$c/hx.zsh" | install -Dm644 /dev/stdin "$pkgdir/usr/share/zsh/site-functions/_helix"
 	sed -e 's/_hx/_helix/g' -e 's/\bhx\b/helix/g' "$c/hx.bash" | install -Dm644 /dev/stdin "$pkgdir/usr/share/bash-completion/completions/helix"
 	sed -e 's/\bhx\b/helix/g' "$c/hx.fish" | install -Dm644 /dev/stdin "$pkgdir/usr/share/fish/vendor_completions.d/helix.fish"
-	install -Dm644 "$src/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
