@@ -15,9 +15,9 @@ Left: `custom/start` (click: `rofi -show drun`), the nine mango tags (`mango/wor
 
 Center: one clock pill (`group/datetime`): day, time (its tooltip is the design's CALENDAR line with the month calendar kept below it, because the design's calendar is a click popover waybar can't open), date (`custom/date`, because waybar's clock zero-pads the day).
 
-Right: tray, recording (`custom/record`, only while `gpurecord` prints), brightness (scroll: `osd-brightness bup/bdown`), night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), power (`custom/power`; click: wlogout, right-click: do-not-disturb), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected), a divider, then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), cpu, memory, temperature, disk (`/`), battery (click: wlogout), and the notification bell (`custom/notifications`).
+Right: recording (`custom/record`, only while `gpurecord` prints), brightness (scroll: `osd-brightness bup/bdown`), night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), power (`custom/power`; click: wlogout, right-click: do-not-disturb), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected), a divider, then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), cpu, memory, temperature, disk (`/`), battery (click: wlogout), then the tray and the notification bell (`custom/notifications`), so the bell keeps the corner.
 
-Kept beyond the mockup, left of the wallpaper button: the tray, recording, brightness, night light and power.
+Kept beyond the mockup: recording, brightness, night light and power left of the wallpaper button, and the tray left of the bell.
 
 ## Tooltips
 
