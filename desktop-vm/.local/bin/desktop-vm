@@ -423,7 +423,8 @@ class Guest:
             raise VmError("guest log needs a run directory")
         glog = f"{GUEST_TMP}/{name}.log"
         self.check(f"mkdir -p {GUEST_TMP} && chmod 1777 {GUEST_TMP} && rm -f {q(glog)}")
-        pid = self.exec(self.shell(f"{cmd} > {q(glog)} 2>&1", user, uid), env=env)
+        # exec first: a trailing `> log` would redirect only the last line of a multi-line script
+        pid = self.exec(self.shell(f"exec > {q(glog)} 2>&1\n{cmd}", user, uid), env=env)
         try:
             st = self.wait(pid, timeout)
         except VmError:
@@ -1310,6 +1311,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    # progress lines must show up as they happen when stdout is a file or the journal, not a tty
+    sys.stdout.reconfigure(line_buffering=True)
     try:
         sys.exit(main(sys.argv[1:]))
     except VmError as e:
