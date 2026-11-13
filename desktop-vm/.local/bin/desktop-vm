@@ -45,8 +45,12 @@ from pathlib import Path
 
 # installed as ~/.local/bin/desktop-vm -> <repo>/desktop-vm/.local/bin/desktop-vm
 REPO = Path(__file__).resolve().parents[3]
-# the transient unit calls this command by its absolute path, so it must not be a shell string
-THIS = str(Path(__file__).resolve())
+# the transient unit calls this command by its absolute path, so it must not be a shell string.
+# Its hooks (wait-ci, restore-ci) run the installed command: a copy run from a worktree would leave
+# the unit pointing into a directory that may be gone by the time the VM stops, and then
+# restore-ci fails (203/EXEC) and CI stays off.
+INSTALLED = Path.home() / ".local/bin/desktop-vm"
+THIS = str(INSTALLED) if INSTALLED.exists() else str(Path(__file__).resolve())
 
 # the guest user is the host user (cloud-init makes the image's first user uid 1000); the guest is
 # reachable only from this host, so the password is a constant, not a secret
