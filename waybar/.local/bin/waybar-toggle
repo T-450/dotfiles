@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# waybar-toggle: show/hide the bar by starting/stopping waybar.service (super+h)
+# waybar-toggle: show/hide the bar by starting/stopping waybar.service (super+b)
 if systemctl --user is-active -q waybar.service; then
 	systemctl --user stop waybar.service
 else

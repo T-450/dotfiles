@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gpurecord [start|stop|toggle|status]: gpu-screen-recorder to ~/video (super+j, bar indicator)
+# gpurecord [start|stop|toggle|status]: gpu-screen-recorder to ~/video (ctrl+alt+r, bar indicator)
 set -uo pipefail
 
 self_path=$(readlink -f -- "${BASH_SOURCE[0]}")

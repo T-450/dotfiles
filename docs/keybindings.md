@@ -13,19 +13,19 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | super+f | thunar (file manager; GTK apps open floating at 720x480) |
 | super+v | clipboard history (Enter copies, Shift+Delete removes) |
 | alt+q / super+shift+q | close window |
-| alt+arrows | focus |
+| super+h/j/k/l | focus left/down/up/right |
 | super+left/right | previous/next tag |
-| ctrl+1..9 / alt+1..9 | view tag / move window to tag |
+| super+1..9 / super+shift+1..9 | view tag / move window to tag (dwm's keys: +ctrl adds the tag to the view, +ctrl+shift adds the window to it) |
 | super+n | next layout |
 | ctrl+alt+a / Print | screenshot region / full (clipboard + ~/Pictures/Screenshots) |
-| super+j | toggle screen recording (~/video) |
-| super+l | lock |
+| ctrl+alt+r | toggle screen recording (~/video) |
+| ctrl+alt+l | lock |
 | super+shift+escape | power menu (not super+escape: a slip from alt+esc must not open it, since its keys act at once) |
 | super+shift+t | theme picker (rofi, `theme pick`) |
 | super+w | wallpaper picker (waypaper; a pick stays across logins and `theme set`) |
 | ctrl+alt+\\ / ctrl+alt+backspace | restore last / dismiss all notifications |
 | ctrl+alt+shift+\\ | toggle do-not-disturb |
-| super+h | toggle the bar (waybar) |
+| super+b | toggle the bar (waybar) |
 | super+r | reload config (also auto-reloads on save) |
 | super+m | log out (`mango-quit`: stops session services, then quits mango) |
 | super+p | laptop panel on/off (`mango-monitor`) |
@@ -33,4 +33,4 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 
 Caps Lock is Escape (`xkb_rules_options=caps:escape`).
 
-Left to apps on purpose, since mango takes every key and click a bind matches: ctrl+left/right (word jumps), ctrl+shift+arrows and ctrl+alt+arrows (word selection, Ghostty's tabs, prompt jumps and splits) and a bare middle click (paste, open in a new tab, waybar's middle-click actions). super+middle click maximizes a window; super+drag and super+right-drag move and resize a floating one.
+Left to apps on purpose, since mango takes every key and click a bind matches: ctrl+1..9 and alt+1..9 (tab switching), alt+left/right (back/forward), ctrl+left/right (word jumps), ctrl+shift+arrows and ctrl+alt+arrows (word selection, Ghostty's tabs, prompt jumps and splits) and a bare middle click (paste, open in a new tab, waybar's middle-click actions). super+middle click maximizes a window; super+drag and super+right-drag move and resize a floating one.

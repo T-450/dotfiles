@@ -46,7 +46,7 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 
 ## Helper scripts
 
-- `waybar-toggle` (super+h): stops or starts `waybar.service`.
+- `waybar-toggle` (super+b): stops or starts `waybar.service`.
 - `waybar-temperature`: reads the coretemp `Package id 0` sensor (`/sys/devices/platform/coretemp.0/hwmon/hwmon*`) and prints one JSON line with text, the `lN` and `critical` classes and a tooltip. Polled every 5s.
 - `waybar-notifications`: counts notifications held by mako (`makoctl list -j`) and reads `makoctl mode`; prints the count ("99+" above 99, a zero-width space at 0 so the bell stays) with classes `unread`, `dnd` (do-not-disturb on) and `critical` (a held critical notification). Polled every 2s and refreshed by `pkill -RTMIN+10 waybar` after a click. Bell clicks: restore, middle dismisses all, right toggles do-not-disturb.
 

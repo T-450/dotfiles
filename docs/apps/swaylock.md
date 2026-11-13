@@ -1,6 +1,6 @@
 # swaylock
 
-The lock screen (super+l, and after 5 min idle).
+The lock screen (ctrl+alt+l, and after 5 min idle).
 
 swaylock has no include, so its whole `config` is rendered from the palette.
 

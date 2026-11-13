@@ -1,6 +1,6 @@
 # recorder
 
-Screen recording with gpu-screen-recorder (super+j toggles; files go to `~/video`).
+Screen recording with gpu-screen-recorder (ctrl+alt+r toggles; files go to `~/video`).
 
 `gpurecord` shows a red indicator in the bar while recording (it signals waybar, `signal 8`).
 

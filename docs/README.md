@@ -48,14 +48,14 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
-| [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (super+j toggles; files go to `~/video`) | gpu-screen-recorder |
+| [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (ctrl+alt+r toggles; files go to `~/video`) | gpu-screen-recorder |
 | [rofi](apps/rofi.md) | The launcher (super+d) and every menu: keybindings (super+/), clipboard history (super+v), theme picker, night light | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (ctrl+alt+a) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
 | [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
-| [swaylock](apps/swaylock.md) | The lock screen (super+l, and after 5 min idle) | swaylock |
+| [swaylock](apps/swaylock.md) | The lock screen (ctrl+alt+l, and after 5 min idle) | swaylock |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
