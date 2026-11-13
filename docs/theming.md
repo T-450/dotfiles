@@ -61,10 +61,10 @@ Which apps use each role (generated from the templates):
 | `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, waybar |
-| `ansi3` | ghostty, waybar |
+| `ansi3` | ghostty, pi, waybar |
 | `ansi4` | ghostty, pi, waybar |
 | `ansi5` | ghostty, pi, waybar |
-| `ansi6` | ghostty, waybar |
+| `ansi6` | ghostty, pi, waybar |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
 | `ansi9` | ghostty, mousepad |

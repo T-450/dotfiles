@@ -32,7 +32,8 @@ fi
 # would switch Pi to its `system` theme over the palette pair; themeAdaptive takes its diff,
 # connector and spinner colors from that pair instead of a fixed Claude palette. quietStartup
 # "header": the version and key hints stay, the list of every loaded resource goes.
-if set_json "$agent/settings.json" 644 '.terminalTheme = false | .themeAdaptive = true | .quietStartup = "header"'; then
+# spinnerVerbColor "bashMode": the spinner's verb in the themes' yellow, as Claude Code's is in its accent
+if set_json "$agent/settings.json" 644 '.terminalTheme = false | .themeAdaptive = true | .quietStartup = "header" | .spinnerVerbColor = "bashMode"'; then
 	echo "pi      Claude Code look: palette colors, quiet startup"
 fi
 ui=npm:pi-claude-code-ui@1.0.112
