@@ -8,7 +8,7 @@ Themes: `{palette}.json.tmpl` renders once per palette into `~/.pi/agent/themes/
 
 Look: Claude Code's, from `pi-claude-code-ui` (pinned; `setup.sh` installs it after the catalog). Consecutive tool calls fold into one line (`Read 2 files, ran 1 shell command`; Ctrl+O expands), edits show a syntax-highlighted diff with word-level marks, finished thinking collapses to `Thought for Ns`, prompts carry a `❯`, and the spinner names what runs. Bash rows show a label the model writes with each call (`bashIntent: model`, a few output tokens per call; `/cc-tools intent off` turns it off). `setup.sh` sets `terminalTheme: false` before the extension first loads, because it would otherwise switch Pi to its `system` theme over the palette pair, plus `themeAdaptive: true` so its diffs, connectors and spinner take the pair's colors, and `quietStartup: "header"` so a session opens on Pi's header without the list of every loaded resource.
 
-Footer: one line from `pi-minimal-footer` (pinned): the working directory and git branch on the left; the model, its thinking level, context used and the subscription's usage in fine braille cells (or the session's estimated cost on an API key) on the right. LazyPi's powerbar, whose meters are block glyphs, stays installed but its `settings.json` entry loads no extensions (`"extensions": []`), so a LazyPi run doesn't bring it back; `setup.sh` sets both. The footer's compact mode (inside the editor's bottom border) is off: with `pi-claude-code-ui` drawing the editor it changes nothing.
+Footer: the shell prompt (`lambda-footer`, the zsh theme cdimascio-lambda): `λ dotfiles git:(main) ✗` on the left, written with the same terminal color codes as zsh's (bold green λ, red after a failed tool as after a failed command; the directory's last component cyan; `git:(` bold blue, the branch red, a yellow `✗` when `git status --porcelain` lists anything), so the terminal's palette draws both alike; the model, thinking level, context and session cost dim on the right. LazyPi's powerbar, whose meters are block glyphs, stays installed but its `settings.json` entry loads no extensions (`"extensions": []`), so a LazyPi run doesn't bring it back; `setup.sh` sets that.
 
 The themes use the palette's whole terminal color set, each pushed to a 4.5:1 contrast on the background: your messages sit on an accent-tinted band; headings, list bullets, the `!` bash mode and the spinner's verb are the palette's yellow (`spinnerVerbColor: bashMode`; on Light 2026 the yellow that reads on white is amber); tool titles are teal, links blue, inline code orange, quote bars violet; code takes GitHub's syntax roles (keywords and operators red, functions purple, strings and numbers blue, types orange). The editor border heats up with the thinking level: grey, muted, teal, accent, purple, pink, orange.
 
@@ -26,6 +26,7 @@ Key: Pi reads the Anthropic key from `$ANTHROPIC_API` (`auth.json`: `"key": "!pr
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.local/bin/pi-mascot-import`
+- `~/.pi/agent/extensions/lambda-footer/index.ts`
 - `~/.pi/agent/extensions/mascot/index.ts`
 - `~/.pi/agent/themes/{palette}.json`
 

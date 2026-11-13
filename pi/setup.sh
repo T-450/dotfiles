@@ -41,19 +41,12 @@ if ! jq -e --arg s "$ui" 'any(.packages[]?; (if type == "object" then .source el
 	"$agent/settings.json" >/dev/null; then
 	(cd / && pi install "$ui") && echo "pi      install $ui"
 fi
-# A one-line footer (pi-minimal-footer): path and branch left; model, thinking level, context and
-# usage (fine braille cells) or cost right. LazyPi's powerbar, with its block meters, stays
-# installed but loads nothing, so a LazyPi run doesn't bring it back.
-footer=npm:pi-minimal-footer@0.15.0
-if ! jq -e --arg s "$footer" 'any(.packages[]?; (if type == "object" then .source else . end) == $s)' \
-	"$agent/settings.json" >/dev/null; then
-	(cd / && pi install "$footer") && echo "pi      install $footer"
-fi
+# The footer is the repo's lambda-footer extension (the shell prompt's look). LazyPi's powerbar,
+# with its block meters, stays installed but loads nothing, so a LazyPi run doesn't bring it back.
 powerbar=npm:@juanibiapina/pi-powerbar
 if set_json "$agent/settings.json" 644 --arg pb "$powerbar" '
-	.packages |= map(if . == $pb or (type == "object" and .source == $pb) then {source: $pb, extensions: []} else . end)
-	| .minFooter = ((.minFooter // {}) + {showThinking: true, maxUsageBarCells: 8, compactEditor: false})'; then
-	echo "pi      minimal footer, powerbar off"
+	.packages |= map(if . == $pb or (type == "object" and .source == $pb) then {source: $pb, extensions: []} else . end)'; then
+	echo "pi      powerbar off"
 fi
 # the key itself stays in ~/.config/zsh/private.zsh (exports $ANTHROPIC_API); Pi runs this command
 # when it first needs the key. A key saved by /login is left alone.
