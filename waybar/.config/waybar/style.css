@@ -1,10 +1,12 @@
-/* waybar, "taskbar": a 36px surface (38px window with its 1px ring) 8px off the bottom and side
-   edges, one control language: 24px buttons 4px apart, radius 4, Inter 13. No boxy pills, no
-   powerline arrows: the design mockup draws each module as a quiet chip on the bar.
+/* waybar, "taskbar": a 42px surface (44px window with its 1px ring) on the bottom edge, 8px in
+   from the sides, one control language: 28px controls 4px apart, radius 4, Inter 14 (the mockup's 24px
+   and 13px, opened up for legibility). No boxy pills, no powerline arrows: the design
+   mockup draws each module as a quiet chip on the bar.
    The bar's ring is an inset hairline (listed last: GTK paints inset shadows in list order, the
    later one on top, so the ring stays over the sheen), so it moves with the widget and needs no extra column. The
-   1px sheen on row 1 is the design's inset top highlight; the design's bevelled corners are plain
-   rounded corners here because GTK3 has no corner-shape.
+   1px sheen on row 1 is the design's inset top highlight. The design's bevelled corners are a
+   plain 9px radius on the top corners here (GTK3 has no corner-shape); the bottom corners are
+   square where the bar sits on the screen edge.
    A module's 2px level bar is its first background layer, a currentColor gradient sized by
    levels.css from the lN state class that levels.json gives it (see that file). Icons are
    -gtk-recolor() background layers: GTK's symbolic loader fills every shape, so stroked paths
@@ -16,7 +18,7 @@
 
 * {
     font-family: "Inter";
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 400;
     min-height: 0;
     border: none;
@@ -29,12 +31,13 @@
 label { background-size: 0% 2px, 14px 14px, 100% 100%; }
 
 window#waybar { background: transparent; color: @text; }
-/* 9px = the design's 8px radius plus the 1px inset ring; 7px padding = ring + the design's 6px */
+/* 9px = the design's 8px radius plus the 1px inset ring; the bottom corners sit on the screen
+   edge. 9px padding = ring + 8px, the air above and below the controls */
 window#waybar > box {
     background-color: @bar;
-    border-radius: 9px 0 9px 0;
+    border-radius: 9px 9px 0 0;
     box-shadow: inset 0 2px 0 alpha(@sheen, 0.05), inset 0 0 0 1px @edge;
-    padding: 0 7px;
+    padding: 0 9px;
 }
 
 /* the design's tooltip: 6px 10px around one 16px line, 30px tall with its ring, 8px above the bar
@@ -43,7 +46,8 @@ window#waybar > box {
    tooltip is its inner box: the box's margins are the transparent offsets. GtkTooltipWindow gives
    that box 6px widget margins on top of CSS, hence -6px top (none), 2px sides (8px: the bar's
    inset from the screen edges) and -2px bottom (4px more above the bar). Pango sets Inter 13px on
-   a 17px line where the design has 16, so the label's bottom padding is 5px. */
+   a 17px line where the design has 16, so the label's bottom padding is 5px. Tooltips keep the
+   design's 13px; only the bar grew. */
 tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
 tooltip box {
     background-color: @bar;
@@ -52,24 +56,24 @@ tooltip box {
     padding: 0;
     margin: -6px 2px -2px 2px;
 }
-tooltip label { color: @text; padding: 6px 10px 5px; }
+tooltip label { color: @text; font-size: 13px; padding: 6px 10px 5px; }
 menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
-/* every control is 24px tall inside the 38px window: 7px of air above and below */
+/* every control is 28px tall inside the 44px window: 8px of air above and below */
 #custom-start, #custom-wallpaper, #custom-power,
 #workspaces, #custom-layout, #custom-divider,
 #network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery,
 #custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray > * {
-    margin-top: 7px;
-    margin-bottom: 7px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-/* icon-only 24x24 buttons: the label is a zero-width space, the SVG is the background */
+/* icon-only 28x28 buttons: the label is a zero-width space, the SVG is the background */
 #custom-start, #custom-wallpaper {
-    min-width: 24px;
-    min-height: 24px;
+    min-width: 28px;
+    min-height: 28px;
     padding: 0;
     border-radius: 4px;
     background-color: transparent;
@@ -92,17 +96,18 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-color: alpha(@editor, 0.06);
 }
 
-/* power: the one control that ends the session, so it reads apart from everything else. It stands
-   alone between two dividers before the bell with 4px more air than the 4px spacing, and is the
-   only red chip: red icon on a red tint, a red ring and a faint red glow, cut to the bar's own
-   corner shape (round top-left and bottom-right, square elsewhere). The glow fits the 7px of air
-   above and below and the 8px to the dividers. Hover lights it, after the shared overlay above. */
+/* power: the one control that ends the session, so it reads apart from everything else. It takes
+   the bar's corner behind its own divider, 8px from it (4px margin + 4px spacing) and 4px more
+   than anything else from the bar's end, and is the only red chip: red icon on a red tint, a red
+   ring and a faint red glow, cut on two corners (round top-left and bottom-right, square
+   elsewhere). GTK clips the glow at the module's margin box on the right, so its 3px blur fades
+   out inside the 4px margin. Hover lights it, after the shared overlay above. */
 #custom-power {
     min-width: 16px;
-    min-height: 24px;
+    min-height: 28px;
     margin-left: 4px;
     margin-right: 4px;
-    padding: 0 8px;
+    padding: 0 9px;
     border-radius: 6px 0 6px 0;
     color: @red;
     background-color: transparent;
@@ -111,19 +116,19 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-repeat: no-repeat;
     background-position: center, 0 0;
     background-size: 16px 16px, 100% 100%;
-    box-shadow: inset 0 0 0 1px alpha(@red, 0.55), 0 0 6px alpha(@red, 0.25);
+    box-shadow: inset 0 0 0 1px alpha(@red, 0.55), 0 0 3px alpha(@red, 0.35);
 }
 box:hover > #custom-power {
     background-color: alpha(@red, 0.14);
-    box-shadow: inset 0 0 0 1px @red, 0 0 8px alpha(@red, 0.45);
+    box-shadow: inset 0 0 0 1px @red, 0 0 3px alpha(@red, 0.65);
 }
 
-/* tags: all nine, 24x24 and 2px apart. The base button is an occupied tag (bright text, a 4x2
+/* tags: all nine, 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
    mark centered at the bottom); .empty resets it, .active and .urgent override it. */
 #workspaces { padding: 0; background: transparent; }
 #workspaces button {
-    min-width: 24px;
-    min-height: 24px;
+    min-width: 28px;
+    min-height: 28px;
     margin: 0 2px 0 0;
     padding: 0;
     border: none;
@@ -171,27 +176,27 @@ box:hover > #custom-power {
     100% { box-shadow: inset 0 0 0 1px @amber; }
 }
 
-/* a 14px rule: 38px window - 2 x 12px margin; the 1px label must not stretch it */
+/* a 16px rule: 44px window - 2 x 14px margin; the 1px label must not stretch it */
 #custom-divider {
     min-width: 1px;
-    min-height: 14px;
-    margin: 12px 0;
+    min-height: 16px;
+    margin: 14px 0;
     padding: 0;
     border-radius: 0;
     font-size: 1px;
     background-color: alpha(@editor, 0.28);
 }
 
-/* 42x24: the drawable layout glyph at 6px and the design's 10px chevron at 27px. The chevron is
+/* 46x28: the drawable layout glyph at 8px and the design's 10px chevron at 30px. The chevron is
    a palette-slot stroke, so -gtk-icon-palette colors it @dim while the glyph follows color. */
 #custom-layout {
-    min-width: 42px;
-    min-height: 24px;
+    min-width: 46px;
+    min-height: 28px;
     padding: 0;
     border-radius: 4px;
     color: @text;
     background-repeat: no-repeat;
-    background-position: 6px center, 27px center;
+    background-position: 8px center, 30px center;
     background-size: 16px 16px, 10px 10px;
     -gtk-icon-palette: success @dim;
 }
@@ -212,21 +217,21 @@ box:hover > #custom-power {
 
 /* the focused window: 8px from the layout button (4px spacing + 4px margin) */
 #window {
-    min-height: 24px;
-    margin: 7px 0 7px 4px;
+    min-height: 28px;
+    margin: 8px 0 8px 4px;
     padding: 0;
     color: @dim;
 }
 
 /* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime.
-   The three labels paint the pill (day and date carry its rounded ends) and keep the 7px inset as
+   The three labels paint the pill (day and date carry its rounded ends) and keep the 8px inset as
    their own margin, like every other module: GTK3 counts a CSS margin inside the allocation, and
    the clock anchors its tooltip to the time label's allocation, so a margin on the group would
-   drop the clock's tooltip 7px below every other one. Hovering the group lights all three. */
+   drop the clock's tooltip 8px below every other one. Hovering the group lights all three. */
 #datetime { margin: 0; padding: 0; background: none; }
 #clock, #custom-date {
-    min-height: 24px;
-    margin: 7px 0;
+    min-height: 28px;
+    margin: 8px 0;
     border-radius: 0;
     background-color: transparent;
     background-image: linear-gradient(alpha(@editor, 0.06), alpha(@editor, 0.06));
@@ -234,22 +239,22 @@ box:hover > #custom-power {
     background-size: 100% 100%; /* the bare `label` rule zeroes a first layer */
 }
 #datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
-#clock.day { padding: 0 4px 0 10px; border-radius: 4px 0 0 4px; color: @dim; }
-#clock.time { padding: 0 4px; color: @text; font-weight: 600; font-feature-settings: "tnum"; }
-#custom-date { padding: 0 10px 0 4px; border-radius: 0 4px 4px 0; color: @dim; }
+#clock.day { padding: 0 5px 0 12px; border-radius: 4px 0 0 4px; color: @dim; }
+#clock.time { padding: 0 5px; color: @text; font-weight: 600; font-feature-settings: "tnum"; }
+#custom-date { padding: 0 12px 0 5px; border-radius: 0 4px 4px 0; color: @dim; }
 #datetime:hover #clock.day, #datetime:hover #custom-date { color: @editor; }
 
-/* chips: 6px left edge, 14px icon, 4px gap, value. The level, icon and tint layers come from the
+/* chips: 7px left edge, 14px icon, 5px gap, value, 7px right edge. The level, icon and tint layers come from the
    module's own rule; levels.css only changes the first layer's width and range icons/skins. */
 #network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery {
-    min-height: 24px;
-    padding: 0 6px 0 24px;
+    min-height: 28px;
+    padding: 0 7px 0 26px;
     border-radius: 4px;
     font-weight: 500;
     font-feature-settings: "tnum";
     background-color: transparent;
     background-repeat: no-repeat;
-    background-position: left bottom, 6px center, 0 0;
+    background-position: left bottom, 7px center, 0 0;
 }
 
 #network {
@@ -337,24 +342,24 @@ box:hover > #custom-power {
                       linear-gradient(alpha(@sky, 0.12), alpha(@sky, 0.12));
 }
 
-/* battery: level, 23x10 outline at 6px, capacity-wide fill at 8px, bolt, tint. The fill's width
-   is in levels.css; charging shows the bolt and pushes the value right by 14px, so the layer
-   stays in the same list as `none` while discharging. */
+/* battery: level, 23x10 outline at 7px, capacity-wide fill at 9px, bolt at 35px, tint. The
+   fill's width is in levels.css; charging shows the bolt and pushes the value right by 15px, so
+   the layer stays in the same list as `none` while discharging. */
 #battery {
     color: @purple;
     min-width: 29px;
-    padding: 0 6px 0 33px;
+    padding: 0 7px 0 35px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
                       none,
                       linear-gradient(alpha(@purple, 0.12), alpha(@purple, 0.12));
-    background-position: left bottom, 6px center, 8px center, 33px center, 0 0;
+    background-position: left bottom, 7px center, 9px center, 35px center, 0 0;
     background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%;
 }
 #battery.charging, #battery.plugged {
     color: @green;
-    padding-left: 47px;
+    padding-left: 50px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
@@ -362,11 +367,11 @@ box:hover > #custom-power {
                       linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
 }
 
-/* icon-only chips keep the same 6px edge and 12px of side padding */
+/* icon-only chips keep the chips' 7px edges */
 #custom-nightlight {
     min-width: 14px;
-    min-height: 24px;
-    padding: 0 6px;
+    min-height: 28px;
+    padding: 0 7px;
     border-radius: 4px;
     color: @editor;
     background-color: transparent;
@@ -388,8 +393,8 @@ box:hover > #custom-power {
 }
 #custom-record {
     min-width: 14px;
-    min-height: 24px;
-    padding: 0 6px;
+    min-height: 28px;
+    padding: 0 7px;
     border-radius: 4px;
     color: @red;
     background-color: transparent;
@@ -400,11 +405,11 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px @red;
 }
 
-/* the bell: 28px with no count, 46px with one. The icon is a palette-slot stroke so it can stay
+/* the bell: 28px with no count, 48px with one. The icon is a palette-slot stroke so it can stay
    @text while the count is @editor; the count itself is the label's text color. */
 #custom-notifications {
     min-width: 16px;
-    min-height: 24px;
+    min-height: 28px;
     padding: 0 6px;
     border-radius: 4px;
     background-color: transparent;
@@ -416,7 +421,7 @@ box:hover > #custom-power {
 }
 #custom-notifications.unread {
     min-width: 14px;
-    padding-left: 26px;
+    padding-left: 28px;
     color: @editor;
     font-size: 11px;
     font-feature-settings: "tnum";
@@ -438,9 +443,9 @@ box:hover > #custom-power {
                       -gtk-recolor(url("icons/dot-symbolic.svg"));
 }
 
-/* bluetooth: icon only, then the 16px icon + 4px gap + connection count */
+/* bluetooth: icon only (28px), then the 16px icon + 6px gap + connection count */
 #bluetooth {
-    min-height: 24px;
+    min-height: 28px;
     padding: 0 6px 0 22px;
     border-radius: 4px;
     color: @editor;
@@ -451,7 +456,7 @@ box:hover > #custom-power {
     background-position: 6px center;
     background-size: 16px 16px;
 }
-#bluetooth.connected { padding-left: 26px; }
+#bluetooth.connected { padding-left: 28px; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     color: @dim;
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
@@ -460,4 +465,4 @@ box:hover > #custom-power {
 /* the inset sits on the tray items, not the tray: each item anchors its own tooltip to its
    allocation, which includes its CSS margin (see the clock) */
 #tray { margin: 0; padding: 0; }
-#tray > * { min-height: 24px; }
+#tray > * { min-height: 28px; }

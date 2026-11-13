@@ -1,16 +1,16 @@
-// waybar, "taskbar": one flat surface with 24px controls 4px apart (style.css). Left: the launcher,
+// waybar, "taskbar": one flat surface with 28px controls 4px apart (style.css). Left: the launcher,
 // the nine tags and the layout button, then the focused window. Center: one clock pill. Right:
 // recording, the live chips (network, volume, brightness, cpu, memory, temperature, disk, battery),
-// a divider, night light, wallpaper, bluetooth and the tray, then the red power chip alone between
-// two dividers, and the notification bell in the corner.
+// a divider, night light, wallpaper, bluetooth and the tray, a divider, the notification bell, a
+// divider, and the red power chip in the corner.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
 {
     "layer": "top",
     "position": "bottom",
-    "height": 38,
+    "height": 44,
     "margin-left": 7,
     "margin-right": 7,
-    "margin-bottom": 7,
+    "margin-bottom": 0,
     "spacing": 4,
     "reload_style_on_change": true,
 
@@ -24,8 +24,8 @@
     "modules-right": [
         "custom/record", "network", "pulseaudio", "backlight", "cpu", "memory",
         "custom/temperature", "disk", "battery", "custom/divider#tray", "custom/nightlight",
-        "custom/wallpaper", "bluetooth", "tray", "custom/divider#power", "custom/power",
-        "custom/divider#bell", "custom/notifications"
+        "custom/wallpaper", "bluetooth", "tray", "custom/divider#bell", "custom/notifications",
+        "custom/divider#power", "custom/power"
     ],
 
     // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
@@ -199,6 +199,6 @@
     // 1px lines (style.css paints the 14px rule); zero-width labels keep the custom module alive
     "custom/divider#left": { "format": "\u200b" },
     "custom/divider#tray": { "format": "\u200b" },
-    "custom/divider#power": { "format": "\u200b" },
-    "custom/divider#bell": { "format": "\u200b" }
+    "custom/divider#bell": { "format": "\u200b" },
+    "custom/divider#power": { "format": "\u200b" }
 }
