@@ -1552,6 +1552,10 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("desktop-vm: interrupted", file=sys.stderr)
         sys.exit(130)
+    except BrokenPipeError:
+        # the reader went away (`desktop-vm status | head`): stop quietly, as cat does
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        sys.exit(141)
     except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as e:
         print(f"desktop-vm: {e}", file=sys.stderr)
         sys.exit(1)
