@@ -53,16 +53,16 @@ Which apps use each role (generated from the templates):
 |---|---|
 | `accent` | claude, fastfetch, firefox, ghostty, mango, mpv, pi, qutebrowser, rofi, swaylock, swayosd, theme, wlogout |
 | `ansi0` | ghostty |
-| `ansi1` | ghostty, waybar |
-| `ansi10` | ghostty, mousepad, pi |
+| `ansi1` | ghostty, pi, waybar |
+| `ansi10` | ghostty, mousepad |
 | `ansi11` | ghostty, mousepad, pi, waybar |
 | `ansi12` | ghostty, mousepad, pi, waybar |
 | `ansi13` | claude, ghostty, mousepad, pi |
-| `ansi14` | ghostty, mousepad, pi |
+| `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, waybar |
 | `ansi3` | ghostty, waybar |
-| `ansi4` | ghostty, waybar |
+| `ansi4` | ghostty, pi, waybar |
 | `ansi5` | ghostty, pi, waybar |
 | `ansi6` | ghostty, waybar |
 | `ansi7` | ghostty |
@@ -89,7 +89,7 @@ Which apps use each role (generated from the templates):
 | `name` | claude, fastfetch, firefox, ghostty, gtk, mako, mango, mousepad, mpv, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
-| `selection_bg` | claude, firefox, ghostty, gtk, mako, mango, mousepad, pi, qutebrowser, rofi, theme, waybar |
+| `selection_bg` | claude, firefox, ghostty, gtk, mako, mango, mousepad, qutebrowser, rofi, theme, waybar |
 | `selection_fg` | firefox, ghostty, gtk, mousepad, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, mako, mango, mousepad, mpv, pi, rofi, swaylock, swayosd, theme, waybar, wlogout |
