@@ -11,7 +11,9 @@ usage: theme list | current | lint
        theme import-base24 SRC SLUG      tinted-theming base16/base24 YAML -> palette
 
 Palettes (theme/palettes/*.toml) hold semantic roles. Every <app>/**/NAME.tmpl in the repo
-uses {{role|filter}} and renders in place to NAME (gitignored by that app's .gitignore).
+uses {{role|filter}} and renders in place to NAME (gitignored by that app's .gitignore) from the
+active palette; a NAME with {palette} in it renders once per palette instead, from that palette,
+with its slug in place of {palette} (an app that keeps a theme per palette).
 Reload hooks (<app>/reload.sh) must not leave background processes holding stdout/stderr.
 The active palette's name is kept in $XDG_STATE_HOME/theme/current.
 Stdlib only, so it runs on a bare Arch install with just `python`.
@@ -289,8 +291,12 @@ def render_template(path, colors, words):
     return "".join(out)
 
 
+PER_PALETTE = "{palette}"
+
+
 def templates():
-    """Every NAME.tmpl under an app dir, as (template, output) paths relative to the repo."""
+    """Every NAME.tmpl under an app dir, as (template, output, palette): paths relative to the repo,
+    palette None for the active one. A NAME with {palette} in it yields one output per palette."""
     found = []
     for app in sorted(REPO.iterdir()):
         if not app.is_dir() or app.name in NOT_APPS or app.name.startswith("."):
@@ -300,19 +306,25 @@ def templates():
             for fn in sorted(fns):
                 if fn.endswith(".tmpl") and len(fn) > 5:
                     t = Path(dp, fn).relative_to(REPO)
-                    found.append((t, t.with_name(fn[:-5])))
+                    name = fn[:-5]
+                    if PER_PALETTE in name:
+                        found += [(t, t.with_name(name.replace(PER_PALETTE, p)), p) for p in palette_names()]
+                    else:
+                        found.append((t, t.with_name(name), None))
     return found
 
 
 def render_all(slug, dest_root):
     """Render every target in memory first, then swap them all into place."""
-    colors, words = load_palette(slug)
+    loaded = {None: load_palette(slug)}
     root = dest_root.resolve()
     rendered = []
-    for tmpl, rel in templates():
+    for tmpl, rel, palette in templates():
+        if palette not in loaded:
+            loaded[palette] = load_palette(palette)
         out = root / rel
         mode = (REPO / tmpl).stat().st_mode & 0o777
-        rendered.append((out, render_template(REPO / tmpl, colors, words), mode))
+        rendered.append((out, render_template(REPO / tmpl, *loaded[palette]), mode))
     staged = []
     try:
         for out, text, mode in rendered:
@@ -329,7 +341,7 @@ def render_all(slug, dest_root):
         for tmp, _ in staged:
             if os.path.exists(tmp):
                 os.unlink(tmp)
-    return words, [out for out, _, _ in rendered]
+    return loaded[None][1], [out for out, _, _ in rendered]
 
 
 def run_generators():
@@ -446,7 +458,7 @@ def lint():
         if f and SECRETS.search(f):
             print(f"{f}: looks like a secret; keep it out of the repo (gitignore it)")
             bad += 1
-    outs = [str(o) for _, o in templates()]
+    outs = [str(o) for _, o, _ in templates()]
     if (REPO / ".git").exists() and outs:
         ignored = subprocess.run(["git", "-C", str(REPO), "check-ignore", "--no-index", "--stdin"],
                                  input="\n".join(outs), capture_output=True, text=True).stdout.split()

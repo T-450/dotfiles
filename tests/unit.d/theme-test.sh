@@ -7,7 +7,10 @@ scratch_home
 theme=$ROOT/theme/.local/bin/theme
 out=$TEST_TMP/out
 
-n_tmpl=$(cd "$ROOT" && find . -path ./tests -prune -o -name '*.tmpl' -print | wc -l)
+# a template with {palette} in its name renders once per palette
+n_plain=$(cd "$ROOT" && find . -path ./tests -prune -o -name '*.tmpl' ! -name '*{palette}*' -print | wc -l)
+n_each=$(cd "$ROOT" && find . -path ./tests -prune -o -name '*{palette}*.tmpl' -print | wc -l)
+n_tmpl=$((n_plain + n_each * $("$theme" list | wc -l)))
 for p in $("$theme" list | tr -d '* '); do
 	rm -rf "$out"
 	msg=$("$theme" init "$p" --to "$out") || fail "palette $p renders" "$msg"
@@ -15,7 +18,7 @@ for p in $("$theme" list | tr -d '* '); do
 	((n_out == n_tmpl)) || fail "palette $p renders every template ($n_out of $n_tmpl)"
 	! grep -rIl '{{' "$out" >/dev/null || fail "palette $p leaves no {{token}}" "$(grep -rIn '{{' "$out" | head)"
 done
-pass "every palette renders all $n_tmpl templates, no token left"
+pass "every palette renders all $n_tmpl files, no token left"
 
 rm -rf "$out" && "$theme" init dark-2026 --to "$out" >/dev/null && a=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
 rm -rf "$out" && "$theme" init dark-2026 --to "$out" >/dev/null && b=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
