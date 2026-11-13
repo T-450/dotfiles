@@ -9,7 +9,10 @@
     "code-simplifier@anthropic-plugin-directory": true,
     "security-guidance@anthropic-plugin-directory": true,
     "claude-code-setup@anthropic-plugin-directory": true,
-    "commit-commands@anthropic-plugin-directory": true
+    "commit-commands@anthropic-plugin-directory": true,
+    "egm@egm": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "rust-cli-skills@anthropic-plugin-directory": true
   },
   "modelSettings": {
     "claude-opus-5-5": {
@@ -24,6 +27,51 @@
         "source": "github",
         "repo": "cursor/plugins"
       }
+    },
+    "egm": {
+      "source": {
+        "source": "github",
+        "repo": "google/elephant-goldfish-model"
+      }
     }
+  },
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Dotfiles Tools: running the repo's own commands (theme, mango -p, mmsg, tools/docs, tests/run, install.sh --check) in ~/dotfiles is routine local work."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Package Removal: removing packages with pacman, paru or yay (-R, -Rs, -Rns, with or without sudo).",
+      "Unit State Changes: systemctl or systemctl --user stop, disable, reenable, mask or unmask. disable/reenable on a unit linked from ~/dotfiles deletes the repo's linked unit file."
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: T-450/dotfiles is PUBLIC (confirmed via gh); upstream remote DreamMaoMao/mango-config is a separate public upstream (no-push)",
+      "**Internal sharing / snippet hosting**: None configured - treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: main (default); no branch protection rules or rulesets listed via gh for T-450/dotfiles",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured - assume Claude Code runs on an ordinary developer machine (ThinkPad T14 Arch desktop) with open internet",
+      "**Source control**: T-450/dotfiles (origin, push) and DreamMaoMao/mango-config (upstream, fetch-only, no-push) - no additional orgs configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured - fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: personal dotfiles/desktop-environment configuration and maintenance (Arch Linux + mangowm) on this machine",
+      "**Trusted repo**: ~/dotfiles (origin: github.com/T-450/dotfiles, public; upstream: github.com/DreamMaoMao/mango-config, fetch-only) - since public, only this repo's own work should be pushed there; content ported from elsewhere is not its own work",
+      "**Org-specific CLIs**: None configured - project-local tools seen in usage: theme, mango, mmsg, sysclet (routine for this repo)",
+      "**Routine read-only commands under ~/dotfiles**: journalctl, systemctl status/--failed/list-units, pacman -Q, theme, mise, mmsg, fastfetch, mango -p. Package removal and unit stop/disable/reenable are not routine (see soft_deny)."
+    ]
   }
 }

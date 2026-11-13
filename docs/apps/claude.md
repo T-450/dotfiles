@@ -2,7 +2,7 @@
 
 Claude Code: its settings and a custom theme rendered from the palette. Also the Claude desktop app (`claude-desktop`, AUR), installed as is: it keeps its own settings.
 
-`~/.claude/settings.json` (theme `custom:mango`, model, plugins, marketplaces) and `~/.claude/themes/mango.json` are linked from the repo like any config. Change settings by editing the repo file; if Claude Code ever replaces the link with a real file, `install.sh --check` reports it and the next `install.sh` backs it up and restores the link.
+`~/.claude/settings.json` (theme `custom:mango`, model and effort, plugins, marketplaces, push notifications, auto mode rules) and `~/.claude/themes/mango.json` are linked from the repo like any config. Auto mode asks before removing a package or stopping, disabling or reenabling a unit: `systemctl --user disable` on a linked unit deletes the repo file. `claude auto-mode config` prints the rules in effect. Change settings by editing the repo file; if Claude Code ever replaces the link with a real file, `install.sh --check` reports it and the next `install.sh` backs it up and restores the link.
 
 ## Reference
 
