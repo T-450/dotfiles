@@ -1,7 +1,8 @@
 // waybar, "taskbar": one flat surface with 24px controls 4px apart (style.css). Left: the launcher,
 // the nine tags and the layout button, then the focused window. Center: one clock pill. Right:
-// recording, brightness, night light, power, wallpaper, bluetooth, a divider, the live chips
-// (network, volume, cpu, memory, temperature, disk, battery), then the tray and the notification bell.
+// recording, power, a divider, the live chips (network, volume, brightness, cpu, memory,
+// temperature, disk, battery), a divider, then night light, wallpaper, bluetooth, the tray and the
+// notification bell.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
 {
     "layer": "top",
@@ -21,9 +22,10 @@
     "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/window"],
     "modules-center": ["group/datetime"],
     "modules-right": [
-        "custom/record", "backlight", "custom/nightlight", "custom/power", "custom/wallpaper",
-        "bluetooth", "custom/divider#right", "network", "pulseaudio", "cpu", "memory",
-        "custom/temperature", "disk", "battery", "tray", "custom/notifications"
+        "custom/record", "custom/power", "custom/divider#right", "network", "pulseaudio",
+        "backlight", "cpu", "memory", "custom/temperature", "disk", "battery",
+        "custom/divider#tray", "custom/nightlight", "custom/wallpaper", "bluetooth", "tray",
+        "custom/notifications"
     ],
 
     // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
@@ -197,5 +199,6 @@
 
     // 1px lines (style.css paints the 14px rule); zero-width labels keep the custom module alive
     "custom/divider#left": { "format": "\u200b" },
-    "custom/divider#right": { "format": "\u200b" }
+    "custom/divider#right": { "format": "\u200b" },
+    "custom/divider#tray": { "format": "\u200b" }
 }

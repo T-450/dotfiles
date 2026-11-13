@@ -264,12 +264,13 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
 
+/* brightness is beyond the mockup; amber is the one accent no chip wears at rest */
 #backlight {
-    color: @editor;
+    color: @amber;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/sun-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      linear-gradient(alpha(@amber, 0.12), alpha(@amber, 0.12));
 }
 
 #cpu {
