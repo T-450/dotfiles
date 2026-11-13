@@ -3,6 +3,9 @@
 # Waybar's own temperature module ignores "states", so the lN level class (min(100, C), sized by
 # levels.css) comes from here; "critical" is added from 80 C.
 
+# the design's tooltip line: dim uppercase name, then the value (see docs/apps/waybar.md)
+name="<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>TEMPERATURE</span>  "
+
 for label in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 	[[ -r $label ]] || continue
 	[[ $(<"$label") == "Package id 0" ]] || continue
@@ -11,7 +14,7 @@ for label in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 done
 
 if [[ -z ${milli:-} ]]; then
-	printf '{"text": "n/a", "class": ["l0"], "tooltip": "CPU package sensor not found"}\n'
+	printf '{"text": "n/a", "class": ["l0"], "tooltip": "%sn/a"}\n' "$name"
 	exit 0
 fi
 
@@ -19,4 +22,6 @@ c=$(((milli + 500) / 1000))
 level=$((c > 100 ? 100 : c))
 class="\"l$level\""
 ((c >= 80)) && class+=", \"critical\""
-printf '{"text": "%d°", "class": [%s], "tooltip": "CPU package %d °C"}\n' "$c" "$class" "$c"
+tip="$c °C"
+((c >= 80)) && tip+=" · high"
+printf '{"text": "%d°", "class": [%s], "tooltip": "%s%s"}\n' "$c" "$class" "$name" "$tip"

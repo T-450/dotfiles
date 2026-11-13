@@ -18,7 +18,7 @@
     // its settings here. The states live apart because they are 7 x 101 repetitive lines.
     "include": ["~/.config/waybar/levels.json"],
 
-    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "mango/layout", "mango/window"],
+    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/window"],
     "modules-center": ["group/datetime"],
     "modules-right": [
         "tray", "custom/record", "backlight", "custom/nightlight", "custom/power",
@@ -29,17 +29,17 @@
     // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
     "custom/start": {
         "format": "\u200b",
-        "tooltip-format": "Applications (super+d)",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>LAUNCHER</span>  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super D</span>",
         "on-click": "rofi -show drun"
     },
     "custom/wallpaper": {
         "format": "\u200b",
-        "tooltip-format": "Wallpaper",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>WALLPAPER</span>  Open picker  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super W</span>",
         "on-click": "waypaper"
     },
     "custom/power": {
         "format": "\u200b",
-        "tooltip": false,
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Shift Esc</span>\n<span font_desc='Inter 11px' fgalpha='66%'>Right-click toggles do not disturb</span>",
         "on-click": "wlogout -b 6 --protocol layer-shell",
         "on-click-right": "makoctl mode -t do-not-disturb"
     },
@@ -51,10 +51,13 @@
         "on-click-right": "toggle"
     },
 
-    // the drawable glyph (layouts/<symbol>-symbolic.svg) and a chevron; mango reports one class
-    "mango/layout": {
-        "format": "  ",
-        "tooltip": false,
+    // the drawable glyph (layouts/<symbol>-symbolic.svg) and a chevron; waybar-layout prints the
+    // symbol as the class and the tooltip (mango/layout has no tooltip support)
+    "custom/layout": {
+        "exec": "~/.local/bin/waybar-layout",
+        "return-type": "json",
+        "restart-interval": 1,
+        "format": "{}",
         "on-click": "mmsg dispatch switch_layout"
     },
 
@@ -69,7 +72,10 @@
         "modules": ["clock#day", "clock#time", "custom/date"]
     },
     "clock#day": { "format": "{:%a}", "tooltip": false },
-    "clock#time": { "format": "{:%H:%M}", "tooltip-format": "<tt>{calendar}</tt>" },
+    "clock#time": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
+    },
     // waybar's clock zero-pads the day; a custom module keeps "12 Nov" (the design's form)
     "custom/date": { "exec": "date '+%-d %b'", "interval": 60 },
 
@@ -81,11 +87,14 @@
         // a long SSID ends in an ellipsis before it reaches the centered clock
         "max-length": 16,
         "align": 1,
-        "tooltip-format": "{ifname} {ipaddr}/{cidr}"
+        "tooltip-format-wifi": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Inter 11px' fgalpha='66%'>Click toggles speeds</span>",
+        "tooltip-format-ethernet": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Inter 11px' fgalpha='66%'>Click toggles speeds</span>",
+        "tooltip-format-disconnected": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>NETWORK</span>  Offline\n<span font_desc='Inter 11px' fgalpha='66%'>Click toggles speeds</span>"
     },
     "pulseaudio": {
         "format": "{volume}%",
         "format-muted": "muted",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>VOLUME</span>  {volume}%\n<span font_desc='Inter 11px' fgalpha='66%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
         "align": 1,
         "on-click": "pamixer -t",
         "on-click-right": "pamixer -t",
@@ -95,6 +104,7 @@
     },
     "backlight": {
         "format": "{percent}%",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BRIGHTNESS</span>  {percent}%\n<span font_desc='Inter 11px' fgalpha='66%'>Scroll ±1</span>",
         "align": 1,
         "on-scroll-up": "~/.local/bin/osd-brightness bup",
         "on-scroll-down": "~/.local/bin/osd-brightness bdown"
@@ -102,13 +112,14 @@
     "cpu": {
         "interval": 5,
         "format": "{usage}%",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>CPU</span>  {usage}%",
         "align": 1
     },
     "memory": {
         "interval": 5,
         "format": "{percentage}%",
         "align": 1,
-        "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>MEMORY</span>  {percentage}%"
     },
     // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
     // prints the lN level class itself (min(100, C)) and "critical" from 80 C
@@ -123,12 +134,17 @@
         "interval": 30,
         "paths": ["/"],
         "format": "{percentage_used}%",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>DISK</span>  {percentage_used}%",
         "align": 1
     },
     "battery": {
         "format": "{capacity}%",
         "format-charging": "{capacity}%",
         "format-plugged": "{capacity}%",
+        "tooltip-format-discharging": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BATTERY</span>  {capacity}% · on battery\n<span font_desc='Inter 11px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-charging": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BATTERY</span>  {capacity}% · charging\n<span font_desc='Inter 11px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-plugged": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BATTERY</span>  {capacity}% · plugged in\n<span font_desc='Inter 11px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-full": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BATTERY</span>  {capacity}% · full\n<span font_desc='Inter 11px' fgalpha='66%'>Click opens the session menu</span>",
         "align": 1,
         "on-click": "wlogout -b 6 --protocol layer-shell"
     },
@@ -149,6 +165,7 @@
         "exec": "~/.local/bin/gpurecord status",
         "signal": 8,
         "format": "\u200b",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>RECORDING</span>  Click stops",
         "on-click": "~/.local/bin/gpurecord"
     },
 
@@ -169,6 +186,10 @@
         "format-off": "\u200b",
         "format-disabled": "\u200b",
         "format-no-controller": "",
+        "tooltip-format-on": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BLUETOOTH</span>  On · none connected",
+        "tooltip-format-connected": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BLUETOOTH</span>  {num_connections} connected",
+        "tooltip-format-off": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BLUETOOTH</span>  Off",
+        "tooltip-format-disabled": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>BLUETOOTH</span>  Off",
         "on-click": "blueman-manager"
     },
 

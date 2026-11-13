@@ -59,9 +59,9 @@ menuitem:hover { background-color: @sel; color: @selfg; }
 
 /* every control is 24px tall inside the 38px window: 7px of air above and below */
 #custom-start, #custom-wallpaper, #custom-power,
-#workspaces, #layout, #custom-divider,
+#workspaces, #custom-layout, #custom-divider,
 #network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery,
-#custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray {
+#custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray > * {
     margin-top: 7px;
     margin-bottom: 7px;
 }
@@ -86,9 +86,9 @@ menuitem:hover { background-color: @sel; color: @selfg; }
    built-in modules, but a custom module's label sits inside a box (AIconLabel), and GTK3 doesn't
    pass the hover state down, so custom modules match on their box. Waybar never sets :active on
    a label, so the design's pressed overlay has no hook here (the tags are buttons and keep it). */
-#layout:hover, #network:hover, #pulseaudio:hover, #backlight:hover, #battery:hover,
+#network:hover, #pulseaudio:hover, #backlight:hover, #battery:hover,
 #bluetooth:hover,
-box:hover > #custom-start, box:hover > #custom-wallpaper, box:hover > #custom-power,
+box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-wallpaper, box:hover > #custom-power,
 box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-notifications {
     background-color: alpha(@editor, 0.06);
 }
@@ -159,7 +159,7 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
 
 /* 42x24: the drawable layout glyph at 6px and the design's 10px chevron at 27px. The chevron is
    a palette-slot stroke, so -gtk-icon-palette colors it @dim while the glyph follows color. */
-#layout {
+#custom-layout {
     min-width: 42px;
     min-height: 24px;
     padding: 0;
@@ -170,20 +170,20 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-size: 16px 16px, 10px 10px;
     -gtk-icon-palette: success @dim;
 }
-#layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")),       -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")),    -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")),     -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")),       -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")),    -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")),     -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 
 /* the focused window: 8px from the layout button (4px spacing + 4px margin) */
 #window {
@@ -431,4 +431,7 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
 }
 
-#tray { min-height: 24px; padding: 0; }
+/* the inset sits on the tray items, not the tray: each item anchors its own tooltip to its
+   allocation, which includes its CSS margin (see the clock) */
+#tray { margin: 0; padding: 0; }
+#tray > * { min-height: 24px; }

@@ -37,13 +37,16 @@ turn_off() {
 status() {
 	local text class tip
 	if [[ -e $off ]] || ! systemctl --user -q is-active "$unit"; then
-		text=󰖙 class=off tip="Night light off"
+		text=󰖙 class=off tip="Off"
 	elif [[ $MODE == warm ]]; then
-		text=󰖔 class=warm tip="Night light warm now (${NIGHT_TEMP} K)"
+		text=󰖔 class=warm tip="Warm now · ${NIGHT_TEMP} K"
 	else
-		text=󰖔 class=auto tip="Night light automatic (${NIGHT_TEMP} K after sunset)"
+		text=󰖔 class=auto tip="Automatic · ${NIGHT_TEMP} K after sunset"
 	fi
-	printf '{"text":"%s","class":"%s","tooltip":"%s\\nclick: on/off · right click: options"}\n' "$text" "$class" "$tip"
+	# the design's tooltip line (dim name, value, dim hint); single quotes keep the JSON unescaped
+	local name="<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>NIGHT LIGHT</span>"
+	local hint="<span font_desc='Inter 11px' fgalpha='66%'>Click toggles · Right-click options</span>"
+	printf '{"text":"%s","class":"%s","tooltip":"%s  %s\\n%s"}\n' "$text" "$class" "$name" "$tip" "$hint"
 }
 
 menu() {
