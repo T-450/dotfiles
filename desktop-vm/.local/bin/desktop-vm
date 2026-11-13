@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """desktop-vm: boot this repo's desktop in a QEMU/KVM VM, on a screen, without touching yours.
 
-usage: desktop-vm base                  build the base disk (cloud image + bootstrap.sh + install.sh)
+usage: desktop-vm base                  build the base disk (cloud image + bootstrap.sh)
+       desktop-vm up [--rebuild]        working tree on a throwaway base, reboot to greeter
        desktop-vm shot [FILE]           one VNC frame to PNG (default: <run>/shot-NN.png)
        desktop-vm keys QCODE...         QMP send-key (e.g. ret, ctrl-alt-f2)
        desktop-vm type TEXT             one key per character
@@ -13,8 +14,10 @@ usage: desktop-vm base                  build the base disk (cloud image + boots
        desktop-vm restore-ci            internal (unit ExecStopPost): restart runner-up if it ran
 
 The base boots runner-up's Arch cloud image under OVMF, cloud-init seeds the user, and the working
-tree is delivered as a git bundle over HTTP (10.0.2.2). State (base.qcow2, base-vars.fd, base.json,
-runs/) lives in $XDG_STATE_HOME/desktop-vm; sockets and the `run` link in $XDG_RUNTIME_DIR/desktop-vm.
+tree is delivered as a git bundle over HTTP (10.0.2.2). `up` runs on a throwaway overlay of the base
+(-snapshot), applies the tree with install.sh, reboots and leaves the VM at the greeter. State
+(base.qcow2, base-vars.fd, base.json, runs/) lives in $XDG_STATE_HOME/desktop-vm; sockets and the
+`run` link in $XDG_RUNTIME_DIR/desktop-vm.
 Stdlib only, so it runs on a bare Arch install with just `python`.
 """
 import base64
@@ -329,7 +332,7 @@ class Qga:
             self.sock.close()
 
 
-def wait_qga(rt, timeout=300):
+def wait_qga(rt, timeout=300, label="base"):
     """The socket exists as soon as QEMU starts; the agent answers only after the guest booted."""
     deadline = time.monotonic() + timeout
     last = "no socket"
@@ -339,7 +342,7 @@ def wait_qga(rt, timeout=300):
             raise VmError(f"unit {UNIT} ended before the guest agent answered "
                           f"(see: systemctl --user status {UNIT})")
         if not announced:
-            print(f"base: waiting for the guest agent (up to {timeout}s)")
+            print(f"{label}: waiting for the guest agent (up to {timeout}s)")
             announced = True
         try:
             return Qga(rt / "qga.sock", timeout=5)
@@ -504,20 +507,18 @@ def vnc_grab(path):
                 raise VmError(f"VNC: unknown message {kind}")
     finally:
         s.close()
-    # PNG rows: filter byte 0, then RGB (the framebuffer is BGRX)
-    raw = bytearray((w * 3 + 1) * h)
-    for row in range(h):
-        dst = row * (w * 3 + 1)
-        raw[dst] = 0
-        src = row * w * 4
-        for x in range(w):
-            raw[dst + 1 + x * 3] = fb[src + x * 4 + 2]
-            raw[dst + 2 + x * 3] = fb[src + x * 4 + 1]
-            raw[dst + 3 + x * 3] = fb[src + x * 4]
-    return w, h, bytes(raw)
+    return w, h, bytes(fb)  # raw BGRX, converted only when a frame is written
 
 
-def write_png(path, w, h, raw):
+def write_png(path, w, h, fb):
+    """fb is the BGRX framebuffer from vnc_grab; PNG wants rows of filter byte 0 then RGB."""
+    rgb = bytearray(w * h * 3)
+    rgb[0::3] = fb[2::4]
+    rgb[1::3] = fb[1::4]
+    rgb[2::3] = fb[0::4]
+    stride = w * 3
+    raw = b"".join(b"\0" + rgb[row * stride:(row + 1) * stride] for row in range(h))
+
     def chunk(tag, data):
         return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data))
 
@@ -596,7 +597,10 @@ git checkout -q -f -B main refs/desktop-vm/tree
 git clean -fdq
 git remote get-url origin >/dev/null 2>&1 || git remote add origin https://github.com/T-450/dotfiles.git
 """
-    code = guest.logged("deliver", script, user=True, uid=uid, timeout=600)
+    try:
+        code = guest.logged("deliver", script, user=True, uid=uid, timeout=600)
+    finally:
+        (www / "tree.bundle").unlink(missing_ok=True)
     if code != 0:
         raise VmError(f"delivering the working tree failed (exit {code}); see {run}/deliver.log")
     return commit
@@ -688,8 +692,12 @@ def cmd_base(argv):
         raise VmError("usage: desktop-vm base")
     if unit_alive():
         raise VmError(f"{UNIT} is already running; `desktop-vm down` first")
-    p = place()
-    version = image_version()
+    return base_disk(place(), image_version())
+
+
+def base_disk(p, version):
+    """Build base.qcow2 (the whole `base` command after its checks; `up` calls it for a stale base).
+    Returns the exit code; on failure the VM is stopped and the disk and run directory are kept."""
     state = state_dir()
     state.mkdir(parents=True, exist_ok=True)
     rt = prepare_runtime()
@@ -745,43 +753,32 @@ def guest_uid(guest):
         raise VmError(f"guest user {USER} does not exist (cloud-init seed failed)") from None
 
 
-def build_base(p, version, run, guest, www, port):
-    # 0 = done, 2 = done with recoverable errors (cloud-init "degraded"): both mean the seed ran
-    code, out, err = guest.output("cloud-init status --wait", timeout=900)
-    if code not in (0, 2):
-        raise VmError(f"cloud-init did not finish (exit {code}): {(err.strip() or out.strip())[-300:]}")
-    _, long, lerr = guest.output("cloud-init status --long", timeout=120)
-    (run / "cloud-init.log").write_text(long or lerr)
-    uid = guest_uid(guest)
-    guest.check(f"loginctl enable-linger {q(USER)}", timeout=120)
+def wait_user_bus(guest, uid):
     # the user manager comes up asynchronously; install.sh's systemctl --user calls need its bus
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         code, _, _ = guest.output(f"test -S /run/user/{uid}/bus")
         if code == 0:
-            break
+            return
         time.sleep(1)
-    else:
-        raise VmError(f"/run/user/{uid}/bus did not appear within 60s after enabling linger")
-    # the image's sync databases are weeks old: -S without -y can 404; curl comes with pacman
-    code = guest.logged("packages", "pacman -Syu --needed --noconfirm git", timeout=1800)
-    if code != 0:
-        raise VmError(f"installing git failed (exit {code}); see {run}/packages.log")
+    raise VmError(f"/run/user/{uid}/bus did not appear within 60s (is lingering enabled?)")
 
-    commit = deliver(guest, run, www, port, uid)
-    print(f"base: delivered {commit}")
 
+def install_sequence(label, run, guest, uid, first):
+    """What `base` and `up` both run after delivery, as in CI: `first` (bootstrap.sh on a bare
+    image, install.sh on the base) -> install-1.log, install.sh again -> install-2.log (it must
+    change nothing), install.sh --check -> check-install.log."""
     env = list(CI_ENV)
     token = github_token()
     if token:
         env.append(f"MISE_GITHUB_TOKEN={token}")  # guest env only: never a file, never printed
-    print("base: bootstrap.sh (install-1.log)")
-    code = guest.logged("install-1", "cd ~/dotfiles && ./bootstrap.sh", user=True, uid=uid,
+    print(f"{label}: {first} (install-1.log)")
+    code = guest.logged("install-1", f"cd ~/dotfiles && ./{first}", user=True, uid=uid,
                         env=env, timeout=14400)
     if code != 0:
-        raise VmError(f"bootstrap.sh failed (exit {code}); see {run}/install-1.log")
+        raise VmError(f"{first} failed (exit {code}); see {run}/install-1.log")
 
-    print("base: install.sh again (install-2.log)")
+    print(f"{label}: install.sh again (install-2.log)")
     code = guest.logged("install-2", "cd ~/dotfiles && ./install.sh", user=True, uid=uid,
                         env=env, timeout=14400)
     if code != 0:
@@ -792,11 +789,32 @@ def build_base(p, version, run, guest, www, port):
         raise VmError("install.sh changed something on its second run; "
                       f"first lines: {changed[:3]} (see {run}/install-2.log)")
 
-    print("base: install.sh --check (check-install.log)")
+    print(f"{label}: install.sh --check (check-install.log)")
     code = guest.logged("check-install", "cd ~/dotfiles && ./install.sh --check", user=True, uid=uid,
                         env=CI_ENV, timeout=1800)
     if code != 0:
         raise VmError(f"install.sh --check failed (exit {code}); see {run}/check-install.log")
+
+
+def build_base(p, version, run, guest, www, port):
+    # 0 = done, 2 = done with recoverable errors (cloud-init "degraded"): both mean the seed ran
+    code, out, err = guest.output("cloud-init status --wait", timeout=900)
+    if code not in (0, 2):
+        raise VmError(f"cloud-init did not finish (exit {code}): {(err.strip() or out.strip())[-300:]}")
+    _, long, lerr = guest.output("cloud-init status --long", timeout=120)
+    (run / "cloud-init.log").write_text(long or lerr)
+    uid = guest_uid(guest)
+    guest.check(f"loginctl enable-linger {q(USER)}", timeout=120)
+    wait_user_bus(guest, uid)
+    # the image's sync databases are weeks old: -S without -y can 404; curl comes with pacman
+    code = guest.logged("packages", "pacman -Syu --needed --noconfirm git", timeout=1800)
+    if code != 0:
+        raise VmError(f"installing git failed (exit {code}); see {run}/packages.log")
+
+    commit = deliver(guest, run, www, port, uid)
+    print(f"base: delivered {commit}")
+
+    install_sequence("base", run, guest, uid, "bootstrap.sh")
 
     guest.check("touch /etc/cloud/cloud-init.disabled && sync", timeout=120)
     print("base: shutting down")
@@ -819,6 +837,150 @@ def build_base(p, version, run, guest, www, port):
         f.unlink()
     print(f"base: wrote {state / 'base.qcow2'} (image {version}, commit {commit[:12]})")
     print(f"base: logs in {run}")
+
+
+# ---------------------------------------------------------------- up
+
+def record_boot(run, rt, t0, old_boot_id=None, timeout=300):
+    """After the reboot command: a VNC frame every 0.5 s, kept only when its pixels differ from the
+    last kept one (at most 40, boot-NN-<s>s.png). Done when the agent answers from a new boot,
+    greetd is active and the screen has not changed for 3 s; that last frame is greeter.png."""
+    deadline = t0 + timeout
+    kept, last_kept, last_hash, stable_since = 0, None, None, t0
+    qga_up = greetd_up = False
+    frame = None
+    next_probe = 0.0
+    tick, next_tick = 0, time.monotonic()
+    while time.monotonic() < deadline:
+        now = time.monotonic()
+        if now < next_tick:
+            time.sleep(next_tick - now)
+        next_tick = max(next_tick + 0.5, time.monotonic())
+        tick += 1
+        if tick % 10 == 0 and service_state(UNIT) not in BUSY:
+            raise VmError(f"unit {UNIT} ended while the guest rebooted (see: systemctl --user status {UNIT})")
+        try:
+            w, h, fb = vnc_grab(rt / "vnc.sock")
+        except VmError:
+            pass  # the socket can be briefly unavailable during the reset: skip this tick
+        else:
+            elapsed = time.monotonic() - t0
+            digest = hashlib.sha1(fb + struct.pack(">II", w, h)).hexdigest()
+            if digest != last_hash:
+                last_hash, stable_since = digest, time.monotonic()
+            if digest != last_kept and kept < 40:
+                kept += 1
+                last_kept = digest
+                write_png(run / f"boot-{kept:02d}-{elapsed:.1f}s.png", w, h, fb)
+            frame = (w, h, fb)
+        if not greetd_up and time.monotonic() >= next_probe:
+            # an absent agent blocks the sync for the whole timeout: probe at most every 3 s so
+            # the frame cadence holds
+            next_probe = time.monotonic() + 3
+            try:
+                qga = Qga(rt / "qga.sock", timeout=2)
+            except (VmError, OSError):
+                continue
+            try:
+                # the old agent can still answer for a moment after the reboot command: boot_id tells
+                code, out, _ = Guest(qga).output(
+                    "cat /proc/sys/kernel/random/boot_id; systemctl is-active greetd", timeout=10)
+            except (VmError, OSError):
+                continue
+            finally:
+                qga.close()
+            lines = out.split()
+            if old_boot_id and lines[:1] == [old_boot_id]:
+                continue
+            qga_up = True
+            greetd_up = bool(lines) and lines[-1] == "active"
+        if qga_up and greetd_up and frame and time.monotonic() - stable_since >= 3:
+            w, h, fb = frame
+            write_png(run / "greeter.png", w, h, fb)
+            print(f"up: greeter after {time.monotonic() - t0:.0f}s, {kept} boot frames in {run}")
+            return
+    unmet = []
+    if not qga_up:
+        unmet.append("the guest agent did not answer after the reboot")
+    if not greetd_up:
+        unmet.append("greetd never became active")
+    if frame is None:
+        unmet.append("no VNC frame could be grabbed")
+    elif time.monotonic() - stable_since < 3:
+        unmet.append("the screen never settled for 3s")
+    raise VmError(f"boot not finished after {timeout}s: {'; '.join(unmet) or 'conditions held too late'}")
+
+
+def cmd_up(argv):
+    rebuild = False
+    for arg in argv:
+        if arg == "--rebuild":
+            rebuild = True
+        else:
+            raise VmError("usage: desktop-vm up [--rebuild]")
+    if unit_alive():
+        raise VmError(f"{UNIT} is already running; `desktop-vm down` first")
+    p = place()
+    version = image_version()
+    reasons = staleness(base_meta())
+    if reasons or rebuild:
+        for reason in reasons:
+            print(f"up: base is stale: {reason}")
+        if rebuild:
+            print("up: --rebuild")
+        code = base_disk(p, version)
+        if code != 0:
+            return code
+    state = state_dir()
+    rt = prepare_runtime()
+    run = new_run("up")
+    vars_file = run / "vars.fd"
+    vars_file.write_bytes((state / "base-vars.fd").read_bytes())
+    www = rt / "www"
+    www.mkdir(parents=True, exist_ok=True)
+
+    print(f"up: run directory {run}")
+    try:
+        # no -smbios: cloud-init is disabled in the base; -snapshot: the base is never written
+        argv = hardware_args(p, state / "base.qcow2", vars_file, rt, run) + ["-snapshot"]
+        print(f"up: starting {UNIT}; runner-up stops, a running job finishes first")
+        start_unit(p, argv)
+        qga = wait_qga(rt, label="up")
+        try:
+            guest = Guest(qga, run)
+            uid = guest_uid(guest)
+            wait_user_bus(guest, uid)
+            with HttpServer(www) as http:
+                commit = deliver(guest, run, www, http.port, uid)
+            print(f"up: delivered {commit}")
+            (run / "commit").write_text(commit + "\n")
+            install_sequence("up", run, guest, uid, "install.sh")
+            old_boot_id = guest.check("cat /proc/sys/kernel/random/boot_id").strip()
+            print("up: rebooting")
+            t0 = time.monotonic()
+            qga.send("guest-shutdown", {"mode": "reboot"})  # never answers on success
+        finally:
+            qga.close()
+        record_boot(run, rt, t0, old_boot_id)
+    except (VmError, OSError) as e:
+        print(f"desktop-vm: up failed: {e}", file=sys.stderr)
+        print(f"desktop-vm: run directory: {run}", file=sys.stderr)
+        try:
+            stop_vm(60)
+        except VmError:
+            pass
+        return 1
+    except BaseException:
+        # a bug or ^C must not leave the VM running and CI paused
+        print(f"desktop-vm: up aborted; run directory: {run}", file=sys.stderr)
+        try:
+            stop_vm(60)
+        except VmError:
+            pass
+        raise
+    print(f"up: VM running at the greeter; run directory {run}")
+    print("up: desktop-vm shot | desktop-vm exec [--user] CMD | desktop-vm down")
+    return 0
 
 
 # ---------------------------------------------------------------- status
@@ -961,8 +1123,8 @@ def cmd_shot(argv):
     path = Path(argv[0]).expanduser() if argv else next_shot(run)
     if not path.is_absolute():
         path = Path.cwd() / path
-    w, h, raw = vnc_grab(runtime_dir() / "vnc.sock")
-    write_png(path, w, h, raw)
+    w, h, fb = vnc_grab(runtime_dir() / "vnc.sock")
+    write_png(path, w, h, fb)
     print(path)
     return 0
 
@@ -1125,6 +1287,7 @@ def cmd_restore_ci(argv):
 
 COMMANDS = {
     "base": cmd_base,
+    "up": cmd_up,
     "shot": cmd_shot,
     "keys": cmd_keys,
     "type": cmd_type,

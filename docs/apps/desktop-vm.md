@@ -29,10 +29,24 @@ change lines `tests.yml` greps for, then runs `install.sh --check`. It does not 
 (CI does), and it does not cover the laptop's UKI boot path, `grub-install`, f2fs, ThinkPad hardware
 (TLP, fprintd, backlight, battery, Bluetooth), the eDP-1 monitor rule, pixel diffing, or a daemon.
 
+## `up`: a session run
+
+`up` boots the base on a throwaway overlay (`-snapshot`: `base.qcow2` is never written), delivers the
+working tree, runs `install.sh` (not `bootstrap.sh`: the base already bootstrapped) with the same CI
+environment, then again (it must change nothing) and `install.sh --check`. It then reboots the guest
+and records the boot over VNC: a frame every 0.5 s, kept only when its pixels differ from the last
+kept one (at most 40). It finishes when the guest agent answers from the new boot, `greetd` is active
+and the screen has not changed for 3 s, and leaves the VM running at the greeter. Any failure or
+interrupt stops the VM and keeps the run directory. If the base is stale (image or hardware profile
+changed, older than 7 days, `refs/desktop-vm/base` missing, or the tree changed something `install.sh`
+cannot undo: a removed package, a removed or renamed `root/` file, any `setup.sh` change, a deleted
+user unit), `up` prints why and rebuilds it first; `--rebuild` forces that.
+
 ## Commands
 
 ```bash
 desktop-vm base             # build the base disk (needs runner-up's image and a kvm place)
+desktop-vm up [--rebuild]   # boot the working tree on the base, reboot, stop at the greeter
 desktop-vm shot [FILE]      # one VNC frame to PNG (default <run>/shot-NN.png)
 desktop-vm keys ret ctrl-alt-f2
 desktop-vm type desktopvm
@@ -49,10 +63,12 @@ packages declare it, and this VM boots runner-up's image anyway.
 ## State and logs
 
 `$XDG_STATE_HOME/desktop-vm/` (default `~/.local/state/desktop-vm/`) holds `base.qcow2`,
-`base-vars.fd`, `base.json` and `runs/<UTC timestamp>-base/`: the QEMU serial log, the delivered
-commit, and each guest command's log (`install-1.log`, `install-2.log`, `check-install.log`,
-`deliver.log`, …). `$XDG_RUNTIME_DIR/desktop-vm/` (mode 0700) holds `qmp.sock`, `qga.sock`,
-`vnc.sock` and the `run` symlink to the current run directory.
+`base-vars.fd`, `base.json` and `runs/<UTC timestamp>-base/` or `-up/`: the QEMU serial log, the
+delivered commit, and each guest command's log (`install-1.log`, `install-2.log`, `check-install.log`,
+`deliver.log`, …). An `up` run also holds `boot-NN-<seconds>s.png` (the distinct frames of the reboot,
+seconds counted from the reboot command) and `greeter.png` (the settled greeter).
+`$XDG_RUNTIME_DIR/desktop-vm/` (mode 0700) holds `qmp.sock`, `qga.sock`, `vnc.sock` and the `run`
+symlink to the current run directory.
 
 `status` builds a commit of the working tree in a temporary index to judge staleness: it writes git
 objects, never refs or your index.
