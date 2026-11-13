@@ -6,7 +6,7 @@ The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet ch
 
 - One 36px surface 8px off the bottom and side edges, drawn as a 38px window (1px ring on each side, 7px margins) with radius 9px on the top-left and bottom-right corners. The mockup asks for `corner-shape: bevel`; GTK3 has none, so the corners are rounded, as Firefox renders the mockup. Fill, ring and 5% top sheen are `bar`, `edge` and `sheen`. The ring is listed after the sheen in `box-shadow` because GTK paints inset shadows in list order, the later one on top.
 - Every control is 24px tall, 4px apart (`spacing`), radius 4, Inter 13. Roles come from `colors.css.tmpl` (`bar`, `edge`, `text`, `dim`, `editor`, `blue`, `sky`, `teal`, `orange`, `purple`, `green`, `amber`, `red`, `tipline`, `sel`, `selfg`); every accent is kept legible on the bar (`|legible`). No color literal lives in `style.css`.
-- Hover and pressed are a translucent `editor` overlay under the chip's own tint.
+- Hover is a translucent `editor` overlay under the chip's own tint. Custom modules match it on their wrapping box (`box:hover > #custom-…`): waybar puts the hover state on the box, and GTK3 doesn't pass it down to the label. Only the tags (real buttons) get the pressed overlay; waybar never sets `:active` on a label.
 
 ## Modules
 

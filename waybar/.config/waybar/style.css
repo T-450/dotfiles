@@ -37,7 +37,11 @@ window#waybar > box {
     padding: 0 7px;
 }
 
-tooltip { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
+/* the design's tooltip: 6px 10px around one 16px line, 30px tall with its ring. Adwaita pads the
+   tooltip and every child, and GtkTooltipWindow's box carries 6px widget margins that CSS
+   `margin: 0` doesn't cancel, so the box takes -6px. */
+tooltip { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; padding: 0; }
+tooltip box { padding: 0; margin: -6px; }
 tooltip label { color: @text; padding: 6px 10px; }
 menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
 menuitem { color: @text; }
@@ -67,18 +71,16 @@ menuitem:hover { background-color: @sel; color: @selfg; }
 #custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 #custom-power { color: @editor; background-image: -gtk-recolor(url("icons/power-symbolic.svg")); }
 
-/* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it */
-#custom-start:hover, #custom-wallpaper:hover, #custom-power:hover,
+/* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it.
+   Waybar sets the hover state on its event box's child. That child is the label itself for
+   built-in modules, but a custom module's label sits inside a box (AIconLabel), and GTK3 doesn't
+   pass the hover state down, so custom modules match on their box. Waybar never sets :active on
+   a label, so the design's pressed overlay has no hook here (the tags are buttons and keep it). */
 #layout:hover, #network:hover, #pulseaudio:hover, #backlight:hover, #battery:hover,
-#custom-nightlight:hover, #custom-record:hover, #custom-notifications:hover,
-#bluetooth:hover {
+#bluetooth:hover,
+box:hover > #custom-start, box:hover > #custom-wallpaper, box:hover > #custom-power,
+box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-notifications {
     background-color: alpha(@editor, 0.06);
-}
-#custom-start:active, #custom-wallpaper:active, #custom-power:active,
-#layout:active, #network:active, #pulseaudio:active, #backlight:active, #battery:active,
-#custom-nightlight:active, #custom-record:active, #custom-notifications:active,
-#bluetooth:active {
-    background-color: alpha(@editor, 0.10);
 }
 
 /* tags: all nine, 24x24 and 2px apart. The base button is an occupied tag (bright text, a 4x2
