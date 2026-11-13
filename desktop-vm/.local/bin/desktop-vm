@@ -593,7 +593,8 @@ mkdir -p ~/dotfiles
 cd ~/dotfiles
 [ -d .git ] || git init -q
 curl -fsSo /tmp/tree.bundle http://10.0.2.2:{port}/tree.bundle
-git fetch -q /tmp/tree.bundle refs/desktop-vm/tree:refs/desktop-vm/tree
+# +: each delivery is a new commit on HEAD, never a descendant of the previous one
+git fetch --no-progress /tmp/tree.bundle +refs/desktop-vm/tree:refs/desktop-vm/tree
 git checkout -q -f -B main refs/desktop-vm/tree
 git clean -fdq
 git remote get-url origin >/dev/null 2>&1 || git remote add origin https://github.com/T-450/dotfiles.git
