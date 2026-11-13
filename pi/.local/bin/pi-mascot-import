@@ -7,27 +7,37 @@ frames/<pose>-<n>.png plus poses.json, which the mascot extension (~/.pi/agent/e
 reads. The sprites are Capcom's, so they stay on this machine and never enter the repo.
 Keying: the white around each frame is flood-filled from its edges, so white inside the sprite
 (eyes, armor shine) stays; large enclosed near-white areas (the saber's trail) turn translucent.
-Each pose's frames share one canvas, feet aligned at the bottom, scaled 3x nearest-neighbor.
-The moments the sheet lacks (beam-in, a real hit, anger, the giga attack) come from Fighters
-Generation's animated GIFs (X3-X5 era, transparent, with their own frame timings), downloaded once
-into ~/.cache/pi-mascot.
+Each pose's frames share one canvas, feet aligned at the bottom.
+Upscaling is ffmpeg's xBR (xbr=4, a pixel-art scaler: smooth contours, crisp highlights), color and
+alpha mask separately, with edge colors bled into the transparent area first so edges take no
+fringe. Frames cut from the JPEG sheet are denoised with nlmeans before it, so xBR doesn't trace
+compression noise.
+Idle, talk and the moments the sheet lacks (beam-in, a real hit, anger, the giga attack) come from
+Fighters Generation's animated GIFs: X3-X5 era, lossless where the sheet is a JPEG, transparent,
+with their own frame timings; downloaded once into ~/.cache/pi-mascot.
+Pi reads the frames when it starts: run /reload (or restart Pi) after an import.
 """
 import json
 import os
+import subprocess
 import sys
+import tempfile
 import urllib.request
 from collections import deque
 from pathlib import Path
 
-from PIL import Image, ImageSequence
+from PIL import Image, ImageFilter, ImageSequence
 
 SIZE = (735, 638)
-SCALE = 3
+SCALE = 4  # xbr's largest factor
+DENOISE = "nlmeans=s=4:p=3:r=7"  # JPEG noise, on the sheet's frames only
 GIF_BASE = "https://www.fightersgeneration.com/np5/char/mega/"
 # pose: (GIF, loop, times to play its frames in a row, the frame where Zero stands whole). Each
 # GIF is cropped to Zero's height on that frame (bottom-anchored, effects above it cut), so he
 # keeps his size from pose to pose instead of shrinking under a tall beam.
 GIFS = {
+    "idle": ("zerobreath.gif", True, 1, 0),
+    "talk": ("zerochat.gif", True, 1, 0),
     "teleport": ("zerotele2.gif", False, 1, -1),
     "hurt": ("zerohurt.gif", False, 1, 0),
     "mad": ("zeromad.gif", False, 4, 0),
@@ -35,10 +45,8 @@ GIFS = {
 }
 # pose: (frames per second, loop, [[x0, y0, x1, y1] inclusive, ...])
 POSES = {
-    "idle": (4, True, [[3, 3, 32, 37], [36, 3, 67, 37], [69, 3, 99, 38], [102, 3, 130, 37]]),
     "ready": (10, False, [[600, 7, 628, 41], [632, 8, 660, 41], [665, 8, 693, 42], [699, 7, 726, 42]]),
     "think": (3, True, [[2, 477, 47, 550], [60, 478, 105, 552], [121, 477, 166, 550], [181, 476, 226, 549], [238, 478, 283, 551]]),
-    "talk": (4, True, [[293, 478, 338, 552], [343, 478, 391, 552], [403, 479, 451, 552]]),
     "run": (14, True, [[68, 120, 104, 151], [110, 120, 146, 153], [150, 120, 185, 153], [191, 119, 224, 153], [230, 118, 262, 152], [269, 118, 297, 152], [306, 120, 339, 154], [347, 121, 382, 153], [388, 121, 420, 154], [426, 121, 462, 154], [468, 120, 501, 154], [508, 119, 539, 154], [545, 119, 575, 154], [581, 120, 614, 154]]),
     "dash": (12, True, [[396, 76, 446, 108], [454, 82, 531, 107], [537, 82, 632, 109]]),
     "slash": (14, True, [[38, 215, 71, 251], [74, 207, 110, 253], [114, 207, 171, 253], [177, 207, 240, 250], [247, 216, 313, 250], [320, 215, 380, 250], [385, 218, 435, 250], [444, 218, 485, 250], [495, 217, 529, 250], [539, 217, 571, 250], [586, 216, 621, 248]]),
@@ -49,6 +57,29 @@ POSES = {
     "alert": (1, True, [[646, 66, 671, 104]]),
     "win": (3, False, [[4, 558, 58, 633], [66, 557, 119, 632], [131, 566, 187, 633]]),
 }
+
+
+def upscale(frames, names, out, denoise):
+    """Write frames (RGBA, one size) to out/names at SCALE with ffmpeg's xBR: colors with their edges
+    bled into the transparent area (and denoised if asked), the alpha mask scaled the same way."""
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp)
+        for n, f in enumerate(frames):
+            a = f.getchannel("A"); mask = a.point(lambda v: 255 if v else 0)
+            # transparent pixels keep a hidden color (a GIF's key, often green); black them out so
+            # the bleed spreads only the sprite's own colors
+            rgb = Image.composite(f.convert("RGB"), Image.new("RGB", f.size), mask)
+            for _ in range(6):
+                rgb = Image.composite(rgb, rgb.filter(ImageFilter.MaxFilter(3)), mask)
+                mask = mask.filter(ImageFilter.MaxFilter(3))
+            rgb.save(t / f"c{n:03d}.png"); Image.merge("RGB", (a, a, a)).save(t / f"a{n:03d}.png")
+        for x, vf in (("c", f"{denoise},xbr={SCALE}" if denoise else f"xbr={SCALE}"), ("a", f"xbr={SCALE}")):
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", t / f"{x}%03d.png", "-vf", vf,
+                            "-start_number", "0", t / f"{x.upper()}%03d.png"], check=True)
+        for n, name in enumerate(names):
+            img = Image.open(t / f"C{n:03d}.png").convert("RGB")
+            img.putalpha(Image.open(t / f"A{n:03d}.png").getchannel("R"))
+            img.save(out / name, optimize=True)
 
 
 def is_light(p, floor):
@@ -104,17 +135,17 @@ def main():
     (out / "frames").mkdir(parents=True, exist_ok=True)
     for old in (out / "frames").glob("*.png"):
         old.unlink()
-    manifest = {"name": "Zero", "poses": {}}
+    manifest = {"name": "Zero", "scale": SCALE, "poses": {}}
     for pose, (fps, loop, rects) in POSES.items():
         frames = [key(sheet.crop((x0, y0, x1 + 1, y1 + 1))) for x0, y0, x1, y1 in rects]
         cw, ch = max(f.width for f in frames), max(f.height for f in frames)
-        names = []
-        for n, f in enumerate(frames):
+        canvases = []
+        for f in frames:
             canvas = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
             canvas.paste(f, ((cw - f.width) // 2, ch - f.height), f)
-            name = f"{pose}-{n}.png"
-            canvas.resize((cw * SCALE, ch * SCALE), Image.NEAREST).save(out / "frames" / name, optimize=True)
-            names.append(name)
+            canvases.append(canvas)
+        names = [f"{pose}-{n}.png" for n in range(len(frames))]
+        upscale(canvases, names, out / "frames", DENOISE)
         manifest["poses"][pose] = {"frames": names, "fps": fps, "loop": loop, "width": cw, "height": ch}
     cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "pi-mascot"
     cache.mkdir(parents=True, exist_ok=True)
@@ -133,11 +164,9 @@ def main():
         rb = frames[ref][0].getchannel("A").getbbox()
         top = max(0, bottom - round((rb[3] - rb[1]) * 1.1))
         frames = [(f.crop((x0, top, x1, bottom)), ms) for f, ms in frames] * repeat
-        names, durations = [], []
-        for n, (f, ms) in enumerate(frames):
-            name = f"{pose}-{n}.png"
-            f.resize((f.width * SCALE, f.height * SCALE), Image.NEAREST).save(out / "frames" / name, optimize=True)
-            names.append(name); durations.append(ms)
+        names = [f"{pose}-{n}.png" for n in range(len(frames))]
+        durations = [ms for _, ms in frames]
+        upscale([f for f, _ in frames], names, out / "frames", None)
         w, h = frames[0][0].size
         manifest["poses"][pose] = {"frames": names, "fps": 10, "loop": loop, "width": w, "height": h,
                                    "durations": durations}

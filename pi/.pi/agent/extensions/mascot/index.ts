@@ -35,13 +35,14 @@ const HOLD_MS: Record<string, number> = { teleport: 0, ready: 0, hurt: 900, mad:
 
 function load(): Map<string, { pose: Pose; frames: Frame[] }> | null {
 	try {
-		const manifest = JSON.parse(readFileSync(join(DIR, "poses.json"), "utf8")) as { poses: Record<string, Pose> };
+		const manifest = JSON.parse(readFileSync(join(DIR, "poses.json"), "utf8")) as { scale?: number; poses: Record<string, Pose> };
+		const scale = manifest.scale ?? 3; // the frames' PNGs are the sprite's pixels times this
 		const poses = new Map<string, { pose: Pose; frames: Frame[] }>();
 		for (const [name, pose] of Object.entries(manifest.poses)) {
 			const frames = pose.frames.map((f) => ({
 				data: readFileSync(join(DIR, "frames", f)).toString("base64"),
-				widthPx: pose.width * 3,
-				heightPx: pose.height * 3,
+				widthPx: pose.width * scale,
+				heightPx: pose.height * scale,
 			}));
 			poses.set(name, { pose, frames });
 		}
