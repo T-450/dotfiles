@@ -126,3 +126,5 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # Example aliases
 alias zc="helix ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+# secrets (API keys) live in ~/.config/zsh/private.zsh: untracked, mode 600; this file is public
+[[ -r ~/.config/zsh/private.zsh ]] && source ~/.config/zsh/private.zsh
