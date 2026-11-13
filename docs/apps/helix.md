@@ -47,7 +47,7 @@ Unchanged on purpose, because helix uses those keys: `space e` (file explorer, t
 
 `space t` asks mango to start the window (`mmsg dispatch spawn`), so it is a new window and not a child of helix's terminal, which mango would swallow.
 
-mango's Alt keys reach mango before helix, which hides four helix commands: Alt+s (split selection on newlines), Alt+e (end of the parent syntax node), Alt+x (shrink to line bounds) and Alt+a (select all siblings). Run them from `space ?` by name. Alt+arrows and Alt+o/i/p/n (expand, shrink, previous, next syntax node) stay helix's.
+mango's Alt keys reach mango before helix, which hides three helix commands: Alt+s (split selection on newlines), Alt+x (shrink to line bounds) and Alt+a (select all siblings). Run them from `space ?` by name. Alt+e (end of the parent syntax node), Alt+arrows and Alt+o/i/p/n (expand, shrink, previous, next syntax node) stay helix's.
 
 ## The fork's options
 

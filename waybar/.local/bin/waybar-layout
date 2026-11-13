@@ -11,23 +11,20 @@ fi
 
 mmsg watch monitor "$out" | jq --unbuffered -c '
 	def names: {
-		tile: ["Master-Stack", "Ctrl Super I"], scroller: ["Scroller", "Ctrl Super L"],
-		monocle: ["Monocle", ""], grid: ["Grid", ""], deck: ["Deck", ""],
-		center_tile: ["Center Master", ""], vertical_tile: ["Vertical Stack", ""],
-		right_tile: ["Right Master", ""], vertical_scroller: ["Vertical Scroller", ""],
-		vertical_grid: ["Vertical Grid", ""], vertical_deck: ["Vertical Deck", ""],
-		dwindle: ["Dwindle", ""], fair: ["Fair", ""], vertical_fair: ["Vertical Fair", ""]
+		tile: "Master-Stack", scroller: "Scroller", monocle: "Monocle", grid: "Grid", deck: "Deck",
+		center_tile: "Center Master", vertical_tile: "Vertical Stack", right_tile: "Right Master",
+		vertical_scroller: "Vertical Scroller", vertical_grid: "Vertical Grid",
+		vertical_deck: "Vertical Deck", dwindle: "Dwindle", fair: "Fair", vertical_fair: "Vertical Fair"
 	};
 	{T: "tile", S: "scroller", G: "grid", M: "monocle", K: "deck", CT: "center_tile",
 	 RT: "right_tile", VS: "vertical_scroller", VT: "vertical_tile", VG: "vertical_grid",
 	 VK: "vertical_deck", DW: "dwindle", F: "fair", VF: "vertical_fair"} as $sym
 	| .layout_symbol as $s
-	| (names[$sym[$s] // ""] // [$s, ""]) as $n
+	| (names[$sym[$s] // ""] // $s) as $n
 	| {
 		text: "  ",
 		class: [$s],
 		tooltip: ("<span font_desc=\u0027Inter Semi-Bold 11px\u0027 letter_spacing=\u0027507\u0027 fgalpha=\u002766%\u0027>LAYOUT</span>  "
-			+ ($n[0] | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;"))
-			+ (if $n[1] != "" then "  <span font_desc=\u0027Inter Medium 11px\u0027 fgalpha=\u002782%\u0027>\($n[1])</span>" else "" end)
+			+ ($n | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;"))
 			+ "\n<span font_desc=\u0027Inter 11px\u0027 fgalpha=\u002766%\u0027>Click or Super N: next layout</span>")
 	}'
