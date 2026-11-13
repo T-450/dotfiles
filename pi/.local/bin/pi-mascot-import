@@ -8,17 +8,31 @@ reads. The sprites are Capcom's, so they stay on this machine and never enter th
 Keying: the white around each frame is flood-filled from its edges, so white inside the sprite
 (eyes, armor shine) stays; large enclosed near-white areas (the saber's trail) turn translucent.
 Each pose's frames share one canvas, feet aligned at the bottom, scaled 3x nearest-neighbor.
+The moments the sheet lacks (beam-in, a real hit, anger, the giga attack) come from Fighters
+Generation's animated GIFs (X3-X5 era, transparent, with their own frame timings), downloaded once
+into ~/.cache/pi-mascot.
 """
 import json
 import os
 import sys
+import urllib.request
 from collections import deque
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageSequence
 
 SIZE = (735, 638)
 SCALE = 3
+GIF_BASE = "https://www.fightersgeneration.com/np5/char/mega/"
+# pose: (GIF, loop, times to play its frames in a row, the frame where Zero stands whole). Each
+# GIF is cropped to Zero's height on that frame (bottom-anchored, effects above it cut), so he
+# keeps his size from pose to pose instead of shrinking under a tall beam.
+GIFS = {
+    "teleport": ("zerotele2.gif", False, 1, -1),
+    "hurt": ("zerohurt.gif", False, 1, 0),
+    "mad": ("zeromad.gif", False, 4, 0),
+    "giga": ("zerofist.gif", False, 1, 0),
+}
 # pose: (frames per second, loop, [[x0, y0, x1, y1] inclusive, ...])
 POSES = {
     "idle": (4, True, [[3, 3, 32, 37], [36, 3, 67, 37], [69, 3, 99, 38], [102, 3, 130, 37]]),
@@ -32,7 +46,6 @@ POSES = {
     "crescent": (12, True, [[3, 314, 35, 351], [43, 307, 82, 350], [98, 307, 167, 353], [178, 307, 253, 359], [263, 306, 338, 355], [346, 307, 422, 358], [431, 308, 483, 356]]),
     "jump": (9, True, [[192, 61, 220, 99], [225, 61, 254, 101], [258, 61, 284, 107], [291, 55, 316, 110], [324, 52, 349, 110], [357, 65, 385, 108]]),
     "dive": (10, True, [[496, 316, 538, 355], [544, 322, 582, 352], [592, 322, 629, 350], [640, 321, 676, 349], [680, 318, 709, 350]]),
-    "hurt": (6, False, [[326, 421, 349, 455], [354, 412, 378, 446], [383, 412, 414, 444]]),
     "alert": (1, True, [[646, 66, 671, 104]]),
     "win": (3, False, [[4, 558, 58, 633], [66, 557, 119, 632], [131, 566, 187, 633]]),
 }
@@ -103,9 +116,34 @@ def main():
             canvas.resize((cw * SCALE, ch * SCALE), Image.NEAREST).save(out / "frames" / name, optimize=True)
             names.append(name)
         manifest["poses"][pose] = {"frames": names, "fps": fps, "loop": loop, "width": cw, "height": ch}
+    cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "pi-mascot"
+    cache.mkdir(parents=True, exist_ok=True)
+    for pose, (gif, loop, repeat, ref) in GIFS.items():
+        path = cache / gif
+        if not path.exists():
+            req = urllib.request.Request(GIF_BASE + gif, headers={"User-Agent": "pi-mascot-import"})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                path.write_bytes(r.read())
+        im = Image.open(path)
+        frames = [(f.convert("RGBA"), f.info.get("duration") or 100) for f in ImageSequence.Iterator(im)]
+        boxes = [f.getchannel("A").getbbox() for f, _ in frames]
+        boxes = [b for b in boxes if b]
+        x0, x1 = min(b[0] for b in boxes), max(b[2] for b in boxes)
+        bottom = max(b[3] for b in boxes)
+        rb = frames[ref][0].getchannel("A").getbbox()
+        top = max(0, bottom - round((rb[3] - rb[1]) * 1.1))
+        frames = [(f.crop((x0, top, x1, bottom)), ms) for f, ms in frames] * repeat
+        names, durations = [], []
+        for n, (f, ms) in enumerate(frames):
+            name = f"{pose}-{n}.png"
+            f.resize((f.width * SCALE, f.height * SCALE), Image.NEAREST).save(out / "frames" / name, optimize=True)
+            names.append(name); durations.append(ms)
+        w, h = frames[0][0].size
+        manifest["poses"][pose] = {"frames": names, "fps": 10, "loop": loop, "width": w, "height": h,
+                                   "durations": durations}
     (out / "poses.json").write_text(json.dumps(manifest, indent=1) + "\n")
     print(f"pi-mascot-import: {sum(len(p['frames']) for p in manifest['poses'].values())} frames, "
-          f"{len(POSES)} poses -> {out}")
+          f"{len(manifest['poses'])} poses -> {out}")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,8 @@
 // Activity poses loop while the model does something: idle (waiting for you), think (thinking),
 // talk (writing a reply), and one per tool (read/search run, bash dashes, edit slashes, write
 // combos, web jumps, subagents crescent-slash). Moments play once and then hold their last
-// frame: ready (a run starts), hurt (a tool failed, a run was aborted), win (a run finished).
+// frame: teleport (Pi starts: he beams in), ready (a run starts), hurt (a tool failed), mad (a
+// run was aborted), giga (the context was compacted), win (a run finished).
 // `/mascot` toggles it; `/mascot POSE` previews one (`/mascot win`).
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -19,7 +20,7 @@ const DIR = process.env.PI_MASCOT_DIR ??
 const ROWS = Number(process.env.PI_MASCOT_ROWS) || 5; // terminal rows the sprite stands in
 const RIGHT_MARGIN = 2; // columns between the sprite and the right edge
 
-type Pose = { frames: string[]; fps: number; loop: boolean; width: number; height: number };
+type Pose = { frames: string[]; fps: number; loop: boolean; width: number; height: number; durations?: number[] };
 type Frame = { data: string; widthPx: number; heightPx: number };
 
 const TOOL_POSE: Record<string, string> = {
@@ -30,7 +31,7 @@ const TOOL_POSE: Record<string, string> = {
 	Agent: "crescent", agent: "crescent", subagent: "crescent", task: "crescent",
 };
 // how long a one-shot pose holds its last frame before the activity pose comes back
-const HOLD_MS: Record<string, number> = { ready: 0, hurt: 1200, win: 2500 };
+const HOLD_MS: Record<string, number> = { teleport: 0, ready: 0, hurt: 900, mad: 700, giga: 300, win: 2500 };
 
 function load(): Map<string, { pose: Pose; frames: Frame[] }> | null {
 	try {
@@ -73,7 +74,7 @@ export default function mascot(pi: ExtensionAPI) {
 		if (!enabled) return;
 		const { pose, frames } = current();
 		const last = frame >= frames.length - 1;
-		let delay = 1000 / Math.max(1, pose.fps);
+		let delay = pose.durations?.[frame] ?? 1000 / Math.max(1, pose.fps);
 		if (moment && last && !pose.loop) delay = HOLD_MS[moment] ?? 800;
 		timer = setTimeout(() => {
 			if (moment && last && !current().pose.loop) {
@@ -132,6 +133,7 @@ export default function mascot(pi: ExtensionAPI) {
 	pi.on("session_start", async (_event, ctx) => {
 		activity = "idle"; moment = null; frame = 0; running = 0;
 		if (enabled) show(ctx);
+		play("teleport");
 	});
 	pi.on("session_shutdown", async (_event, ctx) => hide(ctx));
 
@@ -155,12 +157,13 @@ export default function mascot(pi: ExtensionAPI) {
 		if (event.isError) play("hurt");
 		if (running === 0) setActivity("think");
 	});
+	pi.on("session_compact", async () => play("giga"));
 	pi.on("ui_prompt_start", async () => setActivity("alert"));
 	pi.on("ui_prompt_end", async () => setActivity("think"));
 	pi.on("agent_settled", async (event) => {
 		running = 0;
 		setActivity("idle");
-		play(event.aborted ? "hurt" : "win");
+		play(event.aborted ? "mad" : "win");
 	});
 
 	pi.registerCommand("mascot", {
