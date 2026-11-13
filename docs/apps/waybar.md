@@ -15,9 +15,11 @@ Left: `custom/start` (click: `rofi -show drun`), the nine mango tags (`mango/wor
 
 Center: one clock pill (`group/datetime`): day, time (its tooltip is the design's CALENDAR line with the month calendar kept below it, because the design's calendar is a click popover waybar can't open), date (`custom/date`, because waybar's clock zero-pads the day).
 
-Right: recording (`custom/record`, only while `gpurecord` prints), power (`custom/power`; click: wlogout, right-click: do-not-disturb), a divider, then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), brightness (amber; scroll: `osd-brightness bup/bdown`), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a second divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected), the tray and the notification bell (`custom/notifications`), so the bell keeps the corner.
+Right: recording (`custom/record`, only while `gpurecord` prints), then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), brightness (amber; scroll: `osd-brightness bup/bdown`), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected) and the tray. Then power (`custom/power`; click: wlogout) alone between two dividers, and the notification bell (`custom/notifications`) in the corner.
 
-Kept beyond the mockup: recording and power before the chips, brightness among them (amber, the one accent no chip wears at rest), and night light, the tray and the second divider in the tray area.
+Power is the one control that ends the session, so it reads apart: the only red chip (red icon, tint, ring and a faint glow, brighter on hover), cut to the bar's own corner shape (round top-left and bottom-right), with 8px instead of 4px to its dividers. Do-not-disturb is the bell's right-click only.
+
+Kept beyond the mockup: recording before the chips, brightness among them (amber, the one accent no chip wears at rest), night light and the tray in the tray area, and the power chip's dividers, red and glow.
 
 ## Tooltips
 

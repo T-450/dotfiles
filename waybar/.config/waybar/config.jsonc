@@ -1,8 +1,8 @@
 // waybar, "taskbar": one flat surface with 24px controls 4px apart (style.css). Left: the launcher,
 // the nine tags and the layout button, then the focused window. Center: one clock pill. Right:
-// recording, power, a divider, the live chips (network, volume, brightness, cpu, memory,
-// temperature, disk, battery), a divider, then night light, wallpaper, bluetooth, the tray and the
-// notification bell.
+// recording, the live chips (network, volume, brightness, cpu, memory, temperature, disk, battery),
+// a divider, night light, wallpaper, bluetooth and the tray, then the red power chip alone between
+// two dividers, and the notification bell in the corner.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
 {
     "layer": "top",
@@ -22,10 +22,10 @@
     "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/window"],
     "modules-center": ["group/datetime"],
     "modules-right": [
-        "custom/record", "custom/power", "custom/divider#right", "network", "pulseaudio",
-        "backlight", "cpu", "memory", "custom/temperature", "disk", "battery",
-        "custom/divider#tray", "custom/nightlight", "custom/wallpaper", "bluetooth", "tray",
-        "custom/notifications"
+        "custom/record", "network", "pulseaudio", "backlight", "cpu", "memory",
+        "custom/temperature", "disk", "battery", "custom/divider#tray", "custom/nightlight",
+        "custom/wallpaper", "bluetooth", "tray", "custom/divider#power", "custom/power",
+        "custom/divider#bell", "custom/notifications"
     ],
 
     // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
@@ -41,9 +41,8 @@
     },
     "custom/power": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Shift Esc</span>\n<span font_desc='Inter 11px' fgalpha='66%'>Right-click toggles do not disturb</span>",
-        "on-click": "wlogout -b 6 --protocol layer-shell",
-        "on-click-right": "makoctl mode -t do-not-disturb"
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Shift Esc</span>",
+        "on-click": "wlogout -b 6 --protocol layer-shell"
     },
 
     // all nine tags; style.css gives .empty, occupied, .active and .urgent their own marks
@@ -199,6 +198,7 @@
 
     // 1px lines (style.css paints the 14px rule); zero-width labels keep the custom module alive
     "custom/divider#left": { "format": "\u200b" },
-    "custom/divider#right": { "format": "\u200b" },
-    "custom/divider#tray": { "format": "\u200b" }
+    "custom/divider#tray": { "format": "\u200b" },
+    "custom/divider#power": { "format": "\u200b" },
+    "custom/divider#bell": { "format": "\u200b" }
 }

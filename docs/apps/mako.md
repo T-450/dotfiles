@@ -2,7 +2,7 @@
 
 Notifications.
 
-ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+shift+\\ toggles do-not-disturb (also right-click the bar's power icon). `mako.service` is this repo's own unit, bound to the session like every other daemon.
+ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+shift+\\ toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon.
 
 ## Reference
 
