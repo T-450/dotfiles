@@ -42,7 +42,6 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
 | [mpv](apps/mpv.md) | mpv, the video and audio player, with the uosc on-screen interface in the palette's colors | mpv, mpv-mpris, yt-dlp, mpv-uosc, mpv-thumbfast-git, libva-utils |
-| [opencode](apps/opencode.md) | opencode: a custom theme rendered from the palette | opencode |
 | [plymouth](apps/plymouth.md) | The boot and shutdown splash: Plymouth with the `i_use_arch_btw` theme (AUR) | plymouth, plymouth-i_use_arch_btw-git |
 | [podman](apps/podman.md) | Containers without a root daemon: rootless Podman behind the `docker` command (podman-docker), `docker compose` through podman-compose, and a Docker-compatible API socket for testcontainers and devcontainers | podman, podman-docker, podman-compose, podman-desktop |
 | [polkit](apps/polkit.md) | The polkit authentication agent (polkit-gnome), for apps that ask for admin rights | polkit-gnome |
@@ -98,14 +97,13 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
   docs/             you are here
 ```
 
-Links are one per file, so apps can keep their own data next to them (qutebrowser's bookmarks,
-opencode's password file) without it landing in the repo. A **new file** in an app folder goes live
+Links are one per file, so apps can keep their own data next to them (qutebrowser's bookmarks)
+without it landing in the repo. A **new file** in an app folder goes live
 after `./install.sh --link`; editing an existing file is live at once. The repo owns every file it
 links: if an app replaces a link with a real file, `install.sh --check` reports it and the next
 `install.sh` backs the file up and restores the link. An app that saves a settings file by writing a
 new file and renaming it over the old one breaks the link on every save. The repo doesn't link such
-a file. It sets those settings through the app's environment override instead (opencode's
-`cli.json`, set by `OPENCODE_CLI_CONFIG_CONTENT`).
+a file; it sets those settings through the app's environment override instead, where it has one.
 
 ### Adding or changing an app
 

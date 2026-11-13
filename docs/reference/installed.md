@@ -95,7 +95,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mpv | `mpv-uosc` | 5.13.0-1 |
 | mpv | `mpv-thumbfast-git` | r132.0f711de-1 |
 | mpv | `libva-utils` | 2.24.0-1 |
-| opencode | `opencode` | 2.2.7-1 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |
 | podman | `podman` | 6.2.0-1 |

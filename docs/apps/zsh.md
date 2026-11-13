@@ -8,7 +8,7 @@ oh-my-zsh comes from the AUR package `oh-my-zsh-git` (`/usr/share/oh-my-zsh`, up
 
 The prompt is [cdimascio's lambda theme](https://github.com/cdimascio/lambda-zsh-theme): a `λ` (green after a command that succeeded, red after one that failed), the current directory's name, and `git:(branch)` inside a repository, with a `✗` when it has changes. No package ships it, so `pkg/zsh-theme-cdimascio-lambda` builds it from a pinned commit into oh-my-zsh's custom themes (`/usr/share/oh-my-zsh/custom/themes`). It uses the terminal's ANSI colors, so it follows the palette.
 
-`.zshrc` is the only shell file. It is public with this repo, so API keys stay out of it and out of every tracked file (`theme lint` fails on a pasted token); an app keeps its key in its own credential store, e.g. `opencode auth login`.
+`.zshrc` is the only shell file. It is public with this repo, so API keys stay out of it and out of every tracked file (`theme lint` fails on a pasted token); an app keeps its key in its own credential store, e.g. `gh auth login`.
 
 The `mise` plugin activates [mise](mise.md) in every interactive shell. It puts the toolchain on `PATH`, switches versions when you `cd` into a project that pins them, and adds `mise` completions (cached in `~/.cache/oh-my-zsh/completions`). It adds about 65 ms to each new shell on battery, for two mise runs (`mise activate`, then the first `mise hook-env`). The plugin does nothing when `mise` isn't installed.
 
