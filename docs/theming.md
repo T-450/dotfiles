@@ -154,7 +154,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | zsh, vim | terminal ANSI colors (Ghostty) | at once (Ghostty reloads) |
 | helix | its built-in `dark_plus` theme, not the palette | never (fixed) |
 | Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session (`claude/reload.sh` says so while one runs) |
-| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked); `pi/setup.sh` selects the pair `light-2026/dark-2026` | at once: Pi picks the pair's theme by the terminal's background, which follows `theme set` |
+| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked; catppuccin-mocha comes from LazyPi's theme pack instead); `pi/setup.sh` selects the pair `light-2026/dark-2026` | at once: Pi picks the pair's theme by the terminal's background, which follows `theme set` |
 
 To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore`, an include
 line in its config, and a `reload.sh`: one that reloads it live, or, for an app that reads its colors

@@ -4,3 +4,5 @@
 ^/[^.].*
 ^/\.gitignore
 .+\.tmpl
+# the curated theme pack (LazyPi) ships catppuccin-mocha itself; Pi gets that one, not a second
+^/\.pi/agent/themes/catppuccin-mocha\.json

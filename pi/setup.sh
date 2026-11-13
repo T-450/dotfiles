@@ -27,14 +27,6 @@ when_changed "$repo/pi/lazypi.stamp" catalog <<<"$lazypi"
 if set_json "$agent/settings.json" 644 '.theme = "light-2026/dark-2026"'; then
 	echo "pi      theme light-2026/dark-2026"
 fi
-# the curated theme pack ships some palettes of its own (catppuccin-mocha): leave those to ours, so
-# Pi loads one theme per name instead of reporting a collision at every start
-curated=npm:@victor-software-house/pi-curated-themes
-mine=$(for f in "$repo"/theme/palettes/*.toml; do f=${f##*/}; printf '!themes/%s.json\n' "${f%.toml}"; done | jq -R . | jq -sc .)
-if set_json "$agent/settings.json" 644 --arg src "$curated" --argjson ex "$mine" \
-	'.packages |= map(if (. == $src) or (type == "object" and .source == $src) then {source: $src, themes: $ex} else . end)'; then
-	echo "pi      curated themes: ours take the palette names"
-fi
 # the key itself stays in ~/.config/zsh/private.zsh (exports $ANTHROPIC_API); Pi runs this command
 # when it first needs the key. A key saved by /login is left alone.
 if set_json "$agent/auth.json" 600 '.anthropic //= {"type": "api_key", "key": "!printenv ANTHROPIC_API"}'; then
