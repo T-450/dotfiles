@@ -27,6 +27,19 @@ when_changed "$repo/pi/lazypi.stamp" catalog <<<"$lazypi"
 if set_json "$agent/settings.json" 644 '.theme = "light-2026/dark-2026"'; then
 	echo "pi      theme light-2026/dark-2026"
 fi
+# Claude Code's look (pi-claude-code-ui): tool calls fold into one-line rows, edits show
+# syntax-highlighted diffs, the spinner names what runs. Set before it first loads: terminalTheme
+# would switch Pi to its `system` theme over the palette pair; themeAdaptive takes its diff,
+# connector and spinner colors from that pair instead of a fixed Claude palette. quietStartup
+# "header": the version and key hints stay, the list of every loaded resource goes.
+if set_json "$agent/settings.json" 644 '.terminalTheme = false | .themeAdaptive = true | .quietStartup = "header"'; then
+	echo "pi      Claude Code look: palette colors, quiet startup"
+fi
+ui=npm:pi-claude-code-ui@1.0.112
+if ! jq -e --arg s "$ui" 'any(.packages[]?; (if type == "object" then .source else . end) == $s)' \
+	"$agent/settings.json" >/dev/null; then
+	(cd / && pi install "$ui") && echo "pi      install $ui"
+fi
 # the key itself stays in ~/.config/zsh/private.zsh (exports $ANTHROPIC_API); Pi runs this command
 # when it first needs the key. A key saved by /login is left alone.
 if set_json "$agent/auth.json" 600 '.anthropic //= {"type": "api_key", "key": "!printenv ANTHROPIC_API"}'; then

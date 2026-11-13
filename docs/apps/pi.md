@@ -6,6 +6,10 @@ Pi comes from AUR (`pi-coding-agent-bin`, the release binary), so LazyPi doesn't
 
 Themes: `{palette}.json.tmpl` renders once per palette into `~/.pi/agent/themes/` (`dark-2026`, `light-2026`, `tokyo-night`); catppuccin-mocha isn't linked, because LazyPi's curated theme pack ships its own. `setup.sh` sets Pi's `theme` to `light-2026/dark-2026`, so Pi takes Light 2026 on a light terminal and Dark 2026 on a dark one, and switches when `theme set` changes Ghostty's background. Pi hot-reloads them; another palette's theme is one `/settings` pick away.
 
+Look: Claude Code's, from `pi-claude-code-ui` (pinned; `setup.sh` installs it after the catalog). Consecutive tool calls fold into one line (`Read 2 files, ran 1 shell command`; Ctrl+O expands), edits show a syntax-highlighted diff with word-level marks, finished thinking collapses to `Thought for Ns`, prompts carry a `❯`, and the spinner names what runs. Bash rows show a label the model writes with each call (`bashIntent: model`, a few output tokens per call; `/cc-tools intent off` turns it off). `setup.sh` sets `terminalTheme: false` before the extension first loads, because it would otherwise switch Pi to its `system` theme over the palette pair, plus `themeAdaptive: true` so its diffs, connectors and spinner take the pair's colors, and `quietStartup: "header"` so a session opens on Pi's header without the list of every loaded resource.
+
+The themes are built to stand out on the palette: your messages sit on an accent-tinted band, headings and tool titles glow in a lighter accent, inline code is the palette's orange, and code takes GitHub's syntax roles from the terminal colors (keywords and operators red, functions purple, strings and numbers blue, types orange), each pushed to a 4.5:1 contrast on the background. The editor border runs from cool to hot with the thinking level (grey, blue, accent, purple, violet, red).
+
 Key: Pi reads the Anthropic key from `$ANTHROPIC_API` (`auth.json`: `"key": "!printenv ANTHROPIC_API"`, set by `setup.sh` unless `/login` already saved one). The key itself lives in `~/.config/zsh/private.zsh` (see [zsh](zsh.md)), so a Pi started outside a zsh session has none. Pi writes `settings.json` and `auth.json` itself, so the repo doesn't link them; `setup.sh` only sets those two keys.
 
 ## Reference
@@ -19,7 +23,7 @@ Key: Pi reads the Anthropic key from `$ANTHROPIC_API` (`auth.json`: `"key": "!pr
 
 **Rendered from the palette** (`theme`):
 
-- `pi/.pi/agent/themes/{palette}.json.tmpl` → `pi/.pi/agent/themes/{palette}.json`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi5`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `selection_bg`, `slug`, `success`, `term_bg`, `variant`, `warning`
+- `pi/.pi/agent/themes/{palette}.json.tmpl` → `pi/.pi/agent/themes/{palette}.json`: `accent`, `ansi1`, `ansi11`, `ansi12`, `ansi13`, `ansi4`, `ansi5`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `slug`, `success`, `term_bg`, `variant`, `warning`
 
 **`setup.sh`** (run by `install.sh --setup`): Pi's extensions (the LazyPi catalog), its theme pair (the repo's palettes, rendered into ~/.pi/agent/themes) and its Anthropic key source. Pi writes settings.json and auth.json itself (/settings, /login, pi install), so the repo sets only these keys in them.
 <!-- end generated -->
