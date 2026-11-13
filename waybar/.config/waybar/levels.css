@@ -1,0 +1,510 @@
+/* The level bar: the design draws 2px of the chip's own color at the value's percentage of the
+   chip width. Waybar exposes a value only as a states class and a module has one class at a time,
+   so levels.json lists one class per integer (l0..l100) and this file turns each into the first
+   [level, icon, tint] layer's width. Volume and battery use waybar's "<= value" states, the rest
+   ">= value", so both land on lN exactly; pulseaudio's l100 is 255 so a volume above 100% keeps a
+   full bar. The icon ranges and the hot/low skins below are the design's states. style.css rules
+   that must beat a range (.muted, .disconnected, .ethernet, .charging, .critical) come after the
+   @import and repeat the same id+class specificity. Generated from the design's table; do not
+   hand-edit the numbered lists. */
+.l0 { background-size: 0% 2px, 14px 14px, 100% 100%; }
+.l1 { background-size: 1% 2px, 14px 14px, 100% 100%; }
+.l2 { background-size: 2% 2px, 14px 14px, 100% 100%; }
+.l3 { background-size: 3% 2px, 14px 14px, 100% 100%; }
+.l4 { background-size: 4% 2px, 14px 14px, 100% 100%; }
+.l5 { background-size: 5% 2px, 14px 14px, 100% 100%; }
+.l6 { background-size: 6% 2px, 14px 14px, 100% 100%; }
+.l7 { background-size: 7% 2px, 14px 14px, 100% 100%; }
+.l8 { background-size: 8% 2px, 14px 14px, 100% 100%; }
+.l9 { background-size: 9% 2px, 14px 14px, 100% 100%; }
+.l10 { background-size: 10% 2px, 14px 14px, 100% 100%; }
+.l11 { background-size: 11% 2px, 14px 14px, 100% 100%; }
+.l12 { background-size: 12% 2px, 14px 14px, 100% 100%; }
+.l13 { background-size: 13% 2px, 14px 14px, 100% 100%; }
+.l14 { background-size: 14% 2px, 14px 14px, 100% 100%; }
+.l15 { background-size: 15% 2px, 14px 14px, 100% 100%; }
+.l16 { background-size: 16% 2px, 14px 14px, 100% 100%; }
+.l17 { background-size: 17% 2px, 14px 14px, 100% 100%; }
+.l18 { background-size: 18% 2px, 14px 14px, 100% 100%; }
+.l19 { background-size: 19% 2px, 14px 14px, 100% 100%; }
+.l20 { background-size: 20% 2px, 14px 14px, 100% 100%; }
+.l21 { background-size: 21% 2px, 14px 14px, 100% 100%; }
+.l22 { background-size: 22% 2px, 14px 14px, 100% 100%; }
+.l23 { background-size: 23% 2px, 14px 14px, 100% 100%; }
+.l24 { background-size: 24% 2px, 14px 14px, 100% 100%; }
+.l25 { background-size: 25% 2px, 14px 14px, 100% 100%; }
+.l26 { background-size: 26% 2px, 14px 14px, 100% 100%; }
+.l27 { background-size: 27% 2px, 14px 14px, 100% 100%; }
+.l28 { background-size: 28% 2px, 14px 14px, 100% 100%; }
+.l29 { background-size: 29% 2px, 14px 14px, 100% 100%; }
+.l30 { background-size: 30% 2px, 14px 14px, 100% 100%; }
+.l31 { background-size: 31% 2px, 14px 14px, 100% 100%; }
+.l32 { background-size: 32% 2px, 14px 14px, 100% 100%; }
+.l33 { background-size: 33% 2px, 14px 14px, 100% 100%; }
+.l34 { background-size: 34% 2px, 14px 14px, 100% 100%; }
+.l35 { background-size: 35% 2px, 14px 14px, 100% 100%; }
+.l36 { background-size: 36% 2px, 14px 14px, 100% 100%; }
+.l37 { background-size: 37% 2px, 14px 14px, 100% 100%; }
+.l38 { background-size: 38% 2px, 14px 14px, 100% 100%; }
+.l39 { background-size: 39% 2px, 14px 14px, 100% 100%; }
+.l40 { background-size: 40% 2px, 14px 14px, 100% 100%; }
+.l41 { background-size: 41% 2px, 14px 14px, 100% 100%; }
+.l42 { background-size: 42% 2px, 14px 14px, 100% 100%; }
+.l43 { background-size: 43% 2px, 14px 14px, 100% 100%; }
+.l44 { background-size: 44% 2px, 14px 14px, 100% 100%; }
+.l45 { background-size: 45% 2px, 14px 14px, 100% 100%; }
+.l46 { background-size: 46% 2px, 14px 14px, 100% 100%; }
+.l47 { background-size: 47% 2px, 14px 14px, 100% 100%; }
+.l48 { background-size: 48% 2px, 14px 14px, 100% 100%; }
+.l49 { background-size: 49% 2px, 14px 14px, 100% 100%; }
+.l50 { background-size: 50% 2px, 14px 14px, 100% 100%; }
+.l51 { background-size: 51% 2px, 14px 14px, 100% 100%; }
+.l52 { background-size: 52% 2px, 14px 14px, 100% 100%; }
+.l53 { background-size: 53% 2px, 14px 14px, 100% 100%; }
+.l54 { background-size: 54% 2px, 14px 14px, 100% 100%; }
+.l55 { background-size: 55% 2px, 14px 14px, 100% 100%; }
+.l56 { background-size: 56% 2px, 14px 14px, 100% 100%; }
+.l57 { background-size: 57% 2px, 14px 14px, 100% 100%; }
+.l58 { background-size: 58% 2px, 14px 14px, 100% 100%; }
+.l59 { background-size: 59% 2px, 14px 14px, 100% 100%; }
+.l60 { background-size: 60% 2px, 14px 14px, 100% 100%; }
+.l61 { background-size: 61% 2px, 14px 14px, 100% 100%; }
+.l62 { background-size: 62% 2px, 14px 14px, 100% 100%; }
+.l63 { background-size: 63% 2px, 14px 14px, 100% 100%; }
+.l64 { background-size: 64% 2px, 14px 14px, 100% 100%; }
+.l65 { background-size: 65% 2px, 14px 14px, 100% 100%; }
+.l66 { background-size: 66% 2px, 14px 14px, 100% 100%; }
+.l67 { background-size: 67% 2px, 14px 14px, 100% 100%; }
+.l68 { background-size: 68% 2px, 14px 14px, 100% 100%; }
+.l69 { background-size: 69% 2px, 14px 14px, 100% 100%; }
+.l70 { background-size: 70% 2px, 14px 14px, 100% 100%; }
+.l71 { background-size: 71% 2px, 14px 14px, 100% 100%; }
+.l72 { background-size: 72% 2px, 14px 14px, 100% 100%; }
+.l73 { background-size: 73% 2px, 14px 14px, 100% 100%; }
+.l74 { background-size: 74% 2px, 14px 14px, 100% 100%; }
+.l75 { background-size: 75% 2px, 14px 14px, 100% 100%; }
+.l76 { background-size: 76% 2px, 14px 14px, 100% 100%; }
+.l77 { background-size: 77% 2px, 14px 14px, 100% 100%; }
+.l78 { background-size: 78% 2px, 14px 14px, 100% 100%; }
+.l79 { background-size: 79% 2px, 14px 14px, 100% 100%; }
+.l80 { background-size: 80% 2px, 14px 14px, 100% 100%; }
+.l81 { background-size: 81% 2px, 14px 14px, 100% 100%; }
+.l82 { background-size: 82% 2px, 14px 14px, 100% 100%; }
+.l83 { background-size: 83% 2px, 14px 14px, 100% 100%; }
+.l84 { background-size: 84% 2px, 14px 14px, 100% 100%; }
+.l85 { background-size: 85% 2px, 14px 14px, 100% 100%; }
+.l86 { background-size: 86% 2px, 14px 14px, 100% 100%; }
+.l87 { background-size: 87% 2px, 14px 14px, 100% 100%; }
+.l88 { background-size: 88% 2px, 14px 14px, 100% 100%; }
+.l89 { background-size: 89% 2px, 14px 14px, 100% 100%; }
+.l90 { background-size: 90% 2px, 14px 14px, 100% 100%; }
+.l91 { background-size: 91% 2px, 14px 14px, 100% 100%; }
+.l92 { background-size: 92% 2px, 14px 14px, 100% 100%; }
+.l93 { background-size: 93% 2px, 14px 14px, 100% 100%; }
+.l94 { background-size: 94% 2px, 14px 14px, 100% 100%; }
+.l95 { background-size: 95% 2px, 14px 14px, 100% 100%; }
+.l96 { background-size: 96% 2px, 14px 14px, 100% 100%; }
+.l97 { background-size: 97% 2px, 14px 14px, 100% 100%; }
+.l98 { background-size: 98% 2px, 14px 14px, 100% 100%; }
+.l99 { background-size: 99% 2px, 14px 14px, 100% 100%; }
+.l100 { background-size: 100% 2px, 14px 14px, 100% 100%; }
+
+/* battery: level, 23x10 outline, capacity-wide fill, bolt, tint */
+#battery.l0 { background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l1 { background-size: 1% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l2 { background-size: 2% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l3 { background-size: 3% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l4 { background-size: 4% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l5 { background-size: 5% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l6 { background-size: 6% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l7 { background-size: 7% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l8 { background-size: 8% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l9 { background-size: 9% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%; }
+#battery.l10 { background-size: 10% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l11 { background-size: 11% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l12 { background-size: 12% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l13 { background-size: 13% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l14 { background-size: 14% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l15 { background-size: 15% 2px, 23px 10px, 2px 6px, 10px 10px, 100% 100%; }
+#battery.l16 { background-size: 16% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l17 { background-size: 17% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l18 { background-size: 18% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l19 { background-size: 19% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l20 { background-size: 20% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l21 { background-size: 21% 2px, 23px 10px, 3px 6px, 10px 10px, 100% 100%; }
+#battery.l22 { background-size: 22% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l23 { background-size: 23% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l24 { background-size: 24% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l25 { background-size: 25% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l26 { background-size: 26% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l27 { background-size: 27% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l28 { background-size: 28% 2px, 23px 10px, 4px 6px, 10px 10px, 100% 100%; }
+#battery.l29 { background-size: 29% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l30 { background-size: 30% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l31 { background-size: 31% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l32 { background-size: 32% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l33 { background-size: 33% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l34 { background-size: 34% 2px, 23px 10px, 5px 6px, 10px 10px, 100% 100%; }
+#battery.l35 { background-size: 35% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l36 { background-size: 36% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l37 { background-size: 37% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l38 { background-size: 38% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l39 { background-size: 39% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l40 { background-size: 40% 2px, 23px 10px, 6px 6px, 10px 10px, 100% 100%; }
+#battery.l41 { background-size: 41% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l42 { background-size: 42% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l43 { background-size: 43% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l44 { background-size: 44% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l45 { background-size: 45% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l46 { background-size: 46% 2px, 23px 10px, 7px 6px, 10px 10px, 100% 100%; }
+#battery.l47 { background-size: 47% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l48 { background-size: 48% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l49 { background-size: 49% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l50 { background-size: 50% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l51 { background-size: 51% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l52 { background-size: 52% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l53 { background-size: 53% 2px, 23px 10px, 8px 6px, 10px 10px, 100% 100%; }
+#battery.l54 { background-size: 54% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l55 { background-size: 55% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l56 { background-size: 56% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l57 { background-size: 57% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l58 { background-size: 58% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l59 { background-size: 59% 2px, 23px 10px, 9px 6px, 10px 10px, 100% 100%; }
+#battery.l60 { background-size: 60% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l61 { background-size: 61% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l62 { background-size: 62% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l63 { background-size: 63% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l64 { background-size: 64% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l65 { background-size: 65% 2px, 23px 10px, 10px 6px, 10px 10px, 100% 100%; }
+#battery.l66 { background-size: 66% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l67 { background-size: 67% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l68 { background-size: 68% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l69 { background-size: 69% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l70 { background-size: 70% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l71 { background-size: 71% 2px, 23px 10px, 11px 6px, 10px 10px, 100% 100%; }
+#battery.l72 { background-size: 72% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l73 { background-size: 73% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l74 { background-size: 74% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l75 { background-size: 75% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l76 { background-size: 76% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l77 { background-size: 77% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l78 { background-size: 78% 2px, 23px 10px, 12px 6px, 10px 10px, 100% 100%; }
+#battery.l79 { background-size: 79% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l80 { background-size: 80% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l81 { background-size: 81% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l82 { background-size: 82% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l83 { background-size: 83% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l84 { background-size: 84% 2px, 23px 10px, 13px 6px, 10px 10px, 100% 100%; }
+#battery.l85 { background-size: 85% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l86 { background-size: 86% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l87 { background-size: 87% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l88 { background-size: 88% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l89 { background-size: 89% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l90 { background-size: 90% 2px, 23px 10px, 14px 6px, 10px 10px, 100% 100%; }
+#battery.l91 { background-size: 91% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l92 { background-size: 92% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l93 { background-size: 93% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l94 { background-size: 94% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l95 { background-size: 95% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l96 { background-size: 96% 2px, 23px 10px, 15px 6px, 10px 10px, 100% 100%; }
+#battery.l97 { background-size: 97% 2px, 23px 10px, 16px 6px, 10px 10px, 100% 100%; }
+#battery.l98 { background-size: 98% 2px, 23px 10px, 16px 6px, 10px 10px, 100% 100%; }
+#battery.l99 { background-size: 99% 2px, 23px 10px, 16px 6px, 10px 10px, 100% 100%; }
+#battery.l100 { background-size: 100% 2px, 23px 10px, 16px 6px, 10px 10px, 100% 100%; }
+
+/* network: signal >= 60 three arcs, >= 35 two, >= 10 one, else the dot alone */
+#network.l0,
+#network.l1,
+#network.l2,
+#network.l3,
+#network.l4,
+#network.l5,
+#network.l6,
+#network.l7,
+#network.l8,
+#network.l9 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-0-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+}
+#network.l10,
+#network.l11,
+#network.l12,
+#network.l13,
+#network.l14,
+#network.l15,
+#network.l16,
+#network.l17,
+#network.l18,
+#network.l19,
+#network.l20,
+#network.l21,
+#network.l22,
+#network.l23,
+#network.l24,
+#network.l25,
+#network.l26,
+#network.l27,
+#network.l28,
+#network.l29,
+#network.l30,
+#network.l31,
+#network.l32,
+#network.l33,
+#network.l34 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-1-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+}
+#network.l35,
+#network.l36,
+#network.l37,
+#network.l38,
+#network.l39,
+#network.l40,
+#network.l41,
+#network.l42,
+#network.l43,
+#network.l44,
+#network.l45,
+#network.l46,
+#network.l47,
+#network.l48,
+#network.l49,
+#network.l50,
+#network.l51,
+#network.l52,
+#network.l53,
+#network.l54,
+#network.l55,
+#network.l56,
+#network.l57,
+#network.l58,
+#network.l59 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-2-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+}
+#network.l60,
+#network.l61,
+#network.l62,
+#network.l63,
+#network.l64,
+#network.l65,
+#network.l66,
+#network.l67,
+#network.l68,
+#network.l69,
+#network.l70,
+#network.l71,
+#network.l72,
+#network.l73,
+#network.l74,
+#network.l75,
+#network.l76,
+#network.l77,
+#network.l78,
+#network.l79,
+#network.l80,
+#network.l81,
+#network.l82,
+#network.l83,
+#network.l84,
+#network.l85,
+#network.l86,
+#network.l87,
+#network.l88,
+#network.l89,
+#network.l90,
+#network.l91,
+#network.l92,
+#network.l93,
+#network.l94,
+#network.l95,
+#network.l96,
+#network.l97,
+#network.l98,
+#network.l99,
+#network.l100 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-3-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+}
+
+/* pulseaudio: no wave at 0, one below 50, two from 50 */
+#pulseaudio.l0 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-0-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+}
+#pulseaudio.l1,
+#pulseaudio.l2,
+#pulseaudio.l3,
+#pulseaudio.l4,
+#pulseaudio.l5,
+#pulseaudio.l6,
+#pulseaudio.l7,
+#pulseaudio.l8,
+#pulseaudio.l9,
+#pulseaudio.l10,
+#pulseaudio.l11,
+#pulseaudio.l12,
+#pulseaudio.l13,
+#pulseaudio.l14,
+#pulseaudio.l15,
+#pulseaudio.l16,
+#pulseaudio.l17,
+#pulseaudio.l18,
+#pulseaudio.l19,
+#pulseaudio.l20,
+#pulseaudio.l21,
+#pulseaudio.l22,
+#pulseaudio.l23,
+#pulseaudio.l24,
+#pulseaudio.l25,
+#pulseaudio.l26,
+#pulseaudio.l27,
+#pulseaudio.l28,
+#pulseaudio.l29,
+#pulseaudio.l30,
+#pulseaudio.l31,
+#pulseaudio.l32,
+#pulseaudio.l33,
+#pulseaudio.l34,
+#pulseaudio.l35,
+#pulseaudio.l36,
+#pulseaudio.l37,
+#pulseaudio.l38,
+#pulseaudio.l39,
+#pulseaudio.l40,
+#pulseaudio.l41,
+#pulseaudio.l42,
+#pulseaudio.l43,
+#pulseaudio.l44,
+#pulseaudio.l45,
+#pulseaudio.l46,
+#pulseaudio.l47,
+#pulseaudio.l48,
+#pulseaudio.l49 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-1-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+}
+#pulseaudio.l50,
+#pulseaudio.l51,
+#pulseaudio.l52,
+#pulseaudio.l53,
+#pulseaudio.l54,
+#pulseaudio.l55,
+#pulseaudio.l56,
+#pulseaudio.l57,
+#pulseaudio.l58,
+#pulseaudio.l59,
+#pulseaudio.l60,
+#pulseaudio.l61,
+#pulseaudio.l62,
+#pulseaudio.l63,
+#pulseaudio.l64,
+#pulseaudio.l65,
+#pulseaudio.l66,
+#pulseaudio.l67,
+#pulseaudio.l68,
+#pulseaudio.l69,
+#pulseaudio.l70,
+#pulseaudio.l71,
+#pulseaudio.l72,
+#pulseaudio.l73,
+#pulseaudio.l74,
+#pulseaudio.l75,
+#pulseaudio.l76,
+#pulseaudio.l77,
+#pulseaudio.l78,
+#pulseaudio.l79,
+#pulseaudio.l80,
+#pulseaudio.l81,
+#pulseaudio.l82,
+#pulseaudio.l83,
+#pulseaudio.l84,
+#pulseaudio.l85,
+#pulseaudio.l86,
+#pulseaudio.l87,
+#pulseaudio.l88,
+#pulseaudio.l89,
+#pulseaudio.l90,
+#pulseaudio.l91,
+#pulseaudio.l92,
+#pulseaudio.l93,
+#pulseaudio.l94,
+#pulseaudio.l95,
+#pulseaudio.l96,
+#pulseaudio.l97,
+#pulseaudio.l98,
+#pulseaudio.l99,
+#pulseaudio.l100 {
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+}
+
+/* hot skins: no tint, a 1px ring in the alert color (the design's alert skin) */
+#cpu.l85,
+#cpu.l86,
+#cpu.l87,
+#cpu.l88,
+#cpu.l89,
+#cpu.l90,
+#cpu.l91,
+#cpu.l92,
+#cpu.l93,
+#cpu.l94,
+#cpu.l95,
+#cpu.l96,
+#cpu.l97,
+#cpu.l98,
+#cpu.l99,
+#cpu.l100 {
+    color: @amber;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px @amber;
+}
+#memory.l90,
+#memory.l91,
+#memory.l92,
+#memory.l93,
+#memory.l94,
+#memory.l95,
+#memory.l96,
+#memory.l97,
+#memory.l98,
+#memory.l99,
+#memory.l100 {
+    color: @red;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px @red;
+}
+#disk.l90,
+#disk.l91,
+#disk.l92,
+#disk.l93,
+#disk.l94,
+#disk.l95,
+#disk.l96,
+#disk.l97,
+#disk.l98,
+#disk.l99,
+#disk.l100 {
+    color: @red;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px @red;
+}
+#battery.discharging.l0,
+#battery.discharging.l1,
+#battery.discharging.l2,
+#battery.discharging.l3,
+#battery.discharging.l4,
+#battery.discharging.l5,
+#battery.discharging.l6,
+#battery.discharging.l7,
+#battery.discharging.l8,
+#battery.discharging.l9,
+#battery.discharging.l10,
+#battery.discharging.l11,
+#battery.discharging.l12,
+#battery.discharging.l13,
+#battery.discharging.l14,
+#battery.discharging.l15,
+#battery.discharging.l16,
+#battery.discharging.l17,
+#battery.discharging.l18,
+#battery.discharging.l19,
+#battery.discharging.l20 {
+    color: @red;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
+    box-shadow: inset 0 0 0 1px @red;
+}

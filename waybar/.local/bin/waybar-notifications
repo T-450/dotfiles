@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# waybar-notifications: print mako's held notifications as one waybar JSON line (custom/notifications)
+# text = count ("99+" above 99; a zero-width space at 0, since waybar hides a custom module whose
+# text is empty and the bell must stay); class gets unread, dnd and critical.
+# Read-only: only `makoctl list -j` and `makoctl mode`.
+
+list=$(makoctl list -j 2>/dev/null) || list='[]'
+modes=$(makoctl mode 2>/dev/null) || modes=''
+
+dnd=false
+grep -qx 'do-not-disturb' <<<"$modes" && dnd=true
+
+jq -c --argjson dnd "$dnd" '
+	length as $n
+	| (any(.[]; .urgency == "critical")) as $crit
+	| {
+		text: (if $n == 0 then "\u200b" elif $n > 99 then "99+" else ($n | tostring) end),
+		class: ([if $n > 0 then "unread" else empty end,
+			if $dnd then "dnd" else empty end,
+			if $crit then "critical" else empty end]),
+		tooltip: (if $dnd then "Do not disturb · \($n) held"
+			elif $n > 0 then "Notifications: \($n) unread"
+			else "No notifications" end)
+	}' <<<"$list"

@@ -62,7 +62,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp, powertop |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+f), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
-| [waybar](apps/waybar.md) | The bar, at the bottom: cjbassi's layout ([cjbassi/config](https://github.com/cjbassi/config/tree/master/.config/waybar)) as pills and a powerline ribbon, colored from the palette | waybar, pamixer |
+| [waybar](apps/waybar.md) | The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, colored from the palette | waybar, pamixer |
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
 | [wlogout](apps/wlogout.md) | The power menu (super+shift+escape, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |

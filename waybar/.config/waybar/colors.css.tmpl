@@ -1,42 +1,29 @@
 /* waybar colors from {{name}} (palette {{slug}}); rendered by theme from colors.css.tmpl, never edit. */
-@define-color bar     {{bg_surface}};
-@define-color widget  {{bg_widget}};
-@define-color line    {{border_hairline}};
-@define-color fg      {{fg_text}};
-@define-color sel     {{selection_bg|legible:selection_fg}};
+/* The surface, its 1px ring and the design's 1px sheen: the ring is the hairline mixed toward the
+   inactive border, the sheen is white at 5% in style.css. */
+@define-color bar     {{bg_desktop}};
+@define-color edge    {{border_hairline|mix:border_inactive:0.3}};
+@define-color sheen   {{selection_fg}};
+
+/* Text: text is the editor color lifted toward the bright foreground, dim the same color blended
+   with the muted one for tags/title/date. editor is the neutral chip color (volume, wallpaper). */
+@define-color text    {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
+@define-color dim     {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
+@define-color editor  {{fg_editor|legible:bg_desktop}};
+
+/* Accents: the terminal's bright colors, each kept legible on the bar. blue = start/cpu/viewed
+   tag, sky = viewed tag text/disk, teal = memory, orange = temperature/night light warm,
+   purple = battery, green = network/charging, amber = urgent/hot cpu, red = alerts/critical. */
+@define-color blue    {{ansi4|legible:bg_desktop}};
+@define-color sky     {{ansi12|legible:bg_desktop}};
+@define-color teal    {{ansi6|legible:bg_desktop}};
+@define-color orange  {{ansi11|legible:bg_desktop}};
+@define-color purple  {{ansi5|legible:bg_desktop}};
+@define-color green   {{ansi2|legible:bg_desktop}};
+@define-color amber   {{ansi3|legible:bg_desktop}};
+@define-color red     {{ansi1|legible:bg_desktop}};
+
+/* the tooltip's 1px ring, and the selected text in tray menus */
+@define-color tipline {{fg_disabled}};
+@define-color sel     {{selection_bg}};
 @define-color selfg   {{selection_fg}};
-/* on the bar itself: dim = an occupied tag's text, logo = the Arch logo; both made legible on it */
-@define-color dim     {{fg_secondary|legible:bg_surface}};
-@define-color logo    {{accent|legible:bg_surface}};
-
-/* segments: neutrals (a raised surface and a grey) serve the static modules, the palette's
-   accents and its purple the live ones; ink_* = legible text on each. Blues carry white text
-   (selection_fg), each darkened only as far as white needs; disk's accent is mixed toward the
-   desktop first so it stays distinct from memory's badge beside it. faint_raised = dimmed text
-   (muted, night light off) and rec = the recording dot's red, both kept legible on their segment. */
-@define-color raised  {{bg_hover}};
-@define-color ink_raised  {{bg_hover|ink}};
-@define-color faint_raised {{bg_hover|ink|mix:bg_hover:0.4|legible:bg_hover}};
-@define-color grey    {{fg_disabled}};
-@define-color ink_grey    {{fg_disabled|ink}};
-@define-color rec     {{error|legible:fg_disabled}};
-@define-color purple  {{ansi13}};
-@define-color ink_purple  {{ansi13|ink}};
-@define-color accent  {{accent|mix:bg_desktop:0.4|legible:selection_fg}};
-@define-color ink_accent  {{selection_fg}};
-@define-color link    {{link|legible:selection_fg}};
-@define-color ink_link    {{selection_fg}};
-@define-color badge   {{badge|legible:selection_fg}};
-@define-color ink_badge   {{selection_fg}};
-@define-color success {{success}};
-@define-color ink_success {{success|ink}};
-@define-color warn    {{warning}};
-@define-color ink_warn    {{warning|ink}};
-@define-color error   {{error}};
-@define-color ink_error   {{error|ink}};
-
-/* split chevrons. strong = the selected tag's text, glow = the hover ring (accent mixed into the
-   bar, opaque), dots = the selected tag's dotted line (accent, legible on the bar it sits on). */
-@define-color strong  {{fg_bright|legible:bg_surface}};
-@define-color glow    {{accent|mix:bg_surface:0.35}};
-@define-color dots    {{accent|legible:bg_surface}};

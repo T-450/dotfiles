@@ -1,231 +1,424 @@
-/* waybar, "split chevrons" (after Dusky's 17_boxy_h: every module a block of its own
-   with the bar showing between them; here the blocks stay one powerline ribbon).
-   Geometry: bar height 36px (config.jsonc), shapes 26px tall floating 5px off the bar's top and
-   bottom edges, radius 13px (half the height), base text 13px, emphasis in extra bold (800).
-   The left corner: the Arch logo, the tags (occupied ones dim text 8px apart; the selected one
-   bright extra-bold text over a 3px dotted accent line that grows from the center, a hovered one a
-   half-width line) and the layout icon. The clock is one raised pill drawn by three
-   modules, its time in extra bold.
-   The right-hand modules (network, audio, backlight, battery, memory, disk, cpu, night light, then
-   the tray, record and power) are one agnoster-style powerline ribbon of the same height
-   (colors.css): it starts with an arrow tip and ends in the pills' rounded cap, as far from the
-   screen edge as the logo. The live modules take the palette's accents and change with their state;
-   the tray, record and power take its grey. Blue backgrounds carry white text (selection_fg).
-   Powerline arrows are 13x26 chevrons (45 degrees) behind a 3px slit, drawn in 16px edge columns
-   (transparent borders painted by edges/NAME-symbolic.svg at 16x26). The slit is an unpainted
-   part of the column, so the opaque bar shows through it: no fourth color and no alpha. Each
-   boundary between two segments is ONE column owned by one of them, which paints both colors: GTK
-   repaints only the widget that changed, so a column shared by two overlapping widgets would lose
-   one side's half on the other's update.
-   The edge SVGs are recolored through -gtk-icon-palette: error = the segment's own color,
-   warning = its left neighbor's, success = its right neighbor's.
-     tip-left             own arrow into the bar
-     own-left             own arrow pointing left, the slit, the left neighbor's notched end
-     host-right           the right neighbor's arrow pointing left, the slit, the own notched end
-   A segment whose color changes with its state (network, battery, disk, night light) owns both of
-   its boundaries, so its state rule recolors them too; config.jsonc keeps those four apart.
-   Nothing but a column's owner may change a segment's background, so hover never does: it draws a
-   3px underline in the segment's own text color instead (the tags' line), which holds in every
-   state. The free-standing pills (logo, layout) get a 2px outer ring that stays inside their own
-   margins. */
+/* waybar, "taskbar": a 36px surface (38px window with its 1px ring) 8px off the bottom and side
+   edges, one control language: 24px buttons 4px apart, radius 4, Inter 13. No boxy pills, no
+   powerline arrows: the design mockup draws each module as a quiet chip on the bar.
+   The bar's ring is an inset hairline (listed last: GTK paints inset shadows in list order, the
+   later one on top, so the ring stays over the sheen), so it moves with the widget and needs no extra column. The
+   1px sheen on row 1 is the design's inset top highlight; the design's bevelled corners are plain
+   rounded corners here because GTK3 has no corner-shape.
+   A module's 2px level bar is its first background layer, a currentColor gradient sized by
+   levels.css from the lN state class that levels.json gives it (see that file). Icons are
+   -gtk-recolor() background layers: GTK's symbolic loader fills every shape, so stroked paths
+   carry class="stroke" (and class="success stroke" for the layout chevron's palette slot).
+   Background images paint above background-color, so the shared hover/pressed overlay sits under
+   a chip's tint exactly as it does in the design. */
 @import "colors.css";
+@import "levels.css";
 
 * {
-    font-family: "JetBrainsMono Nerd Font";
+    font-family: "Inter";
     font-size: 13px;
-    font-weight: normal;
+    font-weight: 400;
     min-height: 0;
     border: none;
     border-radius: 0;
 }
 
-window#waybar { background: @bar; color: @fg; }
+/* The no-level fallback: a chip without an lN class draws no bar (0% first layer). It must stay a
+   bare type selector: any id or class here would outrank levels.css's .lN rules and hide every
+   bar, since the cascade picks background-size by specificity before source order. */
+label { background-size: 0% 2px, 14px 14px, 100% 100%; }
 
-tooltip { background: @widget; border: 1px solid @line; border-radius: 4px; }
-tooltip label { color: @fg; }
-menu { background: @widget; border: 1px solid @line; border-radius: 4px; }
-menuitem { color: @fg; }
-menuitem:hover { color: @selfg; background: @sel; }
-
-/* ribbon geometry: 26px segments (36px bar - 2 x 5px margin), 0 side margin, 16px edge columns
-   (transparent borders painted by edges/NAME-symbolic.svg at 16x26, their natural size). The last
-   background layer is none so background-color stays between the columns.
-   Every arrow points left, so at text height a segment's own color reaches 13px further on
-   its left than on its right: the smaller left padding evens the two sides out. */
-#network, #pulseaudio, #backlight, #memory, #cpu, #battery, #disk,
-#custom-nightlight, #tray, #custom-record, #custom-power {
-    margin: 5px 0;
-    padding: 0 9px 0 3px;
-    border-style: solid;
-    border-color: transparent;
-    border-width: 0;
-    background-origin: border-box;
-    background-clip: border-box, border-box, padding-box;
-    background-repeat: no-repeat;
-    background-size: 16px 100%;
-    background-position: left, right;
-    transition: box-shadow 150ms ease;
+window#waybar { background: transparent; color: @text; }
+/* 9px = the design's 8px radius plus the 1px inset ring; 7px padding = ring + the design's 6px */
+window#waybar > box {
+    background-color: @bar;
+    border-radius: 9px 0 9px 0;
+    box-shadow: inset 0 2px 0 alpha(@sheen, 0.05), inset 0 0 0 1px @edge;
+    padding: 0 7px;
 }
-/* the ribbon keeps 12px off the clock: a network name longer than max-length (config.jsonc) ends
-   in an ellipsis and gives way first, so the clock stays centered */
-.modules-right { margin-left: 12px; }
-#backlight { border-left-width: 16px; }
-#network, #battery, #disk, #custom-nightlight { border-width: 0 16px; }
 
-/* left group: 26px shapes on the bar (36px - 2 x 5px margin, radius = half the height) */
-#custom-arch, #layout {
-    margin: 5px 3px;
+tooltip { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
+tooltip label { color: @text; padding: 6px 10px; }
+menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
+menuitem { color: @text; }
+menuitem:hover { background-color: @sel; color: @selfg; }
+
+/* every control is 24px tall inside the 38px window: 7px of air above and below */
+#custom-start, #custom-wallpaper, #custom-power,
+#workspaces, #layout, #custom-divider,
+#network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery,
+#custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+/* icon-only 24x24 buttons: the label is a zero-width space, the SVG is the background */
+#custom-start, #custom-wallpaper, #custom-power {
+    min-width: 24px;
+    min-height: 24px;
     padding: 0;
-    border-radius: 13px;
-    transition: background-color 150ms ease, box-shadow 150ms ease;
-}
-
-/* the Arch logo (arch-symbolic.svg) opens the launcher; an icon cell like the layout's */
-#custom-arch, #layout {
-    min-width: 34px;
+    border-radius: 4px;
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: auto;
+    background-size: 16px 16px;
 }
-#custom-arch {
-    margin-left: 8px;
-    color: @logo;
-    background-image: -gtk-recolor(url("arch-symbolic.svg"));
-}
-#layout { color: @fg; }
-/* hover: a raised pill and a 2px ring inside the pill's own margin */
-#custom-arch:hover, #layout:hover { background-color: @raised; box-shadow: 0 0 0 2px @glow; }
+#custom-start { color: @blue; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
+#custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
+#custom-power { color: @editor; background-image: -gtk-recolor(url("icons/power-symbolic.svg")); }
 
-/* tags: only occupied ones show (config.jsonc), so dim text = occupied. Every tag carries the
-   dotted line (3px dots 3px apart, one solid color) at zero width; hovering and selecting animate
-   background-size (GTK3 cannot fade from no image to one), so the line grows from the center. The
-   gaps are transparent, so the bar shows through them. Widths are whole dots, so no line ends in
-   a sliver: 15px (3 dots) on hover, 39px (7 dots) selected. The selected tag also widens through
-   min-width (40px), since GTK3 has no transforms. */
-#workspaces { margin: 0 3px; padding: 0; background: transparent; }
+/* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it */
+#custom-start:hover, #custom-wallpaper:hover, #custom-power:hover,
+#layout:hover, #network:hover, #pulseaudio:hover, #backlight:hover, #battery:hover,
+#custom-nightlight:hover, #custom-record:hover, #custom-notifications:hover,
+#bluetooth:hover {
+    background-color: alpha(@editor, 0.06);
+}
+#custom-start:active, #custom-wallpaper:active, #custom-power:active,
+#layout:active, #network:active, #pulseaudio:active, #backlight:active, #battery:active,
+#custom-nightlight:active, #custom-record:active, #custom-notifications:active,
+#bluetooth:active {
+    background-color: alpha(@editor, 0.10);
+}
+
+/* tags: all nine, 24x24 and 2px apart. The base button is an occupied tag (bright text, a 4x2
+   mark centered at the bottom); .empty resets it, .active and .urgent override it. */
+#workspaces { padding: 0; background: transparent; }
 #workspaces button {
-    margin: 5px 4px;
+    min-width: 24px;
+    min-height: 24px;
+    margin: 0 2px 0 0;
     padding: 0;
-    min-width: 26px;
-    border-radius: 0;
+    border: none;
+    border-radius: 4px;
+    box-shadow: none;
     background-color: transparent;
-    background-image: repeating-linear-gradient(to right, @dots 0px, @dots 3px, transparent 3px, transparent 6px);
+    background-image: linear-gradient(@dim, @dim);
     background-repeat: no-repeat;
     background-position: center bottom;
-    background-size: 0px 3px;
-    color: @dim;
-    box-shadow: none;
-    text-shadow: none;
-    transition: color 150ms ease, min-width 150ms ease, background-size 200ms ease;
+    background-size: 4px 2px;
+    color: @text;
+    font-weight: 500;
+    font-feature-settings: "tnum";
 }
-#workspaces button:hover { background-size: 15px 3px; color: @fg; }
+#workspaces button label { margin: 0; padding: 0; border: none; box-shadow: none; }
+#workspaces button:last-child { margin-right: 0; }
+#workspaces button.empty {
+    color: @dim;
+    font-weight: 400;
+    background-image: none;
+}
 #workspaces button.active {
-    min-width: 40px;
-    background-size: 39px 3px;
-    color: @strong;
-    font-weight: 800;
+    color: @sky;
+    font-weight: 500;
+    background-image: linear-gradient(@blue, @blue),
+                      linear-gradient(alpha(@blue, 0.12), alpha(@blue, 0.12));
+    background-size: 14px 2px, 100% 100%;
+    background-position: center bottom, 0 0;
 }
 #workspaces button.urgent {
-    border-radius: 13px;
-    background-image: none;
-    background-color: @error;
-    color: @ink_error;
-    font-weight: 800;
+    color: @amber;
+    font-weight: 500;
+    background-image: linear-gradient(@amber, @amber);
+    background-size: 4px 2px;
+    background-position: center bottom;
+    box-shadow: inset 0 0 0 1px @amber;
+    animation: tburg 1.2s ease-in-out 2;
+}
+#workspaces button:hover { background-color: alpha(@editor, 0.06); }
+#workspaces button:active { background-color: alpha(@editor, 0.10); }
+/* GTK3 keyframes take one selector per block: "0%, 100%" is a parse error that drops the sheet */
+@keyframes tburg {
+    0% { box-shadow: inset 0 0 0 1px @amber; }
+    50% { box-shadow: inset 0 0 0 1px alpha(@amber, 0.25); }
+    100% { box-shadow: inset 0 0 0 1px @amber; }
 }
 
-/* the layout icon (layouts/NAME-symbolic.svg, AwesomeWM style) */
-#layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
-#layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
-#layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
-#layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")); }
-#layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")); }
-#layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")); }
-#layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")); }
-#layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")); }
-#layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")); }
-#layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")); }
-#layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")); }
-#layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")); }
-#layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
-#layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
+/* a 14px rule: 38px window - 2 x 12px margin; the 1px label must not stretch it */
+#custom-divider {
+    min-width: 1px;
+    min-height: 14px;
+    margin: 12px 0;
+    padding: 0;
+    border-radius: 0;
+    font-size: 1px;
+    background-color: alpha(@editor, 0.28);
+}
 
+/* 42x24: the drawable layout glyph at 6px and the design's 10px chevron at 27px. The chevron is
+   a palette-slot stroke, so -gtk-icon-palette colors it @dim while the glyph follows color. */
+#layout {
+    min-width: 42px;
+    min-height: 24px;
+    padding: 0;
+    border-radius: 4px;
+    color: @text;
+    background-repeat: no-repeat;
+    background-position: 6px center, 27px center;
+    background-size: 16px 16px, 10px 10px;
+    -gtk-icon-palette: success @dim;
+}
+#layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")),       -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")),    -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")),     -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
+#layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 
-/* the clock: day, time and date are three modules drawn as one pill in one color (the day and the
-   date carry the rounded ends); only the weight sets the time apart */
-#clock { margin: 5px 0; padding: 0 6px; background-color: @raised; color: @ink_raised; }
-#clock.day  { padding-left: 17px; border-radius: 13px 0 0 13px; }
-#clock.time { font-weight: 800; }
-#clock.date { padding-right: 17px; border-radius: 0 13px 13px 0; }
+/* the focused window: 8px from the layout button (4px spacing + 4px margin) */
+#window {
+    min-height: 24px;
+    margin: 7px 0 7px 4px;
+    padding: 0;
+    color: @dim;
+}
 
-/* right group, pointing left */
+/* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime */
+#datetime {
+    min-height: 24px;
+    margin: 7px 0;
+    padding: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    background-image: linear-gradient(alpha(@editor, 0.06), alpha(@editor, 0.06));
+    background-repeat: no-repeat;
+}
+#datetime:hover { background-color: alpha(@editor, 0.06); }
+#clock, #custom-date {
+    min-height: 24px;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+}
+#clock.day { padding: 0 4px 0 10px; color: @dim; }
+#clock.time { padding: 0 4px; color: @text; font-weight: 600; font-feature-settings: "tnum"; }
+#custom-date { padding: 0 10px 0 4px; color: @dim; }
+#datetime:hover #clock.day, #datetime:hover #custom-date { color: @editor; }
+
+/* chips: 6px left edge, 14px icon, 4px gap, value. The level, icon and tint layers come from the
+   module's own rule; levels.css only changes the first layer's width and range icons/skins. */
+#network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery {
+    min-height: 24px;
+    padding: 0 6px 0 24px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: left bottom, 6px center, 0 0;
+}
+
 #network {
-    background-image: -gtk-recolor(url("edges/tip-left-symbolic.svg")),
-                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
-    background-color: @success; -gtk-icon-palette: error @success, success @raised; color: @ink_success;
+    color: @green;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
+                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
 }
-#pulseaudio { background-color: @raised; color: @ink_raised; }
-#backlight {
-    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")), none, none;
-    background-color: @link; -gtk-icon-palette: error @link, warning @raised; color: @ink_link;
+/* skins after the @import win over the lN range at the same id+class specificity */
+#network.ethernet {
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/ethernet-symbolic.svg")),
+                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+    background-size: 100% 2px, 14px 14px, 100% 100%;
 }
-#battery {
-    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
-                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
-    background-color: @success; -gtk-icon-palette: error @success, warning @link, success @badge;
-    color: @ink_success;
-}
-#memory { background-color: @badge; color: @ink_badge; }
-#disk {
-    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
-                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
-    background-color: @accent; -gtk-icon-palette: error @accent, warning @badge, success @purple;
-    color: @ink_accent;
-}
-#cpu { background-color: @purple; color: @ink_purple; }
-#custom-nightlight {
-    background-image: -gtk-recolor(url("edges/own-left-symbolic.svg")),
-                      -gtk-recolor(url("edges/host-right-symbolic.svg")), none;
-    background-color: @raised; -gtk-icon-palette: error @raised, warning @purple, success @grey;
-    color: @ink_raised;
-}
-/* the tray, the recording dot and power are one block, so the night light's edge fits whichever
-   of them shows first (the tray hides when empty, the dot while not recording); the dot is red
-   because it only shows while recording. Power closes the ribbon with the pills' rounded end
-   (radius 13px = half of 26px), as far from the screen edge as the logo. */
-#tray, #custom-record, #custom-power { background-color: @grey; color: @ink_grey; }
-#tray, #custom-record { padding-right: 8px; }
-#custom-record { color: @rec; }
-#custom-power { margin-right: 8px; padding-right: 12px; border-radius: 0 13px 13px 0; }
-
-/* states recolor their own segment and both of its arrows */
 #network.disconnected {
-    background-color: @warn; -gtk-icon-palette: error @warn, success @raised; color: @ink_warn;
+    color: @dim;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/wifi-off-symbolic.svg")),
+                      none;
+    background-size: 0% 2px, 14px 14px, 100% 100%;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
-#battery.warning {
-    background-color: @warn; -gtk-icon-palette: error @warn, warning @link, success @badge;
-    color: @ink_warn;
+
+#pulseaudio {
+    color: @editor;
+    min-width: 29px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/audio-2-symbolic.svg")),
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
-#battery.critical {
-    background-color: @error; -gtk-icon-palette: error @error, warning @link, success @badge;
-    color: @ink_error;
+#pulseaudio.muted {
+    color: @dim;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/audio-muted-symbolic.svg")),
+                      none;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
-#disk.warning {
-    background-color: @warn; -gtk-icon-palette: error @warn, warning @badge, success @purple;
-    color: @ink_warn;
+
+#backlight {
+    color: @editor;
+    min-width: 29px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/sun-symbolic.svg")),
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
-#disk.critical {
-    background-color: @error; -gtk-icon-palette: error @error, warning @badge, success @purple;
-    color: @ink_error;
+
+#cpu {
+    color: @blue;
+    min-width: 29px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/cpu-symbolic.svg")),
+                      linear-gradient(alpha(@blue, 0.12), alpha(@blue, 0.12));
+}
+#memory {
+    color: @teal;
+    min-width: 29px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/mem-symbolic.svg")),
+                      linear-gradient(alpha(@teal, 0.12), alpha(@teal, 0.12));
+}
+/* waybar's built-in temperature module ignores "states" (its chip never gets an lN class), so this
+   is custom/temperature: waybar-temperature prints the lN class itself (min(100, C)), and
+   .critical below is the alert skin. */
+#custom-temperature {
+    color: @orange;
+    min-width: 22px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/temp-symbolic.svg")),
+                      linear-gradient(alpha(@orange, 0.12), alpha(@orange, 0.12));
+}
+#custom-temperature.critical {
+    color: @red;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/temp-symbolic.svg")),
+                      none;
+    box-shadow: inset 0 0 0 1px @red;
+}
+#disk {
+    color: @sky;
+    min-width: 29px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/disk-symbolic.svg")),
+                      linear-gradient(alpha(@sky, 0.12), alpha(@sky, 0.12));
+}
+
+/* battery: level, 23x10 outline at 6px, capacity-wide fill at 8px, bolt, tint. The fill's width
+   is in levels.css; charging shows the bolt and pushes the value right by 14px, so the layer
+   stays in the same list as `none` while discharging. */
+#battery {
+    color: @purple;
+    min-width: 29px;
+    padding: 0 6px 0 33px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/battery-symbolic.svg")),
+                      linear-gradient(currentColor, currentColor),
+                      none,
+                      linear-gradient(alpha(@purple, 0.12), alpha(@purple, 0.12));
+    background-position: left bottom, 6px center, 8px center, 33px center, 0 0;
+    background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%;
+}
+#battery.charging, #battery.plugged {
+    color: @green;
+    padding-left: 47px;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/battery-symbolic.svg")),
+                      linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/bolt-symbolic.svg")),
+                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+}
+
+/* icon-only chips keep the same 6px edge and 12px of side padding */
+#custom-nightlight {
+    min-width: 14px;
+    min-height: 24px;
+    padding: 0 6px;
+    border-radius: 4px;
+    color: @editor;
+    background-color: transparent;
+    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")),
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-repeat: no-repeat;
+    background-position: center, 0 0;
+    background-size: 14px 14px, 100% 100%;
 }
 #custom-nightlight.warm {
-    background-color: @warn; -gtk-icon-palette: error @warn, warning @purple, success @grey;
-    color: @ink_warn;
+    color: @orange;
+    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")),
+                      linear-gradient(alpha(@orange, 0.12), alpha(@orange, 0.12));
 }
-/* dimmed with a mixed color (colors.css), not alpha(): GTK3 applies the text color's alpha to the
-   recolored edges too */
-#pulseaudio.muted, #custom-nightlight.off { color: @faint_raised; }
+#custom-nightlight.off {
+    color: @dim;
+    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
+}
+#custom-record {
+    min-width: 14px;
+    min-height: 24px;
+    padding: 0 6px;
+    border-radius: 4px;
+    color: @red;
+    background-color: transparent;
+    background-image: -gtk-recolor(url("icons/record-symbolic.svg"));
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
+    box-shadow: inset 0 0 0 1px @red;
+}
 
-/* the clickable segments underline on hover, in their text color, as thick as the tags' line */
-#network:hover, #pulseaudio:hover, #custom-nightlight:hover, #custom-record:hover,
-#custom-power:hover { box-shadow: inset 0 -3px currentColor; }
+/* the bell: 28px with no count, 46px with one. The icon is a palette-slot stroke so it can stay
+   @text while the count is @editor; the count itself is the label's text color. */
+#custom-notifications {
+    min-width: 16px;
+    min-height: 24px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background-color: transparent;
+    background-image: -gtk-recolor(url("icons/bell-symbolic.svg"));
+    background-repeat: no-repeat;
+    background-position: 6px center;
+    background-size: 16px 16px;
+    -gtk-icon-palette: success @dim, error @red;
+}
+#custom-notifications.unread {
+    min-width: 14px;
+    padding-left: 26px;
+    color: @editor;
+    font-size: 11px;
+    font-feature-settings: "tnum";
+    -gtk-icon-palette: success @text, error @red;
+}
+#custom-notifications.critical { color: @red; }
+#custom-notifications.dnd {
+    background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg"));
+    -gtk-icon-palette: success @dim, error @red;
+}
+#custom-notifications.critical {
+    background-image: -gtk-recolor(url("icons/bell-symbolic.svg")),
+                      -gtk-recolor(url("icons/dot-symbolic.svg"));
+    background-position: 6px center, right top;
+    background-size: 16px 16px, 6px 6px;
+}
+#custom-notifications.dnd.critical {
+    background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")),
+                      -gtk-recolor(url("icons/dot-symbolic.svg"));
+}
+
+/* bluetooth: icon only, then the 16px icon + 4px gap + connection count */
+#bluetooth {
+    min-height: 24px;
+    padding: 0 6px 0 22px;
+    border-radius: 4px;
+    color: @editor;
+    font-feature-settings: "tnum";
+    background-color: transparent;
+    background-image: -gtk-recolor(url("icons/bt-symbolic.svg"));
+    background-repeat: no-repeat;
+    background-position: 6px center;
+    background-size: 16px 16px;
+}
+#bluetooth.connected { padding-left: 26px; }
+#bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
+    color: @dim;
+    background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
+}
+
+#tray { min-height: 24px; padding: 0; }

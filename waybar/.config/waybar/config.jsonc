@@ -1,120 +1,180 @@
-// waybar (split chevrons): cjbassi's layout (github.com/cjbassi/config, .config/waybar): pills on the left and in the
-// center, one powerline ribbon on the right, each segment on one of the palette's accents (style.css,
-// colors.css). Each module draws its own arrow edges (style.css + edges/), so there are no separator
-// modules. Percentages are padded to two digits ({:2}) so a segment keeps its width below 10%.
+// waybar, "taskbar": one flat surface with 24px controls 4px apart (style.css). Left: the launcher,
+// the nine tags and the layout button, then the focused window. Center: one clock pill. Right: the
+// tray, recording, brightness, night light, power, wallpaper, bluetooth, a divider, then the live
+// chips (network, volume, cpu, memory, temperature, disk, battery) and the notification bell.
+// A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
 {
     "layer": "top",
     "position": "bottom",
-    "height": 36,
-    "spacing": 0,
+    "height": 38,
+    "margin-left": 7,
+    "margin-right": 7,
+    "margin-bottom": 7,
+    "spacing": 4,
     "reload_style_on_change": true,
 
-    "modules-left": ["custom/arch", "ext/workspaces", "mango/layout"],
-    "modules-center": ["clock#day", "clock#time", "clock#date"],
-    // network, battery, disk and the night light change color with their state; none of them sit
-    // side by side, so each owns both of its arrows (style.css)
+    // levels.json adds the "states" object (one class per integer) to the modules whose 2px level
+    // bar style.css draws; waybar deep-merges included objects, so each module keeps the rest of
+    // its settings here. The states live apart because they are 7 x 101 repetitive lines.
+    "include": ["~/.config/waybar/levels.json"],
+
+    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "mango/layout", "mango/window"],
+    "modules-center": ["group/datetime"],
     "modules-right": [
-        "network", "pulseaudio", "backlight", "battery",
-        "memory", "disk", "cpu",
-        "custom/nightlight", "tray", "custom/record", "custom/power"
+        "tray", "custom/record", "backlight", "custom/nightlight", "custom/power",
+        "custom/wallpaper", "bluetooth", "custom/divider#right", "network", "pulseaudio",
+        "cpu", "memory", "custom/temperature", "disk", "battery", "custom/notifications"
     ],
 
-    // the Arch logo: the text is blank, style.css draws arch-symbolic.svg; opens the launcher that
-    // mango binds to super+d
-    "custom/arch": {
-        "format": "  ",
+    // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
+    "custom/start": {
+        "format": "\u200b",
         "tooltip-format": "Applications (super+d)",
         "on-click": "rofi -show drun"
     },
-
-    // mango tags over ext-workspace-v1; empty tags are "hidden" there, so they stay out
-    "ext/workspaces": {
-        "format": "{name}",
-        "on-click": "activate",
-        "ignore-hidden": true,
-        "sort-by-id": true
+    "custom/wallpaper": {
+        "format": "\u200b",
+        "tooltip-format": "Wallpaper",
+        "on-click": "waypaper"
+    },
+    "custom/power": {
+        "format": "\u200b",
+        "tooltip": false,
+        "on-click": "wlogout -b 6 --protocol layer-shell",
+        "on-click-right": "makoctl mode -t do-not-disturb"
     },
 
-    // the current layout as an AwesomeWM-style icon: the text is blank, style.css draws
-    // layouts/<name>-symbolic.svg for the symbol class mango reports (mmsg get layouts)
+    // all nine tags; style.css gives .empty, occupied, .active and .urgent their own marks
+    "mango/workspaces": {
+        "format": "{name}",
+        "on-click": "activate",
+        "on-click-right": "toggle"
+    },
+
+    // the drawable glyph (layouts/<symbol>-symbolic.svg) and a chevron; mango reports one class
     "mango/layout": {
         "format": "  ",
         "tooltip": false,
         "on-click": "mmsg dispatch switch_layout"
     },
 
-    // one pill in style.css: "Tue 14:32 10 Nov"
-    "clock#day":  { "format": "{:%a}", "tooltip": false },
+    "mango/window": {
+        "format": "{title}",
+        "max-length": 64
+    },
+
+    // one pill: day, time (calendar tooltip) and date; style.css styles the group's box as #datetime
+    "group/datetime": {
+        "orientation": "horizontal",
+        "modules": ["clock#day", "clock#time", "custom/date"]
+    },
+    "clock#day": { "format": "{:%a}", "tooltip": false },
     "clock#time": { "format": "{:%H:%M}", "tooltip-format": "<tt>{calendar}</tt>" },
-    "clock#date": { "format": "{:%d %b}", "tooltip": false },
+    // waybar's clock zero-pads the day; a custom module keeps "12 Nov" (the design's form)
+    "custom/date": { "exec": "date '+%-d %b'", "interval": 60 },
 
     "network": {
-        "format-wifi": "󰤨 {essid}",
-        "format-ethernet": "󰈀 {ifname}",
-        "format-disconnected": "󰤭 offline",
+        "format-wifi": "{essid}",
+        "format-ethernet": "{ifname}",
+        "format-disconnected": "offline",
         "format-alt": "󰇚 {bandwidthDownBytes} 󰕒 {bandwidthUpBytes}",
-        // a long SSID ends in an ellipsis, so the ribbon can never reach the centered clock
-        "max-length": 24,
+        // a long SSID ends in an ellipsis before it reaches the centered clock
+        "max-length": 16,
+        "align": 1,
         "tooltip-format": "{ifname} {ipaddr}/{cidr}"
     },
     "pulseaudio": {
-        "format": "{icon} {volume:2}%",
-        "format-muted": "󰝟 mute",
-        "format-icons": { "headphone": "󰋋", "default": ["󰕿", "󰖀", "󰕾"] },
+        "format": "{volume}%",
+        "format-muted": "muted",
+        "align": 1,
         "on-click": "pamixer -t",
-        "on-scroll-up": "pamixer -i 2",
-        "on-scroll-down": "pamixer -d 2"
+        "on-click-right": "pamixer -t",
+        "on-click-middle": "pamixer -t",
+        "on-scroll-up": "pamixer -i 5",
+        "on-scroll-down": "pamixer -d 5"
     },
     "backlight": {
-        "format": "󰃠 {percent:2}%",
+        "format": "{percent}%",
+        "align": 1,
         "on-scroll-up": "~/.local/bin/osd-brightness bup",
         "on-scroll-down": "~/.local/bin/osd-brightness bdown"
     },
-    "memory": {
-        "interval": 5,
-        "format": "󰍛 {percentage:2}%",
-        "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
-    },
     "cpu": {
         "interval": 5,
-        "format": "󰻠 {usage:2}%"
+        "format": "{usage}%",
+        "align": 1
     },
-    "battery": {
-        "states": { "warning": 30, "critical": 15 },
-        "format": "{icon} {capacity:2}%",
-        "format-charging": "󰂄 {capacity:2}%",
-        "format-plugged": "󰚥 {capacity:2}%",
-        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
+    "memory": {
+        "interval": 5,
+        "format": "{percentage}%",
+        "align": 1,
+        "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
+    },
+    // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
+    // prints the lN level class itself (min(100, C)) and "critical" from 80 C
+    "custom/temperature": {
+        "exec": "~/.local/bin/waybar-temperature",
+        "return-type": "json",
+        "interval": 5,
+        "align": 1,
+        "format": "{}"
     },
     "disk": {
         "interval": 30,
         "paths": ["/"],
-        "states": { "warning": 80, "critical": 90 },
-        "format": "󰋊 {percentage_used:2}%"
+        "format": "{percentage_used}%",
+        "align": 1
     },
-    // wlsunset (wlsunset/.local/bin/nightlight): moon = on, sun = off; menu sets mode and temperature
+    "battery": {
+        "format": "{capacity}%",
+        "format-charging": "{capacity}%",
+        "format-plugged": "{capacity}%",
+        "align": 1,
+        "on-click": "wlogout -b 6 --protocol layer-shell"
+    },
+
+    // wlsunset (wlsunset/.local/bin/nightlight): moon = on; auto is neutral, warm orange, off hollow
     "custom/nightlight": {
         "exec": "~/.local/bin/nightlight status",
         "return-type": "json",
         "interval": 60,
         "signal": 9,
+        "format": "\u200b",
         "on-click": "~/.local/bin/nightlight toggle",
         "on-click-right": "~/.local/bin/nightlight menu"
     },
-    "tray": { "icon-size": 16, "spacing": 8 },
 
-    // gpurecord prints a line only while recording, and pokes signal 8 on start/stop
+    // gpurecord prints a line only while recording; the zero-width label keeps it hidden otherwise
     "custom/record": {
         "exec": "~/.local/bin/gpurecord status",
         "signal": 8,
-        // the icon alone (gpurecord prints "󰨜 recording"): the word would cost the ribbon 78px
-        "format": "󰨜",
+        "format": "\u200b",
         "on-click": "~/.local/bin/gpurecord"
     },
-    "custom/power": {
-        "format": "⏻",
-        "tooltip": false,
-        "on-click": "wlogout -b 6 --protocol layer-shell",
-        "on-click-right": "makoctl mode -t do-not-disturb"
-    }
+
+    "custom/notifications": {
+        "exec": "~/.local/bin/waybar-notifications",
+        "return-type": "json",
+        "interval": 2,
+        "signal": 10,
+        "format": "{}",
+        "on-click": "makoctl restore; pkill -RTMIN+10 waybar",
+        "on-click-middle": "makoctl dismiss --all; pkill -RTMIN+10 waybar",
+        "on-click-right": "makoctl mode -t do-not-disturb; pkill -RTMIN+10 waybar"
+    },
+
+    "bluetooth": {
+        "format": "\u200b",
+        "format-connected": "{num_connections}",
+        "format-off": "\u200b",
+        "format-disabled": "\u200b",
+        "format-no-controller": "",
+        "on-click": "blueman-manager"
+    },
+
+    "tray": { "icon-size": 16, "spacing": 4 },
+
+    // 1px lines (style.css paints the 14px rule); zero-width labels keep the custom module alive
+    "custom/divider#left": { "format": "\u200b" },
+    "custom/divider#right": { "format": "\u200b" }
 }
