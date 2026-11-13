@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+"""pi-mascot-import SHEET [DIR]: cut Zero's sprite sheet into the Pi mascot's pose frames.
+
+SHEET is the 735x638 Mega Man X4-style Zero sheet (white background) the mascot was laid out on;
+the rectangles below are its frames. The frames go to DIR (default ~/.local/share/pi-mascot/zero):
+frames/<pose>-<n>.png plus poses.json, which the mascot extension (~/.pi/agent/extensions/mascot)
+reads. The sprites are Capcom's, so they stay on this machine and never enter the repo.
+Keying: the white around each frame is flood-filled from its edges, so white inside the sprite
+(eyes, armor shine) stays; large enclosed near-white areas (the saber's trail) turn translucent.
+Each pose's frames share one canvas, feet aligned at the bottom, scaled 3x nearest-neighbor.
+"""
+import json
+import os
+import sys
+from collections import deque
+from pathlib import Path
+
+from PIL import Image
+
+SIZE = (735, 638)
+SCALE = 3
+# pose: (frames per second, loop, [[x0, y0, x1, y1] inclusive, ...])
+POSES = {
+    "idle": (4, True, [[3, 3, 32, 37], [36, 3, 67, 37], [69, 3, 99, 38], [102, 3, 130, 37]]),
+    "ready": (10, False, [[600, 7, 628, 41], [632, 8, 660, 41], [665, 8, 693, 42], [699, 7, 726, 42]]),
+    "think": (3, True, [[2, 477, 47, 550], [60, 478, 105, 552], [121, 477, 166, 550], [181, 476, 226, 549], [238, 478, 283, 551]]),
+    "talk": (4, True, [[293, 478, 338, 552], [343, 478, 391, 552], [403, 479, 451, 552]]),
+    "run": (14, True, [[68, 120, 104, 151], [110, 120, 146, 153], [150, 120, 185, 153], [191, 119, 224, 153], [230, 118, 262, 152], [269, 118, 297, 152], [306, 120, 339, 154], [347, 121, 382, 153], [388, 121, 420, 154], [426, 121, 462, 154], [468, 120, 501, 154], [508, 119, 539, 154], [545, 119, 575, 154], [581, 120, 614, 154]]),
+    "dash": (12, True, [[396, 76, 446, 108], [454, 82, 531, 107], [537, 82, 632, 109]]),
+    "slash": (14, True, [[38, 215, 71, 251], [74, 207, 110, 253], [114, 207, 171, 253], [177, 207, 240, 250], [247, 216, 313, 250], [320, 215, 380, 250], [385, 218, 435, 250], [444, 218, 485, 250], [495, 217, 529, 250], [539, 217, 571, 250], [586, 216, 621, 248]]),
+    "combo": (14, True, [[6, 265, 53, 297], [61, 265, 121, 297], [126, 265, 201, 297], [210, 265, 259, 298], [265, 265, 310, 298], [315, 265, 353, 298], [360, 265, 395, 297], [412, 265, 443, 298], [448, 265, 477, 298], [484, 265, 515, 298]]),
+    "crescent": (12, True, [[3, 314, 35, 351], [43, 307, 82, 350], [98, 307, 167, 353], [178, 307, 253, 359], [263, 306, 338, 355], [346, 307, 422, 358], [431, 308, 483, 356]]),
+    "jump": (9, True, [[192, 61, 220, 99], [225, 61, 254, 101], [258, 61, 284, 107], [291, 55, 316, 110], [324, 52, 349, 110], [357, 65, 385, 108]]),
+    "dive": (10, True, [[496, 316, 538, 355], [544, 322, 582, 352], [592, 322, 629, 350], [640, 321, 676, 349], [680, 318, 709, 350]]),
+    "hurt": (6, False, [[326, 421, 349, 455], [354, 412, 378, 446], [383, 412, 414, 444]]),
+    "alert": (1, True, [[646, 66, 671, 104]]),
+    "win": (3, False, [[4, 558, 58, 633], [66, 557, 119, 632], [131, 566, 187, 633]]),
+}
+
+
+def is_light(p, floor):
+    return min(p[:3]) >= floor
+
+
+def key(crop):
+    """RGBA copy of crop with the background (light pixels reachable from its edges) cleared."""
+    im = crop.convert("RGBA"); w, h = im.size; px = im.load()
+    bg = [[False] * w for _ in range(h)]
+    q = deque((x, y) for x in range(w) for y in (0, h - 1)) + deque((x, y) for y in range(h) for x in (0, w - 1))
+    while q:
+        x, y = q.popleft()
+        if not (0 <= x < w and 0 <= y < h) or bg[y][x] or not is_light(px[x, y], 200):
+            continue
+        bg[y][x] = True
+        q.extend(((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
+    seen = [[False] * w for _ in range(h)]
+    for y in range(h):
+        for x in range(w):
+            r, g, b_, _ = px[x, y]
+            if bg[y][x]:
+                px[x, y] = (r, g, b_, 0)
+            elif not seen[y][x] and is_light(px[x, y], 215):
+                # an enclosed light area: the saber's trail if large, a highlight if small
+                comp, q2 = [], deque([(x, y)]); seen[y][x] = True
+                while q2:
+                    cx, cy = q2.popleft(); comp.append((cx, cy))
+                    for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
+                        if 0 <= nx < w and 0 <= ny < h and not seen[ny][nx] and not bg[ny][nx] and is_light(px[nx, ny], 215):
+                            seen[ny][nx] = True; q2.append((nx, ny))
+                if len(comp) > 40:
+                    for cx, cy in comp:
+                        r2, g2, b2, _ = px[cx, cy]; px[cx, cy] = (r2, g2, b2, 70)
+    # JPEG halo: light pixels touching the cleared background go too
+    for y in range(h):
+        for x in range(w):
+            if not bg[y][x] and is_light(px[x, y], 185) and any(
+                    0 <= x + dx < w and 0 <= y + dy < h and bg[y + dy][x + dx]
+                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                r, g, b_, _ = px[x, y]; px[x, y] = (r, g, b_, 0)
+    return im
+
+
+def main():
+    if len(sys.argv) not in (2, 3) or sys.argv[1] in ("-h", "--help"):
+        sys.exit(__doc__.split("\n\n")[0])
+    sheet = Image.open(sys.argv[1]).convert("RGB")
+    if sheet.size != SIZE:
+        sys.exit(f"pi-mascot-import: {sys.argv[1]} is {sheet.size[0]}x{sheet.size[1]}, the layout is for {SIZE[0]}x{SIZE[1]}")
+    out = Path(sys.argv[2] if len(sys.argv) == 3 else
+               Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "pi-mascot/zero")
+    (out / "frames").mkdir(parents=True, exist_ok=True)
+    for old in (out / "frames").glob("*.png"):
+        old.unlink()
+    manifest = {"name": "Zero", "poses": {}}
+    for pose, (fps, loop, rects) in POSES.items():
+        frames = [key(sheet.crop((x0, y0, x1 + 1, y1 + 1))) for x0, y0, x1, y1 in rects]
+        cw, ch = max(f.width for f in frames), max(f.height for f in frames)
+        names = []
+        for n, f in enumerate(frames):
+            canvas = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
+            canvas.paste(f, ((cw - f.width) // 2, ch - f.height), f)
+            name = f"{pose}-{n}.png"
+            canvas.resize((cw * SCALE, ch * SCALE), Image.NEAREST).save(out / "frames" / name, optimize=True)
+            names.append(name)
+        manifest["poses"][pose] = {"frames": names, "fps": fps, "loop": loop, "width": cw, "height": ch}
+    (out / "poses.json").write_text(json.dumps(manifest, indent=1) + "\n")
+    print(f"pi-mascot-import: {sum(len(p['frames']) for p in manifest['poses'].values())} frames, "
+          f"{len(POSES)} poses -> {out}")
+
+
+if __name__ == "__main__":
+    main()

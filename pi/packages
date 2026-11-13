@@ -1,2 +1,3 @@
 pi-coding-agent-bin   # Pi, the coding agent (AUR: the npm release as one binary)
 ripgrep               # Pi's faster in-repository search (its optional dependency)
+python-pillow         # pi-mascot-import cuts the mascot's sprite sheet
