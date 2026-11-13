@@ -37,12 +37,22 @@ window#waybar > box {
     padding: 0 7px;
 }
 
-/* the design's tooltip: 6px 10px around one 16px line, 30px tall with its ring. Adwaita pads the
-   tooltip and every child, and GtkTooltipWindow's box carries 6px widget margins that CSS
-   `margin: 0` doesn't cancel, so the box takes -6px. */
-tooltip { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; padding: 0; }
-tooltip box { padding: 0; margin: -6px; }
-tooltip label { color: @text; padding: 6px 10px; }
+/* the design's tooltip: 6px 10px around one 16px line, 30px tall with its ring, 8px above the bar
+   and never past the bar's ends. GTK places the tooltip window itself (4px above the bar, clamped
+   to the screen) and ignores CSS margins on it, so the window stays transparent and the visible
+   tooltip is its inner box: the box's margins are the transparent offsets. GtkTooltipWindow gives
+   that box 6px widget margins on top of CSS, hence -6px top (none), 2px sides (8px: the bar's
+   inset from the screen edges) and -2px bottom (4px more above the bar). Pango sets Inter 13px on
+   a 17px line where the design has 16, so the label's bottom padding is 5px. */
+tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
+tooltip box {
+    background-color: @bar;
+    border: 1px solid @tipline;
+    border-radius: 4px;
+    padding: 0;
+    margin: -6px 2px -2px 2px;
+}
+tooltip label { color: @text; padding: 6px 10px 5px; }
 menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
@@ -183,27 +193,25 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     color: @dim;
 }
 
-/* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime */
-#datetime {
+/* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime.
+   The three labels paint the pill (day and date carry its rounded ends) and keep the 7px inset as
+   their own margin, like every other module: GTK3 counts a CSS margin inside the allocation, and
+   the clock anchors its tooltip to the time label's allocation, so a margin on the group would
+   drop the clock's tooltip 7px below every other one. Hovering the group lights all three. */
+#datetime { margin: 0; padding: 0; background: none; }
+#clock, #custom-date {
     min-height: 24px;
     margin: 7px 0;
-    padding: 0;
-    border-radius: 4px;
+    border-radius: 0;
     background-color: transparent;
     background-image: linear-gradient(alpha(@editor, 0.06), alpha(@editor, 0.06));
     background-repeat: no-repeat;
+    background-size: 100% 100%; /* the bare `label` rule zeroes a first layer */
 }
-#datetime:hover { background-color: alpha(@editor, 0.06); }
-#clock, #custom-date {
-    min-height: 24px;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    background: none;
-}
-#clock.day { padding: 0 4px 0 10px; color: @dim; }
+#datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
+#clock.day { padding: 0 4px 0 10px; border-radius: 4px 0 0 4px; color: @dim; }
 #clock.time { padding: 0 4px; color: @text; font-weight: 600; font-feature-settings: "tnum"; }
-#custom-date { padding: 0 10px 0 4px; color: @dim; }
+#custom-date { padding: 0 10px 0 4px; border-radius: 0 4px 4px 0; color: @dim; }
 #datetime:hover #clock.day, #datetime:hover #custom-date { color: @editor; }
 
 /* chips: 6px left edge, 14px icon, 4px gap, value. The level, icon and tint layers come from the
