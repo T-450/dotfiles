@@ -32,3 +32,5 @@ Defined in `mango/.config/mango/bind.conf`. **super+/** shows all of them as key
 | media / brightness / mic-mute keys | `osd-volume`, `osd-brightness` (swayosd) + playerctl (`bindl`, work while locked) |
 
 Caps Lock is Escape (`xkb_rules_options=caps:escape`).
+
+Left to apps on purpose, since mango takes every key and click a bind matches: ctrl+left/right (word jumps), ctrl+shift+arrows and ctrl+alt+arrows (word selection, Ghostty's tabs, prompt jumps and splits) and a bare middle click (paste, open in a new tab, waybar's middle-click actions). super+middle click maximizes a window; super+drag and super+right-drag move and resize a floating one.

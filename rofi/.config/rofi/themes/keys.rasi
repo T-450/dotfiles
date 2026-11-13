@@ -9,7 +9,12 @@ window { background-color: @bg; border: 1px; border-color: @line; border-radius:
 mainbox { spacing: 8px; }
 inputbar { background-color: @input; border: 1px; border-color: @accent; border-radius: 3px; padding: 6px 8px; spacing: 8px; children: [ prompt, entry ]; }
 prompt { text-color: @muted; font: "Inter 12"; }
-entry { placeholder: "Search keys or actions"; placeholder-color: @placeholder; font: "Inter 12"; }
+/* one quoted string per line: rofi 2.1 reads from a line's first quote to its last as one string,
+   so a second string on the line swallows the properties between them */
+entry {
+  placeholder: "Search keys or actions"; placeholder-color: @placeholder;
+  font: "Inter 12";
+}
 listview { lines: 18; spacing: 2px; fixed-height: true; scrollbar: true; }
 scrollbar { handle-color: @inborder; handle-width: 4px; }
 element { padding: 3px 10px; border-radius: 4px; }

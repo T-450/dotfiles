@@ -36,7 +36,7 @@ ACTIONS = {
     "toggleoverlay": "Keep window on top",
     "minimized": "Minimize window",
     "restore_minimized": "Restore minimized window",
-    "toggle_scratchpad": "Scratchpad",
+    "toggle_scratchpad": "Show/hide minimized windows",
     "switch_layout": "Next layout",
     "setlayout": "Layout: {0}",
     "zoom": "Swap with master",
@@ -77,7 +77,7 @@ KEYS = {  # how a key name reads on a cap
     "xf86audioplay": "Play", "xf86audionext": "Next", "xf86audioprev": "Prev",
 }
 MODS = {"super": "Super", "ctrl": "Ctrl", "alt": "Alt", "shift": "Shift"}
-CAP_WIDTH = 34  # characters of keycaps before the description, so descriptions line up
+GAP = 3  # characters between the longest chord and the descriptions, which all start in one column
 
 
 def palette():
@@ -136,28 +136,34 @@ def collapse(rows):
     return [(s, c, d) for s, c, d, *_ in out]
 
 
-def caps(chord, t):
-    """Keycap markup: modifiers as light caps, the key as an accent cap, rounded ends from the Nerd Font."""
-    parts, width = [], 0
+def width(chord):
+    """Characters a chord's caps take: each key plus its two rounded ends, ' + ' between keys."""
+    return sum(len(k) + 2 for k in chord) + 3 * (len(chord) - 1)
+
+
+def caps(chord, t, column):
+    """Keycap markup: modifiers as light caps, the key as an accent cap, rounded ends from the Nerd Font;
+    padded to `column` characters."""
+    parts = []
     for i, k in enumerate(chord):
         last = i == len(chord) - 1
         bg, fg = (t["THEME_ACCENT"], t["THEME_ACCENT_INK"]) if last else (t["THEME_FG_TEXT"], t["THEME_FG_TEXT_INK"])
         parts.append(f"<span foreground='{bg}'></span><span background='{bg}' foreground='{fg}' weight='bold'>{html.escape(k)}</span><span foreground='{bg}'></span>")
-        width += len(k) + 2
         if not last:
             parts.append(f"<span foreground='{t['THEME_FG_MUTED']}'> + </span>")
-            width += 3
-    return "".join(parts) + " " * max(1, CAP_WIDTH - width)
+    return "".join(parts) + " " * (column - width(chord))
 
 
 def rows(t):
     out, section = [], None
-    for sec, chord, desc in parse(CONF.read_text()):
+    binds = parse(CONF.read_text())
+    column = max(width(chord) for _, chord, _ in binds) + GAP
+    for sec, chord, desc in binds:
         if sec != section:
             section = sec
             out.append(f"<span foreground='{t['THEME_ACCENT']}' weight='bold'>{html.escape(sec.upper())}</span>\0nonselectable\x1ftrue")
         plain = " ".join(chord + [desc])
-        out.append(f"{caps(chord, t)}<span font_family='Inter'>{html.escape(desc)}</span>\0meta\x1f{plain}")
+        out.append(f"{caps(chord, t, column)}<span font_family='Inter'>{html.escape(desc)}</span>\0meta\x1f{plain}")
     return out
 
 
@@ -165,7 +171,7 @@ def main():
     t = palette()
     entries = rows(t)
     if "--print" in sys.argv:
-        print("\n".join(re.sub(r"<[^>]+>", "", e.split("\0")[0]) for e in entries))
+        print("\n".join(html.unescape(re.sub(r"<[^>]+>", "", e.split("\0")[0])) for e in entries))
         return
     subprocess.run(["rofi", "-dmenu", "-i", "-markup-rows", "-no-custom", "-p", "keys", "-theme", "keys"],
                    input="\n".join(entries), text=True, check=False)

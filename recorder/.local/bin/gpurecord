@@ -104,6 +104,8 @@ cmd_start() {
         kill -0 "$sup" 2>/dev/null || break
         sleep 0.1
     done
+    # a supervisor that exited has already sent "Recording failed to start"
+    kill -0 "$sup" 2>/dev/null || return 1
 
     local reason
     reason=$(tail -n 4 "$log_file" 2>/dev/null | tr '\n' ' ' |
