@@ -61,5 +61,7 @@ sign-in, so `gh auth login` must have run; `runner-up status` shows the place an
 `desktop-vm base` builds this desktop in a QEMU/KVM VM from the working tree: `bootstrap.sh` and a
 second `install.sh` plus `--check` as in CI. `desktop-vm up` then applies the working tree to that
 base on a throwaway overlay, reboots and stops at the greeter, with a VNC screen and a keyboard
-(`shot`, `keys`, `type`, `exec`) and the guest logs and boot frames kept in its run directory. It
-pauses the coordinator while it runs, so the two never share the laptop. See [desktop-vm](apps/desktop-vm.md).
+(`shot`, `keys`, `type`, `exec`) and the guest logs and boot frames kept in its run directory.
+`desktop-vm check` then logs in, runs `tests/run` inside the session (the one place the session
+tests run for real) and fails on unexpected failed units. The VM pauses the coordinator while it
+runs, so the two never share the laptop. See [desktop-vm](apps/desktop-vm.md).

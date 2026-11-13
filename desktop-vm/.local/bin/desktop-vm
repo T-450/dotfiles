@@ -7,6 +7,7 @@ usage: desktop-vm base                  build the base disk (cloud image + boots
        desktop-vm keys QCODE...         QMP send-key (e.g. ret, ctrl-alt-f2)
        desktop-vm type TEXT             one key per character
        desktop-vm exec [--user] CMD     run in the guest (root, or the user in the session env)
+       desktop-vm check                 log in, run tests/run in the session, list failed units
        desktop-vm status                unit state, run directory, base age and staleness
        desktop-vm down                  stop the VM (QMP quit; the unit ends, CI comes back)
 
@@ -17,7 +18,8 @@ The base boots runner-up's Arch cloud image under OVMF, cloud-init seeds the use
 tree is delivered as a git bundle over HTTP (10.0.2.2). `up` runs on a throwaway overlay of the base
 (-snapshot), applies the tree with install.sh, reboots and leaves the VM at the greeter. State
 (base.qcow2, base-vars.fd, base.json, runs/) lives in $XDG_STATE_HOME/desktop-vm; sockets and the
-`run` link in $XDG_RUNTIME_DIR/desktop-vm.
+`run` link in $XDG_RUNTIME_DIR/desktop-vm. `check` runs on the VM `up` left (it never stops it) and
+exits 0 on pass, 1 on fail.
 Stdlib only, so it runs on a bare Arch install with just `python`.
 """
 import base64
@@ -1176,13 +1178,17 @@ def cmd_keys(argv):
     return 0
 
 
+def type_text(qmp, text):
+    for qcodes in type_qcodes(text):
+        send_key(qmp, qcodes)
+
+
 def cmd_type(argv):
     if len(argv) != 1:
         raise VmError("usage: desktop-vm type TEXT")
     qmp = Qmp(runtime_dir() / "qmp.sock")
     try:
-        for qcodes in type_qcodes(argv[0]):
-            send_key(qmp, qcodes)
+        type_text(qmp, argv[0])
     finally:
         qmp.close()
     return 0
@@ -1214,6 +1220,196 @@ def cmd_down(argv):
     stop_vm()
     print("desktop-vm: stopped")
     return 0
+
+
+# ---------------------------------------------------------------- check
+
+# the session environment the tests need, as tests.yml's job has it (mango's WAYLAND_DISPLAY and
+# MANGO_INSTANCE_SIGNATURE live in the user manager, not in a runuser shell)
+TESTS_CMD = """set -a
+eval "$(systemctl --user show-environment | grep -E '^(WAYLAND_DISPLAY|MANGO_INSTANCE_SIGNATURE|DISPLAY|XDG_SESSION_TYPE|XDG_CURRENT_DESKTOP|XDG_SESSION_DESKTOP)=')"
+set +a
+cd ~/dotfiles && CI=1 MISE_AUTO_INSTALL=0 MISE_EXEC_AUTO_INSTALL=0 mise -C / exec -- "$PWD/tests/run"
+"""
+# the first session of USER on seat0 that is a wayland user session (the `manager` session has no seat)
+SESSION_CMD = """for id in $(loginctl list-sessions --no-legend | awk -v u=%s '$3 == u && $4 == "seat0" {print $1}'); do
+	[ "$(loginctl show-session "$id" -p Type --value)" = wayland ] || continue
+	[ "$(loginctl show-session "$id" -p Class --value)" = user ] || continue
+	echo "$id"; exit 0
+done
+exit 1
+"""
+
+
+def parse_expected(text):
+    """Unit names from expected-failures: one per line, `# reason` after it or on comment lines."""
+    names = []
+    for line in text.splitlines():
+        name = line.split("#", 1)[0].split()
+        if name:
+            names.append(name[0])
+    return names
+
+
+def unit_names(text):
+    """First column of `systemctl --failed --no-legend --plain`."""
+    names = []
+    for line in text.splitlines():
+        cols = line.replace("●", " ").split()
+        if cols:
+            names.append(cols[0])
+    return names
+
+
+def judge(failed, expected):
+    """failed: [(scope, unit)]. Returns (reasons, expected_seen): an unlisted failed unit is a reason."""
+    reasons, seen = [], []
+    for scope, unit in failed:
+        if unit in expected:
+            seen.append(f"{scope}: {unit}")
+        else:
+            reasons.append(f"failed unit not in expected-failures ({scope}): {unit}")
+    return reasons, seen
+
+
+def count_journal(text):
+    """Journal error lines (without the `-- No entries --` / `-- Boot ... --` markers)."""
+    return [l for l in text.splitlines() if l.strip() and not l.startswith("-- ")]
+
+
+def save_frame(path, rt):
+    try:
+        w, h, fb = vnc_grab(rt / "vnc.sock")
+        write_png(path, w, h, fb)
+    except VmError:
+        pass
+
+
+def graphical_session(guest):
+    """The id of USER's wayland session on seat0, or None."""
+    code, out, _ = guest.output(SESSION_CMD % q(USER))
+    return out.split()[0] if code == 0 and out.split() else None
+
+
+def greeter_login(rt):
+    """The sysc-greet sequence confirmed live: user name, ret, the password prompt, password, ret."""
+    qmp = Qmp(rt / "qmp.sock")
+    try:
+        type_text(qmp, USER)
+        send_key(qmp, ["ret"])
+        time.sleep(2)
+        type_text(qmp, PASSWORD)
+        send_key(qmp, ["ret"])
+    finally:
+        qmp.close()
+
+
+def wait_session(guest, uid, run, rt, timeout=120):
+    deadline = time.monotonic() + timeout
+    session = None
+    while time.monotonic() < deadline:
+        if session is None:
+            session = graphical_session(guest)
+        if session is not None:
+            _, out, _ = guest.output("systemctl --user is-active graphical-session.target",
+                                     user=True, uid=uid)
+            if out.strip() == "active":
+                return session
+        time.sleep(2)
+    save_frame(run / "login-failed.png", rt)
+    if session is None:
+        raise VmError(f"no wayland user session of {USER} on seat0 within {timeout}s "
+                      f"(see {run}/login-failed.png)")
+    raise VmError(f"graphical-session.target never became active for {USER} within {timeout}s "
+                  f"(see {run}/login-failed.png)")
+
+
+def wait_screen_still(rt, still=3, timeout=60):
+    """A frame once its pixels have not changed for `still` seconds."""
+    deadline = time.monotonic() + timeout
+    last_hash, since, frame = None, time.monotonic(), None
+    while time.monotonic() < deadline:
+        try:
+            w, h, fb = vnc_grab(rt / "vnc.sock")
+        except VmError:
+            time.sleep(0.5)
+            continue
+        digest = hashlib.sha1(fb + struct.pack(">II", w, h)).hexdigest()
+        if digest != last_hash:
+            last_hash, since = digest, time.monotonic()
+        frame = (w, h, fb)
+        if time.monotonic() - since >= still:
+            return frame
+        time.sleep(0.5)
+    raise VmError(f"the screen did not settle for {still}s within {timeout}s")
+
+
+def check_session(guest, uid, run, rt):
+    """Steps 2-5: login, session, settled screen, tests/run. Returns the failure reasons."""
+    session = graphical_session(guest)
+    if session:
+        print(f"check: {USER} already has session {session}; skipping the login")
+    else:
+        print(f"check: logging in {USER} at the greeter")
+        greeter_login(rt)
+    session = wait_session(guest, uid, run, rt)
+    print(f"check: session {session} is up, graphical-session.target active")
+    w, h, fb = wait_screen_still(rt)
+    write_png(run / "session.png", w, h, fb)
+    print("check: session.png saved; running tests/run in the session (tests.log)")
+    code = guest.logged("tests", TESTS_CMD, user=True, uid=uid, timeout=1800)
+    return [] if code == 0 else ["tests/run failed (see tests.log)"]
+
+
+def collect_failures(guest, uid, run):
+    """Step 6: the failed units and the journal errors into the run directory."""
+    system = guest.check("systemctl --failed --no-legend --plain")
+    user = guest.check("systemctl --user --failed --no-legend --plain", user=True, uid=uid)
+    journal = guest.output("journalctl -b -p err --no-pager -o short-monotonic", timeout=300)[1]
+    (run / "failed-system.txt").write_text(system)
+    (run / "failed-user.txt").write_text(user)
+    (run / "journal-errors.txt").write_text(journal)
+    return system, user, journal
+
+
+def cmd_check(argv):
+    if argv:
+        raise VmError("usage: desktop-vm check")
+    if not unit_alive():
+        raise VmError(f"{UNIT} is not running; `desktop-vm up` first")
+    run, rt = current_run(), runtime_dir()
+    expected = parse_expected((REPO / "desktop-vm" / "expected-failures").read_text())
+    reasons, seen, journal_lines = [], [], []
+    try:
+        qga = Qga(rt / "qga.sock")
+        try:
+            guest = Guest(qga, run)
+            uid = guest_uid(guest)
+            reasons += check_session(guest, uid, run, rt)
+            system, user, journal = collect_failures(guest, uid, run)
+            more, seen = judge([("system", u) for u in unit_names(system)]
+                               + [("user", u) for u in unit_names(user)], expected)
+            reasons += more
+            journal_lines = count_journal(journal)
+        finally:
+            qga.close()
+    except (VmError, OSError) as e:
+        reasons.append(str(e))
+    passed = not reasons
+    (run / "verdict.json").write_text(json.dumps(
+        {"pass": passed, "reasons": reasons, "expected": seen, "journal_errors": len(journal_lines)},
+        indent=2) + "\n")
+    for unit in seen:
+        print(f"check: expected failure ({unit})")
+    if journal_lines:
+        print(f"check: {len(journal_lines)} journal error line(s) (reported, not failing); first lines:")
+        for line in journal_lines[:5]:
+            print(f"check:   {line[:160]}")
+    for reason in reasons:
+        print(f"check: {reason}")
+    print("check: PASS" if passed else f"check: FAIL ({len(reasons)} reasons)")
+    print(f"check: run directory {run}; the VM is still running")
+    return 0 if passed else 1
 
 
 # ---------------------------------------------------------------- internal: CI turn-taking
@@ -1294,6 +1490,7 @@ COMMANDS = {
     "keys": cmd_keys,
     "type": cmd_type,
     "exec": cmd_exec,
+    "check": cmd_check,
     "status": cmd_status,
     "down": cmd_down,
     "wait-ci": cmd_wait_ci,

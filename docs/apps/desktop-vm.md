@@ -42,11 +42,36 @@ changed, older than 7 days, `refs/desktop-vm/base` missing, or the tree changed 
 cannot undo: a removed package, a removed or renamed `root/` file, any `setup.sh` change, a deleted
 user unit), `up` prints why and rebuilds it first; `--rebuild` forces that.
 
+## `check`: log in and test
+
+`check` runs on the VM `up` left at the greeter (it refuses if the unit is not alive) and appends to
+the current run directory. It never stops the VM, pass or fail, so you can look at it; `down` ends it.
+
+1. Logs in unless the user already has a graphical session: types the user name and `ret` at the
+   greeter (sysc-greet), waits 2 s for the password prompt, types the password and `ret`.
+2. Waits up to 120 s for a session of the user on `seat0` with `Type=wayland` and `Class=user` (the
+   `manager` session has no seat and is ignored) and for `graphical-session.target` to be active for
+   the user. On timeout it saves `login-failed.png` and fails saying which condition never held.
+3. Waits until the screen has not changed for 3 s (up to 60 s) and saves it as `session.png`.
+4. Runs `tests/run` as the user in the session environment (`WAYLAND_DISPLAY`,
+   `MANGO_INSTANCE_SIGNATURE`, ... taken from `systemctl --user show-environment`), with `CI=1` and
+   mise's auto-install off as `tests.yml` has it, into `tests.log` (timeout 30 min). A non-zero exit
+   fails the check.
+5. Collects `failed-system.txt` (`systemctl --failed`), `failed-user.txt` (`systemctl --user
+   --failed`) and `journal-errors.txt` (`journalctl -b -p err`). A failed unit that is not in
+   `desktop-vm/expected-failures` fails the check; listed ones are reported as expected. Journal
+   errors are counted and the first lines printed but never fail the check: the VM always logs
+   TDX/SGX CPU notices.
+6. Writes `verdict.json` (`pass`, `reasons`, `expected`, `journal_errors`), prints one line per
+   reason and `check: PASS` or `check: FAIL (<n> reasons)`, and exits 0 or 1. A failure in steps 1-4
+   (login timeout, guest agent gone) is a reason too, and the verdict is still written.
+
 ## Commands
 
 ```bash
 desktop-vm base             # build the base disk (needs runner-up's image and a kvm place)
 desktop-vm up [--rebuild]   # boot the working tree on the base, reboot, stop at the greeter
+desktop-vm check            # log in, run tests/run in the session, list failed units; exit 0 or 1
 desktop-vm shot [FILE]      # one VNC frame to PNG (default <run>/shot-NN.png)
 desktop-vm keys ret ctrl-alt-f2
 desktop-vm type desktopvm
@@ -65,8 +90,10 @@ packages declare it, and this VM boots runner-up's image anyway.
 `$XDG_STATE_HOME/desktop-vm/` (default `~/.local/state/desktop-vm/`) holds `base.qcow2`,
 `base-vars.fd`, `base.json` and `runs/<UTC timestamp>-base/` or `-up/`: the QEMU serial log, the
 delivered commit, and each guest command's log (`install-1.log`, `install-2.log`, `check-install.log`,
-`deliver.log`, …). An `up` run also holds `boot-NN-<seconds>s.png` (the distinct frames of the reboot,
-seconds counted from the reboot command) and `greeter.png` (the settled greeter).
+`deliver.log`, …). A `check` adds `session.png`, `tests.log`, `failed-system.txt`, `failed-user.txt`,
+`journal-errors.txt`, `verdict.json` (and `login-failed.png` when the login did not work). An `up`
+run also holds `boot-NN-<seconds>s.png` (the distinct frames of the reboot, seconds counted from the
+reboot command) and `greeter.png` (the settled greeter).
 `$XDG_RUNTIME_DIR/desktop-vm/` (mode 0700) holds `qmp.sock`, `qga.sock`, `vnc.sock` and the `run`
 symlink to the current run directory.
 
