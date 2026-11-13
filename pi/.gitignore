@@ -1,0 +1,4 @@
+# rendered by theme/.local/bin/theme from {palette}.json.tmpl, one per palette; never edit
+/.pi/agent/themes/*.json
+# setup.sh: the LazyPi version whose catalog was last installed
+/lazypi.stamp
