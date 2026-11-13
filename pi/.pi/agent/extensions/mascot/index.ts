@@ -1,6 +1,6 @@
-// mascot: a sprite above Pi's editor that acts out what the model is doing. The frames come from
-// `pi-mascot-import SHEET` (~/.local/share/pi-mascot/zero: frames/*.png and poses.json); they stay
-// on this machine. Drawn with the Kitty graphics protocol (Ghostty): one image id, each frame
+// mascot: a sprite above Pi's editor (left end; PI_MASCOT_SIDE=right for the right) that acts out
+// what the model is doing. The frames come from `pi-mascot-import SHEET`
+// (~/.local/share/pi-mascot/zero: frames/*.png and poses.json); they stay on this machine. Drawn with the Kitty graphics protocol (Ghostty): one image id, each frame
 // replaces the last in place. Terminals without image support get no widget.
 //
 // Activity poses loop while the model does something: idle (waiting for you), think (thinking),
@@ -18,7 +18,8 @@ import { allocateImageId, deleteKittyImage, getCapabilities, renderImage } from 
 const DIR = process.env.PI_MASCOT_DIR ??
 	join(process.env.XDG_DATA_HOME ?? join(homedir(), ".local/share"), "pi-mascot", "zero");
 const ROWS = Number(process.env.PI_MASCOT_ROWS) || 5; // terminal rows the sprite stands in
-const RIGHT_MARGIN = 2; // columns between the sprite and the right edge
+const SIDE = process.env.PI_MASCOT_SIDE === "right" ? "right" : "left"; // he faces right: on the left he looks in
+const MARGIN = 2; // columns between the sprite and its edge
 
 type Pose = { frames: string[]; fps: number; loop: boolean; width: number; height: number; durations?: number[] };
 type Frame = { data: string; widthPx: number; heightPx: number };
@@ -113,10 +114,10 @@ export default function mascot(pi: ExtensionAPI) {
 					const { frames } = current();
 					const f = frames[Math.min(frame, frames.length - 1)];
 					const img = renderImage(f.data, { widthPx: f.widthPx, heightPx: f.heightPx }, {
-						maxHeightCells: ROWS, maxWidthCells: Math.max(1, width - RIGHT_MARGIN), imageId, moveCursor: false,
+						maxHeightCells: ROWS, maxWidthCells: Math.max(1, width - MARGIN), imageId, moveCursor: false,
 					});
 					if (!img) return [];
-					const pad = " ".repeat(Math.max(0, width - img.columns - RIGHT_MARGIN));
+					const pad = " ".repeat(SIDE === "left" ? MARGIN : Math.max(0, width - img.columns - MARGIN));
 					return [pad + img.sequence, ...Array.from({ length: img.rows - 1 }, () => "")];
 				},
 				invalidate() {},
