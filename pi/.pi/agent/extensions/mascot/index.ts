@@ -118,7 +118,8 @@ export default function mascot(pi: ExtensionAPI) {
 					});
 					if (!img) return [];
 					const pad = " ".repeat(SIDE === "left" ? MARGIN : Math.max(0, width - img.columns - MARGIN));
-					return [pad + img.sequence, ...Array.from({ length: img.rows - 1 }, () => "")];
+					// one empty row under him, so his feet (and the dash's dust) clear the editor's border
+					return [pad + img.sequence, ...Array.from({ length: img.rows }, () => "")];
 				},
 				invalidate() {},
 			};
