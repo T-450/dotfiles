@@ -4,3 +4,4 @@ edk2-ovmf                      # UEFI firmware: OVMF_CODE.4m.fd / OVMF_VARS.4m.f
 qemu-hw-display-virtio-gpu-gl  # the GL GPU device; pulls virglrenderer (host GL for the guest)
 qemu-hw-display-virtio-vga-gl  # virtio-vga-gl: the display mango runs on (real GLES, not software VGA)
 qemu-ui-egl-headless           # egl-headless display for virgl (pulls qemu-ui-opengl); QMP screendump has no surface
+tigervnc                       # vncviewer for `desktop-vm view`: connects to the VM's VNC unix socket

@@ -7,6 +7,7 @@ usage: desktop-vm base                  build the base disk (cloud image + boots
        desktop-vm keys QCODE...         QMP send-key (e.g. ret, ctrl-alt-f2)
        desktop-vm type TEXT             one key per character
        desktop-vm exec [--user] CMD     run in the guest (root, or the user in the session env)
+       desktop-vm view [--control]      open a VNC viewer on the screen (view-only unless --control)
        desktop-vm check                 log in, run tests/run in the session, list failed units
        desktop-vm status                unit state, run directory, base age and staleness
        desktop-vm down                  stop the VM (QMP quit; the unit ends, CI comes back)
@@ -29,6 +30,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import socket
 import struct
 import subprocess
@@ -1212,6 +1214,36 @@ def cmd_exec(argv):
     return code
 
 
+def viewer_argv(sock, control=False):
+    """The vncviewer command line for the VM's VNC socket.
+
+    -Shared: QEMU's VNC server drops the other clients when one asks for an exclusive session,
+    which would cut vnc_grab (it sends shared=1). -RemoteResize=0: the guest stays at 1920x1080,
+    the output mode under test. -ViewOnly unless control: the agent's QMP keys and a human's
+    typing would interleave."""
+    argv = ["vncviewer", "-Shared", "-RemoteResize=0"]
+    if not control:
+        argv.append("-ViewOnly")
+    return argv + [str(sock)]
+
+
+def cmd_view(argv):
+    if argv not in ([], ["--control"]):
+        raise VmError("usage: desktop-vm view [--control]")
+    if not unit_alive():
+        raise VmError(f"{UNIT} is not running; `desktop-vm up` first")
+    if not shutil.which("vncviewer"):
+        raise VmError("vncviewer not found: it comes from tigervnc, declared in "
+                      "desktop-vm/packages (`./install.sh --packages`)")
+    cmd = viewer_argv(runtime_dir() / "vnc.sock", control=bool(argv))
+    log = current_run() / "viewer.log"
+    with open(os.devnull, "rb") as nul, open(log, "ab") as out:
+        p = subprocess.Popen(cmd, stdin=nul, stdout=out, stderr=out, start_new_session=True)
+    print(f"desktop-vm: viewer pid {p.pid} ({'control' if argv else 'view-only'}), log {log}")
+    print("desktop-vm: close the window to end it (`desktop-vm down` ends it too)")
+    return 0
+
+
 def cmd_down(argv):
     if argv:
         raise VmError("usage: desktop-vm down")
@@ -1490,6 +1522,7 @@ COMMANDS = {
     "keys": cmd_keys,
     "type": cmd_type,
     "exec": cmd_exec,
+    "view": cmd_view,
     "check": cmd_check,
     "status": cmd_status,
     "down": cmd_down,

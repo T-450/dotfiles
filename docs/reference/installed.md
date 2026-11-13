@@ -54,6 +54,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | desktop-vm | `qemu-hw-display-virtio-gpu-gl` | 11.1.3-1 |
 | desktop-vm | `qemu-hw-display-virtio-vga-gl` | 11.1.3-1 |
 | desktop-vm | `qemu-ui-egl-headless` | 11.1.3-1 |
+| desktop-vm | `tigervnc` | 1.16.2-6 |
 | fastfetch | `fastfetch` | 2.71.0-1 |
 | firefox | `firefox` | 160.0-1 |
 | fonts | `inter-font` | 4.1-1 |
