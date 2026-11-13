@@ -1,8 +1,8 @@
 # bluetooth
 
-BlueZ and the Blueman tray applet.
+BlueZ and the Blueman applet.
 
-`blueman-applet.service` starts after waybar so its tray icon has a tray to land in. Blueman's file transfers go to `~/Downloads` (`base` runs `xdg-user-dirs-update`).
+`blueman-applet.service` runs without its tray icon: `setup.sh` sets blueman's `plugin-list` to `!StatusNotifierItem`, so the applet falls back to a GtkStatusIcon that Wayland never shows. The bar's own bluetooth button opens blueman-manager, and the bar's right half has no room for a second icon. The applet stays for pairing prompts and connection notifications. Blueman's file transfers go to `~/Downloads` (`base` runs `xdg-user-dirs-update`).
 
 ## Reference
 
@@ -15,5 +15,5 @@ BlueZ and the Blueman tray applet.
 
 **User units** (enabled by `install.sh --units`): `blueman-applet.service`
 
-**`setup.sh`** (run by `install.sh --setup`): the bluetooth daemon (blueman-applet's unit is linked and enabled by install.sh).
+**`setup.sh`** (run by `install.sh --setup`): the bluetooth daemon, and blueman-applet without its tray icon (its unit is linked and enabled by install.sh). The tray part needs a dbus session; skipped without one.
 <!-- end generated -->

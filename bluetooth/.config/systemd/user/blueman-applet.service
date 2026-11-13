@@ -1,7 +1,7 @@
 [Unit]
-Description=Bluetooth tray applet (blueman)
+Description=Bluetooth applet (blueman): pairing prompts and notifications
 PartOf=graphical-session.target
-After=graphical-session.target waybar.service
+After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
