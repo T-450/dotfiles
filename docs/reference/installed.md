@@ -17,8 +17,8 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | audio | `playerctl` | 2.4.1-5 |
 | base | `base` | 3-3 |
 | base | `base-devel` | 1-2 |
-| base | `linux` | 7.2.15.arch1-1 |
-| base | `linux-zen` | 7.2.15.zen1-1 |
+| base | `linux` | 7.3.4.arch1-1 |
+| base | `linux-zen` | 7.3.4.zen2-1 |
 | base | `linux-firmware` | 20261019-1 |
 | base | `mkinitcpio` | 42.2-1 |
 | base | `grub` | 2:2.16-1 |
@@ -41,8 +41,9 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | bluetooth | `bluez` | 5.88-1 |
 | bluetooth | `bluez-utils` | 5.88-1 |
 | bluetooth | `blueman` | 2.4.6-2 |
-| clang | `clang` | 23.1.4-1 |
-| clang | `lldb` | 23.1.4-1 |
+| chrome | `google-chrome` | 157.0.8103.78-1 |
+| clang | `clang` | 23.1.5-1 |
+| clang | `lldb` | 23.1.5-1 |
 | clang | `mold` | 3.0.0-4 |
 | clang | `meson` | 1.12.1-2 |
 | claude | `claude-code` | 2.1.322-1 |
@@ -72,7 +73,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | ghostty | `ghostty` | 1.4.0-1 |
 | ghostty | `xdg-terminal-exec` | 0.14.4-1 |
 | git | `git` | 2.56.1-1 |
-| git | `github-cli` | 2.103.3-1 |
+| git | `github-cli` | 2.104.0-1 |
 | git | `git-delta` | 0.20.1-1 |
 | greeter | `greetd` | 0.10.3-2 |
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
@@ -86,7 +87,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mango | `wlr-randr` | 0.5.0-1 |
 | mango | `wev` | 1.1.0-1 |
 | mango | `xorg-xrdb` | 1.2.3-1 |
-| mise | `mise` | 2026.11.5-2 |
+| mise | `mise` | 2026.11.8-1 |
 | mousepad | `mousepad` | 0.7.0-1 |
 | mousepad | `gspell` | 1.14.5-1 |
 | mpv | `mpv` | 1:0.41.0-7 |
@@ -95,6 +96,10 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mpv | `mpv-uosc` | 5.13.0-1 |
 | mpv | `mpv-thumbfast-git` | r132.0f711de-1 |
 | mpv | `libva-utils` | 2.24.0-1 |
+| pi | `pi-coding-agent-bin` | 1.5.2-1 |
+| pi | `ripgrep` | 15.2.0-1 |
+| pi | `python-pillow` | 13.0.0-1 |
+| pi | `ffmpeg` | 2:9.0.2-3 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |
 | podman | `podman` | 6.2.0-1 |
@@ -112,7 +117,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | qutebrowser | `qutebrowser` | 3.7.0-1 |
 | recorder | `gpu-screen-recorder` | 6.1.7-1 |
 | rofi | `rofi` | 2.1.1-1 |
-| runner-up | `github-cli` | 2.103.3-1 |
+| runner-up | `github-cli` | 2.104.0-1 |
 | runner-up | `qemu-base` | 11.1.3-1 |
 | screenshot | `grim` | 1.5.0-2 |
 | screenshot | `slurp` | 1.5.0-2 |
@@ -130,10 +135,10 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `intel-ucode` | 20261110-1 |
 | thinkpad | `sof-firmware` | 2026.09.2-1 |
 | thinkpad | `intel-media-driver` | 26.3.5-1 |
-| thinkpad | `vulkan-intel` | 1:26.2.6-1 |
+| thinkpad | `vulkan-intel` | 1:26.2.7-1 |
 | thinkpad | `fprintd` | 1.94.5-2 |
 | thinkpad | `fwupd` | 2.1.9-1 |
-| thinkpad | `tlp` | 1.10.2-1 |
+| thinkpad | `tlp` | 1.11.0-1 |
 | thinkpad | `powertop` | 2.16.1-1 |
 | thunar | `thunar` | 4.20.10-1 |
 | thunar | `thunar-archive-plugin` | 0.6.0-1 |
@@ -152,7 +157,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `gvfs-afc` | 1.62.0-3 |
 | thunar | `gvfs-smb` | 1.62.0-3 |
 | thunar | `gvfs-nfs` | 1.62.0-3 |
-| thunar | `udisks2` | 2.11.2-1 |
+| thunar | `udisks2` | 2.12.0-1 |
 | thunar | `xarchiver` | 0.5.4.27-1 |
 | thunar | `7zip` | 26.06-1 |
 | thunar | `unrar` | 1:7.3.2-1 |
@@ -167,7 +172,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | zsh | `zsh-autosuggestions` | 0.7.1-1 |
 | zsh | `zsh-syntax-highlighting` | 0.8.0-2 |
 | zsh | `zsh-completions` | 0.36.0-1 |
-| zsh | `fzf` | 0.74.5-1 |
+| zsh | `fzf` | 0.75.0-1 |
 | zsh | `fzf-tab` | 1.3.0-2 |
 | zsh | `zoxide` | 0.10.0-1 |
 | zsh | `eza` | 0.23.5-2 |
