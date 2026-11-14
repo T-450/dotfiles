@@ -20,7 +20,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | app | what | packages |
 |---|---|---|
 | [audio](apps/audio.md) | PipeWire audio: the server, its ALSA/JACK/Pulse front ends and WirePlumber | pipewire, pipewire-alsa, pipewire-jack, pipewire-pulse, wireplumber, gst-plugin-pipewire, libpulse, rtkit, sox, playerctl |
-| [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, ufw, less, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python |
+| [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, kernel-modules-hook, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, wireless-regdb, ufw, less, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python |
 | [bluetooth](apps/bluetooth.md) | BlueZ and the Blueman applet | bluez, bluez-utils, blueman |
 | [chrome](apps/chrome.md) | Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite | google-chrome |
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
@@ -61,7 +61,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
-| [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, tlp, powertop |
+| [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, bolt, tlp, powertop, smartmontools, nvme-cli |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+f), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
 | [waybar](apps/waybar.md) | The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, colored from the palette | waybar, pamixer |

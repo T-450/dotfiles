@@ -20,6 +20,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `linux` | 7.3.4.arch1-1 |
 | base | `linux-zen` | 7.3.4.zen2-1 |
 | base | `linux-firmware` | 20261019-1 |
+| base | `kernel-modules-hook` | not installed |
 | base | `mkinitcpio` | 42.2-1 |
 | base | `grub` | 2:2.16-1 |
 | base | `efibootmgr` | 18-4 |
@@ -28,6 +29,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `zram-generator` | 1.2.1-1 |
 | base | `networkmanager` | 1.58.1-3 |
 | base | `iwd` | 3.12-2 |
+| base | `wireless-regdb` | not installed |
 | base | `ufw` | 0.36.2-7 |
 | base | `less` | 1:710-1 |
 | base | `unzip` | 6.0-23 |
@@ -138,8 +140,11 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `vulkan-intel` | 1:26.2.7-1 |
 | thinkpad | `fprintd` | 1.94.5-2 |
 | thinkpad | `fwupd` | 2.1.9-1 |
+| thinkpad | `bolt` | not installed |
 | thinkpad | `tlp` | 1.11.0-1 |
 | thinkpad | `powertop` | 2.16.1-1 |
+| thinkpad | `smartmontools` | not installed |
+| thinkpad | `nvme-cli` | not installed |
 | thunar | `thunar` | 4.20.10-1 |
 | thunar | `thunar-archive-plugin` | 0.6.0-1 |
 | thunar | `thunar-media-tags-plugin` | 0.6.0-1 |

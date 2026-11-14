@@ -4,6 +4,7 @@ base-devel   # makepkg, for AUR packages
 linux
 linux-zen
 linux-firmware
+kernel-modules-hook   # keeps the running kernel's modules after an upgrade, until the reboot
 mkinitcpio
 grub
 efibootmgr
@@ -12,6 +13,7 @@ sudo
 zram-generator
 networkmanager
 iwd          # NetworkManager's Wi-Fi backend (etc/NetworkManager/conf.d/wifi_backend.conf)
+wireless-regdb   # Wi-Fi channel rules per country (etc/modprobe.d/cfg80211.conf); without it: world domain 00
 ufw
 less
 unzip

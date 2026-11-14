@@ -1,9 +1,13 @@
-# ThinkPad T14 (Intel) hardware: CPU microcode, audio DSP firmware, VA-API, Vulkan, fingerprint, firmware updates, power
+# ThinkPad T14 (Intel) hardware: CPU microcode, audio DSP firmware, VA-API, Vulkan, fingerprint, firmware updates,
+# Thunderbolt, power, disk health
 intel-ucode
 sof-firmware
 intel-media-driver
 vulkan-intel
 fprintd
 fwupd
+bolt         # authorizes Thunderbolt devices (BIOS security level "user"); boltd is D-Bus activated
 tlp
 powertop   # diagnostic only; never --auto-tune: TLP owns the tunables
+smartmontools  # diagnostic only: smartctl -a /dev/nvme0
+nvme-cli       # diagnostic only: nvme smart-log /dev/nvme0
