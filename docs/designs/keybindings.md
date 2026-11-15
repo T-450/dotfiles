@@ -56,28 +56,32 @@ every key. The card comes from `mango-keys --card MODE`, the same parser as the 
 
 ## Cheatsheet (mango-keys)
 
-A floating Ghostty window (`com.mitchellh.ghostty-keys`, 1500x860, centered) running fzf.
+A floating Ghostty window (`com.mitchellh.ghostty-keys`, 1582x930, centered) running fzf: exactly
+155x41 cells of 10x22 px plus Ghostty's padding and mango's border, so no stray pixels are left over
+(`rule.conf` shows the arithmetic).
 
-- **List.** Every row: a group chip in the group's hue, the keycaps, the description. No header rows,
-  so a group title can never sit alone at the bottom of the view; rows keep bind.conf's order.
-- **Group card.** fzf's preview pane shows the whole group of the selected row: title, entry
-  (`Super+Space › w`) and every key in it as a two-row keycap (legend over a darker skirt, after
-  NuPhy Node's high-profile caps). Groups have at most 13 keys, so a card never scrolls.
-- **Keycaps.** Rounded caps (Nerd Font round ends). Modifier caps: `bg_hover` toward `fg_muted`
-  with a `fg_bright` legend. The final key: the group's hue with dark ink. Chords join with `+`,
-  group sequences with `›`.
-- **Color by purpose**, from the active palette, so every theme works and no literal is written:
-  window `ansi5` (purple), apps `success`, tag `ansi3` (gold), layout `ansi6` (cyan), monitor
-  `ansi11` (orange), capture `error` (coral), notifications `ansi13` (violet), session `ansi1`
-  (red), focus and the chords `fg_bright`, media `ansi4`, mouse `fg_muted`. Matched characters:
-  `warning` (pale yellow), bold. Selected row: `bg_hover` bar with a marker in the group's hue.
-  Blue is the input cursor only. `colors.sh` exports `THEME_ANSI0..15` for this.
+- **One grid.** Keycaps never sit on consecutive lines: the list uses fzf's `--gap`, the card a
+  blank line, the popup a thin spacer. Row pitch 44 px, cap 22 px, gap 22 px everywhere.
+- **List.** Every row: the group name, the keycaps right-aligned in one shared field (so the action
+  key always sits next to its description), a 2-cell gutter, the description. No header rows, so a
+  group title can never sit alone at the bottom of the view; rows keep bind.conf's order. The
+  selected row is a full-width bar. A footer names the layers (Super GO · OPEN, +Shift CARRY,
+  +Alt WINDOW, +Ctrl LAYOUT), each in its group's hue.
+- **Group card.** The preview pane shows the selected row's whole group, its rows on the same lines
+  as the list's; a mode's rows read `› H` under the key that opens it. A group taller than the pane
+  shows the rows around the selection.
+- **Keycaps.** The keyboard's own colors (the palette's `[keycaps]`, NuPhy Air60 HE): modifiers in
+  the black `key_mod` with a faint aluminium edge, the action key in the violet `key_accent`, a
+  mode's opening key in the grey `key_cap`, white `key_legend`s; `+` and `›` in `key_frame`. Group
+  names, the card title and the selection mark keep their group hues (`HUES`).
+- **Color by purpose**, from the active palette, so every theme works and no literal is written.
+  Matched characters: `key_amber`, bold. Empty search: "0/0" and a blank card.
 - **Search.** fzf is the interface and reruns the search on every key press
   (`--disabled`, `change:reload`): `mango-keys --rank QUERY` scores rows and draws the match
   highlight. Each query word must match a row's group, description, keys or synonyms, best first:
   exact word, word prefix, substring, in-order letters (fzf-style, missing letters), then a typo
   (one edit, two for words of 7+ letters, adjacent swaps count as one). Key words work too:
-  `super f`, `space w`. An empty query lists everything in group order. A row's synonyms
+  `super e`, `super ctrl space`. An empty query lists everything in group order. A row's synonyms
   (`close: kill quit exit`) are searchable but not shown.
 - **Speed.** Rows are parsed once per bind.conf change into `$XDG_RUNTIME_DIR/mango-keys.json`;
   ranking is a few ms.

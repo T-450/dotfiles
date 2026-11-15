@@ -1,6 +1,6 @@
 # swaybg
 
-The wallpaper: the last pick from waypaper (super+w), else the palette's own: its own style if it names one (Steel Nebula: a nebula in its purples, see [Theming](../theming.md#wallpaper)), else Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
+The wallpaper: the last pick from waypaper (super+w), else the palette's own: its own style if it names one (Steel Nebula: a nebula in its purples; see Theming, Wallpaper), else Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
 
 The image is [lyje9y on wallhaven](https://wallhaven.cc/w/lyje9y), uploaded by Jesseract. Its
 original source and license are unknown, so the repo never holds it.

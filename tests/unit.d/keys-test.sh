@@ -73,8 +73,8 @@ lock scren	Lock screen
 terminal	Terminal (Ghostty)
 termnial	Terminal (Ghostty)
 term	Terminal (Ghostty)
-shell	Dropdown terminal: a persistent shell; Alt+Esc hides it
-dropdown	Dropdown terminal: a persistent shell; Alt+Esc hides it
+shell	Terminal (Ghostty)|Dropdown terminal (again hides it)
+dropdown	Dropdown terminal (again hides it)
 float term	Floating terminal: a throwaway window
 browser	Browser (Firefox)
 firefox	Browser (Firefox)
@@ -122,7 +122,7 @@ pin	Pin to all tags
 sticky	Pin to all tags
 minimize	Minimize
 restore	Restore a minimized window|Restore the last notification
-scratchpad	Show/hide minimized windows
+scratchpad	Show/hide minimized windows|Dropdown terminal (again hides it)
 resize	Resize ▸|Resize a window
 wider	Wider
 monocle	Monocle

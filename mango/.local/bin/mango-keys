@@ -11,7 +11,9 @@ usage: mango-keys              open the cheatsheet (a floating Ghostty running f
 bind.conf: `## Name` starts a group, `#: text ~ words` describes the bind below it (the words after
 ` ~ ` are searchable, not shown), `key_mode=NAME` starts a mode's binds. A mode's keys are shown
 after the keys that open it (`setkeymode,NAME`), so its binds read `Super+M › H`.
-Colors come from ~/.config/theme/colors.sh (the active palette); each group has its own hue.
+Colors come from ~/.config/theme/colors.sh (the active palette): the caps wear the keyboard's colors
+(THEME_KEY_*: dark modifiers, grey letters, an accent for the key that names the action) and each
+group's name has its own hue.
 """
 import html
 import json
@@ -308,31 +310,30 @@ class Ink:
     def hue(self, group):
         return self.c(HUES.get(group.lower(), "fg_bright"))
 
-    def mod_cap(self):
-        return mix(self.c("bg_hover"), self.c("fg_muted"), 0.22)
+    def cap_colors(self, role):
+        """A cap's face, its round ends and its legend. A modifier cap's ends are a step toward the frame's
+        aluminium: an edge, as the dark cap would lose its shape on a dark background (and on the
+        selected row's bar) without one."""
+        face = self.c(role)
+        return face, mix(face, self.c("key_frame"), 0.3) if role == "key_mod" else face, self.c("key_legend")
 
-    def cap(self, label, bg, fg, bold=True):
-        b = "\x1b[1m" if bold else ""
-        return f"{self.fg(bg)}{self.bg(bg)}{self.fg(fg)}{b}{label}\x1b[0m{self.fg(bg)}\x1b[0m"
+    def cap(self, label, role):
+        face, edge, legend = self.cap_colors(role)
+        bold = "" if role == "key_mod" else "\x1b[1m"
+        return f"{self.fg(edge)}{self.bg(face)}{self.fg(legend)}{bold}{label}\x1b[0m{self.fg(edge)}\x1b[0m"
 
-    def keys(self, r):
-        """A row's caps: modifiers grey, the last key of each chord in the group's hue."""
-        hue, ink, mod = self.hue(r["group"]), self.c("bg_desktop"), self.mod_cap()
-        plus, sep = f"{self.fg(self.c('fg_disabled'))}+\x1b[0m", f" {self.fg(self.c('fg_muted'))}›\x1b[0m "
-        chords = []
-        for n, chord in enumerate(r["steps"]):
-            last_step = n == len(r["steps"]) - 1
-            parts = []
-            for j, k in enumerate(chord):
-                final = j == len(chord) - 1
-                if final and last_step:
-                    parts.append(self.cap(k, hue, ink))
-                elif final:
-                    parts.append(self.cap(k, mix(hue, self.c("bg_desktop"), 0.45), self.c("fg_bright")))
-                else:
-                    parts.append(self.cap(k, mod, self.c("fg_bright"), bold=False))
-            chords.append(plus.join(parts))
-        return sep.join(chords)
+    def keys(self, steps):
+        """The caps of a bind's chords: held keys join with +, chords pressed in turn with ›."""
+        frame = self.fg(self.c("key_frame"))
+        return f" {frame}›\x1b[0m ".join(f"{frame}+\x1b[0m".join(self.cap(k, role) for k, role in chord)
+                                         for chord in cap_roles(steps))
+
+
+def cap_roles(steps):
+    """Each key of each chord with the palette role of its cap: modifiers on the dark caps, the key that
+    opens a mode on a grey letter cap, the key that names the action on the accent."""
+    return [[(k, "key_mod" if j < len(chord) - 1 else "key_accent" if n == len(steps) - 1 else "key_cap")
+             for j, k in enumerate(chord)] for n, chord in enumerate(steps)]
 
 
 def visible(s):
@@ -345,7 +346,7 @@ def visible(s):
 # so the key that names the action always sits next to its description.
 GUTTER = 2
 MARGIN = 3  # the card's left margin: the mark of the selected row sits in it
-EDGE = 2  # fzf's margin in cells; with Ghostty's padding, 34 px on every side
+EDGE = 2  # fzf's side margin in cells (one line above and below): with Ghostty's padding, 34 px all round
 
 
 def chip(ink, group):
@@ -356,7 +357,7 @@ def highlight(ink, desc, marks):
     """The description with matched letters in the highlight color."""
     if not marks:
         return f"{ink.fg(ink.c('fg_text'))}{desc}\x1b[0m"
-    out, n, base, hi = [], -1, ink.fg(ink.c("fg_text")), ink.fg(ink.c("warning")) + "\x1b[1;4m"
+    out, n, base, hi = [], -1, ink.fg(ink.c("fg_text")), ink.fg(ink.c("key_amber")) + "\x1b[1;4m"
     for tok in re.split(r"([A-Za-z0-9]+)", desc):
         if re.fullmatch(r"[A-Za-z0-9]+", tok):
             n += 1
@@ -375,13 +376,13 @@ def list_field(rs, caps):
 
 def list_lines(query):
     rs, ink = rows(), Ink(palette())
-    caps = [ink.keys(r) for r in rs]
+    caps = [ink.keys(r["steps"]) for r in rs]
     field = list_field(rs, caps)
     out = []
     for i, _, marks in rank(query, rs):
         r = rs[i]
         pad = " " * (field - len(r["group"]) - visible(caps[i]))
-        out.append(f"{i}\t {chip(ink, r['group'])}{pad}{caps[i]}{' ' * GUTTER}{highlight(ink, r['desc'], marks)} ")
+        out.append(f"{i}\t {chip(ink, r['group'])}{pad}{caps[i]}{' ' * GUTTER}{highlight(ink, r['desc'], marks)}")
     return out
 
 
@@ -397,13 +398,14 @@ def card_caps(ink, group):
     """Each row's caps as its group's card shows them. A mode's rows drop the keys that open it when the
     card also shows the row that opens it, and read `› H` below that row."""
     shown = [r["steps"] for r in group]
-    then = f"{ink.fg(ink.c('fg_muted'))}›\x1b[0m "
-    return [then + ink.keys(dict(r, steps=r["steps"][-1:])) if r["steps"][:-1] in shown else ink.keys(r)
+    then = f"{ink.fg(ink.c('key_frame'))}›\x1b[0m "
+    return [then + ink.keys(r["steps"][-1:]) if r["steps"][:-1] in shown else ink.keys(r["steps"])
             for r in group]
 
 
 def card(i):
-    """A group's keys for fzf's preview pane: title, then one row of caps every other line."""
+    """A group's keys for fzf's preview pane: its title, then a row of caps on every other line (the
+    lines the list's rows are on)."""
     rs, ink = rows(), Ink(palette())
     if not i.isdigit():  # no row: nothing matched the query
         return ""
@@ -412,7 +414,7 @@ def card(i):
     caps, hue = card_caps(ink, group), ink.hue(sel["group"])
     width = max(map(visible, caps))
     cols, lines = (int(os.environ.get(v) or 0) for v in ("FZF_PREVIEW_COLUMNS", "FZF_PREVIEW_LINES"))
-    room = max(cols - MARGIN - width - GUTTER, 20) if cols else 200  # for the description
+    room = max(cols - MARGIN - width - GUTTER, 10) if cols else 200  # for the description
     head = [f"{' ' * MARGIN}{ink.fg(hue)}\x1b[1m{' '.join(sel['group'].upper())}\x1b[0m", ""]
     body, at = [], 0
     for r, k in zip(group, caps):
@@ -420,39 +422,43 @@ def card(i):
         if r is sel:
             at = len(body)
         # a description wider than the pane continues on the line between caps
-        text = textwrap.wrap(r["desc"], room) or [""]
-        text += [""] * (len(text) % 2)
-        body.append(f" {mark} {' ' * (width - visible(k))}{k}{' ' * GUTTER}{ink.fg(ink.c(tone))}{text[0]}\x1b[0m")
-        body += [f"{' ' * (MARGIN + width + GUTTER)}{ink.fg(ink.c(tone))}{t}\x1b[0m" if t else "" for t in text[1:]]
-    body.pop()
+        first, *more = textwrap.wrap(r["desc"], room) or [""]
+        body.append(f" {mark} {' ' * (width - visible(k))}{k}{' ' * GUTTER}{ink.fg(ink.c(tone))}{first}\x1b[0m")
+        body += [f"{' ' * (MARGIN + width + GUTTER)}{ink.fg(ink.c(tone))}{t}\x1b[0m" for t in more]
+        body += [""] * (1 - len(more) % 2)
+    if not body[-1]:
+        body.pop()
     if lines and len(head) + len(body) > lines:  # a group taller than the pane: the rows around the selected one
-        room = (lines - len(head)) // 2 * 2
-        top = max(0, min(at - room // 2, len(body) - room))
-        body = body[top - top % 2:][:room]
+        fit = (lines - len(head)) // 2 * 2
+        top = max(0, min(at - fit // 2, len(body) - fit))
+        top += top % 2  # start on a row of caps
+        body = body[top:top + fit]
     return "\n".join(head + body)
 
 
 def pango(mode):
-    """A key mode's card as Pango markup for the which-key popup."""
-    rs, p = rows(), palette()
-    ink = Ink(p)
+    """A key mode's card as Pango markup for the which-key popup: the same caps as the list's."""
+    rs, ink = rows(), Ink(palette())
     group = [r for r in rs if r["mode"] == mode]
     if not group:
         return ""
-    hue = ink.hue(group[0]["group"])
-    e = html.escape
-    out = [f"<span foreground='{hue}' weight='bold' letter_spacing='2048'>{e(group[0]['group'].upper())}</span>"
-           f"   <span foreground='{ink.c('fg_muted')}'>{e(entry(rs, mode))}</span>", ""]
-    width = max(sum(len(k) + 3 for k in r["steps"][-1]) - 1 for r in group)
-    for r in group:
-        chord = r["steps"][-1]
-        keys = " ".join(f"<span background='{ink.mod_cap() if j < len(chord) - 1 else hue}' "
-                        f"foreground='{ink.c('fg_bright') if j < len(chord) - 1 else ink.c('bg_desktop')}' "
-                        f"weight='bold'> {e(k)} </span>" for j, k in enumerate(chord))
-        pad = " " * (width - (sum(len(k) + 3 for k in chord) - 1))
-        out.append(f"{pad}{keys}   <span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
-    out.append("")
-    out.append(f"<span foreground='{ink.c('fg_muted')}'>Esc leaves</span>")
+    e, frame = html.escape, ink.c("key_frame")
+
+    def cap(label, role):
+        face, edge, legend = ink.cap_colors(role)
+        weight = "normal" if role == "key_mod" else "bold"
+        return (f"<span foreground='{edge}'></span><span background='{face}' foreground='{legend}' "
+                f"weight='{weight}'>{e(label)}</span><span foreground='{edge}'></span>")
+
+    plus = f"<span foreground='{frame}'>+</span>"
+    chords = [cap_roles(r["steps"][-1:])[0] for r in group]
+    sizes = [sum(len(k) + 3 for k, _ in chord) - 1 for chord in chords]
+    out = [f"<span foreground='{ink.hue(group[0]['group'])}' weight='bold' letter_spacing='2048'>"
+           f"{e(group[0]['group'].upper())}</span>   <span foreground='{frame}'>{e(entry(rs, mode))}</span>", ""]
+    for r, chord, size in zip(group, chords, sizes):
+        out.append(f"{' ' * (max(sizes) - size)}{plus.join(cap(k, role) for k, role in chord)}{' ' * GUTTER}"
+                   f"<span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
+    out += ["", f"<span foreground='{frame}'>Esc leaves</span>"]
     # a thin line between rows so the caps don't touch (a background fills the whole line height)
     gap = "\n<span size='3pt'> </span>\n"
     return "\n".join(out[:2]) + "\n" + gap.join(out[2:-2]) + "\n" + "\n".join(out[-2:])
@@ -468,36 +474,40 @@ def tui():
     rs, ink, me = rows(), Ink(palette()), SELF
     c = ink.c
     colors = ",".join([
-        f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('warning')}", f"fg+:{c('fg_bright')}",
-        f"bg+:{c('bg_hover')}", f"hl+:{c('warning')}", f"info:{c('fg_muted')}", f"prompt:{c('ansi5')}",
-        f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"header:{c('fg_muted')}",
-        f"footer:{c('fg_muted')}", f"ghost:{c('fg_disabled')}",
-        f"border:{c('border_hairline')}", f"separator:{c('border_hairline')}",
-        f"preview-bg:{c('bg_desktop')}", f"preview-border:{c('border_hairline')}",
-        f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
+        f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('key_amber')}", f"fg+:{c('fg_bright')}",
+        f"bg+:{c('bg_hover')}", f"hl+:{c('key_amber')}", f"info:{c('key_frame')}", f"prompt:{c('ansi5')}",
+        f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"footer:{c('key_frame')}",
+        f"ghost:{c('key_frame')}:regular", f"border:{c('border_hairline')}",
+        f"preview-border:{c('border_hairline')}", f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
     ])
-    text, dim = ink.fg(c("fg_text")), ink.fg(c("fg_muted"))
-    legend = "   ".join(f"{text}{mod}\x1b[0m " + f"{dim} · ".join(chip(ink, g) for g in groups) for mod, groups in LAYERS)
-    legend = f" {legend}   {text}Esc\x1b[0m {dim}closes\x1b[0m"
+    # the legend: each layer's modifiers and its groups, drawn as the list's chips; the rest in the footer's color
+    text = ink.fg(c("fg_text"))
+    legend = "   ".join(f"{text}{mods}\x1b[0m " + " · ".join(chip(ink, g) for g in names) for mods, names in LAYERS)
+    legend = f" {legend}   {text}Esc\x1b[0m closes"
     # The panes: the list and the card show the same descriptions, so both get the same room for them
-    # (all of the longest if the window is wide enough) after their own caps. fzf itself takes its
-    # margins, the pointer, a spare column beside the list and the pane's border and padding.
-    caps, groups = [ink.keys(r) for r in rs], {}
+    # after their own columns (all of the longest description if the window is wide enough). fzf takes
+    # its margins, the pointer, a spare column beside the list and the pane's border and padding.
+    caps, groups = [ink.keys(r["steps"]) for r in rs], {}
     for r in rs:
         groups.setdefault(r["group"], []).append(r)
-    in_list = 1 + list_field(rs, caps) + GUTTER + 1
+    in_list = 1 + list_field(rs, caps) + GUTTER + 1  # a cell free at each end of the selected row's bar
     in_card = MARGIN + max(visible(k) for g in groups.values() for k in card_caps(ink, g)) + GUTTER
-    free = shutil.get_terminal_size().columns - 2 * EDGE - 4 - in_list - in_card
+    size = shutil.get_terminal_size()
+    free = size.columns - 2 * EDGE - 4 - in_list - in_card
     pane = in_card + max(min(max(len(r["desc"]) for r in rs), free // 2), 10)
     rank_cmd = f"{me} --rank {{q}}"
     # the first list: fzf runs this when its input is a terminal (instead of its default `find`)
     os.environ["FZF_DEFAULT_COMMAND"] = f"{shlex.quote(me)} --rank ''"
+    # top to bottom: a margin, the input, a blank line (an empty header), the rows with a blank line
+    # after each (--gap; the last one sets the legend apart), the legend, a margin. The rows need an
+    # even number of lines or the last one loses its blank line: the bottom margin takes an odd one.
+    below = 1 + (size.lines - 5) % 2
     os.execvp("fzf", [
         "fzf", "--ansi", "--disabled", "--no-sort", "--layout=reverse", "--delimiter=\t", "--with-nth=2..",
-        "--gap", "--gap-line= ", "--highlight-line", "--prompt=❯ ", "--ghost=Type to search", "--pointer=▌", "--marker=",
-        "--info=inline-right", "--no-scrollbar", "--ellipsis=…", "--border=none", "--no-separator", "--header= ",
-        "--footer", legend, "--footer-border=none",
-        "--color", colors, f"--margin=1,{EDGE}", "--padding=0",
+        "--gap", "--gap-line= ", "--highlight-line", "--pointer=▌", "--marker=", "--no-scrollbar", "--ellipsis=…",
+        "--prompt=❯ ", "--ghost=Type to search", "--info=inline-right", "--no-separator", "--header= ",
+        "--footer", legend, "--footer-border=none", "--border=none",
+        "--color", colors, f"--margin=1,{EDGE},{below}", "--padding=0",
         "--preview", f"{me} --card {{1}}", "--preview-window", f"right,{pane},border-left,noinfo",
         "--bind", f"change:reload({rank_cmd})+first",
         "--bind", "enter:abort,esc:abort,ctrl-c:abort",
@@ -509,7 +519,10 @@ def toggle():
     if subprocess.run(["pkill", "-f", f"{SELF} --tui"], check=False).returncode == 0:
         return
     term = shutil.which("ghostty") or "ghostty"
-    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "-e", SELF, "--tui"],
+    # the window is sized to the grid (mango's window_rule); should its size stop being a whole number
+    # of cells, the leftover goes to every side instead of the right and the bottom
+    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "--window-padding-balance=true",
+                      "-e", SELF, "--tui"],
                      start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 

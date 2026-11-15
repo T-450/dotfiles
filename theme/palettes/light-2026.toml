@@ -49,5 +49,5 @@ mod    = "#2e2e30"
 cap    = "#626165"
 accent = "#6a5bc7"
 legend = "#f2f2f2"
-frame  = "#9d9d9d"
-amber  = "#dcb04a"
+frame  = "#5f5f63"  # the aluminium, darkened: #9d9d9d reads at 2.7:1 on white
+amber  = "#7d5a00"  # the amber, darkened: #dcb04a reads at 2.0:1 on white
