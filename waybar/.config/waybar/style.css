@@ -267,7 +267,8 @@ box:hover > #custom-power {
 }
 #datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
 #clock.day { padding: 0 5px 0 12px; border-radius: 4px 0 0 4px; color: @dim; }
-#clock.time { padding: 0 5px; color: @text; font-weight: 600; font-feature-settings: "tnum"; }
+/* the wall clock is live (Quiet Instrument: cyan means real time); the day and date stay labels */
+#clock.time { padding: 0 5px; color: @live; font-weight: 600; font-feature-settings: "tnum"; }
 #custom-date { padding: 0 12px 0 5px; border-radius: 0 4px 4px 0; color: @dim; }
 #datetime:hover #clock.day, #datetime:hover #custom-date { color: @editor; }
 
@@ -287,7 +288,7 @@ box:hover > #custom-power {
 /* route: a connected network wears the connection color on its icon, name and signal bar (the
    name is the route's); the tint stays neutral like every chip's */
 #network {
-    color: @route;
+    color: @live;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
                       linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
@@ -420,7 +421,7 @@ box:hover > #custom-power {
 }
 /* time: "warm now" holds night on the screen whatever the hour, so on-screen colors are not true.
    Automatic (the schedule) is the resting state and stays neutral. */
-#custom-nightlight.warm { color: @time; }
+#custom-nightlight.warm { color: @held; }
 #custom-nightlight.off {
     color: @dim;
     background-image: -gtk-recolor(url("icons/moon-symbolic.svg")), none;
@@ -493,7 +494,7 @@ box:hover > #custom-power {
     background-position: 6px center;
     background-size: 16px 16px;
 }
-#bluetooth.connected { padding-left: 28px; color: @route; }
+#bluetooth.connected { padding-left: 28px; color: @live; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     color: @dim;
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));

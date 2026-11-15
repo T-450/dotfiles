@@ -16,8 +16,8 @@ Color appears only where it carries meaning (the Quiet Instrument rule behind An
 | color | role | means | where |
 |---|---|---|---|
 | `signal` | `accent` | the one thing that matters now | the viewed tag (14x2 mark and tint under a bright number) |
-| `route` | `link` | a live connection | network while connected (icon, name, signal bar); bluetooth while a device is connected |
-| `time` | `badge` | time held by hand | night light forced warm ("warm now"): the screen's colors are not true |
+| `live` | `link` | real time, a live connection | the clock's time; network while connected (icon, name, signal bar); bluetooth while a device is connected |
+| `held` | `badge` | time held by hand | night light forced warm ("warm now"): the screen's colors are not true |
 | `ok` | `success` | a good outcome in progress | battery while charging |
 | `warn` | `warning` | high, or a standing exception | cpu from 85%; memory and disk from 80%; temperature from 80 C; battery at 20% and below on battery; the window-state chip while a window is pinned |
 | `crit` | `error` | critical, irreversible, or asking now | an urgent tag; memory and disk from 90%; temperature from 95 C; battery at 10% and below; a held critical notification (count and dot); recording in progress; power under the pointer |

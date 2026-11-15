@@ -6,7 +6,7 @@
 @define-color sheen   {{selection_fg}};
 
 /* Text: text is the editor color lifted toward the bright foreground, dim the same color blended
-   with the muted one. text = primary facts (the time, occupied tags, the layout), editor =
+   with the muted one. text = primary facts (occupied tags, the layout), editor =
    secondary facts and controls (every chip's icon, value and level bar), dim = labels and
    whatever is off or empty (day, date, title, empty tags, muted, disconnected). */
 @define-color text    {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
@@ -16,15 +16,17 @@
 /* Colour carries meaning or is absent (the Quiet Instrument rule). Everything on the bar is one
    of the three neutrals above unless it is one of these, each kept legible on the bar:
    signal = the one thing that matters now: the viewed tag
-   route  = a live connection: network up (its name and strength), a bluetooth device connected
-   time   = time held by hand: the night light forced warm ("warm now"), whatever the hour
-   ok     = a good outcome in progress: battery charging
-   warn   = high or asking: cpu/memory/disk/temperature high, battery low, an urgent tag
-   crit   = critical or irreversible: memory/disk/temperature critical, battery nearly empty,
-            a held critical notification, a recording in progress, power under the pointer */
+   live   = real time and live connections: the wall clock, network up (its name and strength),
+            a bluetooth device connected
+   held   = time held by hand: the night light forced warm ("warm now"), whatever the hour
+   ok     = success in progress: battery charging
+   warn   = pending: cpu/memory/disk/temperature high, battery low, a window pinned to every tag
+   crit   = failure, irreversible, or asking now: memory/disk/temperature critical, battery nearly
+            empty, an urgent tag, a held critical notification, a recording in progress, power under
+            the pointer */
 @define-color signal  {{accent|legible:bg_desktop}};
-@define-color route   {{link|legible:bg_desktop}};
-@define-color time    {{badge|legible:bg_desktop}};
+@define-color live    {{link|legible:bg_desktop}};
+@define-color held    {{badge|legible:bg_desktop}};
 @define-color ok      {{success|legible:bg_desktop}};
 @define-color warn    {{warning|legible:bg_desktop}};
 @define-color crit    {{error|legible:bg_desktop}};
