@@ -5,7 +5,7 @@ The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet ch
 ## Look
 
 - One 42px surface on the bottom edge and 8px in from the sides, drawn as a 44px window (1px ring on each side, 7px side margins, none below). The top corners have a 9px radius and the bottom corners are square on the screen edge; mango's 7px outer gaps line the windows up with the bar's ends. The mockup asks for `corner-shape: bevel` on two corners; GTK3 has none, so they are plain rounded corners. Fill, ring and 5% top sheen are `bar`, `edge` and `sheen`. The ring is listed after the sheen in `box-shadow` because GTK paints inset shadows in list order, the later one on top.
-- Every control is 28px tall, 4px apart (`spacing`), radius 4, Inter 14: the mockup's 24px and 13px opened up for legibility, with chips at 7px edges and a 5px icon gap. Wider than that, the right group outgrows its half of a 1920px bar once the bell shows a count (GTK keeps the clock centered by giving each side the same width) and the network name gets cut. Roles come from `colors.css.tmpl` (`bar`, `edge`, `text`, `dim`, `editor`, `blue`, `sky`, `teal`, `orange`, `purple`, `green`, `amber`, `red`, `tipline`, `sel`, `selfg`); every accent is kept legible on the bar (`|legible`). No color literal lives in `style.css`.
+- Every control is 28px tall, 4px apart (`spacing`), radius 4, IBM Plex Sans 14: the mockup's 24px and 13px opened up for legibility, with chips at 7px edges and a 5px icon gap. Wider than that, the right group outgrows its half of a 1920px bar once the bell shows a count (GTK keeps the clock centered by giving each side the same width) and the network name gets cut. Roles come from `colors.css.tmpl` (`bar`, `edge`, `text`, `dim`, `editor`, `blue`, `sky`, `teal`, `orange`, `purple`, `green`, `amber`, `red`, `tipline`, `sel`, `selfg`); every accent is kept legible on the bar (`|legible`). No color literal lives in `style.css`.
 - Hover is a translucent `editor` overlay under the chip's own tint. Custom modules match it on their wrapping box (`box:hover > #custom-…`): waybar puts the hover state on the box, and GTK3 doesn't pass it down to the label. Only the tags (real buttons) get the pressed overlay; waybar never sets `:active` on a label.
 - Tooltips are the design's 30px box (bar color, `tipline` ring, radius 4), 8px above the bar and never past its ends. GTK places the tooltip window itself and ignores CSS margins on it, so the window is transparent and the visible box is its inner box, whose margins are the offsets. The clock labels and the tray items carry their own 8px inset (not the group or the tray) because each anchors its tooltip to its own allocation, and GTK3 counts a CSS margin inside it.
 
@@ -25,10 +25,10 @@ Kept beyond the mockup: recording before the chips, brightness among them (amber
 
 Every module but the tags (`mango/workspaces` sets none and offers no option) and the day label has the design's tooltip: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `@text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, which reproduces the design's greys without a color literal:
 
-- NAME: `<span font_desc='Inter 11px' fgalpha='66%'>cpu</span>` (lowercase, regular, muted: labels whisper, after the Quiet Instrument philosophy behind Anodized Keylight).
+- NAME: `<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>cpu</span>` (lowercase, regular, muted: labels whisper, after the Quiet Instrument philosophy behind Anodized Keylight).
 - VALUE: plain text (13px).
-- KEYS: `<span font_desc='Inter Medium 11px' fgalpha='82%'>Super D</span>`. The design's keycap boxes can't be drawn in Pango, so the keys are plain text, space separated; they are this machine's binds (`mango/.config/mango/bind.conf`).
-- HINT: `\n<span font_desc='Inter 11px' fgalpha='66%'>Scroll ±5</span>`.
+- KEYS: `<span font_desc='IBM Plex Sans Medium 11px' fgalpha='82%'>Super D</span>`. The design's keycap boxes can't be drawn in Pango, so the keys are plain text, space separated; they are this machine's binds (`mango/.config/mango/bind.conf`).
+- HINT: `\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Scroll ±5</span>`.
 
 Scripts that print a tooltip (`waybar-temperature`, `waybar-notifications`, `waybar-layout`, `nightlight status`) build the same markup; text that can hold `& < >` is escaped there (waybar escapes its own placeholders such as `{essid}`).
 

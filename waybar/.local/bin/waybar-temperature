@@ -4,7 +4,7 @@
 # levels.css) comes from here; "critical" is added from 80 C.
 
 # the design's tooltip line: dim uppercase name, then the value (see docs/apps/waybar.md)
-name="<span font_desc='Inter 11px' fgalpha='66%'>temperature</span>  "
+name="<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>temperature</span>  "
 
 for label in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 	[[ -r $label ]] || continue

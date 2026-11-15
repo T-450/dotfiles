@@ -4,7 +4,7 @@
 @import "colors.css";
 
 window#osd {
-	border-radius: 6px;
+	border-radius: 8px;
 	border: 1px solid @osd_border;
 	background: @osd_bg;
 }
@@ -16,7 +16,7 @@ window#osd image:disabled { opacity: 0.5; }
 window#osd progressbar,
 window#osd segmentedprogress {
 	min-height: 6px;
-	border-radius: 999px;
+	border-radius: 4px;
 	background: transparent;
 	border: none;
 }

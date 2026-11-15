@@ -1,8 +1,8 @@
 # mako. Colors come from the active palette (theme/templates/mako -> colors)
 include=~/.config/mako/colors
-font=Inter 11
+font=IBM Plex Sans 11
 border-size=1
-border-radius=4
+border-radius=8
 padding=12,14
 margin=12
 width=320
@@ -30,7 +30,7 @@ markup=1
 format=%b
 default-timeout=0
 history=0
-border-radius=6
+border-radius=8
 
 [mode=do-not-disturb app-name=mango-whichkey]
 invisible=0

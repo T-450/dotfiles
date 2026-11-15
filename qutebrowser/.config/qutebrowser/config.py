@@ -4,6 +4,6 @@
 config.load_autoconfig(False)
 config.source("colors.py")
 
-c.fonts.default_family = ["Inter"]
+c.fonts.default_family = ["IBM Plex Sans"]
 c.fonts.default_size = "11pt"
 c.fonts.web.family.fixed = "JetBrainsMono Nerd Font"

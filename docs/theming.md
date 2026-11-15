@@ -179,4 +179,4 @@ To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore
 line in its config, and a `reload.sh`: one that reloads it live, or, for an app that reads its colors
 only at startup, one that sends a notification while it runs.
 
-Fonts: Inter (UI), JetBrains Mono Nerd Font (mono). They are not part of the palette.
+Fonts: IBM Plex Sans (UI), JetBrains Mono Nerd Font (mono, everything on the character grid). They are not part of the palette.

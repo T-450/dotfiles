@@ -1,4 +1,4 @@
-inter-font               # UI
+inter-font               # the previous UI face, unused (IBM Plex Sans replaced it): sudo pacman -Rns inter-font, then drop this line
 ttf-jetbrains-mono-nerd  # mono (terminal, bar)
 noto-fonts
 noto-fonts-cjk

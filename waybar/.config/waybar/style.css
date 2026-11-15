@@ -1,5 +1,5 @@
 /* waybar, "taskbar": a 42px surface (44px window with its 1px ring) on the bottom edge, 8px in
-   from the sides, one control language: 28px controls 4px apart, radius 4, Inter 14 (the mockup's 24px
+   from the sides, one control language: 28px controls 4px apart, radius 4, IBM Plex Sans 14 (the mockup's 24px
    and 13px, opened up for legibility). No boxy pills, no powerline arrows: the design
    mockup draws each module as a quiet chip on the bar.
    The bar's ring is an inset hairline (listed last: GTK paints inset shadows in list order, the
@@ -17,7 +17,7 @@
 @import "levels.css";
 
 * {
-    font-family: "Inter";
+    font-family: "IBM Plex Sans";
     font-size: 14px;
     font-weight: 400;
     min-height: 0;
@@ -45,7 +45,7 @@ window#waybar > box {
    to the screen) and ignores CSS margins on it, so the window stays transparent and the visible
    tooltip is its inner box: the box's margins are the transparent offsets. GtkTooltipWindow gives
    that box 6px widget margins on top of CSS, hence -6px top (none), 2px sides (8px: the bar's
-   inset from the screen edges) and -2px bottom (4px more above the bar). Pango sets Inter 13px on
+   inset from the screen edges) and -2px bottom (4px more above the bar). Pango sets IBM Plex Sans 13px on
    a 17px line where the design has 16, so the label's bottom padding is 5px. Tooltips keep the
    design's 13px; only the bar grew. */
 tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
@@ -98,17 +98,16 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
 
 /* power: the one control that ends the session, so it reads apart from everything else. It takes
    the bar's corner behind its own divider, 8px from it (4px margin + 4px spacing) and 4px more
-   than anything else from the bar's end, and is the only red chip: red icon on a red tint, a red
-   ring and a faint red glow, cut on two corners (round top-left and bottom-right, square
-   elsewhere). GTK clips the glow at the module's margin box on the right, so its 3px blur fades
-   out inside the 4px margin. Hover lights it, after the shared overlay above. */
+   than anything else from the bar's end, and is the only red chip: red icon on a red tint and a
+   red ring, no glow, cut on two corners (round top-left and bottom-right, square elsewhere).
+   Hover lights the ring, after the shared overlay above. */
 #custom-power {
     min-width: 16px;
     min-height: 28px;
     margin-left: 4px;
     margin-right: 4px;
     padding: 0 9px;
-    border-radius: 6px 0 6px 0;
+    border-radius: 4px 0 4px 0;
     color: @red;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/power-symbolic.svg")),
@@ -116,11 +115,11 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-repeat: no-repeat;
     background-position: center, 0 0;
     background-size: 16px 16px, 100% 100%;
-    box-shadow: inset 0 0 0 1px alpha(@red, 0.55), 0 0 3px alpha(@red, 0.35);
+    box-shadow: inset 0 0 0 1px alpha(@red, 0.55);
 }
 box:hover > #custom-power {
     background-color: alpha(@red, 0.14);
-    box-shadow: inset 0 0 0 1px @red, 0 0 3px alpha(@red, 0.65);
+    box-shadow: inset 0 0 0 1px @red;
 }
 
 /* tags: all nine, 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
@@ -221,7 +220,7 @@ box:hover > #custom-power {
     min-height: 28px;
     margin: 8px 0 8px 4px;
     padding: 0 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 600;
     color: @amber;
     background-color: alpha(@amber, 0.14);
@@ -232,7 +231,7 @@ box:hover > #custom-power {
     min-height: 28px;
     margin: 8px 0 8px 4px;
     padding: 0 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-weight: 600;
     color: @text;
     background-color: alpha(@text, 0.08);
