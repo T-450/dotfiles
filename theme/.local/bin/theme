@@ -122,10 +122,19 @@ def keycap(value, over, where):
 
 
 def keycap_defaults(v):
-    """Keycap roles from a palette's own: modifiers on the hover grey, the action key on the accent."""
+    """Keycap roles from a palette's own: modifiers on the hover grey, the action key on the accent,
+    each cap moved toward the background until its legend reads at AA."""
+    legend = v["fg_bright"]
+
+    def cap(c):
+        for i in range(21):
+            m = mix(c, v["bg_desktop"], i / 20)
+            if contrast(legend, m) >= TEXT_CONTRAST:
+                return m
+        return v["bg_desktop"]
     return {
-        "mod": mix(v["bg_hover"], v["bg_desktop"], 0.3), "cap": mix(v["bg_hover"], v["fg_muted"], 0.3),
-        "accent": v["accent"], "legend": v["fg_bright"], "frame": v["fg_secondary"], "amber": v["warning"],
+        "mod": cap(mix(v["bg_hover"], v["bg_desktop"], 0.3)), "cap": cap(mix(v["bg_hover"], v["fg_muted"], 0.3)),
+        "accent": cap(v["accent"]), "legend": legend, "frame": v["fg_secondary"], "amber": v["warning"],
     }
 
 

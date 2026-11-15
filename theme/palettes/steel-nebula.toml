@@ -1,45 +1,46 @@
-# Steel Nebula: the NuPhy Air60 HE, sampled from its product photos (nuphybrasil.com.br,
-# nuphy-air60-he). Neutrals are the keyboard's own: the black modifier caps and charcoal shell
-# for the surfaces, the grey letter caps for borders, the aluminium frame for secondary text, the
-# white legends for bright text. The violet accent caps are the brand hue (accent, selection,
-# links, cursor); the amber sub-legends are warnings. Every text role reads at WCAG AA (4.5:1) on
-# bg_desktop, bg_surface and bg_widget; fg_muted and fg_disabled are for non-essential text.
+# Steel Nebula: the NuPhy Air60 HE's charcoal, steel and violet, following a community scheme as
+# closely as possible: Precious Dark Eleven (4lex4, github.com/precious-themes/base16-precious-schemes,
+# via tinted-theming), the nearest of 624 tinted-theming schemes to the keyboard's colors (CIELAB
+# distance over background, text, violet, amber, red, green and surface). Every color it defines is
+# used as is (baseNN in the comments); the violet base0E is the accent. Derived, since the scheme has
+# no brighter text tier: fg_bright, selection and the cursor. Every text role reads at WCAG AA (4.5:1)
+# on bg_desktop, bg_surface and bg_widget; fg_muted and fg_disabled are for non-essential text.
 
 [meta]
 name = "Steel Nebula"
 variant = "dark"
-source = "nuphy air60 he product photos"
+source = "base16:precious-dark-eleven (tinted-theming), violet accent; keycaps: NuPhy Air60 HE"
 
 [colors]
-bg_desktop      = "#19191b"  # darker than the shell, so caps and panels sit on it
-bg_surface      = "#202022"  # bar, panels
-bg_widget       = "#28282b"  # menus, notifications, popups
-bg_hover        = "#38383a"  # the charcoal shell
-border_hairline = "#2e2e30"  # the black modifier caps
-border_inactive = "#47464a"  # between the shell and the grey letter caps
-fg_text         = "#d6d6d8"
-fg_editor       = "#d2d2d4"
-fg_secondary    = "#9d9d9d"  # the aluminium frame
-fg_muted        = "#8a898e"
-fg_bright       = "#f2f2f2"  # the white legends
-fg_disabled     = "#5c5b60"
-accent          = "#9386f2"  # the violet accent caps, lifted to read as text on the surfaces
-badge           = "#6a5bc7"  # the violet accent caps as photographed
-selection_bg    = "#3b3274"  # the deep translucent violet
-selection_fg    = "#f2f2f2"
-link            = "#a197f4"
-error           = "#ef7d6f"
-warning         = "#dcb04a"  # the amber sub-legends
-success         = "#7fcf9b"
+bg_desktop      = "#1c1e20"  # base00
+bg_surface      = "#232527"  # between base00 and base01
+bg_widget       = "#292b2d"  # base01
+bg_hover        = "#37393a"  # base02
+border_hairline = "#2e3032"  # between base01 and base02
+border_inactive = "#3f4143"  # base02, a step lighter
+fg_text         = "#b8b7b6"  # base05
+fg_editor       = "#b8b7b6"  # base05
+fg_secondary    = "#a8a8a7"  # base04
+fg_muted        = "#858585"  # base03
+fg_bright       = "#e4e3e2"  # base05 lifted toward the keyboard's white legends
+fg_disabled     = "#5b5c5d"  # base02 toward base03
+accent          = "#b799fe"  # base0E, the violet
+badge           = "#8f7ad0"  # base0E toward base00
+selection_bg    = "#4a4268"  # base0E toward base00
+selection_fg    = "#e4e3e2"
+link            = "#68b0ee"  # base0D
+error           = "#ff8782"  # base08
+warning         = "#d0a543"  # base0A, the amber
+success         = "#95b658"  # base0B
 shadow          = "#000000"
 
 [terminal]
-fg     = "#d2d2d4"
-bg     = "#19191b"
-cursor = "#a197f4"
+fg     = "#b8b7b6"  # base05
+bg     = "#1c1e20"  # base00
+cursor = "#b799fe"  # base0E
 ansi = [
-	"#2e2e30", "#ef7d6f", "#7fcf9b", "#dcb04a", "#7f9ef2", "#a197f4", "#6cc8c0", "#d2d2d4",
-	"#626165", "#f59a8e", "#a2e0b7", "#f0a35a", "#a5b9f7", "#bdb5f8", "#91ddd6", "#f2f2f2",
+	"#292b2d", "#ff8782", "#95b658", "#d0a543", "#68b0ee", "#b799fe", "#42bda7", "#b8b7b6",
+	"#6b6b6c", "#ff8782", "#95b658", "#ea9755", "#68b0ee", "#f382d8", "#42bda7", "#e4e3e2",
 ]
 
 [keycaps]
