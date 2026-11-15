@@ -50,7 +50,7 @@ PY
 pass "leader tree: every mode is opened, binds Escape, one-shots return to default"
 
 # query <TAB> expected first row (a|b: either is right)
-out=$(MANGO_KEYS_CONF=$conf python3 - "$keys" <<'PY'
+out=$(MANGO_KEYS_CONF=$conf PYTHONDONTWRITEBYTECODE=1 python3 - "$keys" <<'PY'
 import sys
 from importlib.machinery import SourceFileLoader
 mk = SourceFileLoader("mk", sys.argv[1]).load_module()
