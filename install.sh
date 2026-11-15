@@ -272,7 +272,17 @@ enable_units() {
 
 # ---------------------------------------------------------------- check
 check() {
-	local bad=0 out f pkgs
+	local bad=0 out f pkgs a
+	# an app with dot-entries but no .stow-local-ignore is never stowed, and stow then sees nothing to
+	# compare: name it (copy any app's .stow-local-ignore into it)
+	for a in $(apps); do
+		[[ -e $repo/$a/.stow-local-ignore ]] && continue
+		compgen -G "$repo/$a/.[!.]*" >/dev/null || continue
+		for f in "$repo/$a"/.[!.]*; do
+			case ${f##*/} in .gitignore | .stow-local-ignore) continue ;; esac
+			echo "home: $a has ${f##*/} but no .stow-local-ignore, so install.sh --link skips it" && bad=1 && break
+		done
+	done
 	mapfile -t pkgs < <(stow_packages)
 	if ((${#pkgs[@]})); then
 		out=$(stow_ -n -v "${pkgs[@]}" 2>&1 | grep -E '^LINK:|existing target|cannot stow' || true)
