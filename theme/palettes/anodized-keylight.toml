@@ -1,11 +1,13 @@
-# Anodized Keylight: the Quiet Instrument philosophy (an instrument sits dark and still, then says
-# exactly what happened). The ground is anodised alloy: near-blacks with a faint violet cast, one
-# step lighter per layer of depth (alloy 0-3), cool graphite borders, brushed aluminium text. Colour
-# is a scarce currency, from light behind keycaps: one signal, the blue, for the single thing that
-# matters (focus, cursor), the deep cobalt for the focused row; its neighbours on the same lit band
-# have fixed jobs: cyan for routes and links, violet for time and its control. Green, amber and rose
-# are outside the band, for outcomes only. Nothing else is saturated.
-# Every text role reads at WCAG AA on alloy 0-3; fg_disabled (alloy 6) is the one exception.
+# Anodized Keylight: the Quiet Instrument philosophy. An instrument sits dark and still until
+# something real happens, then says exactly that. The ground is anodised alloy (alloy 0-9): near-blacks
+# with a faint violet cast, one step lighter per layer of depth, brushed aluminium text. Exactly one
+# signal, the lit key-face blue, with one job: focus and the single operation running now. Every other
+# colour is a state and shows only while something is in it: cyan live (real time, the wall clock, a
+# connection), violet held (virtual time, a clock that waits), green, amber, rose for success, pending,
+# failure. No blends: no colour that exists only as a step between two others, so the selected row is a
+# neutral alloy fill marked by the signal, not a tinted one. The signal and held hues sit at least
+# 0.08 OKLCH from the stock indigo/violet/purple of generated interfaces. Every text role reads at AA on
+# alloy 0-3, except held (4.35:1 on alloy-3: keep it on alloy 0-2) and fg_disabled (alloy-6).
 
 [meta]
 name = "Anodized Keylight"
@@ -25,11 +27,11 @@ fg_secondary    = "#9f9caa"  # between alloy-7 and alloy-8: secondary facts rece
 fg_muted        = "#8a8796"  # alloy-7, labels whisper
 fg_bright       = "#ecebf0"  # alloy-9, primary facts
 fg_disabled     = "#625f72"  # alloy-6
-accent          = "#5b86f7"  # signal-blue: the one signal (focus border, cursor, ring)
-badge           = "#9a86f4"  # signal-violet: time and its control
-selection_bg    = "#21359c"  # signal-cobalt toward navy: the focused row (fg_text 4.9:1 on it)
+accent          = "#12a3fc"  # signal: focus and the one operation running now (5.9:1 on alloy-3)
+badge           = "#a66ccb"  # held: virtual time, a clock that waits (4.8:1 on alloy-2)
+selection_bg    = "#2f2d3a"  # alloy-4: the focused row is a neutral fill marked by the signal (fg_text 6.5:1)
 selection_fg    = "#ecebf0"  # alloy-9
-link            = "#5cdcec"  # signal-cyan: routes and links
+link            = "#5cdcec"  # live: real time, the wall clock, a connection, a link
 error           = "#f2607e"  # rose
 warning         = "#f4b862"  # amber
 success         = "#5fe2a8"  # green
@@ -38,20 +40,21 @@ shadow          = "#000000"
 [terminal]
 fg     = "#b4b2bd"  # alloy-8
 bg     = "#08070c"  # alloy-0
-cursor = "#5b86f7"  # signal-blue
-# the lit band (cyan, sky, blue, indigo, violet), the outcomes and the alloy greys; nothing else
+cursor = "#12a3fc"  # signal
+# the signal, the two state hues, the three outcomes and the alloy greys; the bright slots repeat
+# them (no extra hues)
 ansi = [
-	"#211f2a", "#f2607e", "#5fe2a8", "#f4b862", "#5b86f7", "#7779f5", "#5cdcec", "#b4b2bd",
-	"#8a8796", "#f2607e", "#5fe2a8", "#e9cd80", "#93acfa", "#9a86f4", "#5bb2f6", "#ecebf0",
+	"#211f2a", "#f2607e", "#5fe2a8", "#f4b862", "#12a3fc", "#a66ccb", "#5cdcec", "#b4b2bd",
+	"#8a8796", "#f2607e", "#5fe2a8", "#f4b862", "#12a3fc", "#a66ccb", "#5cdcec", "#ecebf0",
 ]
 
 [keycaps]
 # NuPhy Air60 HE (nuphy.com product photos): black modifier caps, grey letter caps, white legends,
-# the aluminium frame. The accent cap is the one lit key: mango-keys puts it under the selected
-# row's action key only, so here it is the signal (blue, 40% toward the cobalt so the legend reads
-# at AA), not the board's violet. Every legend must read at AA on its cap, or theme fails.
+# the aluminium frame. No lit key: the signal reads 2.45:1 under a white legend, and focus is the
+# signal bar at the selected row's left edge, so the accent cap is the plain grey cap. Every legend
+# must read at AA on its cap, or theme fails.
 mod    = "#2e2e30"
 cap    = "#626165"
-accent = "#4466d3"  # signal-blue toward signal-cobalt: the selected key (legend 4.6:1)
+accent = "#626165"  # the grey cap: focus is the row bar, not a lit key
 legend = "#f2f2f2"
 frame  = "#9d9d9d"
