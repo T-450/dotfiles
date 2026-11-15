@@ -17,10 +17,10 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | audio | `playerctl` | 2.4.1-5 |
 | base | `base` | 3-3 |
 | base | `base-devel` | 1-2 |
-| base | `linux` | 7.3.4.arch1-1 |
-| base | `linux-zen` | 7.3.4.zen2-1 |
+| base | `linux` | 7.3.4.arch1-2 |
+| base | `linux-zen` | 7.3.4.zen2-2 |
 | base | `linux-firmware` | 20261019-1 |
-| base | `kernel-modules-hook` | not installed |
+| base | `kernel-modules-hook` | 0.1.7-3 |
 | base | `mkinitcpio` | 42.2-1 |
 | base | `grub` | 2:2.16-1 |
 | base | `efibootmgr` | 18-4 |
@@ -29,7 +29,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `zram-generator` | 1.2.1-1 |
 | base | `networkmanager` | 1.58.1-3 |
 | base | `iwd` | 3.12-2 |
-| base | `wireless-regdb` | not installed |
+| base | `wireless-regdb` | 2026.09.03-1 |
 | base | `ufw` | 0.36.2-7 |
 | base | `less` | 1:710-1 |
 | base | `unzip` | 6.0-23 |
@@ -48,8 +48,8 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clang | `lldb` | 23.1.5-1 |
 | clang | `mold` | 3.0.0-4 |
 | clang | `meson` | 1.12.1-2 |
-| claude | `claude-code` | 2.1.322-1 |
-| claude | `claude-desktop` | 5.1231.2-1 |
+| claude | `claude-code` | 2.1.325-1 |
+| claude | `claude-desktop` | 5.11492.5-1 |
 | clipboard | `wl-clipboard` | 1:2.3.0-1 |
 | clipboard | `cliphist` | 1:0.7.0-2 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
@@ -140,11 +140,11 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `vulkan-intel` | 1:26.2.7-1 |
 | thinkpad | `fprintd` | 1.94.5-2 |
 | thinkpad | `fwupd` | 2.1.9-1 |
-| thinkpad | `bolt` | not installed |
+| thinkpad | `bolt` | 0.9.11-3 |
 | thinkpad | `tlp` | 1.11.0-1 |
 | thinkpad | `powertop` | 2.16.1-1 |
-| thinkpad | `smartmontools` | not installed |
-| thinkpad | `nvme-cli` | not installed |
+| thinkpad | `smartmontools` | 7.5-2 |
+| thinkpad | `nvme-cli` | 3.2-2 |
 | thunar | `thunar` | 4.20.10-1 |
 | thunar | `thunar-archive-plugin` | 0.6.0-1 |
 | thunar | `thunar-media-tags-plugin` | 0.6.0-1 |
