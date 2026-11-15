@@ -19,7 +19,7 @@
     // its settings here. The states live apart because they are 7 x 101 repetitive lines.
     "include": ["~/.config/waybar/levels.json"],
 
-    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/keymode", "mango/window"],
+    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/keymode", "custom/winstate", "mango/window"],
     "modules-center": ["group/datetime"],
     "modules-right": [
         "custom/record", "network", "pulseaudio", "backlight", "cpu", "memory",
@@ -60,6 +60,16 @@
         "restart-interval": 1,
         "format": "{}",
         "on-click": "mmsg dispatch switch_layout"
+    },
+
+    // windows pinned, kept on top or minimized (states nothing else shows); hidden when none is.
+    // mango sends no event for them, so mango-state signals it (11); it also rechecks every 10s
+    "custom/winstate": {
+        "exec": "~/.local/bin/waybar-winstate",
+        "return-type": "json",
+        "interval": 10,
+        "signal": 11,
+        "on-click": "~/.local/bin/mango-state --clear"
     },
 
     // the open key mode (super+esc, super+n or super+m); hidden in the default mode

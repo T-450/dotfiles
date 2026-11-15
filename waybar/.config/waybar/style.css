@@ -215,6 +215,19 @@ box:hover > #custom-power {
 #custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 #custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 
+/* window states nothing else shows (pinned, on top, minimized): an amber chip, the pinned border's
+   color, so a hidden state is never a surprise */
+#custom-winstate {
+    min-height: 28px;
+    margin: 8px 0 8px 4px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: @amber;
+    background-color: alpha(@amber, 0.14);
+}
+
 /* the open key mode (super+esc, super+n, super+m): a chip in the group's hue (the cheatsheet's) */
 #keymode {
     min-height: 28px;

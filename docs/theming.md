@@ -98,7 +98,7 @@ Which apps use each role (generated from the templates):
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme |
-| `warning` | claude, fastfetch, ghostty, gtk, lazygit, mousepad, pi, qutebrowser, theme |
+| `warning` | claude, fastfetch, ghostty, gtk, lazygit, mango, mousepad, pi, qutebrowser, theme |
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (Ghostty; zsh and vim

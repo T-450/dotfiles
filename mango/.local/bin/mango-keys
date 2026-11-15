@@ -10,7 +10,7 @@ usage: mango-keys              open the cheatsheet (a floating Ghostty running f
 
 bind.conf: `## Name` starts a group, `#: text ~ words` describes the bind below it (the words after
 ` ~ ` are searchable, not shown), `key_mode=NAME` starts a mode's binds. A mode's keys are shown
-after the keys that open it (`setkeymode,NAME`), so leader binds read `␣ › W › F`.
+after the keys that open it (`setkeymode,NAME`), so its binds read `Super+M › H`.
 Colors come from ~/.config/theme/colors.sh (the active palette); each group has its own hue.
 """
 import html
@@ -21,6 +21,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 
 CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
@@ -32,10 +33,9 @@ SELF = os.path.realpath(__file__)
 
 # group (the `## ` name, lowercased) -> palette role of its hue; the rest use fg_bright
 HUES = {
-    "focus": "fg_bright", "launch": "success", "leader": "fg_bright", "tags": "ansi3", "tag": "ansi3",
-    "media": "ansi4", "apps": "success", "window": "ansi5", "resize": "ansi5", "layout": "ansi6",
-    "monitor": "ansi11", "capture": "error", "notifications": "ansi13", "session": "ansi1",
-    "mouse": "fg_muted", "touchpad": "fg_muted",
+    "go": "fg_bright", "open": "success", "carry": "ansi3", "window": "ansi5", "layout": "ansi6",
+    "capture": "error", "media": "ansi4", "session": "ansi1", "notifications": "ansi13",
+    "monitor": "ansi11", "mouse": "fg_muted", "touchpad": "fg_muted",
 }
 # mango's dispatchers -> a description, for binds without a `#: ` line; {0} is the first argument
 ACTIONS = {
@@ -48,7 +48,7 @@ SYNONYMS = {  # extra words for the generated rows
 }
 KEYS = {  # how a key name reads on a cap
     "return": "Enter", "escape": "Esc", "backslash": "\\", "slash": "/", "backspace": "Bksp",
-    "left": "←", "right": "→", "up": "↑", "down": "↓", "tab": "Tab", "space": "␣", "print": "PrtSc",
+    "left": "←", "right": "→", "up": "↑", "down": "↓", "tab": "Tab", "space": "Space", "print": "PrtSc",
     "equal": "=", "minus": "-", "bracketleft": "[", "bracketright": "]",
     "btn_left": "L-click", "btn_right": "R-click", "btn_middle": "M-click",
     "xf86audioraisevolume": "Vol+", "xf86audiolowervolume": "Vol-", "xf86audiomute": "Mute",
@@ -56,7 +56,7 @@ KEYS = {  # how a key name reads on a cap
     "xf86audioplay": "Play", "xf86audionext": "Next", "xf86audioprev": "Prev",
 }
 KEY_WORDS = {  # what you may type to find a key
-    "␣": "space leader", "Enter": "enter return", "Esc": "esc escape", "←": "left arrow",
+    "Enter": "enter return", "Esc": "esc escape", "←": "left arrow",
     "→": "right arrow", "↑": "up arrow", "↓": "down arrow", "/": "slash", "PrtSc": "print prtsc",
     "Tab": "tab", "=": "equal plus", "-": "minus", "[": "bracket", "]": "bracket",
 }
@@ -70,8 +70,6 @@ def step(mods, key):
     """One chord: modifier caps and the key cap."""
     caps = [MODS[m.lower()] for m in mods.split("+") if m.lower() in MODS]
     label = KEYS.get(key.lower(), key.upper() if len(key) == 1 else key)
-    if caps == ["Super"] and label == "␣":  # the leader reads as one cap
-        return ["␣"]
     return caps + [label]
 
 
@@ -341,9 +339,17 @@ def visible(s):
     return len(re.sub(r"\x1b\[[0-9;]*m", "", s))
 
 
-def chip(ink, group, width):
-    name = group.upper()
-    return f"{ink.fg(ink.hue(group))}\x1b[1m{name}\x1b[0m" + " " * (width - len(name))
+# The grid. A cap's background fills its cell from top to bottom, so caps on consecutive lines would
+# touch: every view keeps one line between rows of caps (fzf's --gap in the list, a blank line in the
+# card, a thin spacer line in the popup). Columns are GUTTER cells apart, and caps are right-aligned
+# so the key that names the action always sits next to its description.
+GUTTER = 2
+MARGIN = 3  # the card's left margin: the mark of the selected row sits in it
+EDGE = 2  # fzf's margin in cells; with Ghostty's padding, 34 px on every side
+
+
+def chip(ink, group):
+    return f"{ink.fg(ink.hue(group))}\x1b[1m{group.upper()}\x1b[0m"
 
 
 def highlight(ink, desc, marks):
@@ -361,50 +367,69 @@ def highlight(ink, desc, marks):
     return base + "".join(out) + "\x1b[0m"
 
 
+def list_field(rs, caps):
+    """Width of the list's first field: the group's name on the left, the caps on the right, GUTTER apart
+    in its tightest row. From every row, not just the matches, so the layout doesn't shift as you type."""
+    return max(len(r["group"]) + GUTTER + visible(k) for r, k in zip(rs, caps))
+
+
 def list_lines(query):
     rs, ink = rows(), Ink(palette())
-    # fixed columns from every row, not just the matches, so the layout doesn't shift as you type
-    col = max(visible(ink.keys(r)) for r in rs) + 3
-    gw = max(len(r["group"]) for r in rs) + 2
+    caps = [ink.keys(r) for r in rs]
+    field = list_field(rs, caps)
     out = []
     for i, _, marks in rank(query, rs):
         r = rs[i]
-        caps = ink.keys(r)
-        pad = " " * (col - visible(caps))
-        out.append(f"{i}\t {chip(ink, r['group'], gw)}{caps}{pad}{highlight(ink, r['desc'], marks)}")
+        pad = " " * (field - len(r["group"]) - visible(caps[i]))
+        out.append(f"{i}\t {chip(ink, r['group'])}{pad}{caps[i]}{' ' * GUTTER}{highlight(ink, r['desc'], marks)} ")
     return out
 
 
 def entry(rs, mode):
-    """How a mode is opened, as text: Super+Space › W."""
+    """How a mode is opened, as text: Super+M."""
     for r in rs:
         if r["action"] == "setkeymode" and r["args"] and r["args"][0] == mode:
-            return " › ".join("+".join("Super+Space" if k == "␣" else k for k in c) for c in r["steps"])
+            return " › ".join("+".join(c) for c in r["steps"])
     return ""
 
 
+def card_caps(ink, group):
+    """Each row's caps as its group's card shows them. A mode's rows drop the keys that open it when the
+    card also shows the row that opens it, and read `› H` below that row."""
+    shown = [r["steps"] for r in group]
+    then = f"{ink.fg(ink.c('fg_muted'))}›\x1b[0m "
+    return [then + ink.keys(dict(r, steps=r["steps"][-1:])) if r["steps"][:-1] in shown else ink.keys(r)
+            for r in group]
+
+
 def card(i):
-    """A group as keycaps, two rows each (legend over a darker skirt), for fzf's preview pane."""
+    """A group's keys for fzf's preview pane: title, then one row of caps every other line."""
     rs, ink = rows(), Ink(palette())
+    if not i.isdigit():  # no row: nothing matched the query
+        return ""
     sel = rs[int(i)]
     group = [r for r in rs if r["group"] == sel["group"]]
-    hue = ink.hue(sel["group"])
-    title = " ".join(sel["group"].upper())
-    how = entry(rs, sel["mode"]) if sel["mode"] not in ("default", "common") else ""
-    out = ["", f"  {ink.fg(hue)}\x1b[1m{title}\x1b[0m", ""]
-    if how:
-        out[-1] = f"  {ink.fg(ink.c('fg_muted'))}{how}\x1b[0m"
-        out.append("")
-    width = max(visible(ink.keys(dict(r, steps=r["steps"][-1:]))) for r in group)
-    for r in group:
-        caps = ink.keys(dict(r, steps=r["steps"][-1:]))
-        n = visible(caps)
-        mark = f"{ink.fg(hue)}▌\x1b[0m" if r is sel else " "
-        desc_c = ink.c("fg_bright") if r is sel else ink.c("fg_text")
-        # right-aligned caps: every operation key sits in one column, modifiers to its left
-        out.append(f" {mark} {' ' * (width - n)}{caps}   {ink.fg(desc_c)}{r['desc']}\x1b[0m")
-        out.append("")  # a line between caps, like the gap between keycap rows
-    return "\n".join(out)
+    caps, hue = card_caps(ink, group), ink.hue(sel["group"])
+    width = max(map(visible, caps))
+    cols, lines = (int(os.environ.get(v) or 0) for v in ("FZF_PREVIEW_COLUMNS", "FZF_PREVIEW_LINES"))
+    room = max(cols - MARGIN - width - GUTTER, 20) if cols else 200  # for the description
+    head = [f"{' ' * MARGIN}{ink.fg(hue)}\x1b[1m{' '.join(sel['group'].upper())}\x1b[0m", ""]
+    body, at = [], 0
+    for r, k in zip(group, caps):
+        mark, tone = (f"{ink.fg(hue)}▌\x1b[0m", "fg_bright") if r is sel else (" ", "fg_text")
+        if r is sel:
+            at = len(body)
+        # a description wider than the pane continues on the line between caps
+        text = textwrap.wrap(r["desc"], room) or [""]
+        text += [""] * (len(text) % 2)
+        body.append(f" {mark} {' ' * (width - visible(k))}{k}{' ' * GUTTER}{ink.fg(ink.c(tone))}{text[0]}\x1b[0m")
+        body += [f"{' ' * (MARGIN + width + GUTTER)}{ink.fg(ink.c(tone))}{t}\x1b[0m" if t else "" for t in text[1:]]
+    body.pop()
+    if lines and len(head) + len(body) > lines:  # a group taller than the pane: the rows around the selected one
+        room = (lines - len(head)) // 2 * 2
+        top = max(0, min(at - room // 2, len(body) - room))
+        body = body[top - top % 2:][:room]
+    return "\n".join(head + body)
 
 
 def pango(mode):
@@ -435,29 +460,45 @@ def pango(mode):
 
 # ---------------------------------------------------------------- the window
 
+# the modifiers you hold and the groups they reach, for the legend under the list
+LAYERS = [("Super", ("go", "open")), ("+Shift", ("carry",)), ("+Alt", ("window",)), ("+Ctrl", ("layout",))]
+
+
 def tui():
-    ink, me = Ink(palette()), SELF
+    rs, ink, me = rows(), Ink(palette()), SELF
     c = ink.c
     colors = ",".join([
         f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('warning')}", f"fg+:{c('fg_bright')}",
         f"bg+:{c('bg_hover')}", f"hl+:{c('warning')}", f"info:{c('fg_muted')}", f"prompt:{c('ansi5')}",
         f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"header:{c('fg_muted')}",
+        f"footer:{c('fg_muted')}", f"ghost:{c('fg_disabled')}",
         f"border:{c('border_hairline')}", f"separator:{c('border_hairline')}",
-        f"preview-bg:{c('bg_surface')}", f"preview-border:{c('border_hairline')}",
+        f"preview-bg:{c('bg_desktop')}", f"preview-border:{c('border_hairline')}",
         f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
     ])
-    lead = f"{ink.cap('␣', mix(ink.c('fg_bright'), ink.c('bg_desktop'), 0.45), ink.c('fg_bright'))}"
-    header = (f"{lead} {ink.fg(c('fg_muted'))}leader = Super+Space   "
-              f"› press in turn   + hold together   type to search, Esc closes\x1b[0m")
+    text, dim = ink.fg(c("fg_text")), ink.fg(c("fg_muted"))
+    legend = "   ".join(f"{text}{mod}\x1b[0m " + f"{dim} · ".join(chip(ink, g) for g in groups) for mod, groups in LAYERS)
+    legend = f" {legend}   {text}Esc\x1b[0m {dim}closes\x1b[0m"
+    # The panes: the list and the card show the same descriptions, so both get the same room for them
+    # (all of the longest if the window is wide enough) after their own caps. fzf itself takes its
+    # margins, the pointer, a spare column beside the list and the pane's border and padding.
+    caps, groups = [ink.keys(r) for r in rs], {}
+    for r in rs:
+        groups.setdefault(r["group"], []).append(r)
+    in_list = 1 + list_field(rs, caps) + GUTTER + 1
+    in_card = MARGIN + max(visible(k) for g in groups.values() for k in card_caps(ink, g)) + GUTTER
+    free = shutil.get_terminal_size().columns - 2 * EDGE - 4 - in_list - in_card
+    pane = in_card + max(min(max(len(r["desc"]) for r in rs), free // 2), 10)
     rank_cmd = f"{me} --rank {{q}}"
     # the first list: fzf runs this when its input is a terminal (instead of its default `find`)
     os.environ["FZF_DEFAULT_COMMAND"] = f"{shlex.quote(me)} --rank ''"
     os.execvp("fzf", [
         "fzf", "--ansi", "--disabled", "--no-sort", "--layout=reverse", "--delimiter=\t", "--with-nth=2..",
-        "--prompt=  ❯ ", "--pointer=▌", "--marker= ", "--info=inline-right", "--no-scrollbar",
-        "--border=none", "--no-separator", "--header", header, "--header-first",
-        "--color", colors, "--margin=1,2,1,1", "--padding=0",
-        "--preview", f"{me} --card {{1}}", "--preview-window", "right,44%,border-left,noinfo",
+        "--gap", "--gap-line= ", "--highlight-line", "--prompt=❯ ", "--ghost=Type to search", "--pointer=▌", "--marker=",
+        "--info=inline-right", "--no-scrollbar", "--ellipsis=…", "--border=none", "--no-separator", "--header= ",
+        "--footer", legend, "--footer-border=none",
+        "--color", colors, f"--margin=1,{EDGE}", "--padding=0",
+        "--preview", f"{me} --card {{1}}", "--preview-window", f"right,{pane},border-left,noinfo",
         "--bind", f"change:reload({rank_cmd})+first",
         "--bind", "enter:abort,esc:abort,ctrl-c:abort",
     ])
@@ -479,7 +520,7 @@ def main():
     if a[0] == "--tui":
         return tui()
     if a[0] == "--rank":
-        print("\n".join(list_lines(" ".join(a[1:]))))
+        sys.stdout.write("".join(line + "\n" for line in list_lines(" ".join(a[1:]))))
     elif a[0] == "--card":
         print(card(a[1]))
     elif a[0] == "--pango":

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# waybar-winstate: the window-state chip (custom/winstate). Counts the states a window can be in
+# without anything else showing it: pinned to every tag, kept on top, minimized (hidden in the
+# scratchpad; the alt+esc dropdown is not counted). Titles in the tooltip; empty (hidden) when no
+# window is in any. Refreshed by mango-state (signal 11) and every 10s. Read-only: `mmsg get
+# all-clients`.
+mmsg get all-clients 2>/dev/null | jq -c --arg q "'" '
+	def esc: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
+	def head(s): "<span font_desc=\($q)Inter Semi-Bold 11px\($q) letter_spacing=\($q)507\($q) fgalpha=\($q)66%\($q)>\(s)</span>";
+	def note(s): "<span font_desc=\($q)Inter 11px\($q) fgalpha=\($q)66%\($q)>\(s)</span>";
+	def names: [.[] | "  " + ((.title // .appid) | .[0:60] | esc)] | join("\n");
+	[{key: "pinned", label: "PINNED", tip: "PINNED TO EVERY TAG", w: [.clients[] | select(.is_global)]},
+	 {key: "ontop", label: "ON TOP", tip: "KEPT ON TOP", w: [.clients[] | select(.is_overlay)]},
+	 {key: "minimized", label: "MINIMIZED", tip: "MINIMIZED", w: [.clients[] | select(.is_minimized and (.is_namedscratchpad | not))]}]
+	| map(select(.w | length > 0)) as $s
+	| if ($s | length) == 0 then {text: "", class: "none"}
+	  else {
+		text: ([$s[] | "\(.label) \(.w | length)"] | join("  ·  ")),
+		class: [$s[].key],
+		tooltip: (([$s[] | head(.tip) + "\n" + (.w | names)] | join("\n"))
+			+ "\n" + note("Click: unpin all, nothing on top · Super Alt P pin · O on top · Z minimize · Shift Z restore"))
+	  } end' || echo '{"text":"","class":"none"}'

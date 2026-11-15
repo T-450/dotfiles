@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# mango-state: change a window state the bar shows (pin, keep on top, minimize, restore, the
+# minimized-windows scratchpad), then refresh waybar's state chip (custom/winstate, signal 11):
+# mango sends no IPC event for these. `mango-state --clear` unpins every window and takes every
+# window off top (a click on the chip).
+# usage: mango-state DISPATCHER | --clear
+if [[ ${1:-} == --clear ]]; then
+	for id in $(mmsg get all-clients | jq -r '.clients[] | select(.is_global) | .id'); do
+		mmsg dispatch toggleglobal "client,$id" >/dev/null
+	done
+	for id in $(mmsg get all-clients | jq -r '.clients[] | select(.is_overlay) | .id'); do
+		mmsg dispatch toggleoverlay "client,$id" >/dev/null
+	done
+else
+	mmsg dispatch "${1:?usage: mango-state DISPATCHER | --clear}" >/dev/null
+fi
+pkill -RTMIN+11 waybar

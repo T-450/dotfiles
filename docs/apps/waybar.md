@@ -52,6 +52,7 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 - `waybar-temperature`: reads the coretemp `Package id 0` sensor (`/sys/devices/platform/coretemp.0/hwmon/hwmon*`) and prints one JSON line with text, the `lN` and `critical` classes and a tooltip. Polled every 5s.
 - `waybar-notifications`: counts notifications held by mako (`makoctl list -j`) and reads `makoctl mode`; prints the count ("99+" above 99, a zero-width space at 0 so the bell stays) with classes `unread`, `dnd` (do-not-disturb on) and `critical` (a held critical notification). Polled every 2s and refreshed by `pkill -RTMIN+10 waybar` after a click. Bell clicks: restore, middle dismisses all, right toggles do-not-disturb.
 
+- `waybar-winstate`: the window-state chip (custom/winstate): how many windows are pinned to every tag, kept on top or minimized (the alt+esc dropdown isn't counted), their titles in the tooltip, hidden when none is. mango sends no IPC event for these states, so `mango-state` signals it (`RTMIN+11`) and it rechecks every 10s; a click runs `mango-state --clear`.
 - `waybar-layout`: streams `mmsg watch monitor $WAYBAR_OUTPUT_NAME` (the first active monitor when unset) through `jq` and prints one JSON line per event: the layout symbol as the class (`style.css` draws the glyph from `#custom-layout.T` etc.) and the LAYOUT tooltip (design name, and the super+ctrl+space hint). It replaces `mango/layout`, which has no tooltip support; waybar restarts it after 1s if mmsg exits.
 
 ## Reference
@@ -113,6 +114,7 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 - `~/.local/bin/waybar-notifications`
 - `~/.local/bin/waybar-temperature`
 - `~/.local/bin/waybar-toggle`
+- `~/.local/bin/waybar-winstate`
 
 **Rendered from the palette** (`theme`):
 
