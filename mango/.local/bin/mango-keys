@@ -521,7 +521,7 @@ def toggle():
     term = shutil.which("ghostty") or "ghostty"
     # the window is sized to the grid (mango's window_rule); should its size stop being a whole number
     # of cells, the leftover goes to every side instead of the right and the bottom
-    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "--window-padding-balance=true",
+    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "--window-padding-balance=true", "--background-opacity=0.85",
                       "-e", SELF, "--tui"],
                      start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 

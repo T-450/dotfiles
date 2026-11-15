@@ -1,6 +1,6 @@
 # swaybg
 
-The wallpaper: the last pick from waypaper (super+w), else the palette's own: its own style if it names one (Steel Nebula: a nebula in its purples; see Theming, Wallpaper), else Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
+The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
 
 The image is [lyje9y on wallhaven](https://wallhaven.cc/w/lyje9y), uploaded by Jesseract. Its
 original source and license are unknown, so the repo never holds it.
@@ -33,7 +33,7 @@ an unfocused window keeps `fg_muted` text at 4.5:1 or better. It suits none of t
 
 **`setup.sh`** (run by `install.sh --setup`): swaybg.service shows ~/.local/state/wallpaper/current, a link that wallpaper-set points at each pick. When it is missing, or its file is gone, it goes back to the palette's own wallpaper, ~/.config/swaybg/wallpaper.png (render.sh).
 
-**`render.sh`** (run by `theme` after rendering): the desktop wallpaper, .config/swaybg/wallpaper.png (linked into your home). A palette may name its own style (`wallpaper = "nebula"` in [meta], THEME_WALLPAPER). Otherwise dark palettes get Neptune in ASCII (pkg/wallpaper-neptune-ascii) at 3840x2160, the largest output; the near-black image suits every dark palette as it is. Light palettes get their plain desktop color. Run by `theme` after rendering templates; remade only when its inputs changed.
+**`render.sh`** (run by `theme` after rendering): the desktop wallpaper, .config/swaybg/wallpaper.png (linked into your home). Dark palettes get Neptune in ASCII (pkg/wallpaper-neptune-ascii) at 3840x2160, the largest output; the near-black image suits every dark palette as it is. Light palettes get their plain desktop color. Run by `theme` after rendering templates; remade only when its inputs changed.
 
 **`reload.sh`** (run by `theme set`): restart swaybg.service, which reads its color and wallpaper at startup. try-restart leaves a stopped unit alone.
 <!-- end generated -->

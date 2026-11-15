@@ -1,6 +1,6 @@
 # wlogout
 
-The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color: mango draws no blur, so a translucent background would show the windows behind it.
+The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color, and `rule.conf` turns blur off under it: the menu acts on single keys, so it stays solid and unmistakable.
 
 Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits in the session group (super+esc, then p), two deliberate steps away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
 

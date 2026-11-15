@@ -18,15 +18,6 @@ The default palette is **Dark 2026**, from VS Code's
 Ghostty theme instead (`github.com/dark-2026-theme/nvim`, `themes/dark-2026.conf`); Light 2026
 takes the same from `themes/light-2026.conf`. Re-importing either from VS Code drops them.
 
-## Wallpaper
-
-A palette may name its own wallpaper style in `[meta]`: `wallpaper = "nebula"` (exported as
-`THEME_WALLPAPER`). `swaybg/render.sh` then draws a nebula from the palette's roles: a diagonal arm of
-layered, ridged noise over `bg_desktop`, in the selection color and two darker blends of it, with
-`accent` and `link` only at the brightest cores, and stars in `fg_bright` and `warning`; fixed seeds
-make it reproducible. Steel Nebula uses it. Without a style, dark palettes get Neptune in ASCII and
-light ones their desktop color.
-
 ## Keycaps
 
 An optional `[keycaps]` table gives the keybinding cheatsheet (`mango-keys`) its keycap colors, as
@@ -90,7 +81,7 @@ Which apps use each role (generated from the templates):
 | `ansi7` | ghostty, theme |
 | `ansi8` | ghostty, theme |
 | `ansi9` | ghostty, mousepad, theme |
-| `badge` | lazygit, mango, mousepad, qutebrowser, theme |
+| `badge` | lazygit, mousepad, qutebrowser, theme |
 | `bg_desktop` | claude, firefox, gtk, mango, mousepad, mpv, qutebrowser, swaylock, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, lazygit, mousepad, rofi, swayosd, theme |
 | `bg_surface` | claude, firefox, ghostty, gtk, mako, mango, mousepad, qutebrowser, rofi, theme |
@@ -113,7 +104,7 @@ Which apps use each role (generated from the templates):
 | `key_frame` | theme |
 | `key_legend` | theme |
 | `key_mod` | theme |
-| `link` | claude, gtk, lazygit, mousepad, mpv, pi, qutebrowser, rofi, theme |
+| `link` | claude, gtk, lazygit, mango, mousepad, mpv, pi, qutebrowser, rofi, theme |
 | `name` | claude, fastfetch, firefox, ghostty, gtk, mako, mango, mousepad, mpv, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
@@ -121,12 +112,11 @@ Which apps use each role (generated from the templates):
 | `selection_fg` | firefox, ghostty, gtk, mousepad, qutebrowser, rofi, theme, waybar, wlogout |
 | `shadow` | mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, mako, mango, mousepad, mpv, pi, rofi, swaylock, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, lazygit, mango, mpv, pi, qutebrowser, theme |
+| `success` | claude, fastfetch, gtk, lazygit, mpv, pi, qutebrowser, theme |
 | `term_bg` | claude, ghostty, pi, theme |
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme |
-| `wallpaper` | theme |
 | `warning` | claude, fastfetch, ghostty, gtk, lazygit, mango, mousepad, pi, qutebrowser, theme |
 <!-- end generated -->
 

@@ -55,7 +55,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (shift+Print) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
-| [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own: its own style if it names one (Steel Nebula: a nebula in its purples; see Theming, Wallpaper), else Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
+| [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
 | [swaylock](apps/swaylock.md) | The lock screen (super+esc l, and after 5 min idle) | swaylock |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
