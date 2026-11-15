@@ -7,7 +7,9 @@ Design for the keybinding layout in `mango/.config/mango/bind.conf`, the which-k
 
 - Every binding belongs to a group with one entry point, and the key after it names the operation
   by its word (`w f` = window, fullscreen-in-tile). One mental model for every action.
-- The hot path stays one chord: focus, tags, terminal, launcher, close, fullscreen.
+- The hot path stays one chord: focus, tags, terminal, launcher, close, fullscreen, and the
+  window states used all day (maximize, float, minimize, resize, next layout). Three presses
+  (leader, group, key) are for actions used a few times a day at most.
 - Everything else sits behind a leader, so Alt and Ctrl+Alt go back to apps (Helix, Ghostty).
 - One bind per action, as before. Keys apps own stay free: ctrl/alt+1..9, alt+left/right,
   ctrl+left/right, ctrl+shift/ctrl+alt+arrows, every click and wheel turn.
@@ -23,6 +25,8 @@ Design for the keybinding layout in `mango/.config/mango/bind.conf`, the which-k
 | super+left/right · +shift | previous/next tag · carry the window there |
 | super+return · super+d · alt+esc | terminal · launcher · dropdown terminal |
 | super+shift+q · super+f | close · fullscreen |
+| super+m · super+t · super+z · super+shift+z | maximize · float/tile · minimize · restore |
+| super+r · super+n | resize mode (sticky) · next layout |
 | super+tab · alt+tab · super+u | overview cycle · jump hints · previous window |
 | super+/ · super+space | cheatsheet · leader |
 
@@ -36,9 +40,8 @@ match with Super still held (super+space, then super+w works like w).
 | group | keys |
 |---|---|
 | a apps | b browser · f files · t floating terminal · v clipboard · w wallpaper · p palette (theme) |
-| w window | t float/tile · m maximize · f fullscreen in tile · o on top · p pin to all tags · c center · z minimize · shift+z restore · s show/hide minimized · shift+q force kill · r resize ▸ |
-| w r resize | h/j/k/l shrink/grow width and height (repeats; sticky) · esc/return done |
-| l layout | n next · t tile · s scroller · m monocle · g grid · d deck · z swap with master · = / - more/fewer masters · w scroller width cycle · [ / ] scroller stack left/right |
+| w window | f fullscreen in tile · o on top · p pin to all tags · c center · s show/hide minimized · shift+q force kill |
+| l layout | t tile · s scroller · m monocle · g grid · d deck · z swap with master · = / - more/fewer masters · w scroller width cycle · [ / ] scroller stack left/right |
 | t tag | tab previous tags · a all tags · n/p next/previous tag with windows |
 | m monitor | h/l focus · shift+h/l send window · p laptop panel on/off |
 | c capture | r region · s screen · v video record on/off |

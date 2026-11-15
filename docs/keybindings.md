@@ -5,7 +5,7 @@ Defined in `mango/.config/mango/bind.conf`; design and reasons in [designs/keybi
 Two kinds of keys:
 
 - **Chords**, pressed together, for what you do all day. Super = go/look, +shift = take the focused window along, +ctrl = add instead of switch.
-- **The leader**, super+space, then a group letter, then an operation letter, pressed in turn (`super+space w f`). Each operation returns to normal; Esc leaves at any point. While a group is open, a popup at the bottom shows its keys and the bar shows its name.
+- **The leader**, super+space, then a group letter, then an operation letter, pressed in turn (`super+space l s`). Each operation returns to normal; Esc leaves at any point. While a group is open, a popup at the bottom shows its keys and the bar shows its name.
 
 ## Chords
 
@@ -23,6 +23,11 @@ Two kinds of keys:
 | alt+esc | dropdown terminal: the one persistent shell, on the top edge of whatever tag you view; alt+esc again hides it and it keeps running (also alt+caps, since Caps Lock is Escape) |
 | super+shift+q | close window |
 | super+f | fullscreen |
+| super+m | maximize |
+| super+t | float/tile |
+| super+z / super+shift+z | minimize / restore a minimized window |
+| super+r | resize: **h/l** narrower/wider, **k/j** shorter/taller (hold to repeat; on a tiled window it moves the split), **Enter**/**Esc** done |
+| super+n | next layout |
 | super+tab / alt+tab | overview, cycling windows / jump to a window by its hint |
 | super+u | previous window |
 | super+/ | the cheatsheet (again closes it) |
@@ -36,9 +41,8 @@ Two kinds of keys:
 | group | keys |
 |---|---|
 | **a** apps | **b** firefox · **f** thunar (GTK apps open floating at 720x480) · **t** floating terminal (800x600, a throwaway) · **v** clipboard history (Enter copies, Shift+Delete removes) · **w** wallpaper picker · **p** theme picker |
-| **w** window | **t** float/tile · **m** maximize · **f** fullscreen inside the tile · **o** keep on top · **p** pin to all tags · **c** center a floating window · **z** minimize · **shift+z** restore · **s** show/hide minimized · **shift+q** force kill · **r** resize |
-| **w r** resize | **h/l** narrower/wider, **k/j** shorter/taller (hold to repeat; on a tiled window it moves the split) · **Enter**/**Esc** done |
-| **l** layout | **n** next · **t** tile · **s** scroller · **m** monocle · **g** grid · **d** deck · **z** swap with master · **=**/**-** more/fewer masters · **w** cycle scroller widths · **[**/**]** stack into the left/right column (scroller) |
+| **w** window | **f** fullscreen inside the tile · **o** keep on top · **p** pin to all tags · **c** center a floating window · **s** show/hide minimized · **shift+q** force kill |
+| **l** layout | **t** tile · **s** scroller · **m** monocle · **g** grid · **d** deck · **z** swap with master · **=**/**-** more/fewer masters · **w** cycle scroller widths · **[**/**]** stack into the left/right column (scroller) |
 | **t** tag | **Tab** back to the previous tags · **a** all tags · **n**/**p** next/previous tag with windows |
 | **m** monitor | **h**/**l** focus the left/right monitor · **shift+h**/**shift+l** send the window there · **p** laptop panel on/off (`mango-monitor`) |
 | **c** capture | **r** screenshot of a region · **v** start/stop screen recording (~/video) |

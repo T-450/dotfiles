@@ -131,7 +131,7 @@ monocel	Monocle
 scroller	Scroller
 scrolelr	Scroller
 grid	Grid
-tile	Tile
+tile	Tile|Float/tile
 next layout	Next layout
 master	Swap with master
 more master	More master windows
@@ -176,7 +176,7 @@ pass "search: exact, partial, misspelled, synonym and key queries"
 # the views fzf and the popup use render without error
 MANGO_KEYS_CONF=$conf "$keys" --rank 'fulscr' | sed 's/\x1b\[[0-9;]*m//g' | grep -q 'Super.*Fullscreen' || fail "--rank lists rows"
 MANGO_KEYS_CONF=$conf "$keys" --card 0 | grep -q 'F O C U S' || fail "--card draws a group"
-MANGO_KEYS_CONF=$conf "$keys" --pango window | grep -q 'Float/tile' || fail "--pango draws a mode"
+MANGO_KEYS_CONF=$conf "$keys" --pango window | grep -q 'Keep on top' || fail "--pango draws a mode"
 pass "rank, card and popup views render"
 
 # fzf takes the cheatsheet's options (an unknown flag or color name exits 2 and the window closes)
