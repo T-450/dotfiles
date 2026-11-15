@@ -2,7 +2,7 @@
 
 Notifications.
 
-ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+shift+\\ toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon.
+super+space n r restores the last one, super+space n d dismisses all, super+space n z toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon.
 
 ## Reference
 
@@ -17,7 +17,7 @@ ctrl+alt+\\ restores the last one, ctrl+alt+backspace dismisses all, ctrl+alt+sh
 
 **Rendered from the palette** (`theme`):
 
-- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `bg_widget`, `border_hairline`, `error`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`
+- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`
 
 **User units** (enabled by `install.sh --units`): `mako.service`
 

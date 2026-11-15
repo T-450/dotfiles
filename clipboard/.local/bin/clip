@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# clip: the clipboard history in rofi (super+v). Enter copies the item back to the clipboard,
+# clip: the clipboard history in rofi (super+space a v). Enter copies the item back to the clipboard,
 # Shift+Delete removes it, Ctrl+Shift+Delete clears the history. Images show as thumbnails,
 # cached by cliphist id in ~/.cache/cliphist/thumbs (dropped once the item leaves the history).
 set -euo pipefail

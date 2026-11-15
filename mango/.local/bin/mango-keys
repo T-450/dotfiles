@@ -1,180 +1,485 @@
 #!/usr/bin/env python3
-"""mango-keys: every binding in ~/.config/mango/bind.conf as a rofi cheatsheet of keycaps (super+/).
+"""mango-keys: the keybinding cheatsheet (super+/) and the which-key cards, from ~/.config/mango/bind.conf.
 
-`## Name` lines in bind.conf start a section; a `#: text` line describes the bind below it; other
-binds are described from their action (ACTIONS). Runs of binds that differ only by a tag digit
-collapse into one row (1-9). Colors come from ~/.config/theme/colors.sh (the active palette).
+usage: mango-keys              open the cheatsheet (a floating Ghostty running fzf); again closes it
+       mango-keys --tui        the fzf interface itself (what the Ghostty window runs)
+       mango-keys --rank Q     fzf's rows for query Q, best first, matches highlighted
+       mango-keys --card ROW   the group card of row ROW (fzf's preview pane)
+       mango-keys --pango MODE the group card of key mode MODE as Pango markup (mango-whichkey)
+       mango-keys --print      every row as plain text: group, keys, description
+
+bind.conf: `## Name` starts a group, `#: text ~ words` describes the bind below it (the words after
+` ~ ` are searchable, not shown), `key_mode=NAME` starts a mode's binds. A mode's keys are shown
+after the keys that open it (`setkeymode,NAME`), so leader binds read `␣ › W › F`.
+Colors come from ~/.config/theme/colors.sh (the active palette); each group has its own hue.
 """
 import html
+import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-CONF = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "mango/bind.conf"
-COLORS = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "theme/colors.sh"
+CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+CONF = Path(os.environ.get("MANGO_KEYS_CONF", CONFIG / "mango/bind.conf"))
+COLORS = Path(os.environ.get("MANGO_KEYS_COLORS", CONFIG / "theme/colors.sh"))
+CACHE = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / f"mango-keys-{os.getuid()}.json"
+APP_ID = "com.mitchellh.ghostty-keys"
+SELF = os.path.realpath(__file__)
 
-# mango's dispatchers (github.com/mangowm/mango/wiki/keys): action -> description; {0} is the first argument
+# group (the `## ` name, lowercased) -> palette role of its hue; the rest use fg_bright
+HUES = {
+    "focus": "fg_bright", "launch": "success", "leader": "fg_bright", "tags": "ansi3", "tag": "ansi3",
+    "media": "ansi4", "apps": "success", "window": "ansi5", "resize": "ansi5", "layout": "ansi6",
+    "monitor": "ansi11", "capture": "error", "notifications": "ansi13", "session": "ansi1",
+    "mouse": "fg_muted", "touchpad": "fg_muted",
+}
+# mango's dispatchers -> a description, for binds without a `#: ` line; {0} is the first argument
 ACTIONS = {
-    "reload_config": "Reload mango's config",
-    "killclient": "Close window",
-    "focusdir": "Focus window {0}",
-    "overcircle": "Overview, then cycle windows",
-    "togglejump": "Overview with jump hints",
-    "focusstack": "Focus next in stack",
-    "focuslast": "Focus previous window",
-    "move_client": "Move window {0}",
-    "exchange_client": "Swap window {0}",
-    "movewin": "Nudge floating window",
-    "resizewin": "Resize floating window",
-    "togglefloating": "Float/tile window",
-    "togglemaximizescreen": "Maximize window",
-    "togglefullscreen": "Fullscreen",
-    "togglefakefullscreen": "Fullscreen inside the tile",
-    "toggleglobal": "Pin window to all tags",
-    "toggleoverlay": "Keep window on top",
-    "minimized": "Minimize window",
-    "restore_minimized": "Restore minimized window",
-    "toggle_scratchpad": "Show/hide minimized windows",
-    "switch_layout": "Next layout",
-    "setlayout": "Layout: {0}",
-    "zoom": "Swap with master",
-    "set_proportion": "Scroller width {0}",
-    "switch_proportion_preset": "Cycle scroller widths",
-    "scroller_stack": "Scroller: stack {0}",
-    "dwindle_toggle_split_direction": "Dwindle: flip split",
-    "view": "Show tag {0}",
-    "toggleview": "Also show tag {0}",
-    "tag": "Move window to tag {0}",
-    "toggletag": "Also put window on tag {0}",
-    "viewtoleft": "Previous tag",
-    "viewtoright": "Next tag",
-    "viewtoleft_have_client": "Previous tag with windows",
-    "viewtoright_have_client": "Next tag with windows",
-    "viewprev_have_client": "Previous tag with windows",
-    "viewnext_have_client": "Next tag with windows",
-    "tagtoleft": "Move window to previous tag",
-    "tagtoright": "Move window to next tag",
-    "focusmon": "Focus monitor {0}",
-    "tagmon": "Move window to monitor {0}",
-    "enteroverview": "Overview",
-    "leaveoverview": "Leave overview",
+    "view": "Show tag {0}", "tag": "Move window to tag {0}", "toggleview": "Also show tag {0}",
+    "toggletag": "Also put window on tag {0}", "killclient": "Close window", "setkeymode": "Mode: {0}",
 }
-# binds whose meaning depends on the first argument
-ACTION_ARGS = {
-    ("incnmaster", "1"): "More master windows", ("incnmaster", "-1"): "Fewer master windows",
-    ("set_proportion", "1.0"): "Scroller: full width", ("set_proportion", "0.5"): "Scroller: half width",
-    ("moveresize", "curmove"): "Drag window", ("moveresize", "curresize"): "Resize window",
+SYNONYMS = {  # extra words for the generated rows
+    "view": "workspace switch go", "tag": "move send workspace", "toggleview": "add workspace",
+    "toggletag": "add workspace",
 }
-
 KEYS = {  # how a key name reads on a cap
-    "return": "Enter", "escape": "Esc", "backslash": "\\", "slash": "/", "backspace": "Backspace",
-    "left": "←", "right": "→", "up": "↑", "down": "↓", "tab": "Tab", "space": "Space", "print": "PrtSc",
-    "btn_left": "Left click", "btn_right": "Right click", "btn_middle": "Middle click",
-    "xf86audioraisevolume": "Vol+", "xf86audiolowervolume": "Vol−", "xf86audiomute": "Mute",
-    "xf86audiomicmute": "Mic mute", "xf86monbrightnessup": "Bright+", "xf86monbrightnessdown": "Bright−",
+    "return": "Enter", "escape": "Esc", "backslash": "\\", "slash": "/", "backspace": "Bksp",
+    "left": "←", "right": "→", "up": "↑", "down": "↓", "tab": "Tab", "space": "␣", "print": "PrtSc",
+    "equal": "=", "minus": "-", "bracketleft": "[", "bracketright": "]",
+    "btn_left": "L-click", "btn_right": "R-click", "btn_middle": "M-click",
+    "xf86audioraisevolume": "Vol+", "xf86audiolowervolume": "Vol-", "xf86audiomute": "Mute",
+    "xf86audiomicmute": "Mic", "xf86monbrightnessup": "Bri+", "xf86monbrightnessdown": "Bri-",
     "xf86audioplay": "Play", "xf86audionext": "Next", "xf86audioprev": "Prev",
 }
+KEY_WORDS = {  # what you may type to find a key
+    "␣": "space leader", "Enter": "enter return", "Esc": "esc escape", "←": "left arrow",
+    "→": "right arrow", "↑": "up arrow", "↓": "down arrow", "/": "slash", "PrtSc": "print prtsc",
+    "Tab": "tab", "=": "equal plus", "-": "minus", "[": "bracket", "]": "bracket",
+}
 MODS = {"super": "Super", "ctrl": "Ctrl", "alt": "Alt", "shift": "Shift"}
-GAP = 3  # characters between the longest chord and the descriptions, which all start in one column
+DIRS = {"left": "←", "right": "→", "up": "↑", "down": "↓"}
 
 
-def palette():
-    """THEME_* variables from the rendered colors.sh."""
-    out = {}
-    for line in COLORS.read_text().splitlines():
-        m = re.match(r'(THEME_\w+)="([^"]*)"', line)
-        if m:
-            out[m[1]] = m[2]
-    return out
+# ---------------------------------------------------------------- parsing
+
+def step(mods, key):
+    """One chord: modifier caps and the key cap."""
+    caps = [MODS[m.lower()] for m in mods.split("+") if m.lower() in MODS]
+    label = KEYS.get(key.lower(), key.upper() if len(key) == 1 else key)
+    if caps == ["Super"] and label == "␣":  # the leader reads as one cap
+        return ["␣"]
+    return caps + [label]
 
 
 def parse(text):
-    """Rows of (section, chord, description, search) from bind.conf text."""
-    rows, section, note = [], "", None
+    """Rows from bind.conf: dicts with group, mode, steps (list of chords), desc, syn, action."""
+    raw, group, note, mode = [], "", None, "default"
     for line in text.splitlines():
         line = line.strip()
         if line.startswith("## "):
-            section, note = line[3:], None
+            group, note = line[3:], None
         elif line.startswith("#: "):
             note = line[3:]
-        elif m := re.match(r"(bindl?|mousebind|axisbind|gesturebind)=(.*)", line):
-            kind, fields = m[1], [f.strip() for f in m[2].split(",")]
+        elif line.startswith("key_mode="):
+            mode = line.split("=", 1)[1].strip()
+        elif m := re.match(r"(bind[slrpc]*|mousebind|gesturebind)=(.*)", line):
+            kind, f = m[1], [x.strip() for x in m[2].split(",")]
             if kind == "gesturebind":
-                mods, direction, fingers, action, args = fields[0], fields[1], fields[2], fields[3], fields[4:]
-                chord = [f"{fingers} fingers", {"left": "←", "right": "→", "up": "↑", "down": "↓"}[direction.lower()]]
+                chord, action, args = [f"{f[2]} fingers", DIRS[f[1].lower()]], f[3], f[4:]
             else:
-                mods, key, action, args = fields[0], fields[1], fields[2], fields[3:]
-                if kind == "axisbind":
-                    key = "Wheel " + ("↑" if key.upper() == "UP" else "↓")
-                chord = [MODS[m.lower()] for m in mods.split("+") if m.lower() != "none"] + [KEYS.get(key.lower(), key.upper() if len(key) == 1 else key)]
-            rows.append((section, chord, note or describe(action, [a for a in args if a]), action, args))
+                chord, action, args = step(f[0], f[1]), f[2], f[3:]
+            raw.append(dict(group=group, mode=mode, chord=chord, action=action,
+                            args=[a for a in args if a], note=note))
             note = None
         elif not line.startswith("#"):
             note = None
+    # the keys that open each mode: a setkeymode bind in its parent mode (the first one: NONE before SUPER)
+    opens = {}
+    for r in raw:
+        if r["action"] == "setkeymode" and r["args"] and r["args"][0] not in ("default", r["mode"]):
+            opens.setdefault(r["args"][0], (r["mode"], r["chord"]))
+
+    def path(mode, seen=()):
+        if mode in ("default", "common") or mode not in opens or mode in seen:
+            return []
+        parent, chord = opens[mode]
+        return path(parent, seen + (mode,)) + [chord]
+
+    rows, done = [], set()
+    for r in raw:
+        if r["action"] == "setkeymode" and r["args"] and r["args"][0] == "default" and not r["note"]:
+            continue  # the second half of a one-shot, or an exit key
+        key = (r["mode"], r["action"], tuple(r["args"]))
+        if key in done:
+            continue  # the same bind with super still held (leader)
+        done.add(key)
+        desc, _, syn = (r["note"] or "").partition(" ~ ")
+        if not desc:
+            a = r["args"]
+            desc = ACTIONS.get(r["action"], r["action"].replace("_", " ").capitalize()).format(*(a or [""])).strip()
+            syn = SYNONYMS.get(r["action"], "")
+        rows.append(dict(group=r["group"], mode=r["mode"], steps=path(r["mode"]) + [r["chord"]],
+                         desc=desc.strip(), syn=syn.strip(), action=r["action"], args=r["args"]))
     return collapse(rows)
 
 
-def describe(action, args):
-    if args and (action, args[0]) in ACTION_ARGS:
-        return ACTION_ARGS[(action, args[0])]
-    return ACTIONS.get(action, action.replace("_", " ").capitalize()).format(*(args or [""])).strip()
-
-
 def collapse(rows):
-    """Merge runs that differ only by a digit key whose number is also the action's first arg."""
+    """Runs of binds that differ only by a tag digit (also their first argument) become one row: 1-9."""
     out = []
-    for section, chord, desc, action, args in rows:
-        digit = chord[-1].isdigit() and args and args[0] == chord[-1]
-        prev = out[-1] if out else None
-        if digit and prev and prev[4] and prev[0] == section and prev[3] == action and prev[1][:-1] == chord[:-1]:
-            prev[1][-1] = f"{prev[5]}–{chord[-1]}"
-            prev[2] = re.sub(r"\s*\b\d+$", "", prev[2])
+    for r in rows:
+        last = r["steps"][-1]
+        digit = last[-1].isdigit() and r["args"] and r["args"][0] == last[-1]
+        p = out[-1] if out else None
+        if (digit and p and p.get("digit") and p["group"] == r["group"] and p["action"] == r["action"]
+                and p["steps"][-1][:-1] == last[:-1]):
+            p["steps"][-1][-1] = f"{p['first']}-{last[-1]}"
+            p["desc"] = re.sub(r"\s*\b\d+$", "", p["desc"])
             continue
-        out.append([section, chord, desc, action, digit, chord[-1]])
-    return [(s, c, d) for s, c, d, *_ in out]
-
-
-def width(chord):
-    """Characters a chord's caps take: each key plus its two rounded ends, ' + ' between keys."""
-    return sum(len(k) + 2 for k in chord) + 3 * (len(chord) - 1)
-
-
-def caps(chord, t, column):
-    """Keycap markup: modifiers as light caps, the key as an accent cap, rounded ends from the Nerd Font;
-    padded to `column` characters."""
-    parts = []
-    for i, k in enumerate(chord):
-        last = i == len(chord) - 1
-        bg, fg = (t["THEME_ACCENT"], t["THEME_ACCENT_INK"]) if last else (t["THEME_FG_TEXT"], t["THEME_FG_TEXT_INK"])
-        parts.append(f"<span foreground='{bg}'></span><span background='{bg}' foreground='{fg}' weight='bold'>{html.escape(k)}</span><span foreground='{bg}'></span>")
-        if not last:
-            parts.append(f"<span foreground='{t['THEME_FG_MUTED']}'> + </span>")
-    return "".join(parts) + " " * (column - width(chord))
-
-
-def rows(t):
-    out, section = [], None
-    binds = parse(CONF.read_text())
-    column = max(width(chord) for _, chord, _ in binds) + GAP
-    for sec, chord, desc in binds:
-        if sec != section:
-            section = sec
-            out.append(f"<span foreground='{t['THEME_ACCENT']}' weight='bold'>{html.escape(sec.upper())}</span>\0nonselectable\x1ftrue")
-        plain = " ".join(chord + [desc])
-        out.append(f"{caps(chord, t, column)}<span font_family='Inter'>{html.escape(desc)}</span>\0meta\x1f{plain}")
+        r = dict(r, digit=bool(digit), first=last[-1])
+        out.append(r)
+    for r in out:
+        r.pop("digit"), r.pop("first")
     return out
 
 
-def main():
-    t = palette()
-    entries = rows(t)
-    if "--print" in sys.argv:
-        print("\n".join(html.unescape(re.sub(r"<[^>]+>", "", e.split("\0")[0])) for e in entries))
+def rows():
+    """The parsed rows, cached per bind.conf change (fzf reruns the ranking on every key press)."""
+    stamp = f"{CONF.stat().st_mtime_ns}:{CONF.stat().st_size}:{os.stat(SELF).st_mtime_ns}"
+    try:
+        c = json.loads(CACHE.read_text())
+        if c["stamp"] == stamp:
+            return c["rows"]
+    except (OSError, ValueError, KeyError):
+        pass
+    r = parse(CONF.read_text())
+    try:
+        CACHE.write_text(json.dumps({"stamp": stamp, "rows": r}))
+    except OSError:
+        pass
+    return r
+
+
+# ---------------------------------------------------------------- search
+
+def words(text):
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def key_words(r):
+    out = []
+    for chord in r["steps"]:
+        for k in chord:
+            out += KEY_WORDS.get(k, k.lower()).split()
+    return out
+
+
+def damerau(a, b, limit):
+    """Edit distance with adjacent swaps, or limit+1 once it is past limit."""
+    if abs(len(a) - len(b)) > limit:
+        return limit + 1
+    prev2, prev = None, list(range(len(b) + 1))
+    for i in range(1, len(a) + 1):
+        cur = [i] + [0] * len(b)
+        for j in range(1, len(b) + 1):
+            cost = a[i - 1] != b[j - 1]
+            cur[j] = min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+            if i > 1 and j > 1 and a[i - 1] == b[j - 2] and a[i - 2] == b[j - 1]:
+                cur[j] = min(cur[j], prev2[j - 2] + 1)
+        if min(cur) > limit:
+            return limit + 1
+        prev2, prev = prev, cur
+    return prev[-1]
+
+
+def subsequence(t, w):
+    """Positions of t's letters in order in w (fzf-style), or None."""
+    pos, i = [], 0
+    for ch in t:
+        i = w.find(ch, i)
+        if i < 0:
+            return None
+        pos.append(i)
+        i += 1
+    return pos
+
+
+def word_score(t, w):
+    """How well query word t matches word w, and which letters of w matched."""
+    if w == t:
+        return 100, range(len(w))
+    if w.startswith(t):
+        return 80 + 10 * len(t) / len(w), range(len(t))
+    if len(t) >= 3 and t in w:
+        i = w.index(t)
+        return 60, range(i, i + len(t))
+    if len(t) >= 3 and t[0] == w[0] and (pos := subsequence(t, w)):
+        gaps = pos[-1] - pos[0] + 1 - len(t)
+        return max(45 - 4 * gaps, 25), pos
+    if len(t) >= 4:
+        limit = 2 if len(t) >= 7 else 1
+        if damerau(t, w, limit) <= limit:
+            return 40 - 5 * damerau(t, w, limit), range(len(w))
+        if len(w) > len(t) and damerau(t, w[:len(t)], 1) <= 1:  # a typo while typing a longer word
+            return 32, range(len(t))
+    return 0, ()
+
+
+def rank(query, rs):
+    """(row index, score, {desc word index: matched letters}) for rows matching every query word."""
+    terms = [t for t in re.split(r"[\s+›>]+", query.lower()) if t]
+    if not terms:
+        return [(i, 0, {}) for i in range(len(rs))]
+    out = []
+    for i, r in enumerate(rs):
+        dw, gw, sw, kw = words(r["desc"]), words(r["group"]), words(r["syn"]), key_words(r)
+        total, marks = 0, {}
+        for t in terms:
+            best, hit = 0, None
+            for k in kw:  # keys: single letters only match exactly; a digit matches a range (1-9)
+                if k == t or (len(t) > 1 and k.startswith(t)):
+                    best = max(best, 90 if k == t else 70)
+                elif t.isdigit() and (m := re.fullmatch(r"(\d+)-(\d+)", k)) and int(m[1]) <= int(t) <= int(m[2]):
+                    best = max(best, 90)
+            for n, w in enumerate(dw):
+                if len(t) == 1:
+                    s, p = (30, range(1)) if w.startswith(t) else (0, ())
+                else:
+                    s, p = word_score(t, w)
+                if s > best:
+                    best, hit = s, (n, p)
+            for w in gw + sw:
+                if len(t) > 1:
+                    s = word_score(t, w)[0] * 0.8
+                    if s > best:
+                        best, hit = s, None
+            if best == 0:
+                break
+            total += best
+            if hit:
+                marks.setdefault(hit[0], set()).update(hit[1])
+        else:
+            # equal matches: fewer keys to press, then the more specific (shorter) description first
+            out.append((i, total - len(r["steps"]) - 0.5 * len(dw), marks))
+    out.sort(key=lambda x: (-x[1], x[0]))
+    return out
+
+
+# ---------------------------------------------------------------- drawing
+
+def palette():
+    out = {}
+    try:
+        text = COLORS.read_text()
+    except OSError:
+        text = ""
+    for line in text.splitlines():
+        if m := re.match(r'THEME_(\w+)="([^"]*)"', line):
+            out[m[1].lower()] = m[2]
+    if "fg_text" not in out:
+        sys.exit(f"mango-keys: no palette in {COLORS} (run: theme set <palette>)")
+    return out
+
+
+def mix(a, b, t):
+    pa, pb = [int(a[i:i + 2], 16) for i in (1, 3, 5)], [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(x + (y - x) * t):02x}" for x, y in zip(pa, pb))
+
+
+class Ink:
+    """ANSI truecolor from the palette."""
+
+    def __init__(self, p):
+        self.p = p
+
+    def c(self, role):
+        return self.p.get(role) or self.p["fg_text"]
+
+    @staticmethod
+    def fg(h):
+        return f"\x1b[38;2;{int(h[1:3], 16)};{int(h[3:5], 16)};{int(h[5:7], 16)}m"
+
+    @staticmethod
+    def bg(h):
+        return f"\x1b[48;2;{int(h[1:3], 16)};{int(h[3:5], 16)};{int(h[5:7], 16)}m"
+
+    def hue(self, group):
+        return self.c(HUES.get(group.lower(), "fg_bright"))
+
+    def mod_cap(self):
+        return mix(self.c("bg_hover"), self.c("fg_muted"), 0.22)
+
+    def cap(self, label, bg, fg, bold=True):
+        b = "\x1b[1m" if bold else ""
+        return f"{self.fg(bg)}{self.bg(bg)}{self.fg(fg)}{b}{label}\x1b[0m{self.fg(bg)}\x1b[0m"
+
+    def keys(self, r):
+        """A row's caps: modifiers grey, the last key of each chord in the group's hue."""
+        hue, ink, mod = self.hue(r["group"]), self.c("bg_desktop"), self.mod_cap()
+        plus, sep = f"{self.fg(self.c('fg_disabled'))}+\x1b[0m", f" {self.fg(self.c('fg_muted'))}›\x1b[0m "
+        chords = []
+        for n, chord in enumerate(r["steps"]):
+            last_step = n == len(r["steps"]) - 1
+            parts = []
+            for j, k in enumerate(chord):
+                final = j == len(chord) - 1
+                if final and last_step:
+                    parts.append(self.cap(k, hue, ink))
+                elif final:
+                    parts.append(self.cap(k, mix(hue, self.c("bg_desktop"), 0.45), self.c("fg_bright")))
+                else:
+                    parts.append(self.cap(k, mod, self.c("fg_bright"), bold=False))
+            chords.append(plus.join(parts))
+        return sep.join(chords)
+
+
+def visible(s):
+    return len(re.sub(r"\x1b\[[0-9;]*m", "", s))
+
+
+def chip(ink, group, width=9):
+    name = group.upper()[:width]
+    return f"{ink.fg(ink.hue(group))}\x1b[1m{name}\x1b[0m" + " " * (width - len(name))
+
+
+def highlight(ink, desc, marks):
+    """The description with matched letters in the highlight color."""
+    if not marks:
+        return f"{ink.fg(ink.c('fg_text'))}{desc}\x1b[0m"
+    out, n, base, hi = [], -1, ink.fg(ink.c("fg_text")), ink.fg(ink.c("warning")) + "\x1b[1;4m"
+    for tok in re.split(r"([A-Za-z0-9]+)", desc):
+        if re.fullmatch(r"[A-Za-z0-9]+", tok):
+            n += 1
+            m = marks.get(n, ())
+            out.append("".join(f"{hi}{ch}\x1b[0m{base}" if i in m else ch for i, ch in enumerate(tok)))
+        else:
+            out.append(tok)
+    return base + "".join(out) + "\x1b[0m"
+
+
+def list_lines(query):
+    rs, ink = rows(), Ink(palette())
+    out, col = [], 26
+    for i, _, marks in rank(query, rs):
+        r = rs[i]
+        caps = ink.keys(r)
+        pad = " " * max(2, col - visible(caps))
+        out.append(f"{i}\t {chip(ink, r['group'])} {caps}{pad}{highlight(ink, r['desc'], marks)}")
+    return out
+
+
+def entry(rs, mode):
+    """How a mode is opened, as text: Super+Space › W."""
+    for r in rs:
+        if r["action"] == "setkeymode" and r["args"] and r["args"][0] == mode:
+            return " › ".join("+".join("Super+Space" if k == "␣" else k for k in c) for c in r["steps"])
+    return ""
+
+
+def card(i):
+    """A group as keycaps, two rows each (legend over a darker skirt), for fzf's preview pane."""
+    rs, ink = rows(), Ink(palette())
+    sel = rs[int(i)]
+    group = [r for r in rs if r["group"] == sel["group"]]
+    hue = ink.hue(sel["group"])
+    skirt_hue = mix(hue, ink.c("bg_desktop"), 0.55)
+    title = " ".join(sel["group"].upper())
+    how = entry(rs, sel["mode"]) if sel["mode"] not in ("default", "common") else ""
+    out = ["", f"  {ink.fg(hue)}\x1b[1m{title}\x1b[0m", ""]
+    if how:
+        out[-1] = f"  {ink.fg(ink.c('fg_muted'))}{how}\x1b[0m"
+        out.append("")
+    width = max(visible(ink.keys(dict(r, steps=r["steps"][-1:]))) for r in group)
+    for r in group:
+        caps = ink.keys(dict(r, steps=r["steps"][-1:]))
+        n = visible(caps)
+        skirt = f"{ink.fg(skirt_hue)}" + " " + "▀" * (n - 2) + " \x1b[0m"
+        mark = f"{ink.fg(hue)}▌\x1b[0m" if r is sel else " "
+        desc_c = ink.c("fg_bright") if r is sel else ink.c("fg_text")
+        out.append(f" {mark}{caps}{' ' * (width - n + 2)}{ink.fg(desc_c)}{r['desc']}\x1b[0m")
+        out.append(f"  {skirt}")
+    return "\n".join(out)
+
+
+def pango(mode):
+    """A key mode's card as Pango markup for the which-key popup."""
+    rs, p = rows(), palette()
+    ink = Ink(p)
+    group = [r for r in rs if r["mode"] == mode]
+    if not group:
+        return ""
+    hue = ink.hue(group[0]["group"])
+    e = html.escape
+    out = [f"<span foreground='{hue}' weight='bold' letter_spacing='2048'>{e(group[0]['group'].upper())}</span>"
+           f"   <span foreground='{ink.c('fg_muted')}'>{e(entry(rs, mode))}</span>", ""]
+    for r in group:
+        chord = r["steps"][-1]
+        keys = " ".join(f"<span background='{ink.mod_cap() if j < len(chord) - 1 else hue}' "
+                        f"foreground='{ink.c('fg_bright') if j < len(chord) - 1 else ink.c('bg_desktop')}' "
+                        f"weight='bold'> {e(k)} </span>" for j, k in enumerate(chord))
+        pad = " " * max(1, 10 - sum(len(k) + 3 for k in chord))
+        out.append(f"{keys}{pad}<span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
+    out.append("")
+    out.append(f"<span foreground='{ink.c('fg_muted')}'>Esc leaves</span>")
+    return "\n".join(out)
+
+
+# ---------------------------------------------------------------- the window
+
+def tui():
+    ink, me = Ink(palette()), SELF
+    c = ink.c
+    colors = ",".join([
+        f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('warning')}", f"fg+:{c('fg_bright')}",
+        f"bg+:{c('bg_hover')}", f"hl+:{c('warning')}", f"info:{c('fg_muted')}", f"prompt:{c('ansi5')}",
+        f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"header:{c('fg_muted')}",
+        f"border:{c('border_hairline')}", f"separator:{c('border_hairline')}",
+        f"preview-bg:{c('bg_surface')}", f"preview-border:{c('border_hairline')}",
+        f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}", f"cursor-bg:{c('accent')}",
+    ])
+    lead = f"{ink.cap('␣', mix(ink.c('fg_bright'), ink.c('bg_desktop'), 0.45), ink.c('fg_bright'))}"
+    header = (f"{lead} {ink.fg(c('fg_muted'))}leader = Super+Space   "
+              f"› press in turn   + hold together   type to search, Esc closes\x1b[0m")
+    rank_cmd = f"{me} --rank {{q}}"
+    os.execvp("fzf", [
+        "fzf", "--ansi", "--disabled", "--no-sort", "--layout=reverse", "--delimiter=\t", "--with-nth=2..",
+        "--prompt=  ❯ ", "--pointer=▌", "--marker= ", "--info=inline-right", "--no-scrollbar",
+        "--border=none", "--no-separator", "--header", header, "--header-first",
+        "--color", colors, "--margin=1,2,1,1", "--padding=0",
+        "--preview", f"{me} --card {{1}}", "--preview-window", "right,44%,border-left,noinfo",
+        "--bind", f"start:reload({rank_cmd})", "--bind", f"change:reload({rank_cmd})+first",
+        "--bind", "enter:abort,esc:abort,ctrl-c:abort",
+    ])
+
+
+def toggle():
+    """Close the cheatsheet if it is open, else open it."""
+    if subprocess.run(["pkill", "-f", f"{SELF} --tui"], check=False).returncode == 0:
         return
-    subprocess.run(["rofi", "-dmenu", "-i", "-markup-rows", "-no-custom", "-p", "keys", "-theme", "keys"],
-                   input="\n".join(entries), text=True, check=False)
+    term = shutil.which("ghostty") or "ghostty"
+    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "-e", SELF, "--tui"],
+                     start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def main():
+    a = sys.argv[1:]
+    if not a:
+        return toggle()
+    if a[0] == "--tui":
+        return tui()
+    if a[0] == "--rank":
+        print("\n".join(list_lines(" ".join(a[1:]))))
+    elif a[0] == "--card":
+        print(card(a[1]))
+    elif a[0] == "--pango":
+        print(pango(a[1]))
+    elif a[0] == "--print":
+        for r in rows():
+            print(f"{r['group']:<14}{' › '.join('+'.join(c) for c in r['steps']):<24}{r['desc']}")
+    else:
+        sys.exit(__doc__)
 
 
 if __name__ == "__main__":

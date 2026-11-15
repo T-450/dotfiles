@@ -52,29 +52,29 @@ Which apps use each role (generated from the templates):
 | role / word | used by |
 |---|---|
 | `accent` | claude, fastfetch, firefox, ghostty, mango, mpv, pi, qutebrowser, rofi, swaylock, swayosd, theme, wlogout |
-| `ansi0` | ghostty |
-| `ansi1` | ghostty, pi, waybar |
-| `ansi10` | ghostty, mousepad |
-| `ansi11` | ghostty, mousepad, pi, waybar |
-| `ansi12` | ghostty, mousepad, pi, waybar |
-| `ansi13` | claude, ghostty, mousepad, pi |
-| `ansi14` | ghostty, mousepad |
-| `ansi15` | ghostty |
-| `ansi2` | ghostty, waybar |
-| `ansi3` | ghostty, pi, waybar |
-| `ansi4` | ghostty, pi, waybar |
-| `ansi5` | ghostty, pi, waybar |
-| `ansi6` | ghostty, pi, waybar |
-| `ansi7` | ghostty |
-| `ansi8` | ghostty |
-| `ansi9` | ghostty, mousepad |
+| `ansi0` | ghostty, theme |
+| `ansi1` | ghostty, pi, theme, waybar |
+| `ansi10` | ghostty, mousepad, theme |
+| `ansi11` | ghostty, mousepad, pi, theme, waybar |
+| `ansi12` | ghostty, mousepad, pi, theme, waybar |
+| `ansi13` | claude, ghostty, mousepad, pi, theme |
+| `ansi14` | ghostty, mousepad, theme |
+| `ansi15` | ghostty, theme |
+| `ansi2` | ghostty, theme, waybar |
+| `ansi3` | ghostty, pi, theme, waybar |
+| `ansi4` | ghostty, pi, theme, waybar |
+| `ansi5` | ghostty, pi, theme, waybar |
+| `ansi6` | ghostty, pi, theme, waybar |
+| `ansi7` | ghostty, theme |
+| `ansi8` | ghostty, theme |
+| `ansi9` | ghostty, mousepad, theme |
 | `badge` | lazygit, mango, mousepad, qutebrowser, theme |
 | `bg_desktop` | claude, firefox, gtk, mango, mousepad, mpv, qutebrowser, swaylock, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, lazygit, mousepad, rofi, swayosd, theme |
-| `bg_surface` | claude, firefox, ghostty, gtk, mango, mousepad, qutebrowser, rofi, theme |
+| `bg_surface` | claude, firefox, ghostty, gtk, mako, mango, mousepad, qutebrowser, rofi, theme |
 | `bg_widget` | claude, firefox, gtk, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, wlogout |
 | `border_hairline` | firefox, mako, pi, qutebrowser, rofi, swaylock, swayosd, theme, waybar |
-| `border_inactive` | claude, fastfetch, firefox, ghostty, lazygit, mango, mousepad, pi, rofi, theme |
+| `border_inactive` | claude, fastfetch, firefox, ghostty, lazygit, mako, mango, mousepad, pi, rofi, theme |
 | `error` | claude, fastfetch, gtk, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, swaylock, theme |
 | `fg_bright` | fastfetch, firefox, mango, mousepad, pi, qutebrowser, theme |
 | `fg_disabled` | claude, mousepad, qutebrowser, theme, waybar |

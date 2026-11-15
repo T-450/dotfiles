@@ -2,9 +2,13 @@
 
 The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands.
 
-`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+r). Tiled windows meet edge to edge (`gap_inner_*=0` in `config.conf`), like tmux or Neovim panes; the outer gaps are the bar's 7px side margin, so the outermost windows line up with the bar's ends, 7px below the screen top and above the bar. There are no gap keybindings.
+`config.conf` sources `colors.conf` (rendered) and `env.conf bind.conf rule.conf monitor.conf tag.conf`; `bind.conf` defines `var=` shortcuts (`$term $launcher $locker $browser`) before use. Mango re-reads its config on save (also super+space s r). Tiled windows meet edge to edge (`gap_inner_*=0` in `config.conf`), like tmux or Neovim panes; the outer gaps are the bar's 7px side margin, so the outermost windows line up with the bar's ends, 7px below the screen top and above the bar. There are no gap keybindings.
 
-Borders are drawn like tmux's pane lines: 2px, square corners (mango rounds every corner off the screen edge, so a radius would leave a hole where touching windows meet), a grey line (`border_inactive` mixed toward `fg_muted`) on every window and green (`success`) on the focused one, so two panes meet at a 4px seam that is half green next to the focused pane (mango has one border width for every window; only the color marks focus). Green is used by no other state, so focus never shares a color with maximized (`accent`), scratchpad (`badge` mixed toward `fg_bright`), urgent (`error`), global or overlay windows. A lone window has no border (`no_border_when_single=1`). Every window is fully opaque (`unfocused_opacity=1.0`): the border alone marks focus. The tab bar follows the same rule (2px, square, green focused tab). `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+p); `mango-keys` shows every binding as a rofi cheatsheet (super+/), read from `bind.conf`: `## ` lines are its sections and a `#: ` line describes the bind below it. Caps Lock is Escape.
+Borders are drawn like tmux's pane lines: 2px, square corners (mango rounds every corner off the screen edge, so a radius would leave a hole where touching windows meet), a grey line (`border_inactive` mixed toward `fg_muted`) on every window and green (`success`) on the focused one, so two panes meet at a 4px seam that is half green next to the focused pane (mango has one border width for every window; only the color marks focus). Green is used by no other state, so focus never shares a color with maximized (`accent`), scratchpad (`badge` mixed toward `fg_bright`), urgent (`error`), global or overlay windows. A lone window has no border (`no_border_when_single=1`). Every window is fully opaque (`unfocused_opacity=1.0`): the border alone marks focus. The tab bar follows the same rule (2px, square, green focused tab). `mango-quit` is the logout (see [Session](../session.md)); `mango-monitor` toggles the laptop panel (super+space m p). Caps Lock is Escape.
+
+Keybindings: chords for the hot path and a leader (super+space) whose groups are mango key modes; see [Keybindings](../keybindings.md) and the [design](../designs/keybindings.md). `mango-keys` (super+/) is the cheatsheet: a floating Ghostty (`com.mitchellh.ghostty-keys`) running fzf over every bind in `bind.conf`, searched on each key press by `mango-keys --rank` (whole words, prefixes, missing letters, one typo, synonyms, key names), with the selected row's group drawn as keycaps in the preview pane. In `bind.conf`, a `## ` line starts a group, a `#: ` line describes the bind below it, and words after ` ~ ` are extra search terms. Each group has its own hue from the palette (`THEME_ANSI*` in `colors.sh`). `mango-whichkey.service` follows `mmsg watch keymode` and shows the open group's keys as a mako popup (`mango-keys --pango`) until the mode ends; waybar's `mango/keymode` shows the mode's name.
+
+Input: the touchpad is on (`disable_trackpad=0`) with tap-to-click and tap-and-drag but no drag lock, which held a tap-drag after the finger lifted. The TrackPoint (Elan, behind the touchpad's RMI4 pass-through) sometimes loses sync (`psmouse serio2: TrackPoint ... lost synchronization`, kernel bug 209167) and the driver reconnects it, which can drop a held button; if the pointer sticks in scroll or drag, capture `sudo libinput debug-events --device /dev/input/event14` while it happens.
 
 Every animation lasts 150 ms (9 frames at 60 Hz) on one curve, a quadratic ease-out with no overshoot (`0.5,1,0.89,1`). Fades start at 0.5 (opening) and 0.6 (closing) opacity; zooms grow from 0.1 and shrink to 0.6 of full size. Blur is off, so every overlay is opaque. Shadows are on for floating windows only (`shadow_only_floating=1`). Layer shadows stay enabled but no overlay shows one: a layer shadow outlines the layer's whole surface, not what it draws, and rofi's surface spans the screen above the bar, so `rule.conf` turns its shadow off; notifications have `no_shadow` and the bar never gets one. `blur` and `shadows` are master switches: `blur_layer` and `layer_shadows` do nothing without them. On a busy test workload, 150 ms durations alone halved mango's CPU time (2.51 to 1.24 percent) and the GPU's busy time (11.4 to 6.5 percent), measured before shadows were turned on; the full change was not measured. Why these values: [design](../designs/mango-animations.md).
 
@@ -23,13 +27,18 @@ Every animation lasts 150 ms (9 frames at 60 Hz) on one curve, a quadratic ease-
 - `~/.config/mango/monitor.conf`
 - `~/.config/mango/rule.conf`
 - `~/.config/mango/tag.conf`
+- `~/.config/systemd/user/mango-whichkey.service`
+- `~/.local/bin/__pycache__/mango-keyscpython-314.pyc`
 - `~/.local/bin/mango-keys`
 - `~/.local/bin/mango-monitor`
 - `~/.local/bin/mango-quit`
+- `~/.local/bin/mango-whichkey`
 
 **Rendered from the palette** (`theme`):
 
 - `mango/.config/mango/colors.conf.tmpl` → `mango/.config/mango/colors.conf`: `accent`, `badge`, `bg_desktop`, `bg_surface`, `border_inactive`, `error`, `fg_bright`, `fg_secondary`, `name`, `selection_bg`, `shadow`, `slug`, `success`
+
+**User units** (enabled by `install.sh --units`): `mango-whichkey.service`
 
 **`reload.sh`** (run by `theme set`): reload mango so colors.conf applies. Outside a mango session (no IPC socket) there is nothing to reload.
 <!-- end generated -->

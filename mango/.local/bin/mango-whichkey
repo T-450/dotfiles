@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# mango-whichkey: while a mango key mode is open (super+space, then a group), show that mode's keys as a
+# passive mako popup; close it when the mode returns to default. Run by mango-whichkey.service.
+# usage: mango-whichkey
+set -uo pipefail
+id=0
+close() { ((id)) && makoctl dismiss -n "$id" --no-history 2>/dev/null; id=0; }
+trap close EXIT
+while read -r line; do
+	mode=$(jq -r '.keymode // empty' <<<"$line") || continue
+	if [[ -z $mode || $mode == default ]]; then
+		close
+		continue
+	fi
+	body=$(~/.local/bin/mango-keys --pango "$mode") || continue
+	[[ -n $body ]] || { close; continue; }
+	# one popup, replaced in place as the mode changes; mako's [app-name=mango-whichkey] styles it
+	id=$(notify-send -a mango-whichkey -t 0 -p -r "$id" "keys" "$body") || id=0
+done < <(mmsg watch keymode)

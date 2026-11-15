@@ -31,7 +31,7 @@ archinstall's minimal profile is enough.
 
 Every later change uses these two checks, so run them once now.
 
-1. In a terminal (alt+return), run:
+1. In a terminal (super+return), run:
 
 	```bash
 	cd ~/dotfiles && ./install.sh --check
@@ -83,7 +83,7 @@ Every later change uses these two checks, so run them once now.
 3. The login screen lives outside your home, so it changes only when you run
    `./install.sh --system`, which asks for sudo. `theme set` reminds you.
 
-4. Switch back with `theme set dark-2026`, or pick a palette with super+shift+t.
+4. Switch back with `theme set dark-2026`, or pick a palette with super+space a p.
 
 ## Add a program
 

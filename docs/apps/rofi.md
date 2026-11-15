@@ -1,8 +1,8 @@
 # rofi
 
-The launcher (super+d) and every menu: keybindings (super+/), clipboard history (super+v), theme picker, night light.
+The launcher (super+d) and every menu: clipboard history, theme picker, night light.
 
-`themes/quickinput.rasi` holds the layout (VS Code's quick input) and imports `colors.rasi`. `themes/keys.rasi` is the same look, wider and in the mono font, for `mango-keys`.
+`themes/quickinput.rasi` holds the layout (VS Code's quick input) and imports `colors.rasi`.
 
 ## Reference
 
@@ -13,7 +13,6 @@ The launcher (super+d) and every menu: keybindings (super+/), clipboard history 
 
 - `~/.config/rofi/config.rasi`
 - `~/.config/rofi/themes/colors.rasi`
-- `~/.config/rofi/themes/keys.rasi`
 - `~/.config/rofi/themes/quickinput.rasi`
 
 **Rendered from the palette** (`theme`):

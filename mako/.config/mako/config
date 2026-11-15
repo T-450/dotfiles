@@ -16,3 +16,21 @@ default-timeout=0
 
 [mode=do-not-disturb]
 invisible=1
+
+# the which-key popup (mango-whichkey): the open key mode's keys, bottom center, until the mode ends.
+# mango-keys --pango draws the body; it never takes focus, so the mode keeps every key.
+[app-name=mango-whichkey]
+anchor=bottom-center
+width=460
+height=640
+margin=12,12,24,12
+padding=14,20
+font=JetBrainsMono Nerd Font 11
+markup=1
+format=%b
+default-timeout=0
+history=0
+border-radius=6
+
+[mode=do-not-disturb app-name=mango-whichkey]
+invisible=0

@@ -16,5 +16,5 @@ See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, li
 
 **Rendered from the palette** (`theme`):
 
-- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `warning`
+- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `ansi0`, `ansi1`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi15`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi7`, `ansi8`, `ansi9`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `warning`
 <!-- end generated -->

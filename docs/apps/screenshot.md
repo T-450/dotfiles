@@ -1,6 +1,6 @@
 # screenshot
 
-Screenshots: `screenshot region` (ctrl+alt+a) and `screenshot full` (Print).
+Screenshots: `screenshot region` (super+space c r) and `screenshot full` (Print).
 
 Copies to the clipboard and saves to `~/Pictures/Screenshots`. `slurp-pick` is slurp in the palette's colors, also used by the screen-share chooser.
 

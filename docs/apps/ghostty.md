@@ -1,6 +1,6 @@
 # ghostty
 
-The terminal (alt+return), the dropdown terminal (alt+esc) and the floating terminal (alt+shift+t), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim).
+The terminal (super+return), the dropdown terminal (alt+esc) and the floating terminal (super+space a t), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim).
 
 Every window is its own process (`gtk-single-instance = false`), as kitty's were. Ghostty's single instance opens each new window in `~` instead of the directory it was launched from (Thunar's "Open Terminal Here"), and gives all windows one pid, so mango's swallowing could hide the wrong terminal. A window takes about 0.3 s to open and 75 MB.
 
