@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # waybar-temperature: print the CPU package temperature as one waybar JSON line (custom/temperature)
 # Waybar's own temperature module ignores "states", so the lN level class (min(100, C), sized by
-# levels.css) comes from here; "critical" is added from 80 C.
+# levels.css) comes from here; "high" is added from 80 C and "critical" replaces it from 95 C (the
+# package throttles at 100).
 
 # the design's tooltip line: dim uppercase name, then the value (see docs/apps/waybar.md)
 name="<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>temperature</span>  "
@@ -21,7 +22,12 @@ fi
 c=$(((milli + 500) / 1000))
 level=$((c > 100 ? 100 : c))
 class="\"l$level\""
-((c >= 80)) && class+=", \"critical\""
 tip="$c °C"
-((c >= 80)) && tip+=" · high"
+if ((c >= 95)); then
+	class+=", \"critical\""
+	tip+=" · critical"
+elif ((c >= 80)); then
+	class+=", \"high\""
+	tip+=" · high"
+fi
 printf '{"text": "%d°", "class": [%s], "tooltip": "%s%s"}\n' "$c" "$class" "$name" "$tip"

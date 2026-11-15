@@ -24,7 +24,7 @@
 		// a window too narrow for a line clips it instead of wrapping it under the logo
 		"disableLinewrap": true,
 		"color": {
-			"keys": "{{accent}}",
+			"keys": "{{fg_muted}}",
 			"title": "{{fg_bright}}",
 			"output": "{{fg_text}}",
 			"separator": "{{fg_muted}}"
@@ -63,7 +63,7 @@
 			"type": "title",
 			"format": "{user-name}@{host-name}",
 			"color": {
-				"user": "{{accent}}",
+				"user": "{{fg_bright}}",
 				"at": "{{fg_muted}}",
 				"host": "{{fg_bright}}"
 			}
@@ -99,42 +99,35 @@
 			"key": "shell"
 		},
 		"break",
-		// hardware in the palette's gold
 		{
 			"type": "cpu",
 			"key": "cpu",
-			"keyColor": "{{warning}}",
 			"format": "{name} ({cores-logical})"
 		},
 		{
 			"type": "gpu",
 			"key": "gpu",
-			"keyColor": "{{warning}}",
 			"format": "{name}"
 		},
 		{
 			"type": "memory",
 			"key": "memory",
-			"keyColor": "{{warning}}",
 			"format": "{percentage-bar} {used} / {total}"
 		},
 		{
 			"type": "disk",
 			"key": "disk",
-			"keyColor": "{{warning}}",
 			"folders": "/",
 			"format": "{size-percentage-bar} {size-used} / {size-total}"
 		},
 		{
 			"type": "battery",
 			"key": "battery",
-			"keyColor": "{{warning}}",
 			"format": "{capacity-bar} {capacity} {status}"
 		},
 		{
 			"type": "uptime",
-			"key": "uptime",
-			"keyColor": "{{warning}}"
+			"key": "uptime"
 		},
 		"break",
 		{

@@ -45,7 +45,7 @@ alt+esc is the dropdown terminal: the one persistent shell, on the top edge of w
 | m | maximize |
 | t · c | float/tile · center a floating window |
 | z · shift+z · s | minimize · restore · show/hide minimized windows |
-| o · p | keep on top · pin to all tags (the bar shows ON TOP / PINNED; minimized windows are counted too) |
+| o · p | keep on top · pin to all tags (the bar shows on top / pinned; minimized windows are counted too) |
 | h/l · k/j | narrower/wider · shorter/taller (hold to repeat; on a tiled window it moves the split) |
 | q | force kill |
 

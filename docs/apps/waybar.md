@@ -1,25 +1,40 @@
 # waybar
 
-The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, colored from the palette.
+The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, neutral unless a color has something to say.
 
 ## Look
 
 - One 42px surface on the bottom edge and 8px in from the sides, drawn as a 44px window (1px ring on each side, 7px side margins, none below). The top corners have a 9px radius and the bottom corners are square on the screen edge; mango's 7px outer gaps line the windows up with the bar's ends. The mockup asks for `corner-shape: bevel` on two corners; GTK3 has none, so they are plain rounded corners. Fill, ring and 5% top sheen are `bar`, `edge` and `sheen`. The ring is listed after the sheen in `box-shadow` because GTK paints inset shadows in list order, the later one on top.
-- Every control is 28px tall, 4px apart (`spacing`), radius 4, IBM Plex Sans 14: the mockup's 24px and 13px opened up for legibility, with chips at 7px edges and a 5px icon gap. Wider than that, the right group outgrows its half of a 1920px bar once the bell shows a count (GTK keeps the clock centered by giving each side the same width) and the network name gets cut. Roles come from `colors.css.tmpl` (`bar`, `edge`, `text`, `dim`, `editor`, `blue`, `sky`, `teal`, `orange`, `purple`, `green`, `amber`, `red`, `tipline`, `sel`, `selfg`); every accent is kept legible on the bar (`|legible`). No color literal lives in `style.css`.
-- Hover is a translucent `editor` overlay under the chip's own tint. Custom modules match it on their wrapping box (`box:hover > #custom-…`): waybar puts the hover state on the box, and GTK3 doesn't pass it down to the label. Only the tags (real buttons) get the pressed overlay; waybar never sets `:active` on a label.
+- Every control is 28px tall, 4px apart (`spacing`), radius 4, IBM Plex Sans 14: the mockup's 24px and 13px opened up for legibility, with chips at 7px edges and a 5px icon gap. Wider than that, the right group outgrows its half of a 1920px bar once the bell shows a count (GTK keeps the clock centered by giving each side the same width) and the network name gets cut. Roles come from `colors.css.tmpl` (`bar`, `edge`, `sheen`, `text`, `dim`, `editor`, `signal`, `route`, `time`, `ok`, `warn`, `crit`, `tipline`, `sel`, `selfg`); the six colors are named for what they mean (see Color) and kept legible on the bar (`|legible`). No color literal lives in `style.css`.
+- Hover is a translucent `editor` overlay under the chip's tint. Custom modules match it on their wrapping box (`box:hover > #custom-…`): waybar puts the hover state on the box, and GTK3 doesn't pass it down to the label. Only the tags (real buttons) get the pressed overlay; waybar never sets `:active` on a label.
 - Tooltips are the design's 30px box (bar color, `tipline` ring, radius 4), 8px above the bar and never past its ends. GTK places the tooltip window itself and ignores CSS margins on it, so the window is transparent and the visible box is its inner box, whose margins are the offsets. The clock labels and the tray items carry their own 8px inset (not the group or the tray) because each anchors its tooltip to its own allocation, and GTK3 counts a CSS margin inside it.
+
+## Color
+
+Color appears only where it carries meaning (the Quiet Instrument rule behind Anodized Keylight); a module has no hue of its own. Everything is one of three neutrals: `text` for primary facts (the time, occupied tags, the layout glyph, the window-state and key-mode chips), `editor` for secondary facts and controls (every chip's icon, value, level bar and 12% tint), `dim` for labels and whatever is off or empty (day, date, window title, empty tags, muted, disconnected, night light off). The six colors, and every place they appear:
+
+| color | role | means | where |
+|---|---|---|---|
+| `signal` | `accent` | the one thing that matters now | the viewed tag (14x2 mark and tint under a bright number) |
+| `route` | `link` | a live connection | network while connected (icon, name, signal bar); bluetooth while a device is connected |
+| `time` | `badge` | time held by hand | night light forced warm ("warm now"): the screen's colors are not true |
+| `ok` | `success` | a good outcome in progress | battery while charging |
+| `warn` | `warning` | high, or a standing exception | cpu from 85%; memory and disk from 80%; temperature from 80 C; battery at 20% and below on battery; the window-state chip while a window is pinned |
+| `crit` | `error` | critical, irreversible, or asking now | an urgent tag; memory and disk from 90%; temperature from 95 C; battery at 10% and below; a held critical notification (count and dot); recording in progress; power under the pointer |
+
+A threshold skin drops the chip's tint and rings it 1px in its color. Cpu has no critical tier (full load is work, not a failure). Plugged in without charging (full, or held at the charge threshold) keeps the bolt and stays neutral. Chips that mark a state get no hue unless the state needs attention: the window-state chip and the key-mode chip exist only while their state does, so their presence is the message; they are `text` at weight 600 on a neutral tint, except a pinned window: it shows on every tag until unpinned, so the chip turns `warn`, like the pinned window's amber border. Recording keeps `crit` because a capture you forgot is the one state a glance must never miss. Power is neutral at rest and set apart by its place and its cut corners; it turns `crit` only under the pointer, where the color says what the click would do.
 
 ## Modules
 
-Left: `custom/start` (click: `rofi -show drun`), the nine mango tags (`mango/workspaces`; click views, right-click toggles; `.empty` dim, occupied bright with a 4x2 mark, `.active` blue underline and tint, `.urgent` amber with a ring that pulses twice), a divider, the layout button (`custom/layout`, fed by `waybar-layout`; click: `mmsg dispatch switch_layout`), the focused window title (`mango/window`, 64 chars).
+Left: `custom/start` (click: `rofi -show drun`), the nine mango tags (`mango/workspaces`; click views, right-click toggles; `.empty` dim, occupied bright with a 4x2 mark, `.active` a bright number on the `signal` mark and tint, `.urgent` `warn` with a ring that pulses twice), a divider, the layout button (`custom/layout`, fed by `waybar-layout`; click: `mmsg dispatch switch_layout`), the focused window title (`mango/window`, 64 chars).
 
 Center: one clock pill (`group/datetime`): day, time (its tooltip is the design's CALENDAR line with the month calendar kept below it, because the design's calendar is a click popover waybar can't open), date (`custom/date`, because waybar's clock zero-pads the day).
 
-Right: recording (`custom/record`, only while `gpurecord` prints), then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), brightness (amber; scroll: `osd-brightness bup/bdown`), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected) and the tray. Then a divider, the notification bell (`custom/notifications`), a divider, and power (`custom/power`; click: wlogout) in the corner.
+Right: recording (`custom/record`, only while `gpurecord` prints), then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), brightness (scroll: `osd-brightness bup/bdown`), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected) and the tray. Then a divider, the notification bell (`custom/notifications`), a divider, and power (`custom/power`; click: wlogout) in the corner.
 
-Power is the one control that ends the session, so it reads apart: the only red chip (red icon, tint, ring and a faint glow, brighter on hover), cut on two corners (round top-left and bottom-right), 8px from its divider and 4px further from the bar's end than other modules. Do-not-disturb is the bell's right-click only.
+Power is the one control that ends the session, so it reads apart by placement and shape: cut on two corners (round top-left and bottom-right), 8px from its divider and 4px further from the bar's end than other modules. It is a neutral chip at rest; under the pointer its icon and a 1px ring turn `crit`. Do-not-disturb is the bell's right-click only.
 
-Kept beyond the mockup: recording before the chips, brightness among them (amber, the one accent no chip wears at rest), night light and the tray in the tray area, and the power chip's dividers, red and glow.
+Kept beyond the mockup: recording before the chips, brightness among them, night light and the tray in the tray area, and the power chip's dividers.
 
 ## Tooltips
 
@@ -34,11 +49,11 @@ Scripts that print a tooltip (`waybar-temperature`, `waybar-notifications`, `way
 
 ## Level bars
 
-A chip draws the design's 2px level bar as its first background layer, a `currentColor` gradient. Waybar exposes a value only as a `states` class, and a module has one class at a time, so `levels.json` gives each level module one `states` entry per integer (`l0`..`l100`; included by `config.jsonc`, merged into each module) and `levels.css` turns each `.lN` into that layer's `background-size` width. Volume and battery use waybar's `<= value` states, the rest `>= value`. Both files are generated data (one entry per integer): regenerate them rather than edit single lines. `levels.css` also holds the icon ranges and the hot/low skins.
+A chip draws the design's 2px level bar as its first background layer, a `currentColor` gradient. Waybar exposes a value only as a `states` class, and a module has one class at a time, so `levels.json` gives each level module one `states` entry per integer (`l0`..`l100`; included by `config.jsonc`, merged into each module) and `levels.css` turns each `.lN` into that layer's `background-size` width. Volume and battery use waybar's `<= value` states, the rest `>= value`. Both files are generated data (one entry per integer): regenerate them rather than edit single lines. `levels.css` also holds the icon ranges and the threshold skins (`warn`, `crit`).
 
 Specificity matters: an `#id` rule outranks a `.lN` class rule, so the shared chip rule in `style.css` sets no `background-size`. The fallback `label { background-size: 0% 2px, ... }` (no level class, no bar) is a bare type selector for the same reason. Rules that must beat a range (`.muted`, `.disconnected`, `.ethernet`, `.charging`, `.critical`) sit after the `@import` at the same id+class specificity.
 
-Waybar's temperature module ignores `states` (its chip never gets an `lN` class), so the chip is `custom/temperature`: `waybar-temperature` prints the class itself, `min(100, C)`, plus `critical` from 80 C.
+Waybar's temperature module ignores `states` (its chip never gets an `lN` class), so the chip is `custom/temperature`: `waybar-temperature` prints the class itself, `min(100, C)`, plus `high` from 80 C or `critical` from 95 C (the package throttles at 100).
 
 ## Icons
 
@@ -49,7 +64,7 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 ## Helper scripts
 
 - `waybar-toggle` (super+esc b): stops or starts `waybar.service`.
-- `waybar-temperature`: reads the coretemp `Package id 0` sensor (`/sys/devices/platform/coretemp.0/hwmon/hwmon*`) and prints one JSON line with text, the `lN` and `critical` classes and a tooltip. Polled every 5s.
+- `waybar-temperature`: reads the coretemp `Package id 0` sensor (`/sys/devices/platform/coretemp.0/hwmon/hwmon*`) and prints one JSON line with text, the `lN` class, `high` or `critical`, and a tooltip. Polled every 5s.
 - `waybar-notifications`: counts notifications held by mako (`makoctl list -j`) and reads `makoctl mode`; prints the count ("99+" above 99, a zero-width space at 0 so the bell stays) with classes `unread`, `dnd` (do-not-disturb on) and `critical` (a held critical notification). Polled every 2s and refreshed by `pkill -RTMIN+10 waybar` after a click. Bell clicks: restore, middle dismisses all, right toggles do-not-disturb.
 
 - `waybar-winstate`: the window-state chip (custom/winstate): how many windows are pinned to every tag, kept on top or minimized (the alt+esc dropdown isn't counted), their titles in the tooltip, hidden when none is. mango sends no IPC event for these states, so `mango-state` signals it (`RTMIN+11`) and it rechecks every 10s; a click runs `mango-state --clear`.
@@ -118,7 +133,7 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `ansi1`, `ansi11`, `ansi12`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `bg_desktop`, `border_hairline`, `fg_disabled`, `fg_editor`, `name`, `selection_bg`, `selection_fg`, `slug`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `badge`, `bg_desktop`, `border_hairline`, `error`, `fg_disabled`, `fg_editor`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

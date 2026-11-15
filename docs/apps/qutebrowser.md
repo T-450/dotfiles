@@ -16,7 +16,7 @@ qutebrowser, a keyboard-driven browser, in palette colors.
 
 **Rendered from the palette** (`theme`):
 
-- `qutebrowser/.config/qutebrowser/colors.py.tmpl` → `qutebrowser/.config/qutebrowser/colors.py`: `accent`, `badge`, `bg_desktop`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_bright`, `fg_disabled`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `variant`, `warning`
+- `qutebrowser/.config/qutebrowser/colors.py.tmpl` → `qutebrowser/.config/qutebrowser/colors.py`: `accent`, `bg_desktop`, `bg_surface`, `bg_widget`, `border_hairline`, `error`, `fg_bright`, `fg_disabled`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `variant`, `warning`
 
 **`reload.sh`** (run by `theme set`): re-read config.py (and colors.py) in a running qutebrowser. Only when one runs: the command line would otherwise start a new browser.
 <!-- end generated -->

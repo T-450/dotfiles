@@ -2,7 +2,7 @@
 
 mpv, the video and audio player, with the uosc on-screen interface in the palette's colors.
 
-The interface is uosc (AUR `mpv-uosc`) with seekbar thumbnails from thumbfast; right click or the menu key opens its menu (`input.conf`). The AUR package installs under `/usr/share/mpv`, which mpv does not search, so `mpv.conf` names the script and its fonts. uosc's colors come from `script-opts/uosc.conf.tmpl` (accent for the foreground, the widget color for its background); windows opened after `theme set` get the new colors.
+The interface is uosc (AUR `mpv-uosc`) with seekbar thumbnails from thumbfast; right click or the menu key opens its menu (`input.conf`). The AUR package installs under `/usr/share/mpv`, which mpv does not search, so `mpv.conf` names the script and its fonts. uosc's colors come from `script-opts/uosc.conf.tmpl` (`badge` for the foreground, the palette's color for time and its control: the timeline and the transport are exactly that; the widget color for its background); windows opened after `theme set` get the new colors.
 
 Video decodes in hardware where the Comet Lake GPU can (VA-API: H.264, HEVC, VP9; check with `vainfo`). Streams through yt-dlp are capped at 1080p and skip AV1, which this GPU decodes only in software. mpv remembers where you stopped (`save-position-on-quit`), keeps the window open at the end, picks English subtitles, and saves screenshots (`s`) to `~/Pictures/Screenshots` next to the desktop's own. mpv-mpris lets the media keys and playerctl drive it.
 
@@ -21,7 +21,7 @@ Video decodes in hardware where the Comet Lake GPU can (VA-API: H.264, HEVC, VP9
 
 **Rendered from the palette** (`theme`):
 
-- `mpv/.config/mpv/script-opts/uosc.conf.tmpl` → `mpv/.config/mpv/script-opts/uosc.conf`: `accent`, `bg_desktop`, `bg_widget`, `error`, `fg_text`, `link`, `name`, `slug`, `success`
+- `mpv/.config/mpv/script-opts/uosc.conf.tmpl` → `mpv/.config/mpv/script-opts/uosc.conf`: `badge`, `bg_desktop`, `bg_widget`, `error`, `fg_text`, `link`, `name`, `slug`, `success`
 
 **`setup.sh`** (run by `install.sh --setup`): mpv as the default player for every type its desktop file lists (audio and video).
 <!-- end generated -->

@@ -4,6 +4,8 @@ GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the pale
 
 `gtk-theme` stays `Adwaita` in GSettings and `settings.ini`. GTK 3 reads the name from GSettings over `settings.ini`, and no `Adwaita-dark` theme is installed (its dark variant is built into GTK), so naming it made GTK 3 fall back to light Adwaita. Dark comes from `color-scheme` (GSettings, which the settings portal hands to GTK 4, Qt and Firefox) and `gtk-application-prefer-dark-theme`; `reload.sh` sets both on `theme set`.
 
+libadwaita's standalone accent (`accent_color`: focus rings, checked marks, links) is the palette's `accent`, kept legible on the window background; its filled accent (`accent_bg_color`) is the selection.
+
 GTK reads `gtk.css` once per process, so only apps started after `theme set` get new colors.
 
 ## Reference
@@ -24,7 +26,7 @@ GTK reads `gtk.css` once per process, so only apps started after `theme set` get
 
 - `gtk/.config/gtk-3.0/colors.css.tmpl` → `gtk/.config/gtk-3.0/colors.css`: `bg_desktop`, `bg_surface`, `fg_editor`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`
 - `gtk/.config/gtk-3.0/settings.ini.tmpl` → `gtk/.config/gtk-3.0/settings.ini`: `name`, `prefer_dark`, `slug`
-- `gtk/.config/gtk-4.0/colors.css.tmpl` → `gtk/.config/gtk-4.0/colors.css`: `bg_desktop`, `bg_surface`, `bg_widget`, `error`, `fg_editor`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
+- `gtk/.config/gtk-4.0/colors.css.tmpl` → `gtk/.config/gtk-4.0/colors.css`: `accent`, `bg_desktop`, `bg_surface`, `bg_widget`, `error`, `fg_editor`, `fg_text`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 - `gtk/.config/gtk-4.0/settings.ini.tmpl` → `gtk/.config/gtk-4.0/settings.ini`: `name`, `prefer_dark`, `slug`
 
 **`setup.sh`** (run by `install.sh --setup`): icons (Tela-mango), cursor and fonts for GTK apps, and the palette's dark/light preference (gtk/reload.sh, also run by `theme set`). Needs a dbus session; skipped without one.

@@ -2,7 +2,7 @@
 
 lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs.
 
-Run `lazygit` in a repo (the alt+esc dropdown is a good place). Its panels have square single-line borders like the windows' tmux-style borders: the focused panel's border is the same green (`success`) as the focused window's, the others the window grid's grey. The selected line uses `bg_hover`; cherry-picked commits `badge`, the rebase base `warning`, unstaged files `error`.
+Run `lazygit` in a repo (the alt+esc dropdown is a good place). Its panels have square single-line borders like the windows' tmux-style borders: the focused panel's border is the `accent`, like the focused window's (`link` while searching), the others the window grid's grey; the key hints are `fg_secondary`. The selected line uses `bg_hover`; cherry-picked commits `badge`, the rebase base `warning`, unstaged files `error`.
 
 Diffs go through delta (`git/packages`), with its syntax theme (`ansi`) from git's config and `--dark` or `--light` from the palette's `variant`: delta can't ask the terminal for its background inside lazygit, so it is told. `gui.colorScheme` is set from `variant` for the same reason. `e` opens the file in helix (`os.editPreset: helix`; Arch names the binary `helix`, not `hx`).
 
@@ -21,5 +21,5 @@ Rollback: revert the commit, `./install.sh --link` (removes the link), `sudo pac
 
 **Rendered from the palette** (`theme`):
 
-- `lazygit/.config/lazygit/config.yml.tmpl` → `lazygit/.config/lazygit/config.yml`: `badge`, `bg_hover`, `border_inactive`, `error`, `link`, `success`, `variant`, `warning`
+- `lazygit/.config/lazygit/config.yml.tmpl` → `lazygit/.config/lazygit/config.yml`: `accent`, `badge`, `bg_hover`, `border_inactive`, `error`, `fg_secondary`, `link`, `variant`, `warning`
 <!-- end generated -->

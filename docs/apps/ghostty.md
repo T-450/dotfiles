@@ -18,7 +18,7 @@ Copy and paste work like in GUI apps:
 
 Text looks exactly as it did in kitty: `alpha-blending = linear` draws the same glyphs (Ghostty's default draws them lighter), and `adjust-cell-height = 1` makes the cells 10x22 px (Ghostty's own line height for JetBrains Mono at 12 pt is 21 px). fastfetch's logo is sized for those cells. Window padding is 1 px narrower on the left: Ghostty takes whole points only.
 
-Colors come from `colors.ghostty` (the palette's terminal colors, the split divider and the search highlights) and `tabs.css` (the tab bar). `theme set` recolors open windows at once: `reload.sh` sends SIGUSR2, which makes Ghostty re-read its config, `tabs.css` included. Tabs (ctrl+shift+t) show at the top only when there are two or more: `tabs.css` turns libadwaita's rounded tab bar into square segments one cell tall in the terminal's font, the selected one in the accent, like the bar. Splits are Ghostty's defaults (ctrl+shift+o right, ctrl+shift+e down); an unfocused split is dimmed. fastfetch draws its logo through the kitty graphics protocol.
+Colors come from `colors.ghostty` (the palette's terminal colors, the split divider and the search highlights) and `tabs.css` (the tab bar). `theme set` recolors open windows at once: `reload.sh` sends SIGUSR2, which makes Ghostty re-read its config, `tabs.css` included. Tabs (ctrl+shift+t) show at the top only when there are two or more: `tabs.css` turns libadwaita's rounded tab bar into square segments one cell tall in the terminal's font, the selected one on the focused row's colors (`selection_bg`/`selection_fg`). Search (ctrl+shift+f) marks every match in the route color (`link`) and the one the cursor is on in the `accent`. Splits are Ghostty's defaults (ctrl+shift+o right, ctrl+shift+e down); an unfocused split is dimmed. fastfetch draws its logo through the kitty graphics protocol.
 
 Not carried over from kitty: the cursor trail (Ghostty draws one only with a custom shader, whose animation loop renders every frame while the window has focus, a steady cost on a laptop), the blinking that stops after 15 s, curly link and undercurl styles, and the powerline slants and tab numbers.
 
@@ -36,8 +36,8 @@ Not carried over from kitty: the cursor trail (Ghostty draws one only with a cus
 
 **Rendered from the palette** (`theme`):
 
-- `ghostty/.config/ghostty/colors.ghostty.tmpl` → `ghostty/.config/ghostty/colors.ghostty`: `accent`, `ansi0`, `ansi1`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi15`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi7`, `ansi8`, `ansi9`, `border_inactive`, `name`, `selection_bg`, `selection_fg`, `slug`, `term_bg`, `term_cursor`, `term_fg`, `warning`
-- `ghostty/.config/ghostty/tabs.css.tmpl` → `ghostty/.config/ghostty/tabs.css`: `accent`, `bg_hover`, `bg_surface`, `fg_secondary`, `name`, `slug`
+- `ghostty/.config/ghostty/colors.ghostty.tmpl` → `ghostty/.config/ghostty/colors.ghostty`: `accent`, `ansi0`, `ansi1`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi15`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi7`, `ansi8`, `ansi9`, `border_inactive`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `term_bg`, `term_cursor`, `term_fg`
+- `ghostty/.config/ghostty/tabs.css.tmpl` → `ghostty/.config/ghostty/tabs.css`: `bg_hover`, `bg_surface`, `fg_secondary`, `name`, `selection_bg`, `selection_fg`, `slug`
 
 **`reload.sh`** (run by `theme set`): open ghostty windows re-read config.ghostty, its colors.ghostty and tabs.css
 <!-- end generated -->

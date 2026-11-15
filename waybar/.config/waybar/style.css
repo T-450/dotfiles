@@ -81,7 +81,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
     background-position: center;
     background-size: 16px 16px;
 }
-#custom-start { color: @blue; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
+#custom-start { color: @editor; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
 #custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 
 /* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it.
@@ -96,11 +96,11 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     background-color: alpha(@editor, 0.06);
 }
 
-/* power: the one control that ends the session, so it reads apart from everything else. It takes
-   the bar's corner behind its own divider, 8px from it (4px margin + 4px spacing) and 4px more
-   than anything else from the bar's end, and is the only red chip: red icon on a red tint and a
-   red ring, no glow, cut on two corners (round top-left and bottom-right, square elsewhere).
-   Hover lights the ring, after the shared overlay above. */
+/* power: the one control that ends the session, so it reads apart from everything else, by
+   placement and shape, not hue: it takes the bar's corner behind its own divider, 8px from it
+   (4px margin + 4px spacing) and 4px more than anything else from the bar's end, cut on two
+   corners (round top-left and bottom-right, square elsewhere). At rest it is a neutral chip; the
+   pointer over it turns icon and ring crit: the color says what the click would do. */
 #custom-power {
     min-width: 16px;
     min-height: 28px;
@@ -108,22 +108,23 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     margin-right: 4px;
     padding: 0 9px;
     border-radius: 4px 0 4px 0;
-    color: @red;
+    color: @editor;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/power-symbolic.svg")),
-                      linear-gradient(alpha(@red, 0.14), alpha(@red, 0.14));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
     background-repeat: no-repeat;
     background-position: center, 0 0;
     background-size: 16px 16px, 100% 100%;
-    box-shadow: inset 0 0 0 1px alpha(@red, 0.55);
 }
 box:hover > #custom-power {
-    background-color: alpha(@red, 0.14);
-    box-shadow: inset 0 0 0 1px @red;
+    color: @crit;
+    box-shadow: inset 0 0 0 1px @crit;
 }
 
 /* tags: all nine, 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
-   mark centered at the bottom); .empty resets it, .active and .urgent override it. */
+   mark centered at the bottom); .empty resets it, .active and .urgent override it. The viewed
+   tag is the bar's one use of signal (a 14x2 mark and a tint under a bright number); an urgent
+   tag is warn, because a window there is asking. */
 #workspaces { padding: 0; background: transparent; }
 #workspaces button {
     min-width: 28px;
@@ -150,29 +151,29 @@ box:hover > #custom-power {
     background-image: none;
 }
 #workspaces button.active {
-    color: @sky;
+    color: @text;
     font-weight: 500;
-    background-image: linear-gradient(@blue, @blue),
-                      linear-gradient(alpha(@blue, 0.12), alpha(@blue, 0.12));
+    background-image: linear-gradient(@signal, @signal),
+                      linear-gradient(alpha(@signal, 0.16), alpha(@signal, 0.16));
     background-size: 14px 2px, 100% 100%;
     background-position: center bottom, 0 0;
 }
 #workspaces button.urgent {
-    color: @amber;
+    color: @crit;
     font-weight: 500;
-    background-image: linear-gradient(@amber, @amber);
+    background-image: linear-gradient(@crit, @crit);
     background-size: 4px 2px;
     background-position: center bottom;
-    box-shadow: inset 0 0 0 1px @amber;
+    box-shadow: inset 0 0 0 1px @crit;
     animation: tburg 1.2s ease-in-out 2;
 }
 #workspaces button:hover { background-color: alpha(@editor, 0.06); }
 #workspaces button:active { background-color: alpha(@editor, 0.10); }
 /* GTK3 keyframes take one selector per block: "0%, 100%" is a parse error that drops the sheet */
 @keyframes tburg {
-    0% { box-shadow: inset 0 0 0 1px @amber; }
-    50% { box-shadow: inset 0 0 0 1px alpha(@amber, 0.25); }
-    100% { box-shadow: inset 0 0 0 1px @amber; }
+    0% { box-shadow: inset 0 0 0 1px @warn; }
+    50% { box-shadow: inset 0 0 0 1px alpha(@warn, 0.25); }
+    100% { box-shadow: inset 0 0 0 1px @warn; }
 }
 
 /* a 16px rule: 44px window - 2 x 14px margin; the 1px label must not stretch it */
@@ -214,19 +215,23 @@ box:hover > #custom-power {
 #custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 #custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 
-/* window states nothing else shows (pinned, on top, minimized): an amber chip, the pinned border's
-   color, so a hidden state is never a surprise */
+/* window states nothing else shows (pinned, on top, minimized). The chip exists only while a
+   window is in one, so its presence is the message: neutral, set apart by weight */
 #custom-winstate {
     min-height: 28px;
     margin: 8px 0 8px 4px;
     padding: 0 8px;
     border-radius: 4px;
     font-weight: 600;
-    color: @amber;
-    background-color: alpha(@amber, 0.14);
+    color: @text;
+    background-color: alpha(@text, 0.08);
 }
+/* a pinned window shows on every tag until unpinned: amber, like its border, so it is never a
+   surprise; on top and minimized only describe a window and stay neutral */
+#custom-winstate.pinned { color: @warn; background-color: alpha(@warn, 0.12); }
 
-/* the open key mode (super+esc, super+n, super+m): a chip in the group's hue (the cheatsheet's) */
+/* the open key mode (super+esc, super+n, super+m): the chip shows only while a mode is open and
+   names it, so it needs no hue of its own */
 #keymode {
     min-height: 28px;
     margin: 8px 0 8px 4px;
@@ -236,9 +241,6 @@ box:hover > #custom-power {
     color: @text;
     background-color: alpha(@text, 0.08);
 }
-#keymode.session { color: @red; background-color: alpha(@red, 0.12); }
-#keymode.notify { color: @purple; background-color: alpha(@purple, 0.12); }
-#keymode.monitor { color: @orange; background-color: alpha(@orange, 0.12); }
 
 /* the focused window: 8px from the layout button (4px spacing + 4px margin) */
 #window {
@@ -282,17 +284,19 @@ box:hover > #custom-power {
     background-position: left bottom, 7px center, 0 0;
 }
 
+/* route: a connected network wears the connection color on its icon, name and signal bar (the
+   name is the route's); the tint stays neutral like every chip's */
 #network {
-    color: @green;
+    color: @route;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
-                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 /* skins after the @import win over the lN range at the same id+class specificity */
 #network.ethernet {
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/ethernet-symbolic.svg")),
-                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
     background-size: 100% 2px, 14px 14px, 100% 100%;
 }
 #network.disconnected {
@@ -319,78 +323,86 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
 
-/* brightness is beyond the mockup; amber is the one accent no chip wears at rest */
 #backlight {
-    color: @amber;
+    color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/sun-symbolic.svg")),
-                      linear-gradient(alpha(@amber, 0.12), alpha(@amber, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 
 #cpu {
-    color: @blue;
+    color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/cpu-symbolic.svg")),
-                      linear-gradient(alpha(@blue, 0.12), alpha(@blue, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 #memory {
-    color: @teal;
+    color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/mem-symbolic.svg")),
-                      linear-gradient(alpha(@teal, 0.12), alpha(@teal, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 /* waybar's built-in temperature module ignores "states" (its chip never gets an lN class), so this
    is custom/temperature: waybar-temperature prints the lN class itself (min(100, C)), and
-   .critical below is the alert skin. */
+   .high (from 80 C) and .critical (from 95 C) below are the threshold skins. */
 #custom-temperature {
-    color: @orange;
+    color: @editor;
     min-width: 22px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      linear-gradient(alpha(@orange, 0.12), alpha(@orange, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
-#custom-temperature.critical {
-    color: @red;
+#custom-temperature.high {
+    color: @warn;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
                       none;
-    box-shadow: inset 0 0 0 1px @red;
+    box-shadow: inset 0 0 0 1px @warn;
+}
+#custom-temperature.critical {
+    color: @crit;
+    background-image: linear-gradient(currentColor, currentColor),
+                      -gtk-recolor(url("icons/temp-symbolic.svg")),
+                      none;
+    box-shadow: inset 0 0 0 1px @crit;
 }
 #disk {
-    color: @sky;
+    color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/disk-symbolic.svg")),
-                      linear-gradient(alpha(@sky, 0.12), alpha(@sky, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 
 /* battery: level, 23x10 outline at 7px, capacity-wide fill at 9px, bolt at 35px, tint. The
    fill's width is in levels.css; charging shows the bolt and pushes the value right by 15px, so
-   the layer stays in the same list as `none` while discharging. */
+   the layer stays in the same list as `none` while discharging. Charging is ok (energy is coming
+   in); plugged in without charging (full, or held at the charge threshold) is no news, so it keeps
+   the bolt and stays neutral. */
 #battery {
-    color: @purple;
+    color: @editor;
     min-width: 29px;
     padding: 0 7px 0 35px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
                       none,
-                      linear-gradient(alpha(@purple, 0.12), alpha(@purple, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
     background-position: left bottom, 7px center, 9px center, 35px center, 0 0;
     background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%;
 }
-#battery.charging, #battery.plugged {
-    color: @green;
+#battery.charging, #battery.plugged, #battery.full, #battery.not-charging {
     padding-left: 50px;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/bolt-symbolic.svg")),
-                      linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
+#battery.charging { color: @ok; }
 
 /* icon-only chips keep the chips' 7px edges */
 #custom-nightlight {
@@ -406,28 +418,28 @@ box:hover > #custom-power {
     background-position: center, 0 0;
     background-size: 14px 14px, 100% 100%;
 }
-#custom-nightlight.warm {
-    color: @orange;
-    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")),
-                      linear-gradient(alpha(@orange, 0.12), alpha(@orange, 0.12));
-}
+/* time: "warm now" holds night on the screen whatever the hour, so on-screen colors are not true.
+   Automatic (the schedule) is the resting state and stays neutral. */
+#custom-nightlight.warm { color: @time; }
 #custom-nightlight.off {
     color: @dim;
     background-image: -gtk-recolor(url("icons/moon-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
+/* recording shows only while the screen is being captured: crit, the one live state a glance must
+   never miss */
 #custom-record {
     min-width: 14px;
     min-height: 28px;
     padding: 0 7px;
     border-radius: 4px;
-    color: @red;
+    color: @crit;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/record-symbolic.svg"));
     background-repeat: no-repeat;
     background-position: center;
     background-size: 14px 14px;
-    box-shadow: inset 0 0 0 1px @red;
+    box-shadow: inset 0 0 0 1px @crit;
 }
 
 /* the bell: 28px with no count, 48px with one. The icon is a palette-slot stroke so it can stay
@@ -442,7 +454,7 @@ box:hover > #custom-power {
     background-repeat: no-repeat;
     background-position: 6px center;
     background-size: 16px 16px;
-    -gtk-icon-palette: success @dim, error @red;
+    -gtk-icon-palette: success @dim, error @crit;
 }
 #custom-notifications.unread {
     min-width: 14px;
@@ -450,12 +462,12 @@ box:hover > #custom-power {
     color: @editor;
     font-size: 11px;
     font-feature-settings: "tnum";
-    -gtk-icon-palette: success @text, error @red;
+    -gtk-icon-palette: success @text, error @crit;
 }
-#custom-notifications.critical { color: @red; }
+#custom-notifications.critical { color: @crit; }
 #custom-notifications.dnd {
     background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg"));
-    -gtk-icon-palette: success @dim, error @red;
+    -gtk-icon-palette: success @dim, error @crit;
 }
 #custom-notifications.critical {
     background-image: -gtk-recolor(url("icons/bell-symbolic.svg")),
@@ -481,7 +493,7 @@ box:hover > #custom-power {
     background-position: 6px center;
     background-size: 16px 16px;
 }
-#bluetooth.connected { padding-left: 28px; }
+#bluetooth.connected { padding-left: 28px; color: @route; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     color: @dim;
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));

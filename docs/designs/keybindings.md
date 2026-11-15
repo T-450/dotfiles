@@ -65,17 +65,20 @@ A floating Ghostty window (`com.mitchellh.ghostty-keys`, 1582x930, centered) run
 - **List.** Every row: the group name, the keycaps right-aligned in one shared field (so the action
   key always sits next to its description), a 2-cell gutter, the description. No header rows, so a
   group title can never sit alone at the bottom of the view; rows keep bind.conf's order. The
-  selected row is a full-width bar. A footer names the layers (Super GO · OPEN, +Shift CARRY,
-  +Alt WINDOW, +Ctrl LAYOUT), each in its group's hue.
+  selected row is a full-width bar. A footer names the layers (Super go · open, +Shift carry,
+  +Alt window, +Ctrl layout) in the same muted lowercase as the rows' group names.
 - **Group card.** The preview pane shows the selected row's whole group, its rows on the same lines
   as the list's; a mode's rows read `› H` under the key that opens it. A group taller than the pane
   shows the rows around the selection.
-- **Keycaps.** The keyboard's own colors (the palette's `[keycaps]`, NuPhy Air60 HE): modifiers in
-  the black `key_mod` with a faint aluminium edge, the action key in the violet `key_accent`, a
-  mode's opening key in the grey `key_cap`, white `key_legend`s; `+` and `›` in `key_frame`. Group
-  names, the card title and the selection mark keep their group hues (`HUES`).
-- **Color by purpose**, from the active palette, so every theme works and no literal is written.
-  Matched characters: `key_amber`, bold. Empty search: "0/0" and a blank card.
+- **Keycaps.** The keyboard's own neutrals (the palette's `[keycaps]`, NuPhy Air60 HE): modifiers in
+  the black `key_mod` with a faint aluminium edge, every other key in the grey `key_cap`, white
+  `key_legend`s; `+` and `›` in `key_frame`. Group names are `fg_muted`, the card title `fg_bright`.
+- **Color only with meaning**, from the active palette, so every theme works and no literal is
+  written. The signal marks the selection and nothing else: fzf's pointer and the card's mark in
+  `accent`, and the selected row's action key on the one lit cap, `key_accent` (the card knows the
+  selected row; the list's rows are drawn before fzf selects one, so there the bar and the pointer
+  mark it). The which-key popup has no selection, so it has no lit cap. Matched characters: `link`
+  (where the query leads), bold and underlined. Empty search: "0/0" and a blank card.
 - **Search.** fzf is the interface and reruns the search on every key press
   (`--disabled`, `change:reload`): `mango-keys --rank QUERY` scores rows and draws the match
   highlight. Each query word must match a row's group, description, keys or synonyms, best first:

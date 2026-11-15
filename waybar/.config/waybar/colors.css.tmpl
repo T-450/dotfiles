@@ -6,23 +6,28 @@
 @define-color sheen   {{selection_fg}};
 
 /* Text: text is the editor color lifted toward the bright foreground, dim the same color blended
-   with the muted one for tags/title/date. editor is the neutral chip color (volume, wallpaper). */
+   with the muted one. text = primary facts (the time, occupied tags, the layout), editor =
+   secondary facts and controls (every chip's icon, value and level bar), dim = labels and
+   whatever is off or empty (day, date, title, empty tags, muted, disconnected). */
 @define-color text    {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
 @define-color dim     {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
 @define-color editor  {{fg_editor|legible:bg_desktop}};
 
-/* Accents: the terminal's bright colors, each kept legible on the bar. blue = start/cpu/viewed
-   tag, sky = viewed tag text/disk, teal = memory, orange = temperature/night light warm,
-   purple = battery, green = network/charging, amber = brightness/urgent/hot cpu,
-   red = alerts/critical. */
-@define-color blue    {{ansi4|legible:bg_desktop}};
-@define-color sky     {{ansi12|legible:bg_desktop}};
-@define-color teal    {{ansi6|legible:bg_desktop}};
-@define-color orange  {{ansi11|legible:bg_desktop}};
-@define-color purple  {{ansi5|legible:bg_desktop}};
-@define-color green   {{ansi2|legible:bg_desktop}};
-@define-color amber   {{ansi3|legible:bg_desktop}};
-@define-color red     {{ansi1|legible:bg_desktop}};
+/* Colour carries meaning or is absent (the Quiet Instrument rule). Everything on the bar is one
+   of the three neutrals above unless it is one of these, each kept legible on the bar:
+   signal = the one thing that matters now: the viewed tag
+   route  = a live connection: network up (its name and strength), a bluetooth device connected
+   time   = time held by hand: the night light forced warm ("warm now"), whatever the hour
+   ok     = a good outcome in progress: battery charging
+   warn   = high or asking: cpu/memory/disk/temperature high, battery low, an urgent tag
+   crit   = critical or irreversible: memory/disk/temperature critical, battery nearly empty,
+            a held critical notification, a recording in progress, power under the pointer */
+@define-color signal  {{accent|legible:bg_desktop}};
+@define-color route   {{link|legible:bg_desktop}};
+@define-color time    {{badge|legible:bg_desktop}};
+@define-color ok      {{success|legible:bg_desktop}};
+@define-color warn    {{warning|legible:bg_desktop}};
+@define-color crit    {{error|legible:bg_desktop}};
 
 /* the tooltip's 1px ring, and the selected text in tray menus */
 @define-color tipline {{fg_disabled}};

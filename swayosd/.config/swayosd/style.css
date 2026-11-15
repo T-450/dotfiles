@@ -1,5 +1,5 @@
 /* swayosd (volume/brightness OSD), styled like the mako toasts: flat widget
-   background, hairline border, accent fill. Colors: colors.css, rendered from
+   background, hairline border, a neutral fill (a level is a fact, not a signal). Colors: colors.css, rendered from
    the active palette by theme/theme. Loaded with -s by swayosd.service. */
 @import "colors.css";
 

@@ -223,7 +223,7 @@
 #network.l7,
 #network.l8,
 #network.l9 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-0-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-0-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 #network.l10,
 #network.l11,
@@ -250,7 +250,7 @@
 #network.l32,
 #network.l33,
 #network.l34 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-1-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-1-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 #network.l35,
 #network.l36,
@@ -277,7 +277,7 @@
 #network.l57,
 #network.l58,
 #network.l59 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-2-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 #network.l60,
 #network.l61,
@@ -320,7 +320,7 @@
 #network.l98,
 #network.l99,
 #network.l100 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-3-symbolic.svg")), linear-gradient(alpha(@green, 0.12), alpha(@green, 0.12));
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-3-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 
 /* pulseaudio: no wave at 0, one below 50, two from 50 */
@@ -432,7 +432,10 @@
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 
-/* hot skins: no tint, a 1px ring in the alert color (the design's alert skin) */
+/* threshold skins, the only color a chip takes from its value: no tint, a 1px ring. warn = high
+   (cpu from 85; memory and disk from 80; battery at 20 and below while discharging), crit =
+   critical (memory and disk from 90; battery at 10 and below). cpu has no critical tier: full
+   load is work, not a failure. Temperature's two tiers are classes from waybar-temperature. */
 #cpu.l85,
 #cpu.l86,
 #cpu.l87,
@@ -449,9 +452,23 @@
 #cpu.l98,
 #cpu.l99,
 #cpu.l100 {
-    color: @amber;
+    color: @warn;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), none;
-    box-shadow: inset 0 0 0 1px @amber;
+    box-shadow: inset 0 0 0 1px @warn;
+}
+#memory.l80,
+#memory.l81,
+#memory.l82,
+#memory.l83,
+#memory.l84,
+#memory.l85,
+#memory.l86,
+#memory.l87,
+#memory.l88,
+#memory.l89 {
+    color: @warn;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px @warn;
 }
 #memory.l90,
 #memory.l91,
@@ -464,9 +481,23 @@
 #memory.l98,
 #memory.l99,
 #memory.l100 {
-    color: @red;
+    color: @crit;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
-    box-shadow: inset 0 0 0 1px @red;
+    box-shadow: inset 0 0 0 1px @crit;
+}
+#disk.l80,
+#disk.l81,
+#disk.l82,
+#disk.l83,
+#disk.l84,
+#disk.l85,
+#disk.l86,
+#disk.l87,
+#disk.l88,
+#disk.l89 {
+    color: @warn;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
+    box-shadow: inset 0 0 0 1px @warn;
 }
 #disk.l90,
 #disk.l91,
@@ -479,9 +510,23 @@
 #disk.l98,
 #disk.l99,
 #disk.l100 {
-    color: @red;
+    color: @crit;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
-    box-shadow: inset 0 0 0 1px @red;
+    box-shadow: inset 0 0 0 1px @crit;
+}
+#battery.discharging.l11,
+#battery.discharging.l12,
+#battery.discharging.l13,
+#battery.discharging.l14,
+#battery.discharging.l15,
+#battery.discharging.l16,
+#battery.discharging.l17,
+#battery.discharging.l18,
+#battery.discharging.l19,
+#battery.discharging.l20 {
+    color: @warn;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
+    box-shadow: inset 0 0 0 1px @warn;
 }
 #battery.discharging.l0,
 #battery.discharging.l1,
@@ -493,18 +538,8 @@
 #battery.discharging.l7,
 #battery.discharging.l8,
 #battery.discharging.l9,
-#battery.discharging.l10,
-#battery.discharging.l11,
-#battery.discharging.l12,
-#battery.discharging.l13,
-#battery.discharging.l14,
-#battery.discharging.l15,
-#battery.discharging.l16,
-#battery.discharging.l17,
-#battery.discharging.l18,
-#battery.discharging.l19,
-#battery.discharging.l20 {
-    color: @red;
+#battery.discharging.l10 {
+    color: @crit;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
-    box-shadow: inset 0 0 0 1px @red;
+    box-shadow: inset 0 0 0 1px @crit;
 }

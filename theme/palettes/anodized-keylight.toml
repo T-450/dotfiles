@@ -46,13 +46,12 @@ ansi = [
 ]
 
 [keycaps]
-# NuPhy Air60 HE (nuphy.com product photos): black modifier caps, grey letter caps, the violet
-# accent caps, white legends, the aluminium frame, the amber sub-legends. Same on every palette:
-# the cheatsheet looks like the keyboard. The violet caps are translucent on dark palettes (theme
-# composites #rrggbbaa over bg_desktop); every legend must read at AA on its cap, or theme fails.
+# NuPhy Air60 HE (nuphy.com product photos): black modifier caps, grey letter caps, white legends,
+# the aluminium frame. The accent cap is the one lit key: mango-keys puts it under the selected
+# row's action key only, so here it is the signal (blue, 40% toward the cobalt so the legend reads
+# at AA), not the board's violet. Every legend must read at AA on its cap, or theme fails.
 mod    = "#2e2e30"
 cap    = "#626165"
-accent = "#6a5bc7d9"  # translucent, like the board: 85% over the panel
+accent = "#4466d3"  # signal-blue toward signal-cobalt: the selected key (legend 4.6:1)
 legend = "#f2f2f2"
 frame  = "#9d9d9d"
-amber  = "#dcb04a"

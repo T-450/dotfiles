@@ -10,17 +10,17 @@ gui:
   # square single lines, like the windows' tmux-style borders (mango) and the dropdown
   border: single
   theme:
-    # the focused panel takes the focused window's green; the rest the window grid's grey
+    # the focused panel takes the focused window's color, the signal; the rest the window grid's grey
     activeBorderColor:
-      - "{{success}}"
+      - "{{accent}}"
       - bold
     inactiveBorderColor:
       - "{{border_inactive|mix:fg_muted:0.2}}"
     searchingActiveBorderColor:
-      - "{{warning}}"
+      - "{{link}}"
       - bold
     optionsTextColor:
-      - "{{link}}"
+      - "{{fg_secondary}}"
     selectedLineBgColor:
       - "{{bg_hover}}"
     cherryPickedCommitFgColor:

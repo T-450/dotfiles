@@ -47,7 +47,7 @@ ROLES = [
 TERMINAL = ["fg", "bg", "cursor"]
 # Optional [keycaps] table: the keybinding cheatsheet's keycaps (mango-keys), as `key_<name>` roles.
 # A palette without it gets them from its own roles (KEYCAP_DEFAULTS).
-KEYCAPS = ["mod", "cap", "accent", "legend", "frame", "amber"]
+KEYCAPS = ["mod", "cap", "accent", "legend", "frame"]
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
@@ -122,7 +122,7 @@ def keycap(value, over, where):
 
 
 def keycap_defaults(v):
-    """Keycap roles from a palette's own: modifiers on the hover grey, the action key on the accent,
+    """Keycap roles from a palette's own: modifiers on the hover grey, the selected row's action key on the accent,
     each cap moved toward the background until its legend reads at AA."""
     legend = v["fg_bright"]
 
@@ -134,7 +134,7 @@ def keycap_defaults(v):
         return v["bg_desktop"]
     return {
         "mod": cap(mix(v["bg_hover"], v["bg_desktop"], 0.3)), "cap": cap(mix(v["bg_hover"], v["fg_muted"], 0.3)),
-        "accent": cap(v["accent"]), "legend": legend, "frame": v["fg_secondary"], "amber": v["warning"],
+        "accent": cap(v["accent"]), "legend": legend, "frame": v["fg_secondary"],
     }
 
 

@@ -2,7 +2,7 @@
 
 The lock screen (super+esc l, and after 5 min idle).
 
-swaylock has no include, so its whole `config` is rendered from the palette.
+swaylock has no include, so its whole `config` is rendered from the palette. The ring is a hairline at rest; the `accent` marks typing and verifying, `error` a wrong password only, and clearing or backspacing is neutral (`fg_secondary`).
 
 ## Reference
 
