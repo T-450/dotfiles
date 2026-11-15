@@ -6,12 +6,12 @@
 # all-clients`.
 mmsg get all-clients 2>/dev/null | jq -c --arg q "'" '
 	def esc: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
-	def head(s): "<span font_desc=\($q)Inter Semi-Bold 11px\($q) letter_spacing=\($q)507\($q) fgalpha=\($q)66%\($q)>\(s)</span>";
+	def head(s): "<span font_desc=\($q)Inter 11px\($q) fgalpha=\($q)66%\($q)>\(s)</span>";
 	def note(s): "<span font_desc=\($q)Inter 11px\($q) fgalpha=\($q)66%\($q)>\(s)</span>";
 	def names: [.[] | "  " + ((.title // .appid) | .[0:60] | esc)] | join("\n");
-	[{key: "pinned", label: "PINNED", tip: "PINNED TO EVERY TAG", w: [.clients[] | select(.is_global)]},
-	 {key: "ontop", label: "ON TOP", tip: "KEPT ON TOP", w: [.clients[] | select(.is_overlay)]},
-	 {key: "minimized", label: "MINIMIZED", tip: "MINIMIZED", w: [.clients[] | select(.is_minimized and (.is_namedscratchpad | not))]}]
+	[{key: "pinned", label: "pinned", tip: "pinned to every tag", w: [.clients[] | select(.is_global)]},
+	 {key: "ontop", label: "on top", tip: "kept on top", w: [.clients[] | select(.is_overlay)]},
+	 {key: "minimized", label: "minimized", tip: "minimized", w: [.clients[] | select(.is_minimized and (.is_namedscratchpad | not))]}]
 	| map(select(.w | length > 0)) as $s
 	| if ($s | length) == 0 then {text: "", class: "none"}
 	  else {

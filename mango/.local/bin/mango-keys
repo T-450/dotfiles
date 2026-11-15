@@ -350,7 +350,7 @@ EDGE = 2  # fzf's side margin in cells (one line above and below): with Ghostty'
 
 
 def chip(ink, group):
-    return f"{ink.fg(ink.hue(group))}\x1b[1m{group.upper()}\x1b[0m"
+    return f"{ink.fg(ink.hue(group))}{group.lower()}\x1b[0m"  # labels whisper: lowercase, regular
 
 
 def highlight(ink, desc, marks):
@@ -415,7 +415,7 @@ def card(i):
     width = max(map(visible, caps))
     cols, lines = (int(os.environ.get(v) or 0) for v in ("FZF_PREVIEW_COLUMNS", "FZF_PREVIEW_LINES"))
     room = max(cols - MARGIN - width - GUTTER, 10) if cols else 200  # for the description
-    head = [f"{' ' * MARGIN}{ink.fg(hue)}\x1b[1m{' '.join(sel['group'].upper())}\x1b[0m", ""]
+    head = [f"{' ' * MARGIN}{ink.fg(hue)}\x1b[1m{sel['group'].lower()}\x1b[0m", ""]
     body, at = [], 0
     for r, k in zip(group, caps):
         mark, tone = (f"{ink.fg(hue)}▌\x1b[0m", "fg_bright") if r is sel else (" ", "fg_text")
@@ -453,8 +453,8 @@ def pango(mode):
     plus = f"<span foreground='{frame}'>+</span>"
     chords = [cap_roles(r["steps"][-1:])[0] for r in group]
     sizes = [sum(len(k) + 3 for k, _ in chord) - 1 for chord in chords]
-    out = [f"<span foreground='{ink.hue(group[0]['group'])}' weight='bold' letter_spacing='2048'>"
-           f"{e(group[0]['group'].upper())}</span>   <span foreground='{frame}'>{e(entry(rs, mode))}</span>", ""]
+    out = [f"<span foreground='{ink.hue(group[0]['group'])}' weight='bold'>"
+           f"{e(group[0]['group'].lower())}</span>   <span foreground='{frame}'>{e(entry(rs, mode))}</span>", ""]
     for r, chord, size in zip(group, chords, sizes):
         out.append(f"{' ' * (max(sizes) - size)}{plus.join(cap(k, role) for k, role in chord)}{' ' * GUTTER}"
                    f"<span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
@@ -476,7 +476,7 @@ def tui():
     colors = ",".join([
         f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('key_amber')}", f"fg+:{c('fg_bright')}",
         f"bg+:{c('bg_hover')}", f"hl+:{c('key_amber')}", f"info:{c('key_frame')}", f"prompt:{c('ansi5')}",
-        f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"footer:{c('key_frame')}",
+        f"pointer:{c('accent')}", f"spinner:{c('ansi5')}", f"footer:{c('key_frame')}",
         f"ghost:{c('key_frame')}:regular", f"border:{c('border_hairline')}",
         f"preview-border:{c('border_hairline')}", f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
     ])

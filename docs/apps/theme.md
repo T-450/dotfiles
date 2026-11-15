@@ -2,7 +2,7 @@
 
 The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps.
 
-See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, light-2026, tokyo-night, catppuccin-mocha, anodized: the NuPhy Air60 HE's charcoal and steel with one run of color, cyan to blue to violet). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
+See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, light-2026, tokyo-night, catppuccin-mocha, anodized-keylight: the Quiet Instrument philosophy, alloy blacks and one lit cyan-blue-violet band). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
 
 ## Reference
 

@@ -223,7 +223,6 @@ box:hover > #custom-power {
     padding: 0 8px;
     border-radius: 6px;
     font-weight: 600;
-    letter-spacing: 1px;
     color: @amber;
     background-color: alpha(@amber, 0.14);
 }
@@ -235,7 +234,6 @@ box:hover > #custom-power {
     padding: 0 8px;
     border-radius: 6px;
     font-weight: 600;
-    letter-spacing: 1px;
     color: @text;
     background-color: alpha(@text, 0.08);
 }

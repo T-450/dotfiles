@@ -25,7 +25,7 @@ Kept beyond the mockup: recording before the chips, brightness among them (amber
 
 Every module but the tags (`mango/workspaces` sets none and offers no option) and the day label has the design's tooltip: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `@text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, which reproduces the design's greys without a color literal:
 
-- NAME: `<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>CPU</span>` (uppercase, +.06em tracking).
+- NAME: `<span font_desc='Inter 11px' fgalpha='66%'>cpu</span>` (lowercase, regular, muted: labels whisper, after the Quiet Instrument philosophy behind Anodized Keylight).
 - VALUE: plain text (13px).
 - KEYS: `<span font_desc='Inter Medium 11px' fgalpha='82%'>Super D</span>`. The design's keycap boxes can't be drawn in Pango, so the keys are plain text, space separated; they are this machine's binds (`mango/.config/mango/bind.conf`).
 - HINT: `\n<span font_desc='Inter 11px' fgalpha='66%'>Scroll ±5</span>`.

@@ -179,7 +179,7 @@ pass "search: exact, partial, misspelled, synonym and key queries"
 
 # the views fzf and the popup use render without error
 MANGO_KEYS_CONF=$conf "$keys" --rank 'fulscr' | sed 's/\x1b\[[0-9;]*m//g' | grep -q 'Super.*Maximize' || fail "--rank lists rows"
-MANGO_KEYS_CONF=$conf "$keys" --card 0 | grep -q 'G O' || fail "--card draws a group"
+MANGO_KEYS_CONF=$conf "$keys" --card 0 | sed 's/\x1b\[[0-9;]*m//g' | grep -q -E '^\s*go\s*$' || fail "--card draws a group"
 MANGO_KEYS_CONF=$conf "$keys" --pango session | grep -q 'Lock screen' || fail "--pango draws a mode"
 pass "rank, card and popup views render"
 
