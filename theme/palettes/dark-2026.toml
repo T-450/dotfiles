@@ -41,3 +41,15 @@ ansi = [
 	"#202122", "#ff7b72", "#7ee787", "#cd9731", "#79c0ff", "#d2a8ff", "#4ec9b0", "#bbbebf",
 	"#555555", "#ffa198", "#91eb99", "#ffa657", "#a5d6ff", "#b267e6", "#71d4c0", "#ffffff",
 ]
+
+[keycaps]
+# NuPhy Air60 HE (nuphy.com product photos): black modifier caps, grey letter caps, the violet
+# accent caps, white legends, the aluminium frame, the amber sub-legends. Same on every palette:
+# the cheatsheet looks like the keyboard. The violet caps are translucent on dark palettes (theme
+# composites #rrggbbaa over bg_desktop); every legend must read at AA on its cap, or theme fails.
+mod    = "#2e2e30"
+cap    = "#626165"
+accent = "#6a5bc7d9"  # translucent, like the board: 85% over the panel
+legend = "#f2f2f2"
+frame  = "#9d9d9d"
+amber  = "#dcb04a"

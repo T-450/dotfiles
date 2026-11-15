@@ -45,6 +45,9 @@ ROLES = [
     "error", "warning", "success", "shadow",
 ]
 TERMINAL = ["fg", "bg", "cursor"]
+# Optional [keycaps] table: the keybinding cheatsheet's keycaps (mango-keys), as `key_<name>` roles.
+# A palette without it gets them from its own roles (KEYCAP_DEFAULTS).
+KEYCAPS = ["mod", "cap", "accent", "legend", "frame", "amber"]
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
@@ -112,6 +115,20 @@ def ink(bg, colors):
     return legible(fg, bg, pole(bg), TEXT_CONTRAST)
 
 
+def keycap(value, over, where):
+    if not isinstance(value, str) or not re.fullmatch(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?", value):
+        raise ThemeError(f"{where}: expected #rrggbb or #rrggbbaa, got {value!r}")
+    return flatten(value, over)
+
+
+def keycap_defaults(v):
+    """Keycap roles from a palette's own: modifiers on the hover grey, the action key on the accent."""
+    return {
+        "mod": mix(v["bg_hover"], v["bg_desktop"], 0.3), "cap": mix(v["bg_hover"], v["fg_muted"], 0.3),
+        "accent": v["accent"], "legend": v["fg_bright"], "frame": v["fg_secondary"], "amber": v["warning"],
+    }
+
+
 def flatten(value, over):
     """#rrggbb or #rrggbbaa -> opaque rgb tuple composited over `over`."""
     v = value.strip()
@@ -162,6 +179,19 @@ def load_palette(slug, path=None):
         v[f"term_{k}"] = rgb(term[k], f"{path.name} terminal.{k}")
     for i, c in enumerate(ansi):
         v[f"ansi{i}"] = rgb(c, f"{path.name} terminal.ansi[{i}]")
+    caps = data.get("keycaps", {})
+    unknown = sorted(set(caps) - set(KEYCAPS))
+    if unknown:
+        raise ThemeError(f"{path.name}: unknown keycaps {', '.join(unknown)} (have: {', '.join(KEYCAPS)})")
+    defaults = keycap_defaults(v)
+    for k in KEYCAPS:
+        # a cap may be translucent (#rrggbbaa, like the board's violet keys): composited over the
+        # panel behind it (bg_desktop), as the eye sees it
+        v[f"key_{k}"] = keycap(caps[k], v["bg_desktop"], f"{path.name} keycaps.{k}") if k in caps else defaults[k]
+    for k in ("mod", "cap", "accent"):
+        if contrast(v["key_legend"], v[f"key_{k}"]) < TEXT_CONTRAST:
+            raise ThemeError(f"{path.name}: keycaps.legend reads at {contrast(v['key_legend'], v[f'key_{k}']):.2f}:1 "
+                             f"on keycaps.{k} (needs {TEXT_CONTRAST}); make the cap more opaque or darker")
 
     dark = variant == "dark"
     words = {

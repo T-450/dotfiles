@@ -18,6 +18,19 @@ The default palette is **Dark 2026**, from VS Code's
 Ghostty theme instead (`github.com/dark-2026-theme/nvim`, `themes/dark-2026.conf`); Light 2026
 takes the same from `themes/light-2026.conf`. Re-importing either from VS Code drops them.
 
+## Keycaps
+
+An optional `[keycaps]` table gives the keybinding cheatsheet (`mango-keys`) its keycap colors, as
+roles `key_mod`, `key_cap`, `key_accent`, `key_legend`, `key_frame`, `key_amber` (and
+`THEME_KEY_*` in `colors.sh`). Every bundled palette sets the same values, sampled from the NuPhy
+Air60 HE: black modifier caps, grey letter caps, violet accent caps, white legends, the aluminium
+frame, the amber sub-legends. A cap may be translucent (`#rrggbbaa`): `theme` composites it over
+`bg_desktop`, as you see the plate through the board's violet keys (85% on dark palettes; opaque on
+light ones, where blending would wash the legend out). `theme` fails a palette whose legend reads
+below WCAG AA (4.5:1) on any cap. A palette without the table
+(an import) derives them from its own roles: modifiers on its hover grey, the action key on its
+accent, matches in its warning color.
+
 ## Roles
 
 A palette names colors by what they do, not by app. The VS Code key is where
@@ -85,6 +98,12 @@ Which apps use each role (generated from the templates):
 | `git_email` | git |
 | `git_name` | git |
 | `home` | helix, runner-up |
+| `key_accent` | theme |
+| `key_amber` | theme |
+| `key_cap` | theme |
+| `key_frame` | theme |
+| `key_legend` | theme |
+| `key_mod` | theme |
 | `link` | claude, gtk, lazygit, mousepad, mpv, pi, qutebrowser, rofi, theme |
 | `name` | claude, fastfetch, firefox, ghostty, gtk, mako, mango, mousepad, mpv, qutebrowser, rofi, swaylock, swayosd, theme, waybar, wlogout |
 | `prefer_dark` | gtk |

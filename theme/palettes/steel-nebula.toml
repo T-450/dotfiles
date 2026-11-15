@@ -1,0 +1,55 @@
+# Steel Nebula: the NuPhy Air60 HE, sampled from its product photos (nuphybrasil.com.br,
+# nuphy-air60-he). Neutrals are the keyboard's own: the black modifier caps and charcoal shell
+# for the surfaces, the grey letter caps for borders, the aluminium frame for secondary text, the
+# white legends for bright text. The violet accent caps are the brand hue (accent, selection,
+# links, cursor); the amber sub-legends are warnings. Every text role reads at WCAG AA (4.5:1) on
+# bg_desktop, bg_surface and bg_widget; fg_muted and fg_disabled are for non-essential text.
+
+[meta]
+name = "Steel Nebula"
+variant = "dark"
+source = "nuphy air60 he product photos"
+
+[colors]
+bg_desktop      = "#19191b"  # darker than the shell, so caps and panels sit on it
+bg_surface      = "#202022"  # bar, panels
+bg_widget       = "#28282b"  # menus, notifications, popups
+bg_hover        = "#38383a"  # the charcoal shell
+border_hairline = "#2e2e30"  # the black modifier caps
+border_inactive = "#47464a"  # between the shell and the grey letter caps
+fg_text         = "#d6d6d8"
+fg_editor       = "#d2d2d4"
+fg_secondary    = "#9d9d9d"  # the aluminium frame
+fg_muted        = "#8a898e"
+fg_bright       = "#f2f2f2"  # the white legends
+fg_disabled     = "#5c5b60"
+accent          = "#9386f2"  # the violet accent caps, lifted to read as text on the surfaces
+badge           = "#6a5bc7"  # the violet accent caps as photographed
+selection_bg    = "#3b3274"  # the deep translucent violet
+selection_fg    = "#f2f2f2"
+link            = "#a197f4"
+error           = "#ef7d6f"
+warning         = "#dcb04a"  # the amber sub-legends
+success         = "#7fcf9b"
+shadow          = "#000000"
+
+[terminal]
+fg     = "#d2d2d4"
+bg     = "#19191b"
+cursor = "#a197f4"
+ansi = [
+	"#2e2e30", "#ef7d6f", "#7fcf9b", "#dcb04a", "#7f9ef2", "#a197f4", "#6cc8c0", "#d2d2d4",
+	"#626165", "#f59a8e", "#a2e0b7", "#f0a35a", "#a5b9f7", "#bdb5f8", "#91ddd6", "#f2f2f2",
+]
+
+[keycaps]
+# NuPhy Air60 HE (nuphy.com product photos): black modifier caps, grey letter caps, the violet
+# accent caps, white legends, the aluminium frame, the amber sub-legends. Same on every palette:
+# the cheatsheet looks like the keyboard. The violet caps are translucent on dark palettes (theme
+# composites #rrggbbaa over bg_desktop); every legend must read at AA on its cap, or theme fails.
+mod    = "#2e2e30"
+cap    = "#626165"
+accent = "#6a5bc7d9"  # translucent, like the board: 85% over the panel
+legend = "#f2f2f2"
+frame  = "#9d9d9d"
+amber  = "#dcb04a"
