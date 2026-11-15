@@ -17,6 +17,7 @@ import html
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -442,19 +443,21 @@ def tui():
         f"pointer:{c('fg_bright')}", f"spinner:{c('ansi5')}", f"header:{c('fg_muted')}",
         f"border:{c('border_hairline')}", f"separator:{c('border_hairline')}",
         f"preview-bg:{c('bg_surface')}", f"preview-border:{c('border_hairline')}",
-        f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}", f"cursor-bg:{c('accent')}",
+        f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
     ])
     lead = f"{ink.cap('␣', mix(ink.c('fg_bright'), ink.c('bg_desktop'), 0.45), ink.c('fg_bright'))}"
     header = (f"{lead} {ink.fg(c('fg_muted'))}leader = Super+Space   "
               f"› press in turn   + hold together   type to search, Esc closes\x1b[0m")
     rank_cmd = f"{me} --rank {{q}}"
+    # the first list: fzf runs this when its input is a terminal (instead of its default `find`)
+    os.environ["FZF_DEFAULT_COMMAND"] = f"{shlex.quote(me)} --rank ''"
     os.execvp("fzf", [
         "fzf", "--ansi", "--disabled", "--no-sort", "--layout=reverse", "--delimiter=\t", "--with-nth=2..",
         "--prompt=  ❯ ", "--pointer=▌", "--marker= ", "--info=inline-right", "--no-scrollbar",
         "--border=none", "--no-separator", "--header", header, "--header-first",
         "--color", colors, "--margin=1,2,1,1", "--padding=0",
         "--preview", f"{me} --card {{1}}", "--preview-window", "right,44%,border-left,noinfo",
-        "--bind", f"start:reload({rank_cmd})", "--bind", f"change:reload({rank_cmd})+first",
+        "--bind", f"change:reload({rank_cmd})+first",
         "--bind", "enter:abort,esc:abort,ctrl-c:abort",
     ])
 

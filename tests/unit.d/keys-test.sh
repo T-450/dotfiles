@@ -178,3 +178,23 @@ MANGO_KEYS_CONF=$conf "$keys" --rank 'fulscr' | sed 's/\x1b\[[0-9;]*m//g' | grep
 MANGO_KEYS_CONF=$conf "$keys" --card 0 | grep -q 'F O C U S' || fail "--card draws a group"
 MANGO_KEYS_CONF=$conf "$keys" --pango window | grep -q 'Float/tile' || fail "--pango draws a mode"
 pass "rank, card and popup views render"
+
+# fzf takes the cheatsheet's options (an unknown flag or color name exits 2 and the window closes)
+if command -v fzf >/dev/null; then
+	out=$(MANGO_KEYS_CONF=$conf PYTHONDONTWRITEBYTECODE=1 python3 - "$keys" <<'PY'
+import os, subprocess, sys
+from importlib.machinery import SourceFileLoader
+mk = SourceFileLoader("mk", sys.argv[1]).load_module()
+args = []
+os.execvp = lambda f, a: args.extend(a)
+mk.tui()
+rows = subprocess.run([sys.argv[1], "--rank", ""], capture_output=True, text=True).stdout
+r = subprocess.run([a for a in args if a != "--disabled"] + ["--filter", "Fullscreen"], input=rows,
+                   capture_output=True, text=True)
+if r.returncode != 0 or not r.stdout:
+    print(f"fzf exit {r.returncode}: {r.stderr.strip()}")
+PY
+)
+	[[ -z $out ]] || fail "fzf takes the cheatsheet's options" "$out"
+	pass "fzf takes the cheatsheet's options"
+else skip "fzf not installed"; fi
