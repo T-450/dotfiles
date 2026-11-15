@@ -29,8 +29,8 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 ## Idle
 
 swayidle (`swayidle/.config/systemd/user/swayidle.service`): dim at 4 min (dimland) → lock at 5 min
-(swaylock) → panel off at 10 min (`mmsg dispatch sleep_monitor`); lock before suspend and on
-`loginctl lock-session`. swaylock starts only if not already running (`pidof -q swaylock ||`), and
+(hyprlock) → panel off at 10 min (`mmsg dispatch sleep_monitor`); lock before suspend and on
+`loginctl lock-session`. hyprlock starts only if not already running (`pidof -q hyprlock ||`), always in the background (it runs until unlock and `swayidle -w` waits for each command), and
 `KillMode=process` keeps it alive if swayidle restarts. Keep both.
 
 ## Debugging
