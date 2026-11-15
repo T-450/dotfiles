@@ -18,6 +18,15 @@ The default palette is **Dark 2026**, from VS Code's
 Ghostty theme instead (`github.com/dark-2026-theme/nvim`, `themes/dark-2026.conf`); Light 2026
 takes the same from `themes/light-2026.conf`. Re-importing either from VS Code drops them.
 
+## Wallpaper
+
+A palette may name its own wallpaper style in `[meta]`: `wallpaper = "nebula"` (exported as
+`THEME_WALLPAPER`). `swaybg/render.sh` then draws a nebula from the palette's roles: a diagonal arm of
+layered, ridged noise over `bg_desktop`, in the selection color and two darker blends of it, with
+`accent` and `link` only at the brightest cores, and stars in `fg_bright` and `warning`; fixed seeds
+make it reproducible. Steel Nebula uses it. Without a style, dark palettes get Neptune in ASCII and
+light ones their desktop color.
+
 ## Keycaps
 
 An optional `[keycaps]` table gives the keybinding cheatsheet (`mango-keys`) its keycap colors, as
@@ -117,6 +126,7 @@ Which apps use each role (generated from the templates):
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme |
+| `wallpaper` | theme |
 | `warning` | claude, fastfetch, ghostty, gtk, lazygit, mango, mousepad, pi, qutebrowser, theme |
 <!-- end generated -->
 

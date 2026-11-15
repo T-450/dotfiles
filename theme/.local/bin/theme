@@ -115,6 +115,16 @@ def ink(bg, colors):
     return legible(fg, bg, pole(bg), TEXT_CONTRAST)
 
 
+WALLPAPERS = ["", "nebula"]
+
+
+def wallpaper_style(meta, path):
+    w = meta.get("wallpaper", "")
+    if w not in WALLPAPERS:
+        raise ThemeError(f"{path.name}: meta.wallpaper {w!r} is not one of: {', '.join(repr(x) for x in WALLPAPERS)}")
+    return w
+
+
 def keycap(value, over, where):
     if not isinstance(value, str) or not re.fullmatch(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?", value):
         raise ThemeError(f"{where}: expected #rrggbb or #rrggbbaa, got {value!r}")
@@ -210,6 +220,8 @@ def load_palette(slug, path=None):
         "prefer_dark": "1" if dark else "0",
         "color_scheme": "prefer-dark" if dark else "prefer-light",
         "home": str(Path.home()),   # for configs that need absolute paths (runner-up)
+        # the palette's own wallpaper style (swaybg/render.sh): "" = the default for its variant
+        "wallpaper": wallpaper_style(meta, path),
     }
     return v, words
 

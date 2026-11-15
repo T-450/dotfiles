@@ -1,15 +1,21 @@
 # Steel Nebula: the NuPhy Air60 HE's charcoal, steel and violet, following a community scheme as
 # closely as possible: Precious Dark Eleven (4lex4, github.com/precious-themes/base16-precious-schemes,
 # via tinted-theming), the nearest of 624 tinted-theming schemes to the keyboard's colors (CIELAB
-# distance over background, text, violet, amber, red, green and surface). Every color it defines is
-# used as is (baseNN in the comments); the violet base0E is the accent. Derived, since the scheme has
-# no brighter text tier: fg_bright, selection and the cursor. Every text role reads at WCAG AA (4.5:1)
+# distance over background, text, violet, amber, red, green and surface). Every neutral, text and
+# status color it defines is used as is (baseNN in the comments). The purples come from Colibri
+# (archseer, github.com/archseer/colibri.vim, the palette of Helix's default theme): lavender is the
+# accent and cursor, lilac the links and brightest highlights, bossanova the selection, comet the
+# badges. Derived, since the scheme has no brighter text tier: fg_bright. Restrained on purpose:
+# purple, blacks, greys and whites, plus three status colors (error red, warning amber, success
+# green); the scheme's blue, cyan, orange and pink are left out. Every text role reads at WCAG AA (4.5:1)
 # on bg_desktop, bg_surface and bg_widget; fg_muted and fg_disabled are for non-essential text.
 
 [meta]
 name = "Steel Nebula"
 variant = "dark"
-source = "base16:precious-dark-eleven (tinted-theming), violet accent; keycaps: NuPhy Air60 HE"
+source = "base16:precious-dark-eleven (tinted-theming); purples: colibri.vim; keycaps: NuPhy Air60 HE"
+# its own wallpaper: a nebula in its purples (swaybg/render.sh)
+wallpaper = "nebula"
 
 [colors]
 bg_desktop      = "#1c1e20"  # base00
@@ -24,11 +30,11 @@ fg_secondary    = "#a8a8a7"  # base04
 fg_muted        = "#858585"  # base03
 fg_bright       = "#e4e3e2"  # base05 lifted toward the keyboard's white legends
 fg_disabled     = "#5b5c5d"  # base02 toward base03
-accent          = "#b799fe"  # base0E, the violet
-badge           = "#8f7ad0"  # base0E toward base00
-selection_bg    = "#4a4268"  # base0E toward base00
+accent          = "#a4a0e8"  # colibri lavender
+badge           = "#5a5977"  # colibri comet
+selection_bg    = "#452859"  # colibri bossanova
 selection_fg    = "#e4e3e2"
-link            = "#68b0ee"  # base0D
+link            = "#dbbfef"  # colibri lilac
 error           = "#ff8782"  # base08
 warning         = "#d0a543"  # base0A, the amber
 success         = "#95b658"  # base0B
@@ -37,10 +43,12 @@ shadow          = "#000000"
 [terminal]
 fg     = "#b8b7b6"  # base05
 bg     = "#1c1e20"  # base00
-cursor = "#b799fe"  # base0E
+cursor = "#a4a0e8"  # colibri lavender
+# restrained: purple, greys and whites, and three status colors (red, amber, green); the blue and
+# cyan slots hold purples and greys, the orange slot the amber
 ansi = [
-	"#292b2d", "#ff8782", "#95b658", "#d0a543", "#68b0ee", "#b799fe", "#42bda7", "#b8b7b6",
-	"#6b6b6c", "#ff8782", "#95b658", "#ea9755", "#68b0ee", "#f382d8", "#42bda7", "#e4e3e2",
+	"#292b2d", "#ff8782", "#95b658", "#d0a543", "#a4a0e8", "#dbbfef", "#a8a8a7", "#b8b7b6",
+	"#6b6b6c", "#ff8782", "#95b658", "#d0a543", "#dbbfef", "#a4a0e8", "#cfcecd", "#e4e3e2",
 ]
 
 [keycaps]
