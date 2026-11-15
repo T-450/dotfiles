@@ -339,8 +339,8 @@ def visible(s):
     return len(re.sub(r"\x1b\[[0-9;]*m", "", s))
 
 
-def chip(ink, group, width=9):
-    name = group.upper()[:width]
+def chip(ink, group, width):
+    name = group.upper()
     return f"{ink.fg(ink.hue(group))}\x1b[1m{name}\x1b[0m" + " " * (width - len(name))
 
 
@@ -361,12 +361,15 @@ def highlight(ink, desc, marks):
 
 def list_lines(query):
     rs, ink = rows(), Ink(palette())
-    out, col = [], 26
+    # fixed columns from every row, not just the matches, so the layout doesn't shift as you type
+    col = max(visible(ink.keys(r)) for r in rs) + 3
+    gw = max(len(r["group"]) for r in rs) + 2
+    out = []
     for i, _, marks in rank(query, rs):
         r = rs[i]
         caps = ink.keys(r)
-        pad = " " * max(2, col - visible(caps))
-        out.append(f"{i}\t {chip(ink, r['group'])} {caps}{pad}{highlight(ink, r['desc'], marks)}")
+        pad = " " * (col - visible(caps))
+        out.append(f"{i}\t {chip(ink, r['group'], gw)}{caps}{pad}{highlight(ink, r['desc'], marks)}")
     return out
 
 
@@ -384,7 +387,6 @@ def card(i):
     sel = rs[int(i)]
     group = [r for r in rs if r["group"] == sel["group"]]
     hue = ink.hue(sel["group"])
-    skirt_hue = mix(hue, ink.c("bg_desktop"), 0.55)
     title = " ".join(sel["group"].upper())
     how = entry(rs, sel["mode"]) if sel["mode"] not in ("default", "common") else ""
     out = ["", f"  {ink.fg(hue)}\x1b[1m{title}\x1b[0m", ""]
@@ -395,11 +397,11 @@ def card(i):
     for r in group:
         caps = ink.keys(dict(r, steps=r["steps"][-1:]))
         n = visible(caps)
-        skirt = f"{ink.fg(skirt_hue)}" + " " + "▀" * (n - 2) + " \x1b[0m"
         mark = f"{ink.fg(hue)}▌\x1b[0m" if r is sel else " "
         desc_c = ink.c("fg_bright") if r is sel else ink.c("fg_text")
-        out.append(f" {mark}{caps}{' ' * (width - n + 2)}{ink.fg(desc_c)}{r['desc']}\x1b[0m")
-        out.append(f"  {skirt}")
+        # right-aligned caps: every operation key sits in one column, modifiers to its left
+        out.append(f" {mark} {' ' * (width - n)}{caps}   {ink.fg(desc_c)}{r['desc']}\x1b[0m")
+        out.append("")  # a line between caps, like the gap between keycap rows
     return "\n".join(out)
 
 
@@ -414,16 +416,19 @@ def pango(mode):
     e = html.escape
     out = [f"<span foreground='{hue}' weight='bold' letter_spacing='2048'>{e(group[0]['group'].upper())}</span>"
            f"   <span foreground='{ink.c('fg_muted')}'>{e(entry(rs, mode))}</span>", ""]
+    width = max(sum(len(k) + 3 for k in r["steps"][-1]) - 1 for r in group)
     for r in group:
         chord = r["steps"][-1]
         keys = " ".join(f"<span background='{ink.mod_cap() if j < len(chord) - 1 else hue}' "
                         f"foreground='{ink.c('fg_bright') if j < len(chord) - 1 else ink.c('bg_desktop')}' "
                         f"weight='bold'> {e(k)} </span>" for j, k in enumerate(chord))
-        pad = " " * max(1, 10 - sum(len(k) + 3 for k in chord))
-        out.append(f"{keys}{pad}<span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
+        pad = " " * (width - (sum(len(k) + 3 for k in chord) - 1))
+        out.append(f"{pad}{keys}   <span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
     out.append("")
     out.append(f"<span foreground='{ink.c('fg_muted')}'>Esc leaves</span>")
-    return "\n".join(out)
+    # a thin line between rows so the caps don't touch (a background fills the whole line height)
+    gap = "\n<span size='3pt'> </span>\n"
+    return "\n".join(out[:2]) + "\n" + gap.join(out[2:-2]) + "\n" + "\n".join(out[-2:])
 
 
 # ---------------------------------------------------------------- the window

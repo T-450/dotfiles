@@ -28,7 +28,6 @@ Every animation lasts 150 ms (9 frames at 60 Hz) on one curve, a quadratic ease-
 - `~/.config/mango/rule.conf`
 - `~/.config/mango/tag.conf`
 - `~/.config/systemd/user/mango-whichkey.service`
-- `~/.local/bin/__pycache__/mango-keyscpython-314.pyc`
 - `~/.local/bin/mango-keys`
 - `~/.local/bin/mango-monitor`
 - `~/.local/bin/mango-quit`
