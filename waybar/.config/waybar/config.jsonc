@@ -72,9 +72,11 @@
         "on-click": "~/.local/bin/mango-state --clear"
     },
 
-    // the open key mode (super+esc, super+n or super+m); hidden in the default mode
+    // the open key mode (super+esc, super+n or super+m)
     "mango/keymode": {
-        "format": "{mode}"
+        "format": "{mode}",
+        // waybar names mango's normal mode "default" and shows it; an empty format hides the chip
+        "format-default": ""
     },
 
     "mango/window": {
