@@ -2,7 +2,7 @@
 
 Notifications.
 
-super+space n r restores the last one, super+space n d dismisses all, super+space n z toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon.
+super+n r restores the last one, super+n d dismisses all, super+n z toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon.
 
 ## Reference
 

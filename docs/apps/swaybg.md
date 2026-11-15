@@ -1,6 +1,6 @@
 # swaybg
 
-The wallpaper: the last pick from waypaper (super+space a w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
+The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones.
 
 The image is [lyje9y on wallhaven](https://wallhaven.cc/w/lyje9y), uploaded by Jesseract. Its
 original source and license are unknown, so the repo never holds it.

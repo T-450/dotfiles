@@ -263,7 +263,8 @@ def rank(query, rs):
                 marks.setdefault(hit[0], set()).update(hit[1])
         else:
             # equal matches: fewer keys to press, then the more specific (shorter) description first
-            out.append((i, total - len(r["steps"]) - 0.5 * len(dw), marks))
+            # extra keys in the chord rank below an exact chord (super d: the launcher, not super+ctrl+d)
+            out.append((i, total - sum(len(c) for c in r["steps"]) - 0.5 * len(dw), marks))
     out.sort(key=lambda x: (-x[1], x[0]))
     return out
 

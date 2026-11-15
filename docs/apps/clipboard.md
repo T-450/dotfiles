@@ -2,7 +2,7 @@
 
 Clipboard history (cliphist) and persistence after the source app quits (wl-clip-persist).
 
-super+space a v opens the history in rofi (`clip`): Enter copies an item back to the clipboard, Shift+Delete removes it, Ctrl+Shift+Delete clears the history. `cliphist.service` stores every type, so copied images and screenshots are in the history too; `clip` shows them as thumbnails, cached by item in `~/.cache/cliphist/thumbs` and dropped when the item leaves the history.
+super+v opens the history in rofi (`clip`): Enter copies an item back to the clipboard, Shift+Delete removes it, Ctrl+Shift+Delete clears the history. `cliphist.service` stores every type, so copied images and screenshots are in the history too; `clip` shows them as thumbnails, cached by item in `~/.cache/cliphist/thumbs` and dropped when the item leaves the history.
 
 ## Reference
 

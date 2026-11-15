@@ -1,8 +1,8 @@
 # thunar
 
-Thunar, the file manager (super+space a f), with thumbnails, archives, network places and automounting.
+Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting.
 
-super+space a f opens it, as a 720x480 floating window like the other GTK apps (mango's `rule.conf`). `thunar.service` runs it as a daemon from the start of the session, so windows open at once, "show in folder" from other apps reaches it (it owns `org.freedesktop.FileManager1`), and thunar-volman can mount removable drives and media as they are plugged in (it works only while Thunar runs).
+super+e opens it, as a 720x480 floating window like the other GTK apps (mango's `rule.conf`). `thunar.service` runs it as a daemon from the start of the session, so windows open at once, "show in folder" from other apps reaches it (it owns `org.freedesktop.FileManager1`), and thunar-volman can mount removable drives and media as they are plugged in (it works only while Thunar runs).
 
 The plugins and helpers come from `packages`: archives through the context menu (thunar-archive-plugin with xarchiver, the only archiver, so it never asks which one), media tags, tumbler thumbnails for video, PDF, office, e-book, RAW and HEIF files, and gvfs for the trash, phones (MTP, gphoto2, AFC) and network shares (SMB, NFS). "Open Terminal Here" opens Ghostty in that folder (`~/.config/xfce4/helpers.rc`).
 

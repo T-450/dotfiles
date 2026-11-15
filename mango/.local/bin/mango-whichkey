@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mango-whichkey: while a mango key mode is open (super+space, then a group), show that mode's keys as a
+# mango-whichkey: while a mango key mode is open (super+esc, super+n or super+m), show that mode's keys as a
 # passive mako popup; close it when the mode returns to default. Run by mango-whichkey.service.
 # usage: mango-whichkey
 set -uo pipefail

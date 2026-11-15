@@ -1,6 +1,6 @@
 # waypaper
 
-The wallpaper picker (super+space a w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette.
+The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette.
 
 It shows the images in `~/Pictures/Wallpapers` (put yours there) and in `~/.config/swaybg`, which
 holds the palette's wallpaper. waypaper doesn't set the wallpaper itself (backend `none`): after a

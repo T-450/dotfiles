@@ -1,8 +1,8 @@
 # wlogout
 
-The power menu (super+space s p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color: mango draws no blur, so a translucent background would show the windows behind it.
+The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color: mango draws no blur, so a translucent background would show the windows behind it.
 
-Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits behind the leader (super+space s p), three deliberate keys away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
+Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits in the session group (super+esc, then p), two deliberate steps away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
 
 The AUR package checks wlogout's signed release against its maintainer's key (`validpgpkeys`). That key is kept in `keys/F4FDB18A9937358364B276E9E25D679AF73C6D2F.asc` and imported by `install.sh` before the AUR builds, so a fresh install doesn't fetch it from a public keyserver; when the keyservers were down (2026-11-11), every clean install failed there. It came from the maintainer's GitHub keys and verified the 1.2.2 release's signature. If a new wlogout release is signed with another key, the build fails until that key is added the same way.
 

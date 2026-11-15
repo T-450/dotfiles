@@ -215,7 +215,7 @@ box:hover > #custom-power {
 #custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 #custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
 
-/* the open key mode: a small caps chip in the group's hue (the cheatsheet's colors) */
+/* the open key mode (super+esc, super+n, super+m): a chip in the group's hue (the cheatsheet's) */
 #keymode {
     min-height: 28px;
     margin: 8px 0 8px 4px;
@@ -226,13 +226,9 @@ box:hover > #custom-power {
     color: @text;
     background-color: alpha(@text, 0.08);
 }
-#keymode.window, #keymode.resize { color: @purple; background-color: alpha(@purple, 0.12); }
-#keymode.apps { color: @green; background-color: alpha(@green, 0.12); }
-#keymode.tag { color: @amber; background-color: alpha(@amber, 0.12); }
-#keymode.layout { color: @teal; background-color: alpha(@teal, 0.12); }
-#keymode.monitor { color: @orange; background-color: alpha(@orange, 0.12); }
-#keymode.capture, #keymode.session { color: @red; background-color: alpha(@red, 0.12); }
+#keymode.session { color: @red; background-color: alpha(@red, 0.12); }
 #keymode.notify { color: @purple; background-color: alpha(@purple, 0.12); }
+#keymode.monitor { color: @orange; background-color: alpha(@orange, 0.12); }
 
 /* the focused window: 8px from the layout button (4px spacing + 4px margin) */
 #window {

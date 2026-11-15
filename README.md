@@ -6,7 +6,7 @@ An Arch Linux desktop on mangowm, themed from one switchable palette (default: V
 ```bash
 git clone https://github.com/T-450/dotfiles ~/dotfiles
 ~/dotfiles/install.sh            # packages, theme, links, setup, units; safe to re-run
-theme set tokyo-night            # recolor everything (or super+space a p)
+theme set tokyo-night            # recolor everything (or super+p)
 ```
 
 New here? Follow [Get started](docs/onboarding.md). Documentation: [docs/](docs/README.md): install, every app, session, theming, keybindings,

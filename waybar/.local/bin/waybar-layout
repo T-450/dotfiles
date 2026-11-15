@@ -26,5 +26,5 @@ mmsg watch monitor "$out" | jq --unbuffered -c '
 		class: [$s],
 		tooltip: ("<span font_desc=\u0027Inter Semi-Bold 11px\u0027 letter_spacing=\u0027507\u0027 fgalpha=\u002766%\u0027>LAYOUT</span>  "
 			+ ($n | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;"))
-			+ "\n<span font_desc=\u0027Inter 11px\u0027 fgalpha=\u002766%\u0027>Click, or Super Space  L  N: next layout</span>")
+			+ "\n<span font_desc=\u0027Inter 11px\u0027 fgalpha=\u002766%\u0027>Click, or Super Ctrl Space: next layout</span>")
 	}'

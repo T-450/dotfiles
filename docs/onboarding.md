@@ -83,7 +83,7 @@ Every later change uses these two checks, so run them once now.
 3. The login screen lives outside your home, so it changes only when you run
    `./install.sh --system`, which asks for sudo. `theme set` reminds you.
 
-4. Switch back with `theme set dark-2026`, or pick a palette with super+space a p.
+4. Switch back with `theme set dark-2026`, or pick a palette with super+p.
 
 ## Add a program
 

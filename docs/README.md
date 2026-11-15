@@ -30,7 +30,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [fastfetch](apps/fastfetch.md) | System summary beside Godzilla breathing fire into a starry sky, drawn by Ghostty through the kitty graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox (the default browser, super+return) with palette-colored browser chrome | firefox |
 | [fonts](apps/fonts.md) | Fonts: Inter for the UI, JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
-| [ghostty](apps/ghostty.md) | The terminal (super+return), the dropdown terminal (alt+esc) and the floating terminal (super+space a t), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | ghostty, xdg-terminal-exec |
+| [ghostty](apps/ghostty.md) | The terminal (super+return), the dropdown terminal (alt+esc) and the floating terminal (super+shift+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | ghostty, xdg-terminal-exec |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS and delta for diffs | git, github-cli, git-delta |
 | [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
@@ -50,23 +50,23 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [portals](apps/portals.md) | XDG desktop portals: wlr for screenshots and screen sharing, GTK for file pickers and settings, gnome-keyring for secrets | xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, gnome-keyring |
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
-| [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (super+space c v toggles; files go to `~/video`) | gpu-screen-recorder |
+| [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (ctrl+Print toggles; files go to `~/video`) | gpu-screen-recorder |
 | [rofi](apps/rofi.md) | The launcher (super+d) and every menu: clipboard history, theme picker, night light | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
-| [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (super+space c r) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
-| [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+space a w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
+| [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (shift+Print) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
+| [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
-| [swaylock](apps/swaylock.md) | The lock screen (super+space s l, and after 5 min idle) | swaylock |
+| [swaylock](apps/swaylock.md) | The lock screen (super+esc l, and after 5 min idle) | swaylock |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, bolt, tlp, powertop, smartmontools, nvme-cli |
-| [thunar](apps/thunar.md) | Thunar, the file manager (super+space a f), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
+| [thunar](apps/thunar.md) | Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
 | [waybar](apps/waybar.md) | The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, colored from the palette | waybar, pamixer |
-| [waypaper](apps/waypaper.md) | The wallpaper picker (super+space a w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
-| [wlogout](apps/wlogout.md) | The power menu (super+space s p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
+| [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
+| [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd |
 <!-- end generated -->

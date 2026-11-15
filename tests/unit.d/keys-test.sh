@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# keybindings: the leader tree in bind.conf resolves, and the cheatsheet's search (mango-keys --rank)
+# keybindings: the group modes in bind.conf resolve, and the cheatsheet's search (mango-keys --rank)
 # puts the expected row first for exact, partial, misspelled, synonym and key queries.
 set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
@@ -47,7 +47,7 @@ for m in sorted(opened - modes - {"default"}):
 PY
 )
 [[ -z $out ]] || fail "the leader tree resolves" "$out"
-pass "leader tree: every mode is opened, binds Escape, one-shots return to default"
+pass "group modes: every mode is opened, binds Escape, one-shots return to default"
 
 # query <TAB> expected first row (a|b: either is right)
 out=$(MANGO_KEYS_CONF=$conf PYTHONDONTWRITEBYTECODE=1 python3 - "$keys" <<'PY'
@@ -56,13 +56,12 @@ from importlib.machinery import SourceFileLoader
 mk = SourceFileLoader("mk", sys.argv[1]).load_module()
 rs = mk.rows()
 corpus = """
-fullscreen	Fullscreen
-full	Fullscreen
-fulscr	Fullscreen
-fullsrceen	Fullscreen
-fullscren	Fullscreen
-ful screen	Fullscreen
-fake full	Fullscreen inside the tile
+fullscreen	Maximize
+full	Maximize
+fulscr	Maximize
+fullsrceen	Maximize
+fullscren	Maximize
+ful screen	Maximize
 close	Close window
 clsoe	Close window
 kill	Force kill
@@ -122,7 +121,7 @@ on top	Keep on top
 pin	Pin to all tags
 sticky	Pin to all tags
 minimize	Minimize
-restore	Restore a minimized window
+restore	Restore a minimized window|Restore the last notification
 scratchpad	Show/hide minimized windows
 resize	Resize ▸|Resize a window
 wider	Wider
@@ -142,7 +141,7 @@ next tag	Next tag
 previous tag	Previous tag
 tag 3	Show tag
 move to tag	Move window to tag
-workspace	Show tag
+workspace	Show tag|Tag ▸
 all tags	Show all tags
 monitor	Monitor ▸
 laptop panel	Laptop panel on/off
@@ -150,16 +149,21 @@ launcher	App launcher
 app launcher	App launcher
 cheatsheet	Keybindings (this cheatsheet)
 help	Keybindings (this cheatsheet)
-super f	Fullscreen
+super e	File manager (Thunar)
 super d	App launcher
 super enter	Terminal (Ghostty)
-space w	Window ▸
-space w f	Fullscreen inside the tile
-leader	Leader: every other group
+super w	Wallpaper picker (waypaper)
+super alt m	Maximize
+super ctrl space	Next layout
+super ctrl s	Scroller
+shift print	Screenshot of a region
+super esc	Session ▸
+maximise window	Maximize
+super alt l	Wider
 alt tab	Jump to a window by its hint
-overview	Overview, cycle windows|Overview
 drag	Drag a window
-swipe	Previous tag with windows|Next tag with windows|Overview|Leave overview
+overview	Overview: every window at once|Overview, cycle windows
+super o	Overview: every window at once
 zzqx	-
 """
 for line in corpus.strip().splitlines():
@@ -174,9 +178,9 @@ PY
 pass "search: exact, partial, misspelled, synonym and key queries"
 
 # the views fzf and the popup use render without error
-MANGO_KEYS_CONF=$conf "$keys" --rank 'fulscr' | sed 's/\x1b\[[0-9;]*m//g' | grep -q 'Super.*Fullscreen' || fail "--rank lists rows"
-MANGO_KEYS_CONF=$conf "$keys" --card 0 | grep -q 'F O C U S' || fail "--card draws a group"
-MANGO_KEYS_CONF=$conf "$keys" --pango window | grep -q 'Keep on top' || fail "--pango draws a mode"
+MANGO_KEYS_CONF=$conf "$keys" --rank 'fulscr' | sed 's/\x1b\[[0-9;]*m//g' | grep -q 'Super.*Maximize' || fail "--rank lists rows"
+MANGO_KEYS_CONF=$conf "$keys" --card 0 | grep -q 'G O' || fail "--card draws a group"
+MANGO_KEYS_CONF=$conf "$keys" --pango session | grep -q 'Lock screen' || fail "--pango draws a mode"
 pass "rank, card and popup views render"
 
 # fzf takes the cheatsheet's options (an unknown flag or color name exits 2 and the window closes)
@@ -189,7 +193,7 @@ args = []
 os.execvp = lambda f, a: args.extend(a)
 mk.tui()
 rows = subprocess.run([sys.argv[1], "--rank", ""], capture_output=True, text=True).stdout
-r = subprocess.run([a for a in args if a != "--disabled"] + ["--filter", "Fullscreen"], input=rows,
+r = subprocess.run([a for a in args if a != "--disabled"] + ["--filter", "Maximize"], input=rows,
                    capture_output=True, text=True)
 if r.returncode != 0 or not r.stdout:
     print(f"fzf exit {r.returncode}: {r.stderr.strip()}")

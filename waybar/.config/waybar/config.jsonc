@@ -36,12 +36,12 @@
     },
     "custom/wallpaper": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>WALLPAPER</span>  Open picker  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Space  A  W</span>",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>WALLPAPER</span>  Open picker  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super W</span>",
         "on-click": "waypaper"
     },
     "custom/power": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Space  S  P</span>",
+        "tooltip-format": "<span font_desc='Inter Semi-Bold 11px' letter_spacing='507' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='Inter Medium 11px' fgalpha='82%'>Super Esc  P</span>",
         "on-click": "wlogout -b 6 --protocol layer-shell"
     },
 
@@ -62,7 +62,7 @@
         "on-click": "mmsg dispatch switch_layout"
     },
 
-    // the open key mode (super+space, then a group); hidden in the default mode
+    // the open key mode (super+esc, super+n or super+m); hidden in the default mode
     "mango/keymode": {
         "format": "{mode}"
     },
