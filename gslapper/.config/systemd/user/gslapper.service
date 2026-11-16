@@ -1,0 +1,17 @@
+[Unit]
+Description=Video wallpaper (gslapper)
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+# Plays the current wallpaper (wallpaper-set's link) when it is a video, looped and filling every
+# output; swaybg.service shows it when it is an image (each unit starts only for its kind). -p
+# pauses playback while windows hide it; gst-plugin-va decodes on the GPU. The link is the state,
+# so gslapper keeps none of its own (--no-save-state).
+ExecCondition=%h/.local/bin/wallpaper-is video
+ExecStart=/usr/bin/gslapper -p --no-save-state -o "loop fill" * %h/.local/state/wallpaper/current
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

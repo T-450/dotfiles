@@ -16,6 +16,12 @@ for f in "$ROOT"/*/.config/systemd/user/*.service; do
 	while IFS= read -r p; do
 		[[ -e ${p//%h/$HOME} ]] && off=1
 	done < <(sed -n 's/^ConditionPathExists=!//p' "$f")
+	# or by its ExecCondition: swaybg.service and gslapper.service each start only for their kind of
+	# wallpaper (wallpaper-is), so one of them is always skipped
+	while IFS= read -r c; do
+		read -ra cmd <<<"${c//%h/$HOME}"
+		"${cmd[@]}" &>/dev/null || off=1
+	done < <(sed -n 's/^ExecCondition=//p' "$f")
 	((off)) || fail "$u is active"
 done
 pass "every session unit is active"

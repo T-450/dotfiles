@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# wallpaper-is image|video: exit 0 when the current wallpaper (~/.local/state/wallpaper/current,
+# wallpaper-set's link) is that kind, 1 when not. The ExecCondition of swaybg.service (image) and
+# gslapper.service (video), so exactly one of them runs. A missing link counts as an image: swaybg
+# then shows the palette's desktop color.
+set -euo pipefail
+case ${1:-} in image | video) ;; *) echo "usage: wallpaper-is image|video" >&2 && exit 2 ;; esac
+mime=$(file -bL --mime-type -- "$HOME/.local/state/wallpaper/current" 2>/dev/null || true)
+[[ $mime == video/* ]] && kind=video || kind=image
+[[ $kind == "$1" ]]

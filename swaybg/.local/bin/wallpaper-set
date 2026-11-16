@@ -1,13 +1,26 @@
 #!/usr/bin/env bash
-# wallpaper-set FILE: make FILE the wallpaper, now and at every login. Points
-# ~/.local/state/wallpaper/current, which swaybg.service shows, at FILE and restarts swaybg.
-# waypaper runs it after each pick (its post_command, set by waypaper/setup.sh).
+# wallpaper-set FILE | wallpaper-set --lock FILE: make FILE the wallpaper, or the lock screen's
+# image, now and at every login.
+#   FILE         points ~/.local/state/wallpaper/current at FILE, an image or a video, and restarts
+#                swaybg.service and gslapper.service: swaybg shows an image, gslapper plays a video
+#                (wallpaper-is decides which one starts). waypaper runs it after each pick (its
+#                post_command, set by waypaper/setup.sh); waypaper lists images only, so pick a
+#                video here.
+#   --lock FILE  points ~/.local/state/wallpaper/lock, the image hyprlock shows, at FILE (an image:
+#                hyprlock can't play video); the next lock shows it.
 set -euo pipefail
+lock=false
+[[ ${1:-} == --lock ]] && lock=true && shift
 file=${1:-}
-[[ -f $file ]] || { echo "usage: wallpaper-set FILE ('$file' is not a file; the wallpaper stays)" >&2; exit 1; }
+[[ -f $file ]] || { echo "usage: wallpaper-set [--lock] FILE ('$file' is not a file; the wallpaper stays)" >&2; exit 1; }
 state=$HOME/.local/state/wallpaper
 mkdir -p "$state"
+if $lock; then
+	[[ $(file -bL --mime-type -- "$file") == image/* ]] || { echo "wallpaper-set --lock: '$file' is not an image (hyprlock shows images only)" >&2; exit 1; }
+	ln -sfn -- "$(realpath -s -- "$file")" "$state/lock"
+	exit 0
+fi
 # -s keeps a link's own path: a pick of ~/.config/swaybg/wallpaper.png then follows `theme set`,
 # which renders a new file there
 ln -sfn -- "$(realpath -s -- "$file")" "$state/current"
-systemctl --user restart swaybg.service
+systemctl --user restart swaybg.service gslapper.service

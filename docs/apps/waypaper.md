@@ -3,7 +3,8 @@
 The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette.
 
 It shows the images in `~/Pictures/Wallpapers` (put yours there) and in `~/.config/swaybg`, which
-holds the palette's wallpaper. waypaper doesn't set the wallpaper itself (backend `none`): after a
+holds the palette's wallpaper. Videos don't show (waypaper lists them only for its own video
+backends): set one with `wallpaper-set FILE` ([swaybg](swaybg.md)). waypaper doesn't set the wallpaper itself (backend `none`): after a
 pick it runs `wallpaper-set` ([swaybg](swaybg.md)), which points
 `~/.local/state/wallpaper/current` at the image and restarts swaybg. The link keeps the path it is
 given, so a pick of `~/.config/swaybg/wallpaper.png` shows whatever `theme set` renders there next.

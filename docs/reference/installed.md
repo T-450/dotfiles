@@ -81,6 +81,8 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | greeter | `jq` | 1.8.2-1 |
 | greeter | `wlr-randr` | 0.5.0-1 |
+| gslapper | `gslapper` | 1.5.4-1 |
+| gslapper | `gst-plugin-va` | not installed |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `jdtls` | 1.63.0-1 |
@@ -169,7 +171,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `7zip` | 26.06-1 |
 | thunar | `unrar` | 1:7.3.2-1 |
 | vim | `vim` | 9.2.1178-1 |
-| way-displays | `way-displays` | not installed |
+| way-displays | `way-displays` | 2.0.1-1 |
 | waybar | `waybar` | 0.16.0-1 |
 | waybar | `pamixer` | 1.6-4 |
 | waypaper | `waypaper` | 2.9-1 |

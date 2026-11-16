@@ -1,0 +1,38 @@
+# Cosmic Storm Haze's moving wallpapers, made from two Pinterest pins by loop.sh: the desktop's
+# storm over a sea of clouds (pin 595390013286711434, "cosmic storm") and the login screen's eclipse
+# over a cloud bowl ("Blue Dawn Wallpaper" by Siren, pin 935763628845484676), plus that eclipse as the
+# lock screen's still. Their licenses are unknown, so the clips are downloaded here and checked
+# against their SHA-256, never committed to this public repo; both are portrait 720x1280 at 24 fps.
+pkgname=wallpaper-cosmic-storm
+pkgver=20261116 # the day the loops were cut
+pkgrel=1
+pkgdesc='Seamless 1080p wallpaper loops (cosmic storm, Blue Dawn) and the Blue Dawn lock still'
+arch=(any)
+url='https://br.pinterest.com/pin/595390013286711434/'
+license=(LicenseRef-unknown)
+makedepends=(ffmpeg gawk)
+options=(!strip !debug)
+source=("storm-src.mp4::https://v1.pinimg.com/videos/iht/expMp4/7f/21/74/7f217470542a6a9552791820144c7a1e_720w.mp4"
+	"dawn-src.mp4::https://v1.pinimg.com/videos/iht/expMp4/20/ea/c4/20eac43f5cfd7a9e99621e312d62a316_720w.mp4"
+	loop.sh)
+noextract=(storm-src.mp4 dawn-src.mp4)
+sha256sums=('c98974ce82712fffcbb9fc8cb76137c52b0478371797aa9470c93c8820a6efbc'
+	'1188b6bb8cfa7da69ca143b7cfabfa9d07f13c9c1efe68390416036b3f805db4'
+	'SKIP')
+
+build() {
+	# storm: frame 0 is black (the clip fades in), so frames 1-239; the last 2 s fade into the
+	# opening lightning flash, which hides the cut. Band from y 300: both lightning cores.
+	bash loop.sh loop storm-src.mp4 cosmic-storm.mp4 1 239 48 300
+	# Blue Dawn: all 125 frames, a 1 s crossfade; the eclipse at the top, clouds below
+	bash loop.sh loop dawn-src.mp4 blue-dawn.mp4 0 124 24 230
+	# the lock still: the eclipse centred, so hyprlock's clock panel sits inside the black sun
+	bash loop.sh still dawn-src.mp4 blue-dawn-lock.png 2 113
+}
+
+package() {
+	local d="$pkgdir/usr/share/backgrounds/cosmic-storm"
+	install -Dm644 cosmic-storm.mp4 "$d/cosmic-storm.mp4"
+	install -Dm644 blue-dawn.mp4 "$d/blue-dawn.mp4"
+	install -Dm644 blue-dawn-lock.png "$d/blue-dawn-lock.png"
+}
