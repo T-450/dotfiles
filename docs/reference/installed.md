@@ -81,9 +81,9 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | greeter | `jq` | 1.8.2-1 |
 | greeter | `wlr-randr` | 0.5.0-1 |
-| greeter | `figlet` | not installed |
+| greeter | `figlet` | 2.2.5-6 |
 | gslapper | `gslapper` | 1.5.4-1 |
-| gslapper | `gst-plugin-va` | not installed |
+| gslapper | `gst-plugin-va` | 1.28.9-1 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `jdtls` | 1.63.0-1 |
@@ -144,7 +144,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `intel-media-driver` | 26.3.5-1 |
 | thinkpad | `vulkan-intel` | 1:26.2.7-1 |
 | thinkpad | `fprintd` | 1.94.5-2 |
-| thinkpad | `fwupd` | 2.1.9-1 |
+| thinkpad | `fwupd` | 2.1.10-1 |
 | thinkpad | `bolt` | 0.9.11-3 |
 | thinkpad | `tlp` | 1.11.0-1 |
 | thinkpad | `powertop` | 2.16.1-1 |
@@ -189,3 +189,5 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | zsh | `eza` | 0.23.5-2 |
 | zsh | `bat` | 0.26.1-3 |
 | zsh | `fd` | 10.5.0-3 |
+| zsh | `ripgrep` | 15.2.0-1 |
+| zsh | `btop` | not installed |

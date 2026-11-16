@@ -10,3 +10,5 @@ zoxide
 eza
 bat
 fd
+ripgrep
+btop
