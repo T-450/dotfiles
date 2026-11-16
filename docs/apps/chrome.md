@@ -1,6 +1,6 @@
 # chrome
 
-Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite. Firefox stays the default browser.
+Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite. It is the default browser (super+b, web links and HTML files: `chrome/setup.sh`).
 
 - **Flags** (`~/.config/chrome-flags.conf`, read by the AUR launcher): native Wayland
   (`--ozone-platform-hint=auto`) and VA-API video decode/encode on the Intel GPU
@@ -31,4 +31,6 @@ to Chrome started through the launcher.
 **System files** (`chrome/root/`, copied by `install.sh --system`):
 
 - `/etc/opt/chrome/policies/managed/dotfiles.json`
+
+**`setup.sh`** (run by `install.sh --setup`): Chrome is the default browser (web links, HTML files, super+b).
 <!-- end generated -->

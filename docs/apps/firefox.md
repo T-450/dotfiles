@@ -1,6 +1,6 @@
 # firefox
 
-Firefox (the default browser, super+return) with palette-colored browser chrome.
+Firefox with palette-colored browser chrome; Chrome is the default browser.
 
 The profile has a fixed name: `profiles.ini` and `installs.ini` (linked) declare `~/.config/mozilla/firefox/default-release`, so `user.js` (enables `userChrome.css`) and `chrome/userChrome.css` are linked into it like any config, before Firefox first starts. Restart Firefox to see a new palette.
 
