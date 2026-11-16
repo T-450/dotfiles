@@ -218,8 +218,10 @@ the lid and move its windows twice until way-displays is back a second later. At
 `stop-hook` empties the file when the target is inactive or has a stop job. Otherwise (a restart,
 a manual `systemctl --user stop`, the start limit) it keeps `disable:1` only while the lid is
 closed and `wlr-randr --json` (`timeout 5`) shows an enabled external output, and empties it
-else: with the lid open and nothing managing the panel it would stay off. If wlr-randr fails the
-file is unchanged. The write is `sync`'s atomic one, and the unit's `-` prefix keeps a failing hook
+else: with the lid open and nothing managing the panel it would stay off. If wlr-randr times out
+(a compositor that is there but not answering) the file is unchanged; if it fails at once (mango
+crashed or was killed while the target stays up) the file is emptied, since a kept `disable:1`
+would start the next login with no output once the external display is gone. The write is `sync`'s atomic one, and the unit's `-` prefix keeps a failing hook
 from failing the stop.
 
 ### Config reloads
@@ -302,7 +304,7 @@ mango starts with the panel on until way-displays turns it off, about a second.
 |---|---|
 | `way-displays/packages`, `.config/way-displays/cfg.yaml`, `.config/systemd/user/way-displays.service` | New app |
 | `docs/apps/way-displays.md` | New: what it does here, how to change things |
-| `mango/.local/bin/mango-monitor` | Bash: `sync`, `toggle`, `sleep`, `wake`, and `hold-lid` (the lid inhibitor's holder) |
+| `mango/.local/bin/mango-monitor` | Bash: `sync`, `toggle`, `sleep`, `wake`, and the internal `hold-lid` (the lid inhibitor's holder) and `stop-hook` (way-displays.service's `ExecStopPost`) |
 | `mango/.config/mango/monitor.conf` | No display rules; `Xft.dpi: 120`; `source_optional` last |
 | `mango/.config/mango/bind.conf` | Super+M p runs `mango-monitor toggle` |
 | `mango/.config/user-tmpfiles.d/mango-monitor.conf` | New: create the state directory, remove the generated rule at boot |
