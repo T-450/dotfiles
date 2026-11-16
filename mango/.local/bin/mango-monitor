@@ -21,7 +21,12 @@ need_daemon() {
 }
 
 # Only the commands that need the output list pay for wlr-randr.
-load_outputs() { outputs=$(wlr-randr --json 2>/dev/null) || outputs='[]'; }
+# The timeout keeps a wedged compositor from hanging swayidle -w, which waits for each command.
+load_outputs() {
+	outputs=$(timeout 5 wlr-randr --json 2>/dev/null) && return 0
+	note "wlr-randr failed or timed out"
+	outputs='[]'
+}
 
 # The laptop panel is the first internal output (eDP, LVDS or DSI).
 panel() {

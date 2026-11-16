@@ -29,11 +29,12 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 ## Idle
 
 swayidle (`swayidle/.config/systemd/user/swayidle.service`): dim at 4 min (dimland) → lock at 5 min
-(hyprlock) → displays off at 10 min (`mango-monitor sleep` pauses
-way-displays, then `mmsg dispatch sleep_monitor` per display; activity resumes way-displays,
-which turns back on what the lid allows); lock before suspend and on
-`loginctl lock-session`. hyprlock starts only if not already running (`pidof -q hyprlock ||`), always in the background (it runs until unlock and `swayidle -w` waits for each command), and
-`KillMode=process` keeps it alive if swayidle restarts. Keep both.
+(hyprlock) → displays off at 10 min (`mango-monitor sleep` pauses way-displays, then `mmsg dispatch
+sleep_monitor` per display; activity resumes way-displays, which turns back on what the lid allows);
+lock before suspend and on `loginctl lock-session`. hyprlock starts only if not already running
+(`pidof -q hyprlock ||`), always in the background (it runs until unlock and `swayidle -w` waits for
+each command), and `KillMode=process` keeps it alive if swayidle restarts. Keep both. Every swayidle
+start runs `mango-monitor wake`, so a restart while idle can't leave way-displays paused.
 
 ## Debugging
 
