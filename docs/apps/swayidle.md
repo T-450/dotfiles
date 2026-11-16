@@ -2,7 +2,7 @@
 
 Idle handling: dim, lock, displays off.
 
-See [Session](../session.md#idle). Dimming is dimland (AUR).
+See [Session](../session.md#idle). Dimming is dimland (AUR). Displays off goes through `mango-monitor sleep`/`wake`, which also hold a lid inhibitor while an external display is connected, so idle with the lid closed doesn't suspend the laptop.
 
 ## Reference
 

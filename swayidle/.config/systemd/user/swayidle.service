@@ -5,8 +5,9 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-# sleep stops way-displays and only the resume handler continues it; a swayidle restart while idle
-# would leave it stopped. wake is idempotent: CONT on a running unit is a no-op.
+# sleep stops way-displays and holds a lid inhibitor, and only the resume handler undoes both; a
+# swayidle restart while idle would leave them. wake is idempotent: CONT on a running unit is a
+# no-op, and with no inhibitor there is nothing to end.
 ExecStartPre=-%h/.local/bin/mango-monitor wake
 ExecStart=/usr/bin/swayidle -w \
   timeout 240 '/usr/bin/dimland -a 0.3' \

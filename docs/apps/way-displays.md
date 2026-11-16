@@ -4,7 +4,9 @@ Display manager: each display gets its native resolution at its highest refresh 
 
 ## Changing things
 
-`way-displays -g` prints every display with its mode, scale, position and why. `-s SCALE 'LG' 1.5` or `-s MODE ...` change the live state, `-t DISABLED eDP-1` toggles a display, `-w` saves the live state to `cfg.yaml`. `cfg.yaml` is linked into the repo, so `-w` writes through the link and drops the comments: review `git diff` before committing. Keys: `man 5 way-displays`.
+`way-displays -g` prints every display with its mode, scale, position and why. `-s SCALE 'ULTRAFINE' 1.5` or `-s MODE ...` change the live state, `-t DISABLED eDP-1` toggles a display, `-w` saves the live state to `cfg.yaml`. `cfg.yaml` is linked into the repo, so `-w` writes through the link and drops the comments: review `git diff` before committing. Keys: `man 5 way-displays`.
+
+The panel toggle (super+m p, `mango-monitor toggle`) is a way-displays override that ends when the lid state agrees with it; unplugging the last external display while it holds would leave no display on, so `mango-monitor sync` toggles it back then. `way-displays.service` empties mango's generated rule file only when the session ends, not on a restart (install.sh, a crash), which would light the panel behind a closed lid. At idle `mango-monitor sleep` pauses the daemon and holds a lid inhibitor while an external display is connected (see [Session](../session.md#idle)).
 
 One-time step: set the LG's picture mode to sRGB in its on-screen menu. Its panel is wide gamut (near DCI-P3) and sRGB content looks oversaturated without it.
 
