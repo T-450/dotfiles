@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# mango-monitor sync|toggle|sleep|wake|hold-lid
+# mango-monitor sync|toggle|sleep|wake|hold-lid|stop-hook
 #   sync      way-displays' CALLBACK_CMD: mirror the panel's off state into a mango rule file
-#   toggle    laptop panel on/off (super+m p)
+#   toggle    laptop panel on/off (super+m p); without way-displays, only turns the panel back on
 #   sleep     pause way-displays if running, keep logind from acting on the lid while an external
 #             display is connected, then power every enabled display off (swayidle)
 #   wake      resume way-displays, which turns back on what should be on; without it, wake the
 #             externals and the panel unless the lid is closed over an external; then end the
 #             lid inhibitor (swayidle)
 #   hold-lid  internal: what the lid inhibitor runs, until no external display is connected
+#   stop-hook internal: way-displays.service's ExecStopPost; empty the rule file unless the lid rule
+#             still holds
 
 rules=$HOME/.local/state/mango/outputs.conf
 unit=way-displays.service
@@ -23,18 +25,25 @@ daemon_active() { systemctl --user is-active --quiet "$unit"; }
 need_daemon() {
 	daemon_active && return 0
 	note "$unit is not running"
-	notify-send "Laptop panel" "way-displays is not running"
+	notify-send -- "Laptop panel" "way-displays is not running"
 	return 1
 }
 
 # Only the commands that need the output list pay for wlr-randr.
 # The timeout keeps a wedged compositor from hanging swayidle -w, which waits for each command.
+# randr_rc keeps wlr-randr's status: 124 is a compositor that is there but not answering, anything
+# else (no compositor at all) means mango is gone.
 load_outputs() {
-	outputs=$(timeout 5 wlr-randr --json 2>/dev/null) && return 0
+	outputs=$(timeout 5 wlr-randr --json 2>/dev/null)
+	randr_rc=$?
+	((randr_rc == 0)) && return 0
 	note "wlr-randr failed or timed out"
 	outputs='[]'
 	return 1
 }
+
+# No output enabled, in the current list.
+nothing_on() { [[ -z $(jq -r '.[] | select(.enabled) | .name' <<<"$outputs") ]]; }
 
 # The laptop panel is the first internal output (eDP, LVDS or DSI).
 panel() {
@@ -57,9 +66,7 @@ external() {
 	local d n
 	for d in "$drm"/card*-*; do
 		n=${d##*/}
-		case ${n#card*-} in
-		eDP-* | LVDS-* | DSI-* | Virtual-*) continue ;;
-		esac
+		[[ ${n#card*-} =~ $internal|^Virtual- ]] && continue
 		[[ $(<"$d/status") == connected ]] || continue
 		[[ ${1:-} != enabled || $(<"$d/enabled") == enabled ]] && return 0
 	done 2>/dev/null
@@ -89,20 +96,34 @@ release_lid() {
 	lid_held || return 0
 	local i
 	for ((i = 0; i < 25; i++)); do
-		lid_open || external enabled || ! external && break
+		{ lid_open || external enabled || ! external; } && break
 		sleep 0.2
 	done
 	systemctl --user stop "$lid_unit" 2>/dev/null
 	return 0
 }
 
+# Write the rule file ($1 is its content, empty for none) the way sync does: atomically, and only
+# on a difference, since every write reloads mango.
+write_rules() {
+	local want=$1 have=
+	[[ -f $rules ]] && have=$(<"$rules")
+	[[ $have == "$want" ]] && return 0
+	mkdir -p "${rules%/*}"
+	local tmp
+	tmp=$(mktemp "$rules.XXXXXX") || return 0
+	[[ -n $want ]] && echo "$want" >"$tmp"
+	mv -f "$tmp" "$rules"
+}
+
 cmd_sync() {
 	case ${CALLBACK_LEVEL:-} in
-	WARNING | ERROR | FATAL) notify-send "way-displays" "${CALLBACK_MSG:-$CALLBACK_LEVEL}" ;;
+	WARNING | ERROR | FATAL) notify-send -- "way-displays" "${CALLBACK_MSG:-$CALLBACK_LEVEL}" ;;
 	esac
 	# way-displays may run several callbacks at once; without the lock a slow run can
 	# overwrite a newer rule with a stale one.
-	exec 9>"${XDG_RUNTIME_DIR:-/tmp}/mango-monitor-sync.lock"
+	# Append, not truncate: the /tmp fallback is shared, and a planted link must not cost a file.
+	exec 9>>"${XDG_RUNTIME_DIR:-/tmp}/mango-monitor-sync.lock"
 	flock 9
 	# Without the list the panel's state is unknown: writing would reload mango for nothing.
 	load_outputs || return 0
@@ -113,40 +134,49 @@ cmd_sync() {
 	# leaves no output on. Toggling again drops the override (-d would delete the lid condition).
 	# Not while the displays are asleep: a sync that started before sleep sees them all off, and
 	# way-displays, paused, would light the panel behind the lid when it resumes.
-	if [[ -n $name && $enabled == false ]] && ! lid_held &&
-		[[ -z $(jq -r '.[] | select(.enabled) | .name' <<<"$outputs") ]]; then
-		note "no display on: dropping the $name override"
-		timeout 5 way-displays -t DISABLED "$name" >/dev/null
-		# way-displays turns the panel on and calls back, which writes the rule.
-		return 0
+	# One snapshot can catch the gap right after an unplug, or a callback resumed at wake: look
+	# again a second later before toggling.
+	if [[ -n $name && $enabled == false ]] && ! lid_held && nothing_on; then
+		sleep 1
+		load_outputs || return 0
+		read -r name enabled < <(panel)
+		if [[ -n $name && $enabled == false ]] && nothing_on; then
+			note "no display on: dropping the $name override"
+			timeout 5 way-displays -t DISABLED "$name" >/dev/null
+			# way-displays turns the panel on and calls back, which writes the rule.
+			return 0
+		fi
 	fi
 	# A reload re-enables every output whose rule doesn't say disable:1, so the off state
 	# has to be a rule mango reads on every reload.
 	[[ -n $name && $enabled == false ]] && want="monitor_rule=name:^$name\$,disable:1"
-	local have=
-	[[ -f $rules ]] && have=$(<"$rules")
-	[[ $have == "$want" ]] && return 0
-	mkdir -p "${rules%/*}"
-	local tmp
-	tmp=$(mktemp "$rules.XXXXXX") || return 0
-	[[ -n $want ]] && echo "$want" >"$tmp"
-	mv -f "$tmp" "$rules"
+	write_rules "$want"
 }
 
 cmd_toggle() {
-	need_daemon || return 0
-	load_outputs
 	local name enabled
+	if ! need_daemon; then
+		# Nothing manages the panel (way-displays crashed out): the key can still bring it back,
+		# never turn it off.
+		load_outputs || return 0
+		read -r name enabled < <(panel)
+		if [[ -n $name && $enabled == false ]]; then
+			write_rules ""
+			timeout 5 mmsg dispatch "enable_monitor,^$name\$"
+		fi
+		return 0
+	fi
+	load_outputs
 	read -r name enabled < <(panel)
 	if [[ -z $name ]]; then
 		note "no laptop panel"
 		return 0
 	fi
 	if [[ $enabled == true ]] && [[ -z $(jq -r --arg n "$name" '.[] | select(.enabled and .name != $n) | .name' <<<"$outputs") ]]; then
-		notify-send "Laptop panel" "No other display is on"
+		notify-send -- "Laptop panel" "No other display is on"
 		return 0
 	fi
-	way-displays -t DISABLED "$name"
+	timeout 5 way-displays -t DISABLED "$name"
 }
 
 # mmsg matches a monitor name as a regex, so DP-1 alone would also match eDP-1: anchor it.
@@ -162,7 +192,7 @@ cmd_sleep() {
 	fi
 	local name
 	while read -r name; do
-		mmsg dispatch "sleep_monitor,^$name\$"
+		timeout 5 mmsg dispatch "sleep_monitor,^$name\$"
 	done < <(jq -r --arg o "$only" '.[] | select(.enabled and (.name | test($o))) | .name' <<<"$outputs")
 }
 
@@ -180,10 +210,36 @@ cmd_wake() {
 			if [[ $name == "$pname" ]] && ! lid_open && [[ -n $others ]]; then
 				continue
 			fi
-			mmsg dispatch "wakeup_monitor,^$name\$"
+			timeout 5 mmsg dispatch "wakeup_monitor,^$name\$"
 		done < <(jq -r '.[].name' <<<"$outputs")
 	fi
 	release_lid
+}
+
+# way-displays.service's ExecStopPost. A stale disable:1 with no external display would start mango
+# with no output, and a restart (install.sh, Restart=) must keep the rule: emptying it reloads mango
+# and lights the panel behind a closed lid until way-displays is back. At logout the target is still
+# active while its units stop, with a stop job waiting: that, or an inactive target, is the end.
+# Otherwise (a manual stop, the start limit) nothing manages the panel: keep the rule only while
+# the lid rule it mirrors holds, else the panel would stay off with the lid open.
+cmd_stop_hook() {
+	local target=graphical-session.target
+	if ! systemctl --user -q is-active "$target" ||
+		systemctl --user list-jobs --no-legend "$target" | grep -qw stop; then
+		write_rules ""
+		return 0
+	fi
+	# A compositor that is there but not answering: state unknown, leave the file. No compositor at
+	# all (mango crashed or was killed while the target stays up): a kept disable:1 would start the
+	# next login with no output when the external display is gone, so empty it.
+	if ! load_outputs; then
+		((randr_rc == 124)) || write_rules ""
+		return 0
+	fi
+	if ! lid_open && [[ -n $(jq -r --arg i "$internal" '.[] | select(.enabled and (.name | test($i) | not)) | .name' <<<"$outputs") ]]; then
+		return 0
+	fi
+	write_rules ""
 }
 
 # Runs under systemd-inhibit, so it starts only once logind granted the inhibitor.
@@ -200,8 +256,9 @@ toggle) cmd_toggle ;;
 sleep) cmd_sleep ;;
 wake) cmd_wake ;;
 hold-lid) cmd_hold_lid ;;
+stop-hook) cmd_stop_hook ;;
 *)
-	echo "usage: mango-monitor sync|toggle|sleep|wake|hold-lid" >&2
+	echo "usage: mango-monitor sync|toggle|sleep|wake|hold-lid|stop-hook" >&2
 	exit 2
 	;;
 esac

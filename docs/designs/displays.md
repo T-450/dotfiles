@@ -169,12 +169,15 @@ comments; review `git diff` before committing, as for any app-written config).
 *   `toggle` (Super+M p, as today): `way-displays -t DISABLED eDP-1`, a manual override that
     way-displays drops once the lid rule agrees with it. It refuses when the panel is the only
     enabled display (a notification says so); today's toggle allows that. Without the daemon it
-    says so in a notification too. The override can still outlive the display that made it safe:
+    says so in a notification and can only turn the panel back on (it empties the rule and enables
+    the panel), never off. The override can still outlive the display that made it safe:
     turn the panel off, then unplug the LG, and way-displays keeps the panel off (with one display
     it ignores the lid, so its own state is "on" and never matches the override). So `sync`, seeing
     the panel connected and off with no display on, runs `way-displays -t DISABLED eDP-1` again,
     which drops the override (`-d` would delete the lid condition from the config), and writes
-    nothing: the next callback does. Not while the displays are asleep (the lid inhibitor below is
+    nothing: the next callback does. It reads the outputs again a second later and acts only if
+    that read agrees: one snapshot can catch the gap right after an unplug, or a callback resumed
+    at wake. Not while the displays are asleep (the lid inhibitor below is
     held): a callback that started before `sleep` would see every display off and queue the toggle
     for the paused daemon, which would light the panel behind the lid on wake.
 *   `sleep` and `wake`, for swayidle. mango powers a display off by disabling it, and
@@ -209,13 +212,20 @@ keeps `xwayland_ignore_scale=1`, sets `Xft.dpi: 120`, and ends with
 ### The generated rule never outlives a session
 
 A stale `disable:1` with no external display would start mango with no output. `way-displays.service`
-empties the file when it stops at the end of the session (`ExecStopPost`), and user tmpfiles
+empties the file when it stops (`ExecStopPost`, which runs `mango-monitor stop-hook`), and user tmpfiles
 (`mango/.config/user-tmpfiles.d/mango-monitor.conf`) create `~/.local/state/mango/` and remove the
-file at boot. A restart (`install.sh` restarting a changed unit, `Restart=on-failure`) keeps the
-file: emptying it would reload mango, light the panel behind a closed lid and move its windows
-twice until way-displays is back a second later. At logout `graphical-session.target` is still
-active while its units stop, with a stop job waiting, so `ExecStopPost` empties the file when the
-target is inactive or has a stop job, and keeps it otherwise.
+file at boot. A restart (`install.sh` restarting a changed unit, `Restart=on-failure`) with the lid closed
+over an external display keeps the file: emptying it would reload mango, light the panel behind
+the lid and move its windows twice until way-displays is back a second later. At logout
+`graphical-session.target` is still active while its units stop, with a stop job waiting. So
+`stop-hook` empties the file when the target is inactive or has a stop job. Otherwise (a restart,
+a manual `systemctl --user stop`, the start limit) it keeps `disable:1` only while the lid is
+closed and `wlr-randr --json` (`timeout 5`) shows an enabled external output, and empties it
+else: with the lid open and nothing managing the panel it would stay off. If wlr-randr times out
+(a compositor that is there but not answering) the file is unchanged; if it fails at once (mango
+crashed or was killed while the target stays up) the file is emptied, since a kept `disable:1`
+would start the next login with no output once the external display is gone. The write is `sync`'s atomic one, and the unit's `-` prefix keeps a failing hook
+from failing the stop.
 
 ### Config reloads
 
@@ -256,14 +266,24 @@ external display connected, the panel is off and the prompt is on the external d
 
 The repo owns three files in `greeter/root/etc/greetd/` (the package's stay untouched):
 
-*   `greeter-panel`: `mmsg dispatch disable_monitor,eDP-1` when the lid is closed
-    (`/proc/acpi/button/lid/*/state`) and `wlr-randr --json` shows an enabled external display,
-    `enable_monitor` otherwise. No reloads happen in the greeter, so a runtime disable is enough.
+*   `greeter-panel`: `mmsg dispatch disable_monitor,^<panel>$` when the lid is closed
+    (`/proc/acpi/button/lid/*/state`, none counts as open) and `wlr-randr --json` shows an enabled
+    external display, `enable_monitor` otherwise. The name is anchored: mmsg matches it as a regex.
+    No reloads happen in the greeter, so a runtime disable is enough. It exits 0 on any error.
 *   `mango-greeter.conf`: `source=/etc/greetd/mango-greeter-config.conf`, then
     `switchbind=fold,spawn,/etc/greetd/greeter-panel` and the same for `unfold`, so closing or
     opening the lid at the login screen moves the prompt too.
-*   `greeter-session.sh`: runs `greeter-panel`, then `exec /etc/greetd/mango-greeter-session.sh`,
-    so the panel is off before sysc-greet picks its monitor.
+*   `greeter-session.sh`: runs `greeter-panel`, starts a background watcher, then
+    `exec /etc/greetd/mango-greeter-session.sh`, so the panel is off before sysc-greet picks its
+    monitor. The watcher follows `mmsg watch all-monitors` and re-runs `greeter-panel` when the
+    sorted set of monitor names in an event differs from the last one acted on (mango streams
+    focus and tag changes too), so a display plugged in or out at the login screen moves the
+    prompt. It reads the stream until mmsg exits, which happens when mango quits, and its output
+    goes to /dev/null so it holds no descriptor of the greeter's log pipe: it neither keeps the
+    greeter alive nor blocks `mmsg dispatch quit`. `greeter-panel` never blocks or fails
+    (`timeout 5` on wlr-randr, exit 0 on any error).
+
+Both scripts are bash (`#!/usr/bin/env bash`), as everywhere in the repo.
 
 `config.toml` points at `mango-greeter.conf` and `greeter-session.sh`. After login the user's
 mango starts with the panel on until way-displays turns it off, about a second.
@@ -287,7 +307,7 @@ mango starts with the panel on until way-displays turns it off, about a second.
 |---|---|
 | `way-displays/packages`, `.config/way-displays/cfg.yaml`, `.config/systemd/user/way-displays.service` | New app |
 | `docs/apps/way-displays.md` | New: what it does here, how to change things |
-| `mango/.local/bin/mango-monitor` | Bash: `sync`, `toggle`, `sleep`, `wake`, and `hold-lid` (the lid inhibitor's holder) |
+| `mango/.local/bin/mango-monitor` | Bash: `sync`, `toggle`, `sleep`, `wake`, and the internal `hold-lid` (the lid inhibitor's holder) and `stop-hook` (way-displays.service's `ExecStopPost`) |
 | `mango/.config/mango/monitor.conf` | No display rules; `Xft.dpi: 120`; `source_optional` last |
 | `mango/.config/mango/bind.conf` | Super+M p runs `mango-monitor toggle` |
 | `mango/.config/user-tmpfiles.d/mango-monitor.conf` | New: create the state directory, remove the generated rule at boot |
