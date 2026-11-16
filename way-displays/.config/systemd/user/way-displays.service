@@ -7,7 +7,7 @@ Requisite=graphical-session.target
 [Service]
 ExecStart=/usr/bin/way-displays
 # Empty, not removed: mango watches the file. A stale disable rule would start mango with no output.
-ExecStopPost=/usr/bin/sh -c ': > %h/.local/state/mango/outputs.conf'
+ExecStopPost=/usr/bin/sh -c 'f=%h/.local/state/mango/outputs.conf; [ -e "$f" ] && : > "$f"; exit 0'
 Restart=on-failure
 RestartSec=1
 
