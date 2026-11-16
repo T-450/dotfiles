@@ -7,10 +7,11 @@ Requisite=graphical-session.target
 [Service]
 ExecStart=/usr/bin/way-displays
 # Empty, not removed: mango watches the file. A stale disable rule would start mango with no output.
-# Only when the session ends: on a restart (install.sh, Restart=) the write reloads mango, which
-# lights the panel behind a closed lid until way-displays is back. At logout the target is still
-# active while its units stop, with a stop job waiting: that, or an inactive target, is the end.
-ExecStopPost=/usr/bin/sh -c 'if /usr/bin/systemctl --user -q is-active graphical-session.target && ! /usr/bin/systemctl --user list-jobs --no-legend graphical-session.target | /usr/bin/grep -qw stop; then exit 0; fi; f=%h/.local/state/mango/outputs.conf; [ -e "$f" ] && : > "$f"; exit 0'
+# `mango-monitor stop-hook` empties it when the session ends, or when the lid rule no longer holds
+# (a manual stop, the start limit: nothing would turn the panel back on). It keeps it while the lid
+# is closed over an external display, so a restart (install.sh, Restart=) does not light the panel
+# behind the lid until way-displays is back. The "-" keeps a failing hook from failing the unit.
+ExecStopPost=-%h/.local/bin/mango-monitor stop-hook
 Restart=on-failure
 RestartSec=1
 

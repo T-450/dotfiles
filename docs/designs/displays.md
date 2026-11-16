@@ -209,13 +209,18 @@ keeps `xwayland_ignore_scale=1`, sets `Xft.dpi: 120`, and ends with
 ### The generated rule never outlives a session
 
 A stale `disable:1` with no external display would start mango with no output. `way-displays.service`
-empties the file when it stops at the end of the session (`ExecStopPost`), and user tmpfiles
+empties the file when it stops (`ExecStopPost`, which runs `mango-monitor stop-hook`), and user tmpfiles
 (`mango/.config/user-tmpfiles.d/mango-monitor.conf`) create `~/.local/state/mango/` and remove the
-file at boot. A restart (`install.sh` restarting a changed unit, `Restart=on-failure`) keeps the
-file: emptying it would reload mango, light the panel behind a closed lid and move its windows
-twice until way-displays is back a second later. At logout `graphical-session.target` is still
-active while its units stop, with a stop job waiting, so `ExecStopPost` empties the file when the
-target is inactive or has a stop job, and keeps it otherwise.
+file at boot. A restart (`install.sh` restarting a changed unit, `Restart=on-failure`) with the lid closed
+over an external display keeps the file: emptying it would reload mango, light the panel behind
+the lid and move its windows twice until way-displays is back a second later. At logout
+`graphical-session.target` is still active while its units stop, with a stop job waiting. So
+`stop-hook` empties the file when the target is inactive or has a stop job. Otherwise (a restart,
+a manual `systemctl --user stop`, the start limit) it keeps `disable:1` only while the lid is
+closed and `wlr-randr --json` (`timeout 5`) shows an enabled external output, and empties it
+else: with the lid open and nothing managing the panel it would stay off. If wlr-randr fails the
+file is unchanged. The write is `sync`'s atomic one, and the unit's `-` prefix keeps a failing hook
+from failing the stop.
 
 ### Config reloads
 
