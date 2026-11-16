@@ -4,6 +4,8 @@ Pi, the coding agent (`pi`), with the LazyPi extension catalog and a theme for e
 
 Pi comes from AUR (`pi-coding-agent-bin`, the release binary), so LazyPi doesn't install it with `npm -g`. `setup.sh` runs `npx @robzolkos/lazypi --yes` (pinned, through mise's node) to install the whole catalog through `pi install`: sub-agents, ask-user, web access, memory, plan, simplify, add-dir, prompt templates, the Claude Code CLI provider, plannotator, diff review, powerbar, usage, raw paste, tasks, side chat, shell overlays, the research loops, Compound Engineering (skipped without bun) and three theme packs. It runs again only when the pinned version changes (`pi/lazypi.stamp`); `npx @robzolkos/lazypi status`, `update`, `remove ID` and `doctor` manage it by hand.
 
+Instructions: `~/.pi/agent/APPEND_SYSTEM.md` links to `claude/.claude/CLAUDE.md`, so Pi and Claude Code follow the same global rules; `~/.pi/agent/AGENTS.md` stays the compound plugin's file.
+
 Themes: `{palette}.json.tmpl` renders once per palette into `~/.pi/agent/themes/` (`dark-2026`, `light-2026`, `tokyo-night`, `anodized-keylight`, `cosmic-storm-haze`); catppuccin-mocha isn't linked, because LazyPi's curated theme pack ships its own. `setup.sh` sets Pi's `theme` to `light-2026/dark-2026`, so Pi takes Light 2026 on a light terminal and Dark 2026 on a dark one, and switches when `theme set` changes Ghostty's background. Pi hot-reloads them; another palette's theme is one `/settings` pick away.
 
 Look: Claude Code's, from `pi-claude-code-ui` (pinned; `setup.sh` installs it after the catalog). Consecutive tool calls fold into one line (`Read 2 files, ran 1 shell command`; Ctrl+O expands), edits show a syntax-highlighted diff with word-level marks, finished thinking collapses to `Thought for Ns`, prompts carry a `❯`, and the spinner names what runs. Bash rows show a label the model writes with each call (`bashIntent: model`, a few output tokens per call; `/cc-tools intent off` turns it off). `setup.sh` sets `terminalTheme: false` before the extension first loads, because it would otherwise switch Pi to its `system` theme over the palette pair, plus `themeAdaptive: true` so its diffs, connectors and spinner take the pair's colors, and `quietStartup: "header"` so a session opens on Pi's header without the list of every loaded resource.
@@ -26,6 +28,7 @@ Key: Pi reads the Anthropic key from `$ANTHROPIC_API` (`auth.json`: `"key": "!pr
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.local/bin/pi-mascot-import`
+- `~/.pi/agent/APPEND_SYSTEM.md`
 - `~/.pi/agent/extensions/lambda-footer/index.ts`
 - `~/.pi/agent/extensions/mascot/index.ts`
 - `~/.pi/agent/themes/{palette}.json`

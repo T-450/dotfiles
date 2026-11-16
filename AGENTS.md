@@ -65,10 +65,11 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
   systemd deletes a linked unit file on disable (install.sh --link restores it).
 - Env vars: `mango/.config/mango/env.conf` for mango's children, `mango/.config/environment.d/` for
   units; a variable both need goes in both.
-- Git: work on a branch, merge to `main`, push to `origin` (github.com/T-450/dotfiles, public:
-  never commit secrets). `upstream` is
+- Git: work on a branch and merge to `main`; push to `origin` (github.com/T-450/dotfiles, public:
+  never commit secrets) only when the user asks for it in the session. `upstream` is
   DreamMaoMao's repo and is never pushed to. No PRs. Never skip git hooks (`--no-verify`,
-  `-c core.hooksPath=...`).
+  `-c core.hooksPath=...`). Delete a branch once it is merged; a branch dropped unmerged is
+  deleted too, with its reason in the report.
 - Never add a `Co-Authored-By` trailer or share an agent session (link or ID) in commits, issues,
   comments or anything else sent to another service.
 
