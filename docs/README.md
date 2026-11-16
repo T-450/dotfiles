@@ -35,7 +35,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango, jq, wlr-randr |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
-| [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's) | jdtls, jre-openjdk |
+| [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and a theme rendered from the active palette, which `theme set` reloads in running editors | jdtls, jre-openjdk |
 | [hyprlock](apps/hyprlock.md) | The lock screen (super+esc l, the power menu, and after 5 min idle) | hyprlock |
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |

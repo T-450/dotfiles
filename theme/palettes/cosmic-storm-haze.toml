@@ -1,0 +1,60 @@
+# Cosmic Storm Haze: a Keychron Q1 Navy on a retro space-gray desk, with a GMK novelty set's purple,
+# lilac, pink, mint and yellow, and the violetear hummingbird (Colibri) for its violet ear patch
+# and green body. Colour is a cue, never decoration: the ground and every text tier are space grays
+# with a whisper of the Q1's navy (OKLCH hue 265), body text is a soft grey (not white), and
+# fg_bright is kept for the few things that must draw the eye. Each hue has one job; a bright ANSI
+# slot is a lighter shade of the same hue (no extra hues), and warnings share the yellow.
+# Night: wlsunset multiplies each encoded channel by its whitepoint (3500 K: green 0.76, blue 0.50),
+# so blue and violet lose the most. The accents are set apart by lightness as well as hue, so they
+# stay distinct down to 3000 K, the warmest the night-light menu offers. By day every text role
+# reads at AA on bg_desktop through bg_hover; at 3500 K fg_text is 7.9:1 and fg_muted 4.1:1 on
+# bg_desktop (the accent, a non-text signal, 3.7:1). Values were picked in OKLCH (L C h).
+
+[meta]
+name = "Cosmic Storm Haze"
+variant = "dark"
+source = "Keychron Q1 Navy, a GMK novelty set and the violetear (Colibri), picked in OKLCH"
+
+[colors]
+bg_desktop      = "#0c0f16"  # 0.170 0.014 265: navy-black ground, never pure black
+bg_surface      = "#12161d"  # 0.200: panels
+bg_widget       = "#191d26"  # 0.232: menus, notifications
+bg_hover        = "#222630"  # 0.270
+border_hairline = "#2d323c"  # 0.315
+border_inactive = "#404550"  # 0.390
+fg_text         = "#c9ccd4"  # 0.845: space gray, 11.9:1, complements the ground instead of glaring
+fg_editor       = "#c9ccd4"
+fg_secondary    = "#a5a9b2"  # 0.735
+fg_muted        = "#8a8f99"  # 0.648: labels and comments, AA on every tier up to bg_hover (4.7:1)
+fg_bright       = "#e7e9ef"  # 0.935: sparingly, for what must draw the eye
+fg_disabled     = "#5e636e"  # 0.500
+accent          = "#608cff"  # 0.665 0.200 266: Q1 cobalt, the signal: focus, cursor, the lit key
+badge           = "#b68cf2"  # 0.720 0.150 302: GMK purple, the violetear's ear patch
+selection_bg    = "#2d399c"  # 0.400 0.160 272: the Q1's royal navy case (fg_bright on it 8.0:1)
+selection_fg    = "#e7e9ef"
+link            = "#77d3ed"  # 0.820 0.095 218: the Q1's cyan Esc and Enter keys
+error           = "#ee7c90"  # 0.720 0.140 10: rose
+warning         = "#f5ce60"  # 0.865 0.135 90: GMK yellow, deep enough to stay apart from warmed whites
+success         = "#8ae5ab"  # 0.850 0.120 155: GMK mint, the violetear's body
+shadow          = "#000000"
+
+[terminal]
+fg     = "#c9ccd4"
+bg     = "#0c0f16"
+cursor = "#608cff"  # the signal
+# normal slots: the cue hues (blue is the signal's lighter text shade, 0.730 0.160 262); bright
+# slots: a lighter shade of each (sky, lilac, pink, mint, cream), plus the gray tiers
+ansi = [
+	"#222630", "#ee7c90", "#8ae5ab", "#f5ce60", "#77a6fe", "#b68cf2", "#77d3ed", "#c9ccd4",
+	"#8a8f99", "#fca9bb", "#b7f2ca", "#fce5a1", "#a6ccfe", "#d5b2ff", "#aee8f6", "#e7e9ef",
+]
+
+[keycaps]
+# Keychron Q1 Navy (product photo): navy modifiers, the letters in retro space gray,
+# the lit key in the signal's royal cobalt, soft-white legends (AA on every cap: 10.1, 6.4 and
+# 6.6:1); `+` and `›` in the muted gray.
+mod    = "#25335c"
+cap    = "#4e535c"
+accent = "#2f40c2"
+legend = "#e7e9ef"
+frame  = "#8a8f99"

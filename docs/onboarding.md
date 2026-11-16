@@ -64,7 +64,9 @@ Every later change uses these two checks, so run them once now.
 	```
 
 	```
+	  anodized-keylight
 	  catppuccin-mocha
+	  cosmic-storm-haze
 	* dark-2026
 	  light-2026
 	  tokyo-night

@@ -1,6 +1,6 @@
 # helix
 
-Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's).
+Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and a theme rendered from the active palette, which `theme set` reloads in running editors.
 
 Helix here is [gj1118's fork](https://github.com/gj1118/helix): upstream helix (it reports itself as `helix 25.07.1`) with merged pull requests for a sidebar file tree, icons, inline git blame, breadcrumbs, code folding, a command-line popup and notifications. Neither Arch nor the AUR packages it, and the file tree came after its last release (26.09.02), so `pkg/helix-gj1118/PKGBUILD` builds a pinned master commit (`2610b17`, `pkgver` 26.09.02.r57.g2610b17) from source, the way Arch builds helix: the commit's tarball checked by SHA-256, cargo with the locked dependencies, and helix's build script, which fetches each of the 301 tree-sitter grammars at the git revision `languages.toml` pins and compiles it. The build takes about 8 minutes on this laptop; makepkg installs `cargo` and `git` for it and removes what it installed afterwards. It installs in Arch's own layout: `/usr/lib/helix-gj1118/hx` beside `runtime/`, `/usr/bin/helix` a link, the desktop file and completions renamed `hx` to `helix`. It replaces Arch's `helix` (`provides`/`conflicts`). It went in after a day of editing C#, TypeScript and Go showed no regression from its open issue [#94](https://github.com/gj1118/helix/issues/94) (completion and fuzzy matching). Its version is the PKGBUILD's `pkgver` (`docs/reference/installed.md` lists only `packages` entries). To move to another commit or a tag, change `_commit`, `pkgver` and the tarball's sha256 together, then check `helix --health` and the keys below against the new keymap.
 
@@ -17,6 +17,8 @@ mise installs the language servers, formatters and debuggers (yamlfmt for YAML, 
 - CMake uses neocmakelsp; Meson (helix's built-in choice) uses mesonlsp. Both come from mise. mesonlsp's upstream was archived in August 2026 at 5.0.4; it still works, and no other Meson server exists.
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.
+
+Theme: `themes/palette.toml.tmpl` renders the active palette into a helix theme named `palette` (`theme = "palette"` in `config.toml`). Text and punctuation keep the palette's greys and the syntax takes the terminal's hues, each made legible on `bg_desktop`, so a light palette darkens them: keywords `ansi5`, types `ansi13`, functions `ansi12`, strings `ansi2`, constants `ansi3`, attributes and escapes `ansi6`, lifetimes and labels `ansi9`, comments `fg_muted`. The cursor is `accent`; selections, the picker's row and the selected menu item are `selection_bg`; popups sit on `bg_widget` with `border_inactive` borders. `reload.sh` sends running editors SIGUSR1 (helix's `:config-reload`), so `theme set` recolors them at once. The mode name (NOR/INS/SEL) stays uncolored because `color-modes` is off.
 
 ## Keys
 
@@ -60,7 +62,7 @@ The end of `config.toml` turns on gj1118's options (stock helix rejects them: go
 - **Icons** (`[icons.mime]`, `[icons.kind]`, JetBrains Mono Nerd Font): in the file tree, the buffer picker, the breadcrumb and completion. The file picker and the `space e` explorer don't draw them.
 - **Square corners and rainbow brackets** (`rounded-corners = false`, `rainbow-brackets` under `[editor]`): popups and pickers keep square corners, like mango's window borders. Notification popups take theirs from `[editor.notifications.border] radius = 0`.
 
-Left at the fork's defaults: the welcome screen and popup notifications (both on), and folding (`z f`/`z F`/`z A-f`, the fork's own keys). Not used: gradient picker borders, which take hex colors (the repo writes no color literals, and helix's colors come from `dark_plus`, not the palette).
+Left at the fork's defaults: the welcome screen and popup notifications (both on), and folding (`z f`/`z F`/`z A-f`, the fork's own keys). Not used: gradient picker borders, which take hex colors (the repo writes no color literals outside palettes; helix's colors come from the palette through `palette.toml.tmpl`).
 
 ## Diagnostics and debugging
 
@@ -79,8 +81,12 @@ To check a language, run `helix --health LANG` in a terminal. No language server
 
 - `~/.config/helix/config.toml`
 - `~/.config/helix/languages.toml`
+- `~/.config/helix/themes/palette.toml`
 
 **Rendered from the palette** (`theme`):
 
 - `helix/.config/helix/languages.toml.tmpl` → `helix/.config/helix/languages.toml`: `home`
+- `helix/.config/helix/themes/palette.toml.tmpl` → `helix/.config/helix/themes/palette.toml`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi9`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `name`, `selection_bg`, `selection_fg`, `warning`
+
+**`reload.sh`** (run by `theme set`): running helix editors re-read config.toml and the rendered themes/palette.toml; helix reloads its config on SIGUSR1, as :config-reload does. The process is `helix` (the /usr/bin link's name), not `hx`, the binary it points to.
 <!-- end generated -->
