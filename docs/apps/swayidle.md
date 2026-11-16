@@ -1,6 +1,6 @@
 # swayidle
 
-Idle handling: dim, lock, panel off.
+Idle handling: dim, lock, displays off.
 
 See [Session](../session.md#idle). Dimming is dimland (AUR).
 

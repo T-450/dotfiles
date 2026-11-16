@@ -57,7 +57,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (shift+Print) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
 | [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
-| [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
+| [swayidle](apps/swayidle.md) | Idle handling: dim, lock, displays off | swayidle, dimland-git |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
