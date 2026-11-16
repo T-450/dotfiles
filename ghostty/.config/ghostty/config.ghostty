@@ -10,6 +10,10 @@ font-size   = 12
 # height for this font is 21 px). fastfetch's logo is sized for these cells.
 alpha-blending     = linear
 adjust-cell-height = 1
+# keep text from vanishing when a program picks a foreground the same as its background. Ghostty
+# snaps any text below the floor to pure white, so a higher floor (3) would whiten the palette's
+# deliberate dim tiers: fg_disabled on raised panels (2.5-2.8:1) and helix's whitespace dots (1.5:1)
+minimum-contrast   = 1.1
 
 # one process per window, like any other app: each window starts in the directory it was launched
 # from (Thunar's "Open Terminal Here"; a single instance opens new windows in ~) and has its own

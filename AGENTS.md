@@ -73,6 +73,79 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
 - Never add a `Co-Authored-By` trailer or share an agent session (link or ID) in commits, issues,
   comments or anything else sent to another service.
 
+## Engineering directives
+
+Optimize for correctness, minimal surgical changes and fast execution. On any conflict with the
+rules above (no tests, merge to `main`, no PRs, turn endings, desktop-vm), the rules above win.
+
+### Workflow
+
+- `using-superpowers` is the meta-skill where installed. These directives govern without it; load a
+  skill's `SKILL.md` only when its domain guidance is needed.
+- Line 1 of a non-trivial reply names the posture: `> [Active: brainstorming, ponytail]` (feature,
+  plan), `systematic-debugging` (bug, trace), `test-driven-development` (implementation: here a
+  reproduction, not a test file), `verification-before-completion, requesting-code-review` (review,
+  completion), `ponytail` alone (Q&A, exploration).
+- **Spike** (feasibility): one cheap probe, then the finding and a recommendation in 2-3 sentences.
+- **Bounded** (bugfix, 1-3 file additive change): trace the root cause, reproduce, minimal change,
+  targeted verification. Autonomous.
+- **Architectural** (new app or subsystem, changes to install.sh/theme/bootstrap/CI contracts):
+  brainstorm, spec approval, plan, plan approval, adversarial plan review in fresh context,
+  implement, diff-grounded readiness review, verification, branch finish. When a step needs a
+  user-supplied prompt (planning, plan review, readiness review), ask for it instead of improvising.
+- Track bounded work with an inline `- [ ]` checklist; architectural work with one per milestone.
+
+### Approval gate
+
+Ask first for: architectural changes and new apps; a new package or `pkg/` PKGBUILD (installed
+tools run freely); changes to bootstrap.sh, CI or `root/` system files; destructive operations
+(`rm -rf`, `git reset --hard`, `git clean -fd`, deleting unmerged work). Everything else runs
+autonomously: read-only exploration, bounded fixes, additive changes, running `tests/run`.
+
+### Ponytail constraints
+
+- Ladder: YAGNI, then existing repo scripts and helpers, stdlib, native platform, installed
+  packages, then the minimum new code.
+- Think before coding: state assumptions, surface tradeoffs, push back when something simpler exists.
+- Surgical: every changed line traces to the request; no reformatting or refactoring next to it.
+- Fix the root cause where callers route through, not the symptom.
+- Delivery: `[change] → skipped: [X], add when [Y].`
+- Arithmetic (contrast ratios, sizes, timings) comes from code, never from mental math in text.
+
+### Verification and recovery
+
+- No harness for a behavior: a standalone reproduction or CLI command showing before and after
+  (scratchpad, not a committed test). Config: dry-runs and validators (`mango -p`,
+  `ghostty +validate-config`, `theme lint`), not exit code 0 alone.
+- Never claim "passes" or "fixed" without fresh output from this turn.
+- When verification fails: stop cascading edits, find whether the cause, the change, the check or
+  the environment is wrong, form one hypothesis, make one minimal adjustment, re-verify.
+- Review the diff (spec compliance, scope creep, unrelated edits) before merging to `main` and after
+  each subagent task.
+
+### Communication
+
+- Lead with the answer: command, `file_path:line`, snippet or finding.
+- Number multi-step work; at most 5 bullets per list; `Step X of Y` only for real multi-step tasks.
+- No filler, time estimates or closers.
+
+### Coding guidelines
+
+1. Good taste removes special cases: when the edge case folds into the normal path, the design is
+   right. Many `if` branches for edge cases mean the design is wrong.
+2. Data structures first; the right layout makes the code obvious.
+3. Short functions, shallow indentation: three or four levels deep means split it.
+4. Honest names: short for short-lived locals, descriptive for anything global; no types in names.
+5. Comments explain why; if code needs a what-comment, rewrite the code. The full story goes in the
+   commit message.
+6. Never break users: whoever depends on an interface (a command's flags or output, a file format,
+   a keybinding, behavior) is a user, even when they were "doing it wrong".
+7. No abstractions for imaginary futures; refactor when the second real user appears.
+8. Details over vision: error paths, lifetimes and performance are where the bugs live.
+9. One logical change per commit, with a message that says why; too big to review is too big to merge.
+10. Understand everything you submit, whatever wrote it.
+11. Own mistakes, remove bad code without ego, accept pushback; attack the code, not the person.
+
 ## Validating changes
 
 ```bash
