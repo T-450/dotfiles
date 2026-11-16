@@ -2,7 +2,7 @@
   "model": "opus",
   "enabledPlugins": {
     "superpowers@anthropic-plugin-directory": true,
-    "research-superpowers@anthropic-plugin-directory": true,
+    "research-superpowers@anthropic-plugin-directory": false,
     "frontend-design@anthropic-plugin-directory": true,
     "code-review-anthropics@anthropic-plugin-directory": true,
     "skill-creator@anthropic-plugin-directory": true,
@@ -12,11 +12,27 @@
     "commit-commands@anthropic-plugin-directory": true,
     "egm@egm": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "rust-cli-skills@anthropic-plugin-directory": true
+    "rust-cli-skills@anthropic-plugin-directory": true,
+    "education-agent-skills@synced": false,
+    "product-management@synced": false,
+    "productivity@synced": false,
+    "github-portfolio-builder@synced": false,
+    "code-modernization@synced": false,
+    "ai-mentor@synced": false,
+    "auto-research@synced": false,
+    "agent-army@synced": false,
+    "agent-smith@synced": false,
+    "ai-firstify@synced": false,
+    "agentic-harness@synced": false
+  },
+  "env": {
+    "CLAUDE_CODE_SHELL": "/usr/bin/bash",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "xhigh",
+      "autoCompactWindow": 400000
     }
   },
   "tui": "fullscreen",
@@ -39,7 +55,9 @@
   "autoMode": {
     "allow": [
       "$defaults",
-      "Dotfiles Tools: running the repo's own commands (theme, mango -p, mmsg, tools/docs, tests/run, install.sh --check) in ~/dotfiles is routine local work."
+      "Dotfiles Tools: running the repo's own commands (theme, mango -p, mmsg, tools/docs, tests/run, install.sh --check) in ~/dotfiles is routine local work.",
+      "Desktop VM: desktop-vm up, check, shot, keys, exec and down are the repo's documented verification loop (AGENTS.md); starting and stopping its own QEMU guest is routine.",
+      "Previews: rendering files inside the session scratchpad or $CLAUDE_JOB_DIR to images or video with headless Chrome, ffmpeg, grim, magick or pango-view is routine local work."
     ],
     "soft_deny": [
       "$defaults",

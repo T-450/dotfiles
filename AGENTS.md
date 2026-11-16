@@ -32,8 +32,9 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
 - Update the keybindings listing (Super + /) every time a keybinding is added or changed.
 - Don't write tests: the user runs the required commands and verifies. `tests/run` must still pass.
 - **Check every change in [desktop-vm](docs/apps/desktop-vm.md) before calling it done**, never in
-  the live session (no second mango, no reloading the user's apps to test): `desktop-vm up` installs
-  the working tree in a VM, reboots and records the boot; `desktop-vm check` logs in at the greeter
+  the live session (no second mango, no locker such as hyprlock, no reloading the user's apps to
+  test): `desktop-vm up` installs the working tree in a VM, reboots and records the boot;
+  `desktop-vm check` logs in at the greeter
   and runs `tests/run` in that session (PASS/FAIL, `verdict.json`). Look at what you changed: the
   run directory's `boot-*.png`, `greeter.png`, `session.png`, and `desktop-vm shot` / `keys` /
   `exec` for anything else. `desktop-vm down` when done: the VM pauses CI while it runs. If starting
@@ -51,6 +52,9 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
   `<app>/**/NAME.tmpl` templates (`{{role|filter}}`) rendered in place to `NAME`; list `NAME` in the
   app's `.gitignore`. Scripts read `THEME_*` from `~/.config/theme/colors.sh`. `theme lint` must pass.
 - **Never commit secrets** (an app's `service.json` or `auth.json`, tokens, keys). `theme lint` flags known names.
+- **Agents have no sudo** (it asks for a password). Never ask for the password or pipe one into
+  `sudo -S`. Put the root work in the repo (`packages`, `root/`, `setup.sh`), give the user one
+  `! <command>` line to run (usually `./install.sh`), and carry on with what doesn't need root.
 - **Apps write to linked configs.** Claude Code rewrites `claude/.claude/settings.json` through the
   link (`*@synced` plugin entries, `/effort` and `/model` changes, key reordering). Before committing
   it, review `git diff` and keep only changes the user decided on.
@@ -63,7 +67,8 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
   units; a variable both need goes in both.
 - Git: work on a branch, merge to `main`, push to `origin` (github.com/T-450/dotfiles, public:
   never commit secrets). `upstream` is
-  DreamMaoMao's repo and is never pushed to. No PRs.
+  DreamMaoMao's repo and is never pushed to. No PRs. Never skip git hooks (`--no-verify`,
+  `-c core.hooksPath=...`).
 - Never add a `Co-Authored-By` trailer or share an agent session (link or ID) in commits, issues,
   comments or anything else sent to another service.
 
