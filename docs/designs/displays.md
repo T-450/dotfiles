@@ -169,12 +169,15 @@ comments; review `git diff` before committing, as for any app-written config).
 *   `toggle` (Super+M p, as today): `way-displays -t DISABLED eDP-1`, a manual override that
     way-displays drops once the lid rule agrees with it. It refuses when the panel is the only
     enabled display (a notification says so); today's toggle allows that. Without the daemon it
-    says so in a notification too. The override can still outlive the display that made it safe:
+    says so in a notification and can only turn the panel back on (it empties the rule and enables
+    the panel), never off. The override can still outlive the display that made it safe:
     turn the panel off, then unplug the LG, and way-displays keeps the panel off (with one display
     it ignores the lid, so its own state is "on" and never matches the override). So `sync`, seeing
     the panel connected and off with no display on, runs `way-displays -t DISABLED eDP-1` again,
     which drops the override (`-d` would delete the lid condition from the config), and writes
-    nothing: the next callback does. Not while the displays are asleep (the lid inhibitor below is
+    nothing: the next callback does. It reads the outputs again a second later and acts only if
+    that read agrees: one snapshot can catch the gap right after an unplug, or a callback resumed
+    at wake. Not while the displays are asleep (the lid inhibitor below is
     held): a callback that started before `sleep` would see every display off and queue the toggle
     for the paused daemon, which would light the panel behind the lid on wake.
 *   `sleep` and `wake`, for swayidle. mango powers a display off by disabling it, and
