@@ -136,12 +136,16 @@ cmd_sync() {
 	# way-displays, paused, would light the panel behind the lid when it resumes.
 	# One snapshot can catch the gap right after an unplug, or a callback resumed at wake: look
 	# again a second later before toggling.
-	if [[ -n $name && $enabled == false ]] && ! lid_held && nothing_on &&
-		sleep 1 && load_outputs && nothing_on; then
-		note "no display on: dropping the $name override"
-		timeout 5 way-displays -t DISABLED "$name" >/dev/null
-		# way-displays turns the panel on and calls back, which writes the rule.
-		return 0
+	if [[ -n $name && $enabled == false ]] && ! lid_held && nothing_on; then
+		sleep 1
+		load_outputs || return 0
+		read -r name enabled < <(panel)
+		if [[ -n $name && $enabled == false ]] && nothing_on; then
+			note "no display on: dropping the $name override"
+			timeout 5 way-displays -t DISABLED "$name" >/dev/null
+			# way-displays turns the panel on and calls back, which writes the rule.
+			return 0
+		fi
 	fi
 	# A reload re-enables every output whose rule doesn't say disable:1, so the off state
 	# has to be a rule mango reads on every reload.
