@@ -1,9 +1,85 @@
-#!/usr/bin/bash
-# mango-monitor: toggle the laptop panel (eDP-1) on/off (super+p)
+#!/usr/bin/env bash
+# mango-monitor sync|toggle|sleep|wake
+#   sync    way-displays' CALLBACK_CMD: mirror the panel's off state into a mango rule file
+#   toggle  laptop panel on/off (super+m p)
+#   sleep   pause way-displays, then power every enabled display off (swayidle)
+#   wake    resume way-displays, which turns back on what should be on (swayidle)
 
-enable=$(wlr-randr --json | jq --arg name "eDP-1" '.[] | select(.name == $name) | .enabled')
-if [ $enable == "true" ]; then
-    wlr-randr --output eDP-1 --off
-else
-    wlr-randr --output eDP-1 --on
-fi
+rules=$HOME/.local/state/mango/outputs.conf
+unit=way-displays.service
+
+note() { echo "mango-monitor: $*" >&2; }
+
+# Needs way-displays running; every command is a no-op without it.
+need_daemon() {
+	systemctl --user is-active --quiet "$unit" && return 0
+	note "$unit is not running"
+	return 1
+}
+
+# The laptop panel is the first internal output (eDP, LVDS or DSI).
+outputs=$(wlr-randr --json 2>/dev/null) || outputs='[]'
+panel() {
+	jq -r '[.[] | select(.name | test("^(eDP|LVDS|DSI)-"))][0] // empty | "\(.name) \(.enabled)"' <<<"$outputs"
+}
+
+cmd_sync() {
+	case ${CALLBACK_LEVEL:-} in
+	WARNING | ERROR | FATAL) notify-send "way-displays" "${CALLBACK_MSG:-$CALLBACK_LEVEL}" ;;
+	esac
+	local name enabled want=
+	read -r name enabled < <(panel)
+	# A reload re-enables every output whose rule doesn't say disable:1, so the off state
+	# has to be a rule mango reads on every reload.
+	[[ -n $name && $enabled == false ]] && want="monitor_rule=name:^$name\$,disable:1"
+	local have=
+	[[ -f $rules ]] && have=$(<"$rules")
+	[[ $have == "$want" ]] && return 0
+	mkdir -p "${rules%/*}"
+	local tmp
+	tmp=$(mktemp "$rules.XXXXXX") || return 0
+	[[ -n $want ]] && echo "$want" >"$tmp"
+	mv -f "$tmp" "$rules"
+}
+
+cmd_toggle() {
+	need_daemon || return 0
+	local name enabled
+	read -r name enabled < <(panel)
+	if [[ -z $name ]]; then
+		note "no laptop panel"
+		return 0
+	fi
+	if [[ $enabled == true ]] && [[ -z $(jq -r --arg n "$name" '.[] | select(.enabled and .name != $n) | .name' <<<"$outputs") ]]; then
+		notify-send "Laptop panel" "No other display is on"
+		return 0
+	fi
+	way-displays -t DISABLED "$name"
+}
+
+cmd_sleep() {
+	need_daemon || return 0
+	# way-displays re-enables any display not in its wanted state, which would undo the sleep.
+	systemctl --user kill -s STOP "$unit"
+	local name
+	while read -r name; do
+		mmsg dispatch "sleep_monitor,$name"
+	done < <(jq -r '.[] | select(.enabled) | .name' <<<"$outputs")
+}
+
+cmd_wake() {
+	need_daemon || return 0
+	systemctl --user kill -s CONT "$unit"
+}
+
+case ${1:-} in
+sync) cmd_sync ;;
+toggle) cmd_toggle ;;
+sleep) cmd_sleep ;;
+wake) cmd_wake ;;
+*)
+	echo "usage: mango-monitor sync|toggle|sleep|wake" >&2
+	exit 2
+	;;
+esac
+exit 0

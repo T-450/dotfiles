@@ -1,0 +1,3 @@
+# Gives the logged-in user the lid switch device only (not the input group, which would expose
+# every keyboard): way-displays reads the lid through libinput to turn the panel off when it closes.
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Lid Switch", TAG+="uaccess"

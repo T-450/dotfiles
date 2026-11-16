@@ -167,6 +167,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `7zip` | 26.06-1 |
 | thunar | `unrar` | 1:7.3.2-1 |
 | vim | `vim` | 9.2.1178-1 |
+| way-displays | `way-displays` | not installed |
 | waybar | `waybar` | 0.16.0-1 |
 | waybar | `pamixer` | 1.6-4 |
 | waypaper | `waypaper` | 2.9-1 |

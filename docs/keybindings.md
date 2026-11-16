@@ -76,7 +76,7 @@ There is no fullscreen key on purpose; maximize covers it.
 |---|---|
 | super+esc session | **l** lock · **e** log out (`mango-quit`) · **p** power menu · **r** reload mango's config (it also reloads on save) · **b** show/hide the bar |
 | super+n notifications | **r** restore the last · **d** dismiss all · **z** do not disturb |
-| super+m monitor | **h**/**l** focus the left/right monitor · **shift+h**/**shift+l** send the window there · **p** laptop panel on/off (`mango-monitor`) |
+| super+m monitor | **h**/**l** focus the left/right monitor · **shift+h**/**shift+l** send the window there · **p** laptop panel on/off (way-displays, until the lid changes) |
 
 The second key works with super still held or released.
 
