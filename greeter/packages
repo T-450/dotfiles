@@ -2,3 +2,4 @@ greetd
 sysc-greet-mango   # AUR
 jq         # greeter-panel: finds the laptop panel and the enabled external displays
 wlr-randr  # greeter-panel: lists the greeter's outputs
+figlet     # greeter-hostname-art: the host name in sysc-greet's FIGlet font

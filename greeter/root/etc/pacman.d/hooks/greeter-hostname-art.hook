@@ -1,0 +1,12 @@
+# a sysc-greet-mango update puts the packaged "mango" art back: draw the host name again
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = usr/share/sysc-greet/ascii_configs/mango.conf
+
+[Action]
+Description = Drawing the host name as the login screen's art...
+When = PostTransaction
+Exec = /etc/greetd/greeter-hostname-art
+Depends = figlet

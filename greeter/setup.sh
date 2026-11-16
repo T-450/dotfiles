@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # greeter/setup.sh: start greetd at boot (its files come from greeter/root/ via install.sh --system),
-# and give sysc-greet the Blue Dawn loop (pkg wallpaper-cosmic-storm, swaybg/) as its background:
-# a link in its custom wallpaper folder, played by gslapper, and two keys in its preferences,
-# `wallpaper` (that file) and `form_mode` frosted (a blurred, dimmed plate behind the login form, so
-# its small text reads over the clouds). sysc-greet rewrites the preferences file when you change
-# something at the login screen, so only these keys are set, when they differ. The file is the
-# greeter's own (0600 in its home), so even the check needs sudo: one call, which writes only on a
-# difference.
+# draw the host name as the login screen's art, and give sysc-greet the Blue Dawn loop (pkg
+# wallpaper-cosmic-storm, swaybg/) as its background: a link in its custom wallpaper folder, played
+# by gslapper, and two keys in its preferences, `wallpaper` (that file) and `form_mode` frosted (a
+# blurred, dimmed plate behind the login form, so its small text reads over the clouds). sysc-greet
+# rewrites the preferences file when you change something at the login screen, so only these keys
+# are set, when they differ. The file is the greeter's own (0600 in its home), so even the check
+# needs sudo: one call, which writes only on a difference.
 . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 enable_system greetd.service
+
+# the login screen's art: this machine's host name (root/etc/greetd/greeter-hostname-art, also run
+# by a pacman hook after each sysc-greet-mango update); the check needs no root
+art=/etc/greetd/greeter-hostname-art
+[[ -x $art ]] && { "$art" --check || sudo "$art"; }
 
 dawn=/usr/share/backgrounds/cosmic-storm/blue-dawn.mp4
 walls=/var/lib/greeter/Pictures/wallpapers

@@ -81,6 +81,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | greeter | `jq` | 1.8.2-1 |
 | greeter | `wlr-randr` | 0.5.0-1 |
+| greeter | `figlet` | not installed |
 | gslapper | `gslapper` | 1.5.4-1 |
 | gslapper | `gst-plugin-va` | not installed |
 | gtk | `gtk3` | 1:3.24.52-2 |
