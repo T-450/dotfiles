@@ -358,8 +358,10 @@ open_log() {
 }
 
 # action lines (a lowercase verb, then spaces): the ones every run prints aren't changes
-count_changes() { # count_changes FILE: "install 2, enable 1"
-	grep -oE '^[a-z]+ +[^ ]' "$1" | awk '{print $1}' | grep -vxE 'skip|retry|stowed|rendered|interrupted' |
+# count_changes FILE: "install 2, enable 1". Only the repo's action verbs (the ones desktop-vm's
+# second-run check counts): the rest is pacman, yay and npm talking.
+count_changes() {
+	grep -oE '^(install|backup|unlink|prune|enable|gsettings|render|linger|xdg|rebuild|config|link|mkdir) ' "$1" |
 		sort | uniq -c | sort -rn | awk '{printf "%s%s %s", (NR > 1 ? ", " : ""), $2, $1}'
 }
 
@@ -418,7 +420,9 @@ run_phase() {
 	out=$(mktemp)
 	printf '==> [%d/%d] %s\n' "$2" "$3" "$name"
 	local links=0
-	[[ $name != packages ]] || pacman -Q >"${before:=$(mktemp)}" 2>/dev/null || true
+	# before is set here, not in the redirection: bash expands an external command's redirection
+	# in the forked child, so an assignment there never reaches this shell
+	[[ $name != packages ]] || { before=$(mktemp) && pacman -Q >"$before" 2>/dev/null; } || true
 	[[ $name != link ]] || links=$(repo_links)
 	start=$(now)
 	(
