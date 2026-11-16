@@ -15,9 +15,10 @@ panel=$(printf '%s' "$json" | jq -r '[.[] | select(.name | test("^(eDP|LVDS|DSI)
 [ -n "$panel" ] || exit 0
 ext=$(printf '%s' "$json" | jq -r '[.[] | select((.name | test("^(eDP|LVDS|DSI)-") | not) and .enabled)] | length' 2>/dev/null)
 
+# mmsg matches the name as a regex: anchor it, so it names one output only.
 if [ "$lid" = closed ] && [ "${ext:-0}" -gt 0 ]; then
-	mmsg dispatch "disable_monitor,$panel" >/dev/null 2>&1
+	mmsg dispatch "disable_monitor,^$panel\$" >/dev/null 2>&1
 else
-	mmsg dispatch "enable_monitor,$panel" >/dev/null 2>&1
+	mmsg dispatch "enable_monitor,^$panel\$" >/dev/null 2>&1
 fi
 exit 0
