@@ -8,6 +8,8 @@
 #             externals and the panel unless the lid is closed over an external; then end the
 #             lid inhibitor (swayidle)
 #   hold-lid  internal: what the lid inhibitor runs, until no external display is connected
+#   stop-hook internal: way-displays.service's ExecStopPost; empty the rule file unless the lid rule
+#             still holds
 
 rules=$HOME/.local/state/mango/outputs.conf
 unit=way-displays.service
@@ -57,9 +59,7 @@ external() {
 	local d n
 	for d in "$drm"/card*-*; do
 		n=${d##*/}
-		case ${n#card*-} in
-		eDP-* | LVDS-* | DSI-* | Virtual-*) continue ;;
-		esac
+		[[ ${n#card*-} =~ $internal|^Virtual- ]] && continue
 		[[ $(<"$d/status") == connected ]] || continue
 		[[ ${1:-} != enabled || $(<"$d/enabled") == enabled ]] && return 0
 	done 2>/dev/null
@@ -89,11 +89,24 @@ release_lid() {
 	lid_held || return 0
 	local i
 	for ((i = 0; i < 25; i++)); do
-		lid_open || external enabled || ! external && break
+		{ lid_open || external enabled || ! external; } && break
 		sleep 0.2
 	done
 	systemctl --user stop "$lid_unit" 2>/dev/null
 	return 0
+}
+
+# Write the rule file ($1 is its content, empty for none) the way sync does: atomically, and only
+# on a difference, since every write reloads mango.
+write_rules() {
+	local want=$1 have=
+	[[ -f $rules ]] && have=$(<"$rules")
+	[[ $have == "$want" ]] && return 0
+	mkdir -p "${rules%/*}"
+	local tmp
+	tmp=$(mktemp "$rules.XXXXXX") || return 0
+	[[ -n $want ]] && echo "$want" >"$tmp"
+	mv -f "$tmp" "$rules"
 }
 
 cmd_sync() {
@@ -102,7 +115,8 @@ cmd_sync() {
 	esac
 	# way-displays may run several callbacks at once; without the lock a slow run can
 	# overwrite a newer rule with a stale one.
-	exec 9>"${XDG_RUNTIME_DIR:-/tmp}/mango-monitor-sync.lock"
+	# Append, not truncate: the /tmp fallback is shared, and a planted link must not cost a file.
+	exec 9>>"${XDG_RUNTIME_DIR:-/tmp}/mango-monitor-sync.lock"
 	flock 9
 	# Without the list the panel's state is unknown: writing would reload mango for nothing.
 	load_outputs || return 0
@@ -123,14 +137,7 @@ cmd_sync() {
 	# A reload re-enables every output whose rule doesn't say disable:1, so the off state
 	# has to be a rule mango reads on every reload.
 	[[ -n $name && $enabled == false ]] && want="monitor_rule=name:^$name\$,disable:1"
-	local have=
-	[[ -f $rules ]] && have=$(<"$rules")
-	[[ $have == "$want" ]] && return 0
-	mkdir -p "${rules%/*}"
-	local tmp
-	tmp=$(mktemp "$rules.XXXXXX") || return 0
-	[[ -n $want ]] && echo "$want" >"$tmp"
-	mv -f "$tmp" "$rules"
+	write_rules "$want"
 }
 
 cmd_toggle() {
@@ -186,6 +193,27 @@ cmd_wake() {
 	release_lid
 }
 
+# way-displays.service's ExecStopPost. A stale disable:1 with no external display would start mango
+# with no output, and a restart (install.sh, Restart=) must keep the rule: emptying it reloads mango
+# and lights the panel behind a closed lid until way-displays is back. At logout the target is still
+# active while its units stop, with a stop job waiting: that, or an inactive target, is the end.
+# Otherwise (a manual stop, the start limit) nothing manages the panel: keep the rule only while
+# the lid rule it mirrors holds, else the panel would stay off with the lid open.
+cmd_stop_hook() {
+	local target=graphical-session.target
+	if ! systemctl --user -q is-active "$target" ||
+		systemctl --user list-jobs --no-legend "$target" | grep -qw stop; then
+		write_rules ""
+		return 0
+	fi
+	# Unknown state (compositor not answering): leave the file as it is.
+	load_outputs || return 0
+	if ! lid_open && [[ -n $(jq -r --arg i "$internal" '.[] | select(.enabled and (.name | test($i) | not)) | .name' <<<"$outputs") ]]; then
+		return 0
+	fi
+	write_rules ""
+}
+
 # Runs under systemd-inhibit, so it starts only once logind granted the inhibitor.
 cmd_hold_lid() {
 	systemd-notify --ready
@@ -200,8 +228,9 @@ toggle) cmd_toggle ;;
 sleep) cmd_sleep ;;
 wake) cmd_wake ;;
 hold-lid) cmd_hold_lid ;;
+stop-hook) cmd_stop_hook ;;
 *)
-	echo "usage: mango-monitor sync|toggle|sleep|wake|hold-lid" >&2
+	echo "usage: mango-monitor sync|toggle|sleep|wake|hold-lid|stop-hook" >&2
 	exit 2
 	;;
 esac
