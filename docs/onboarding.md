@@ -22,7 +22,9 @@ archinstall's minimal profile is enough.
 	- `Your name, for git commits` and `Your email, for git commits` appear only when your git
 	  config has no identity. They fill `~/.config/git/config`.
 
-	The run ends with the `==> units` step.
+	The run ends with `==> summary`: each phase's status, time and changes, and the path of the
+	run's full log. If a phase fails, the run stops there and names the failing command, its line
+	and a likely fix.
 
 3. Reboot. The login screen is sysc-greet, stock. Log in to start mango, with
    waybar at the bottom.
@@ -125,8 +127,9 @@ runtime, or language server goes in mise's config instead:
 	Among the output you see:
 
 	```
-	==> link
+	==> [3/6] link
 	stowed  1 apps into /home/<you>
+	   ok in 0.3s: linked 1
 	```
 
 5. Check the link:

@@ -15,12 +15,16 @@
 #             exit 1 on any difference. Changes nothing.
 # --home DIR / --root DIR  link / copy into DIR instead of $HOME / / (tests).
 # Run as your user, not root: sudo is called only where something must change.
+# Each run ends with a summary (per phase: status, time, what changed) and keeps its full output in
+# ~/.local/state/dotfiles/install/<UTC time>.log (the last 20 runs). A failed phase stops the run
+# and names the command, the line, and the likely cause.
 set -euo pipefail
 
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 . "$repo/tools/setup-lib.sh"
 home=$HOME root=/
 phases=() only=() check=
+args=("$@")
 
 while (($#)); do
 	case $1 in
@@ -29,7 +33,7 @@ while (($#)); do
 	--home) home=$(realpath -m -- "$2") && phases+=(link) && shift ;;
 	--root) root=$(realpath -m -- "$2") && phases+=(system) && shift ;;
 	--only) shift && while (($#)) && [[ $1 != --* ]]; do only+=("$1") && shift; done && continue ;;
-	-h | --help) sed -n '2,16s/^# \{0,1\}//p' "$0" && exit 0 ;;
+	-h | --help) sed -n '2,19s/^# \{0,1\}//p' "$0" && exit 0 ;;
 	*) echo "install.sh: unknown argument $1" >&2 && exit 2 ;;
 	esac
 	shift
@@ -302,11 +306,204 @@ check() {
 	return "$bad"
 }
 
-has packages && { say "packages" && install_packages; }
-has theme && { say "theme" && render_theme; }
-has link && { say "link" && link; }
-has system && { say "system" && install_system; }
-has setup && run_setup
-has units && { say "units" && enable_units; }
-if [[ -n $check ]]; then check || exit 1; fi
-exit 0
+# ---------------------------------------------------------------- run log, summary, troubleshooting
+# Every phase's output is also written to the run log, so a failure can be read after the terminal is
+# gone. pacman and yay then write to a pipe, not a terminal: lines instead of progress bars, as in CI.
+# Lines the summary adds start with "==>" or a space, never with a verb, so desktop-vm's check that a
+# second run changes nothing (its CHANGED pattern) and the tests still read only the action lines.
+order=(packages theme link system setup units)
+declare -A fn=([packages]=install_packages [theme]=render_theme [link]=link [system]=install_system
+	[setup]=run_setup [units]=enable_units)
+declare -A status=() took=() changes=()
+log_dir=${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/install
+log='' trace=''
+
+# Known failures, most specific first: PHASE (or *) @@ extended regex over the failed phase's last
+# output lines @@ what to do. Every hint that matches is shown.
+hints=(
+	'packages@@unable to lock database@@another pacman is running, or one died: pgrep -a pacman; if none, sudo rm /var/lib/pacman/db.lck'
+	'packages@@signature from .* is (unknown trust|invalid)|invalid or corrupted package \(PGP signature\)@@the keyring is older than the packages: sudo pacman -Sy archlinux-keyring, then run again'
+	'packages@@One or more PGP signatures could not be verified|unknown public key@@a PKGBUILD source key is missing: keep it as <app>/keys/FINGERPRINT.asc (see the packages section of install.sh)'
+	'packages@@[Cc]ould not resolve host|failed retrieving file|Operation too slow|Connection timed out|Failed to connect@@no network or a dead mirror: check the network, then /etc/pacman.d/mirrorlist'
+	'packages@@exists in filesystem@@a file no package owns is in the way: pacman -Qo PATH; move it aside, then run again'
+	'packages@@target not found|No AUR package found@@a package left the repos or the AUR: find its new name (pacman -Ss, yay -Ss) and fix that app'"'"'s packages file'
+	'packages@@conflicting dependencies|are in conflict@@two packages conflict: pacman -Qi NAME shows Conflicts With; drop one from its packages file'
+	'*@@No space left on device@@a disk is full: df -h (/tmp is RAM; builds go to ~/.cache)'
+	'*@@a password is required|a terminal is required to read the password@@sudo needs a password: run install.sh from a terminal'
+	'*@@command not found@@a program is missing: ./install.sh --packages first'
+	'*@@Permission denied@@a path is not writable: ls -ld it; install.sh runs as your user and calls sudo only for root/'
+	'link@@two apps provide@@two app folders ship the same file: keep it in one of them'
+	'link@@cannot stow|existing target@@./install.sh --check lists what is in the way'
+	'theme@@[Pp]alette|tmpl|KeyError|Traceback@@a template or palette is broken: theme lint names it'
+	'units@@Failed to (enable|start)|not found@@systemctl --user status UNIT and journalctl --user -b -u UNIT show why'
+)
+
+now() { printf '%s' "${EPOCHREALTIME/[.,]/}"; } # microseconds
+human() { # human MICROSECONDS
+	local us=$1 s=$(($1 / 1000000))
+	if ((s >= 60)); then printf '%dm%02ds' $((s / 60)) $((s % 60)); else printf '%d.%01ds' "$s" $((us / 100000 % 10)); fi
+}
+
+open_log() {
+	mkdir -p "$log_dir"
+	log=$log_dir/$(date -u +%Y-%m-%dT%H-%M-%SZ).log
+	trace=$(mktemp)
+	{
+		printf 'install.sh %s\n' "${args[*]:-(all phases)}"
+		printf 'repo %s (%s)\nhost %s, kernel %s\n' "$repo" "$(git -C "$repo" describe --always --dirty 2>/dev/null || echo 'no git')" \
+			"$(uname -n)" "$(uname -r)"
+	} >"$log"
+	# keep the last 20 runs
+	find "$log_dir" -maxdepth 1 -name '*.log' -printf '%f\n' | sort -r | tail -n +21 | sed "s|^|$log_dir/|" | xargs -r rm --
+}
+
+# action lines (a lowercase verb, then spaces): the ones every run prints aren't changes
+count_changes() { # count_changes FILE: "install 2, enable 1"
+	grep -oE '^[a-z]+ +[^ ]' "$1" | awk '{print $1}' | grep -vxE 'skip|retry|stowed|rendered|interrupted' |
+		sort | uniq -c | sort -rn | awk '{printf "%s%s %s", (NR > 1 ? ", " : ""), $2, $1}'
+}
+
+# packages: pacman's own output is too noisy to count, so compare what is installed before and after
+package_delta() { # package_delta BEFORE AFTER: "installed 2, upgraded 5, removed 1"
+	local new up gone
+	new=$(join -v2 <(cut -d' ' -f1 "$1") <(cut -d' ' -f1 "$2") | wc -l)
+	gone=$(join -v1 <(cut -d' ' -f1 "$1") <(cut -d' ' -f1 "$2") | wc -l)
+	up=$(join "$1" "$2" | awk '$2 != $3' | wc -l)
+	local out=()
+	((new == 0)) || out+=("installed $new")
+	((up == 0)) || out+=("upgraded $up")
+	((gone == 0)) || out+=("removed $gone")
+	local IFS=,
+	printf '%s' "${out[*]}" | sed 's/,/, /g'
+}
+
+# link: stow is silent, so count the links into the repo before and after
+repo_links() {
+	{ find "$home" -maxdepth 1 -type l -print0 2>/dev/null
+		find "$home/.config" "$home/.local" "$home/.claude" -type l -print0 2>/dev/null; } |
+		xargs -0 -r realpath -m -- | grep -c "^$repo/" || true
+}
+
+troubleshoot() { # troubleshoot PHASE OUTPUT: the hints whose pattern is in the last 60 lines
+	local h p re msg tail n=0
+	tail=$(tail -n 60 -- "$2")
+	for h in "${hints[@]}"; do
+		p=${h%%@@*} re=${h#*@@} msg=${re#*@@} re=${re%%@@*}
+		[[ $p == '*' || $p == "$1" ]] || continue
+		grep -qE -- "$re" <<<"$tail" || continue
+		printf '   hint: %s\n' "$msg"
+		n=$((n + 1))
+	done
+	local app
+	case $1 in
+	setup)
+		app=$(sed -n 's/^==> setup //p' "$2" | tail -1)
+		printf '   hint: run %s alone to see each step: bash -x %s/setup.sh\n' "${app:-the app}" "${app:-<app>}" ;;
+	*) ((n)) || printf '   hint: no known cause; the lines above and the log show the error\n' ;;
+	esac
+}
+
+# ERR trap: the first failure wins (an inner one is the precise one; its callers fail after it)
+on_err() {
+	local rc=$?
+	[[ -s $trace ]] || printf '%s\t%s\t%s\t%s\t%s\n' "$rc" "${BASH_SOURCE[1]}" "${BASH_LINENO[0]}" \
+		"${FUNCNAME[1]:-main}" "$BASH_COMMAND" >"$trace"
+}
+
+# run_phase NAME N TOTAL: run the phase in a subshell with errexit and an ERR trap that records
+# the first failing command, its exit code and where it ran; tee its output to the terminal and
+# the log. Called with errexit off (main turns it off around the call).
+run_phase() {
+	local name=$1 out before after start rc first file line func cmd src
+	out=$(mktemp)
+	printf '==> [%d/%d] %s\n' "$2" "$3" "$name"
+	local links=0
+	[[ $name != packages ]] || pacman -Q >"${before:=$(mktemp)}" 2>/dev/null || true
+	[[ $name != link ]] || links=$(repo_links)
+	start=$(now)
+	(
+		set -eE
+		trap on_err ERR
+		"${fn[$name]}"
+	) 2>&1 | tee "$out"
+	rc=${PIPESTATUS[0]}
+	took[$name]=$(($(now) - start))
+	{ printf '\n### %s (exit %s, %s)\n' "$name" "$rc" "$(human "${took[$name]}")" && cat -- "$out"; } >>"$log"
+	if [[ $name == packages && -s ${before:-} ]]; then
+		after=$(mktemp)
+		pacman -Q >"$after" 2>/dev/null || true
+		changes[$name]=$(package_delta "$before" "$after")
+		rm -f -- "$before" "$after"
+	else
+		changes[$name]=$(count_changes "$out")
+	fi
+	if [[ $name == link ]]; then
+		links=$(($(repo_links) - links))
+		((links == 0)) || changes[$name]="$( ((links > 0)) && echo "linked $links" || echo "unlinked $((-links))")${changes[$name]:+, ${changes[$name]}}"
+	fi
+	if ((rc == 0)); then
+		status[$name]=ok
+		printf '   ok in %s%s\n' "$(human "${took[$name]}")" "${changes[$name]:+: ${changes[$name]}}"
+		rm -f -- "$out"
+		return 0
+	fi
+	if ((rc == 130)); then
+		status[$name]=interrupted
+	else
+		status[$name]=failed
+	fi
+	{
+		printf '\n==> %s %s (exit %s)\n' "$name" "${status[$name]}" "$rc"
+		if [[ -s $trace ]]; then
+			IFS=$'\t' read -r first file line func cmd <"$trace"
+			# BASH_COMMAND is only `return 1` when a function failed; the source line names the call
+			src=$(sed -n "${line}{s/^[[:space:]]*//;p}" "$file" 2>/dev/null)
+			printf '   command: %s\n   at %s:%s, in %s (exit %s)\n' "${src:-$cmd}" "${file##*/}" "$line" "$func" "$first"
+		fi
+		((rc == 130)) || troubleshoot "$name" "$out"
+	} | tee -a "$log" >&2
+	rm -f -- "$out"
+	return "$rc"
+}
+
+summary() { # summary START RC
+	local p total=$(($(now) - $1)) state
+	case $2 in 0) state=ok ;; 130) state=interrupted ;; *) state="failed (exit $2)" ;; esac
+	printf '\n==> summary: %s in %s\n' "$state" "$(human "$total")"
+	printf '   %-9s %-11s %7s  %s\n' phase status time changes
+	for p in "${order[@]}"; do
+		has "$p" || continue
+		printf '   %-9s %-11s %7s  %s\n' "$p" "${status[$p]:-not run}" \
+			"$([[ -n ${took[$p]:-} ]] && human "${took[$p]}" || echo -)" "${changes[$p]:-${status[$p]:+none}}"
+	done
+	printf '   log: %s\n' "$log"
+}
+
+main() {
+	local p n=0 total=0 start rc=0
+	if ((${#phases[@]})); then
+		for p in "${order[@]}"; do has "$p" && total=$((total + 1)); done
+		open_log
+		start=$(now)
+		# Ctrl+C: the phase's subshell resets the trap and dies (so retry() can't run yay again);
+		# this shell waits for it, then reports the phase as interrupted and prints the summary
+		trap : INT
+		for p in "${order[@]}"; do
+			has "$p" || continue
+			n=$((n + 1))
+			# not `run_phase || …`: bash ignores errexit in anything called from a condition, the
+			# phase's own `set -e` included, so a failing step would not stop the phase
+			set +e
+			run_phase "$p" "$n" "$total"
+			rc=$?
+			set -e
+			((rc == 0)) || break
+		done
+		summary "$start" "$rc" | tee -a "$log"
+		rm -f -- "$trace"
+		((rc == 0)) || exit "$rc"
+	fi
+	if [[ -n $check ]]; then check || exit 1; fi
+	exit 0
+}
+main
