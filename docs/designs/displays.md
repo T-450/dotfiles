@@ -199,6 +199,30 @@ this machine once after `install.sh --system` with `sudo udevadm trigger --subsy
 logind is unchanged: lid closed with an external display is docked (ignored), so the laptop stays
 awake for the LG; lid closed with none suspends.
 
+### The login screen
+
+The greeter is its own small mango session (greetd runs `mango -c
+/etc/greetd/mango-greeter-config.conf -s /etc/greetd/mango-greeter-session.sh`, both from
+`sysc-greet-mango`), so neither way-displays nor `mango-monitor` runs there. sysc-greet puts the
+login prompt on the monitor mango focuses first, the laptop panel, so with the lid closed the
+prompt sits behind the lid and the LG shows only the background. The greeter has no keybindings to
+move it. Rather than adding one, the greeter gets the same rule as the desktop: lid closed with an
+external display connected, the panel is off and the prompt is on the external display.
+
+The repo owns three files in `greeter/root/etc/greetd/` (the package's stay untouched):
+
+*   `greeter-panel`: `mmsg dispatch disable_monitor,eDP-1` when the lid is closed
+    (`/proc/acpi/button/lid/*/state`) and `wlr-randr --json` shows an enabled external display,
+    `enable_monitor` otherwise. No reloads happen in the greeter, so a runtime disable is enough.
+*   `mango-greeter.conf`: `source=/etc/greetd/mango-greeter-config.conf`, then
+    `switchbind=fold,spawn,/etc/greetd/greeter-panel` and the same for `unfold`, so closing or
+    opening the lid at the login screen moves the prompt too.
+*   `greeter-session.sh`: runs `greeter-panel`, then `exec /etc/greetd/mango-greeter-session.sh`,
+    so the panel is off before sysc-greet picks its monitor.
+
+`config.toml` points at `mango-greeter.conf` and `greeter-session.sh`. After login the user's
+mango starts with the panel on until way-displays turns it off, about a second.
+
 ### Walkthroughs
 
 *   **At the desk, lid open, LG plugged in.** way-displays sets 4K at 60 Hz and 1.25, the LG at
@@ -209,6 +233,7 @@ awake for the LG; lid closed with none suspends.
     rule.
 *   **Wake from suspend with the lid closed and the LG just plugged in.** way-displays sees the LG
     arrive and the lid closed, and disables the panel.
+*   **Boot with the lid closed and the LG connected.** The login prompt is on the LG.
 *   **A projector.** Native resolution at its highest refresh, scale 1, on the left.
 
 ## Changes
@@ -221,6 +246,7 @@ awake for the LG; lid closed with none suspends.
 | `mango/.config/mango/monitor.conf` | No display rules; `Xft.dpi: 120`; `source_optional` last |
 | `mango/.config/mango/bind.conf` | Super+M p runs `mango-monitor toggle` |
 | `mango/.config/user-tmpfiles.d/mango-monitor.conf` | New: create the state directory, remove the generated rule at boot |
+| `greeter/root/etc/greetd/config.toml`, `greeter-panel`, `mango-greeter.conf`, `greeter-session.sh` | The login prompt follows the lid rule |
 | `thinkpad/root/etc/udev/rules.d/70-lid-switch.rules` | New: the lid switch for the logged-in user |
 | `swayidle/.config/systemd/user/swayidle.service` | Every display off at 10 min through `mango-monitor sleep`/`wake` |
 | `docs/apps/mango.md`, `docs/apps/thinkpad.md`, `docs/session.md`, `docs/apps/swayidle.md`, `docs/keybindings.md` | Displays, lid and idle; the LG's sRGB picture mode as a one-time step |
@@ -239,4 +265,5 @@ awake for the LG; lid closed with none suspends.
 *   On the T14, by the user after the merge: close the lid with the LG connected (only the LG
     stays on), `theme set` while closed (the panel stays off), open it (the panel returns at the
     right), unplug the LG with the lid closed (the laptop suspends), idle 10 minutes (both go dark
-    and come back with the lid's state), Super+M p.
+    and come back with the lid's state), Super+M p, and reboot with the lid closed (the login
+    prompt is on the LG).
