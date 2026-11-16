@@ -1,0 +1,155 @@
+# {{name}}: helix's theme from the active palette, rendered by `theme`; config.toml selects it
+# as "palette". Colour is a cue: text and punctuation stay the palette's greys, and the syntax takes
+# the terminal's hues, each made legible on bg_desktop (light palettes darken them): keywords
+# magenta, types bright magenta, functions bright blue, strings green, constants yellow, attributes
+# and escapes cyan, lifetimes and labels bright red. The cursor is the accent, the selection the
+# palette's selection fill; popups and menus use the same tiers as the desktop's.
+
+# --- syntax ---
+"comment" = { fg = "muted", modifiers = ["italic"] }
+"keyword" = "purple"
+"keyword.directive" = "purple"
+"keyword.storage.modifier" = "purple"
+"keyword.operator" = "purple"
+"operator" = "secondary"
+"punctuation" = "secondary"
+"punctuation.special" = "cyan"
+"type" = "lilac"
+"type.builtin" = "lilac"
+"type.enum.variant" = "lilac"
+"constructor" = "lilac"
+"namespace" = "lilac"
+"function" = "sky"
+"function.macro" = "sky"
+"function.builtin" = "sky"
+"string" = "mint"
+"string.regexp" = "cyan"
+"string.special" = "cyan"
+"constant" = "yellow"
+"constant.builtin" = "yellow"
+"constant.numeric" = "yellow"
+"constant.character" = "mint"
+"constant.character.escape" = "cyan"
+"variable" = "text"
+"variable.builtin" = { fg = "purple", modifiers = ["italic"] }
+"variable.parameter" = "text"
+"variable.other.member" = "text"
+"attribute" = "cyan"
+"label" = "pink"
+"special" = "sky"
+"tag" = "purple"
+"tag.attribute" = "lilac"
+
+"markup.heading" = { fg = "bright", modifiers = ["bold"] }
+"markup.list" = "purple"
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "cyan", modifiers = ["underlined"] }
+"markup.link.text" = "sky"
+"markup.quote" = { fg = "muted", modifiers = ["italic"] }
+"markup.raw" = "mint"
+
+"diff.plus" = "mint"
+"diff.minus" = "error"
+"diff.delta" = "blue"
+
+# --- diagnostics ---
+"error" = "error"
+"warning" = "warning"
+"info" = "cyan"
+"hint" = "muted"
+"diagnostic.error" = { underline = { color = "error", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "warning", style = "curl" } }
+"diagnostic.info" = { underline = { color = "cyan", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "muted", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+# --- interface ---
+# ui.background's fg is the default for cells nothing else styles: the picker's borders
+"ui.background" = { fg = "border", bg = "ground" }
+"ui.background.separator" = "disabled"
+"ui.text" = "text"
+"ui.text.focus" = { fg = "selection-text", bg = "selection" }
+"ui.text.inactive" = "muted"
+"ui.text.info" = "text"
+"ui.text.directory" = "blue"
+"ui.cursor" = { fg = "ground", bg = "secondary" }
+"ui.cursor.primary" = { fg = "ground", bg = "accent" }
+"ui.cursor.primary.insert" = { fg = "ground", bg = "mint" }
+"ui.cursor.primary.select" = { fg = "ground", bg = "purple" }
+"ui.cursor.match" = { fg = "bright", bg = "border", modifiers = ["bold"] }
+"ui.cursorline.primary" = { bg = "surface" }
+"ui.selection" = { bg = "selection-dim" }
+"ui.selection.primary" = { bg = "selection" }
+"ui.highlight" = { bg = "hover" }
+"ui.highlight.frameline" = { bg = "hover" }
+"ui.linenr" = "disabled"
+"ui.linenr.selected" = "secondary"
+"ui.gutter" = { bg = "ground" }
+"ui.statusline" = { fg = "text", bg = "surface" }
+"ui.statusline.inactive" = { fg = "muted", bg = "ground" }
+"ui.statusline.normal" = { fg = "ground", bg = "accent", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "ground", bg = "mint", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "ground", bg = "purple", modifiers = ["bold"] }
+"ui.statusline.separator" = "border"
+"ui.bufferline" = { fg = "muted", bg = "surface" }
+"ui.bufferline.active" = { fg = "bright", bg = "ground", underline = { color = "accent", style = "line" } }
+"ui.bufferline.background" = { bg = "surface" }
+"ui.breadcrumb" = "secondary"
+"ui.breadcrumb.separator" = "disabled"
+"ui.popup" = { fg = "text", bg = "widget" }
+"ui.popup.info" = { fg = "text", bg = "widget" }
+"ui.popup.border" = "border"
+"ui.help" = { fg = "text", bg = "widget" }
+"ui.menu" = { fg = "text", bg = "widget" }
+"ui.menu.selected" = { fg = "selection-text", bg = "selection" }
+"ui.menu.scroll" = { fg = "border", bg = "widget" }
+"ui.picker.header" = { fg = "muted", modifiers = ["bold"] }
+"ui.picker.header.column" = "muted"
+"ui.picker.header.column.active" = { fg = "bright", modifiers = ["bold"] }
+"ui.window" = "hairline"
+"ui.virtual" = "disabled"
+"ui.virtual.whitespace" = "hairline"
+"ui.virtual.indent-guide" = "hairline"
+"ui.virtual.ruler" = { bg = "surface" }
+"ui.virtual.wrap" = "disabled"
+"ui.virtual.fold-decoration" = "muted"
+"ui.virtual.inlay-hint" = { fg = "disabled", modifiers = ["italic"] }
+"ui.virtual.jump-label" = { fg = "yellow", modifiers = ["bold"] }
+"ui.debug.breakpoint" = "error"
+"ui.debug.active" = "yellow"
+"tabstop" = { bg = "hover" }
+
+# nested brackets: the lighter (bright) shades, so nesting reads without shouting
+rainbow = ["secondary", "lilac", "sky", "mint-light", "yellow-light", "pink"]
+
+[palette]
+ground = "{{bg_desktop}}"
+surface = "{{bg_surface}}"
+widget = "{{bg_widget}}"
+hover = "{{bg_hover}}"
+hairline = "{{border_hairline}}"
+border = "{{border_inactive}}"
+disabled = "{{fg_disabled}}"
+muted = "{{fg_muted|legible:bg_desktop}}"
+secondary = "{{fg_secondary}}"
+text = "{{fg_editor}}"
+bright = "{{fg_bright}}"
+accent = "{{accent}}"
+selection = "{{selection_bg}}"
+selection-dim = "{{selection_bg|mix:bg_desktop:0.4}}"
+selection-text = "{{selection_fg}}"
+error = "{{error|legible:bg_desktop}}"
+warning = "{{warning|legible:bg_desktop}}"
+purple = "{{ansi5|legible:bg_desktop}}"
+lilac = "{{ansi13|legible:bg_desktop}}"
+blue = "{{ansi4|legible:bg_desktop}}"
+sky = "{{ansi12|legible:bg_desktop}}"
+cyan = "{{ansi6|legible:bg_desktop}}"
+mint = "{{ansi2|legible:bg_desktop}}"
+mint-light = "{{ansi10|legible:bg_desktop}}"
+yellow = "{{ansi3|legible:bg_desktop}}"
+yellow-light = "{{ansi11|legible:bg_desktop}}"
+pink = "{{ansi9|legible:bg_desktop}}"

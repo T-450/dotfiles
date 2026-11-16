@@ -1,2 +1,3 @@
 # rendered by theme/.local/bin/theme from the matching .tmpl; never edit
 /.config/helix/languages.toml
+/.config/helix/themes/palette.toml

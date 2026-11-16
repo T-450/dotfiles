@@ -1,6 +1,7 @@
-# helix: VS Code's Dark+ theme (built in), diagnostics shown inline, and keys added for Vim and
-# AstroNvim habits without changing helix's own (selection first: select, then act). Every added
-# key was free in the keymap of helix (gj1118's fork at 2610b17), except four named ones:
+# helix: the active palette's theme (themes/palette.toml, rendered by `theme`), diagnostics shown
+# inline, and keys added for Vim and AstroNvim habits without changing helix's own (selection
+# first: select, then act). Every added key was free in the keymap of helix (gj1118's fork at
+# 2610b17), except four named ones:
 # - Ctrl+C copies the selection to the system clipboard (helix's own Ctrl+C toggles comments, which
 #   space+c also does); Ghostty's Ctrl+V pastes.
 # - $ goes to the line end, as in Vim; the command it replaces (keep selections whose shell command
@@ -8,7 +9,7 @@
 # - Ctrl+j/k move between splits (AstroNvim); the fork's move-lines goes to Alt+j/k.
 # - space l is the LSP group (AstroNvim); the fork's search-in-file goes to space o.
 # The table of every added key is in docs/apps/helix.md.
-theme = "dark_plus"
+theme = "palette"
 
 [editor]
 # a diagnostic at the end of its line (hints and up); warnings and errors also in full under the
