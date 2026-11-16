@@ -261,14 +261,24 @@ external display connected, the panel is off and the prompt is on the external d
 
 The repo owns three files in `greeter/root/etc/greetd/` (the package's stay untouched):
 
-*   `greeter-panel`: `mmsg dispatch disable_monitor,eDP-1` when the lid is closed
-    (`/proc/acpi/button/lid/*/state`) and `wlr-randr --json` shows an enabled external display,
-    `enable_monitor` otherwise. No reloads happen in the greeter, so a runtime disable is enough.
+*   `greeter-panel`: `mmsg dispatch disable_monitor,^<panel>$` when the lid is closed
+    (`/proc/acpi/button/lid/*/state`, none counts as open) and `wlr-randr --json` shows an enabled
+    external display, `enable_monitor` otherwise. The name is anchored: mmsg matches it as a regex.
+    No reloads happen in the greeter, so a runtime disable is enough. It exits 0 on any error.
 *   `mango-greeter.conf`: `source=/etc/greetd/mango-greeter-config.conf`, then
     `switchbind=fold,spawn,/etc/greetd/greeter-panel` and the same for `unfold`, so closing or
     opening the lid at the login screen moves the prompt too.
-*   `greeter-session.sh`: runs `greeter-panel`, then `exec /etc/greetd/mango-greeter-session.sh`,
-    so the panel is off before sysc-greet picks its monitor.
+*   `greeter-session.sh`: runs `greeter-panel`, starts a background watcher, then
+    `exec /etc/greetd/mango-greeter-session.sh`, so the panel is off before sysc-greet picks its
+    monitor. The watcher follows `mmsg watch all-monitors` and re-runs `greeter-panel` when the
+    sorted set of monitor names in an event differs from the last one acted on (mango streams
+    focus and tag changes too), so a display plugged in or out at the login screen moves the
+    prompt. It reads the stream until mmsg exits, which happens when mango quits, and its output
+    goes to /dev/null so it holds no descriptor of the greeter's log pipe: it neither keeps the
+    greeter alive nor blocks `mmsg dispatch quit`. `greeter-panel` never blocks or fails
+    (`timeout 5` on wlr-randr, exit 0 on any error).
+
+Both scripts are bash (`#!/usr/bin/env bash`), as everywhere in the repo.
 
 `config.toml` points at `mango-greeter.conf` and `greeter-session.sh`. After login the user's
 mango starts with the panel on until way-displays turns it off, about a second.
