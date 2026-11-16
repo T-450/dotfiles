@@ -79,10 +79,13 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | git | `git-delta` | 0.20.1-1 |
 | greeter | `greetd` | 0.10.3-2 |
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
+| greeter | `jq` | 1.8.2-1 |
+| greeter | `wlr-randr` | 0.5.0-1 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.0.3.u1-1 |
+| hyprlock | `hyprlock` | 0.9.7-2 |
 | lazygit | `lazygit` | 0.66.3-1 |
 | mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.5-1 |
@@ -128,7 +131,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | swaybg | `imagemagick` | 7.1.2.35-1 |
 | swayidle | `swayidle` | 1.9.1-1 |
 | swayidle | `dimland-git` | r40.76c653f-1 |
-| swaylock | `swaylock` | 1.8.6-1 |
 | swayosd | `swayosd` | 0.3.2-2 |
 | swayosd | `brightnessctl` | 0.5.1-3 |
 | tealdeer | `tealdeer` | 1.9.1-1 |
