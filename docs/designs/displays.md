@@ -8,13 +8,18 @@
 The T14 is used with an external display, an LG UltraFine 32" 4K, and sometimes with others. Today
 each display runs at whatever mango picks, the LG at scale 1 (the smallest text), and closing the
 lid with the LG connected leaves the laptop panel enabled behind the lid, where windows and focus
-can still land. This design gives each display its best mode and a scale for its pixel density,
-places the displays to match the desk (the laptop to the right of the LG), and turns the laptop
-panel off while the lid is closed and an external display is connected, so the external display is
-the only one. It also powers every display off at idle, not just the laptop panel.
+can still land. This design hands display management to
+[way-displays](https://github.com/alex-courtis/way-displays), an open-source daemon for wlroots
+compositors: it gives each display its native resolution at its highest refresh and a scale from
+its pixel density, places the displays to match the desk (the laptop to the right of the LG), and
+turns the laptop panel off while the lid is closed and an external display is connected, so the
+external display is the only one. One YAML file holds the settings; `way-displays -g` shows the
+state and `way-displays -s`/`-t`/`-w` change and save it. A small glue script covers what mango
+does differently from sway: config reloads and idle sleep. Every display now powers off at idle.
 
-The change is in `mango/` (config, the `mango-monitor` script, a user unit, user tmpfiles),
-`swayidle/`, and their docs. logind keeps its defaults.
+The change is a new `way-displays/` app folder, `mango/` (config, the `mango-monitor` glue, user
+tmpfiles), a udev rule in `thinkpad/root/`, `swayidle/`, and their docs. logind keeps its
+defaults.
 
 ## Key terms
 
@@ -74,159 +79,164 @@ from its 0.18.5 source.
 
 From the user:
 
+*   Existing open-source tools over custom code; managing displays should be easy.
 *   The LG runs at scale 1.25: a 3072x1728 workspace, text about the size of the laptop panel's
     at scale 1 once viewing distance is counted (about 70 cm against 50 cm).
 *   The laptop sits to the right of the LG.
-*   Displays without a rule of their own get the best mode and a scale from their pixel density,
-    picked automatically.
+*   Other displays get their best mode and a scale from their pixel density, automatically.
 *   Lid closed with an external display connected: the external display is the only one.
 
 Defaults (correct any in review):
 
 *   Lid open with an external display connected: both on, side by side, as today.
 *   Lid closed with no external display: the laptop suspends, as today (logind's default).
-*   Outputs are bottom-aligned: the laptop's bottom edge lines up with the LG's.
-*   The laptop panel keeps its preferred mode (1920x1080 at 60 Hz) and scale 1.
+    way-displays never disables the only display.
+*   Displays are bottom-aligned: the laptop's bottom edge lines up with the LG's.
+*   The laptop panel stays at scale 1 (auto scale would give it 1.5).
+*   The best mode is the native resolution at its highest refresh (`MAX_PREFERRED_REFRESH`), not
+    the highest resolution at any refresh (`MAX`), which would put a TV that does 4K only at 30 Hz
+    at 30 Hz.
+*   way-displays shows a notification only for warnings and errors: it may run its callback
+    several times per connect.
+*   The lid is read through a udev rule that gives the logged-in user the lid switch device only
+    (`uaccess`), not membership of the `input` group, which would expose every keyboard.
 *   `Xft.dpi` (the scale XWayland apps draw themselves at) becomes 120, matching the LG's 1.25;
     today it is 144 (1.5) while every output runs at scale 1. No XWayland app runs today.
-*   No VRR, HDR, 10-bit or ICC settings (Findings).
+*   No VRR, HDR, 10-bit or ICC settings (Findings); `VRR_OFF` for every display, so way-displays
+    doesn't try.
 
 ## Design
 
-Three pieces, each with one owner.
+### way-displays owns the displays
 
-### `monitor.conf`: displays pinned by hand
+`way-displays/` is a new app folder: `packages` (`way-displays`, AUR), `.config/way-displays/cfg.yaml`,
+and `.config/systemd/user/way-displays.service` (a session daemon: `PartOf=`/`After=`/
+`Requisite=graphical-session.target`, `Restart=on-failure`). It talks to mango over wlr output
+management (protocol version 4, which mango's wlroots 0.20 provides) and reads the lid with
+libinput. `cfg.yaml`:
 
-Static rules for displays whose settings are fixed by hand, matched by make, model and serial,
-never by connector name. One today, the LG:
-
-```ini
-monitor_rule=make:LG Electronics,model:LG ULTRAFINE,serial:509AZWSGA385,width:3840,height:2160,refresh:60,scale:1.25,primary:1
+```yaml
+ARRANGE: ROW
+ALIGN: BOTTOM
+ORDER:                       # externals left to right, the laptop panel rightmost
+- '!^(DP|HDMI)-'
+- '!^eDP-'
+SCALING: TRUE
+AUTO_SCALE: TRUE
+AUTO_SCALE_DPI: 110          # the density that gives the LG the user's 1.25 (139 / 110 = 1.27)
+AUTO_SCALE_MIN: 1.0
+AUTO_SCALE_MAX: 3.0
+SCALE_ROUND_TO: 0.25
+SCALE_ROUND_STRATEGY: NEAREST
+SCALE:
+  'LG Electronics LG ULTRAFINE 509AZWSGA385': 1.25
+  '!^eDP-': 1.0
+MODE:
+  '!^(DP|HDMI)-':
+    MAX_PREFERRED_REFRESH: TRUE
+VRR_OFF:
+- '!.*'
+DISABLED:
+  '!^eDP-':
+    IF:
+    - LID: CLOSED
+CALLBACK_CMD: ~/.local/bin/mango-monitor sync
 ```
 
-No position: `mango-monitor` owns the layout. With `x` and `y` unset, a reload leaves an enabled
-output where it is. The rules for `eDP-1` and `DP-2` go, and so does `hdr_depth` (HDR is not
-possible here). The file ends with the generated file:
+With the LG: the LG at 0,0 (3072x1728), the panel at 3072,648. With the lid closed: the LG alone.
+A 27" 4K gets 1.5, a 27" 1440p or a 24" 1080p gets 1, a 15.6" 4K gets 2.5, a projector reporting
+no size gets 1.
 
-```ini
-source_optional=~/.local/state/mango/outputs.conf
+Changing things: `way-displays -g` prints every display, its mode, scale, position and why;
+`way-displays -s SCALE 'LG' 1.5` or `-s MODE ...` changes the live state; `-w` saves it to
+`cfg.yaml`, which is linked into the repo (way-displays writes through the link and drops the
+comments; review `git diff` before committing, as for any app-written config).
+
+### mango-monitor: glue for what mango does differently
+
+`mango/.local/bin/mango-monitor`, bash, replacing today's toggle.
+
+*   `sync`, way-displays' `CALLBACK_CMD`: after each change, writes
+    `monitor_rule=name:^eDP-1$,disable:1` to `~/.local/state/mango/outputs.conf` when the panel is
+    connected and disabled, and empties the file otherwise, writing only on a difference. mango's
+    config reload re-enables any output whose rule doesn't say `disable:1` (Findings), and
+    way-displays would then disable it again, moving its windows twice; with the rule, a reload
+    (`theme set`, Super+R, a config save) leaves the panel off. For a `WARNING`, `ERROR` or
+    `FATAL` callback it also runs `notify-send "way-displays" "$CALLBACK_MSG"`.
+*   `toggle` (Super+M p, as today): `way-displays -t DISABLED eDP-1`, a manual override that
+    way-displays drops once the lid rule agrees with it. It refuses when the panel is the only
+    enabled display (a notification says so); today's toggle allows that.
+*   `sleep` and `wake`, for swayidle. mango powers a display off by disabling it, and
+    way-displays re-enables any display that is not in the state it wants (`act.c`), so idle
+    sleep would undo itself. `sleep` pauses way-displays (`systemctl --user kill -s STOP
+    way-displays.service`), then `mmsg dispatch sleep_monitor,NAME` for each enabled display;
+    `wake` resumes it (`-s CONT`), and way-displays turns back on what should be on: a closed lid
+    keeps the panel off.
+
+`monitor.conf` keeps no display rules: the `eDP-1` and `DP-2` rules and `hdr_depth` go, so no rule
+fights way-displays on reload (a display with no rule keeps its mode, scale and position). It
+keeps `xwayland_ignore_scale=1`, sets `Xft.dpi: 120`, and ends with
+`source_optional=~/.local/state/mango/outputs.conf`.
+
+### The generated rule never outlives a session
+
+A stale `disable:1` with no external display would start mango with no output. `way-displays.service`
+empties the file when it stops (`ExecStopPost`), which is when the session ends, and user tmpfiles
+(`mango/.config/user-tmpfiles.d/mango-monitor.conf`) create `~/.local/state/mango/` and remove the
+file at boot.
+
+### The lid
+
+way-displays opens the lid switch with libinput, which needs read access to its `/dev/input`
+node. `thinkpad/root/etc/udev/rules.d/70-lid-switch.rules`:
+
+```
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Lid Switch", TAG+="uaccess"
 ```
 
-`primary:1` makes the LG the XWayland primary output while it is connected; without it, the panel
-is primary (the first matching rule).
-
-### `mango-monitor`: the layout and the laptop panel
-
-`mango/.local/bin/mango-monitor`, rewritten in Python (as `mango-keys` and `theme` are). Its data:
-the lid state (`/proc/acpi/button/lid/*/state`; no lid counts as open) and the outputs from
-`wlr-randr --json` (name, make, model, serial, enabled, modes, physical size), including disabled
-ones. A pure function turns them into a plan: per output, enabled or not, mode, scale, position.
-
-*   **Internal or external.** An output named `eDP-*`, `LVDS-*` or `DSI-*` is the laptop panel;
-    every other output is external.
-*   **Pinned or automatic.** An external display is pinned when a `monitor_rule` in
-    `~/.config/mango/monitor.conf` sets at least one of make, model and serial and every one it
-    sets equals the display's (mango's test, without the name). mango gives a pinned display its
-    mode and scale; the script leaves them alone and only positions it. Rules that match by name
-    alone are not considered (a connector name does not identify a display).
-*   **Best mode (automatic).** Among modes at 59 Hz or more (all modes if there are none), the
-    most pixels, then the highest refresh. A 4K TV that does 4K only at 30 Hz gets 1080p at 60 Hz.
-*   **Scale (automatic).** Pixel density divided by 110, rounded to a quarter, kept between 1 and
-    3; 1 when the physical size is unknown (0, or under 100 mm wide, as projectors report). 110
-    is the density that gives the LG the user's 1.25 (139 / 110 = 1.27). A 27" 4K gets 1.5, a 27"
-    1440p or a 24" 1080p gets 1, a 15.6" 4K gets 2.5.
-*   **Panel.** Off when the lid is closed and an external display is connected; otherwise on. The
-    plan never leaves no output enabled.
-*   **Layout.** External displays left to right in connector-name order, the laptop panel
-    rightmost, every output bottom-aligned to the tallest, x and y never negative (negative
-    coordinates break pointer input in XWayland apps). With the LG: the LG at 0,0, the panel at
-    3072,648. With the lid closed: the LG alone at 0,0.
-
-Commands:
-
-*   `mango-monitor apply [--dry-run]`: computes the plan and applies the difference in one
-    `wlr-randr` call (one atomic output configuration), then writes the panel's rule to
-    `~/.local/state/mango/outputs.conf` if it changed, e.g.
-    `monitor_rule=name:^eDP-1$,x:3072,y:648,disable:1`. The rule keeps the panel's state and
-    position across config reloads; the `wlr-randr` call is what takes effect now. `--dry-run`
-    prints the plan and changes nothing. While the displays sleep (below), `apply` does nothing:
-    `wake` applies.
-*   `mango-monitor toggle` (Super+M p, as today): turns the panel off or on until the next lid or
-    display change, through the same `wlr-randr` call and rule. It refuses to turn off the only
-    enabled output; today's toggle allows it.
-*   `mango-monitor watch`: runs `apply`, then follows `mmsg watch all-monitors` and runs `apply`
-    when the set of connected outputs (name and serial, from `wlr-randr`) changes. The stream also
-    reports focus and tag changes; those are ignored.
-*   `mango-monitor sleep` and `wake`, for swayidle: `sleep` powers every enabled output off
-    (`mmsg dispatch sleep_monitor,NAME`) and leaves a marker in `$XDG_RUNTIME_DIR`; `wake`
-    removes the marker and runs `apply`, so a closed lid keeps the panel off.
-
-### `~/.local/state/mango/outputs.conf`: the panel's rule, generated
-
-Written only by `mango-monitor`, never by hand, and never in the repo. A stale "panel off" with no
-external display would start mango with no output, so the file never outlives a session:
-
-*   `mango-monitor.service` removes it when it stops (`ExecStopPost`), which is when the session
-    ends.
-*   User tmpfiles (`mango/.config/user-tmpfiles.d/mango-monitor.conf`) remove it at boot and
-    create `~/.local/state/mango/`, which mango needs to watch the file.
-
-With the file absent, mango gives the panel its defaults (preferred mode, scale 1, enabled), and
-the unit applies the plan once the session starts.
-
-### Triggers
-
-| Event | Runs |
-|---|---|
-| Lid closes or opens | `switchbind=fold,spawn,~/.local/bin/mango-monitor apply` and the same for `unfold`, in `bind.conf`'s `common` mode so they work in any key mode |
-| Display plugged in or out | `mango-monitor.service` (`watch`), a user unit in `mango/.config/systemd/user/` like `mango-whichkey.service` |
-| Session start | the unit's first `apply` |
-| Idle 10 min / activity | swayidle: `mango-monitor sleep` / `mango-monitor wake`, replacing `sleep_monitor,eDP-1` / `wakeup_monitor,eDP-1` |
-| Super+M p | `mango-monitor toggle` |
-
-logind is unchanged: lid closed with an external display connected is docked (ignored), so the
-laptop stays awake for the LG; lid closed with none suspends. Unplugging the LG with the lid
-closed turns the panel back on (so windows land on it), and logind then suspends.
+logind then grants the logged-in user that one device. It takes effect at the next boot, or on
+this machine once after `install.sh --system` with `sudo udevadm trigger --subsystem-match=input`.
+logind is unchanged: lid closed with an external display is docked (ignored), so the laptop stays
+awake for the LG; lid closed with none suspends.
 
 ### Walkthroughs
 
-*   **At the desk, lid open, LG plugged in.** mango applies the LG's rule (4K at 60 Hz, 1.25) and
-    places it right of the panel; the unit sees a new output and moves the LG to 0,0 and the panel
-    to 3072,648.
-*   **Close the lid.** `fold` runs `apply`: the panel turns off and its rule says `disable:1`; its
-    windows move to the LG. A later `theme set` keeps it off.
-*   **Open the lid.** `unfold` runs `apply`: the panel comes back at 3072,648 and its windows move
-    back to it.
-*   **Wake from suspend with the lid closed and the LG just plugged in.** No lid event fires; the
-    unit sees the new output and turns the panel off.
-*   **A projector.** Not pinned: it gets its best mode at scale 1 (unknown size), on the left.
+*   **At the desk, lid open, LG plugged in.** way-displays sets 4K at 60 Hz and 1.25, the LG at
+    0,0, the panel at 3072,648.
+*   **Close the lid.** way-displays disables the panel; its windows move to the LG; `sync` writes
+    the rule, so a later `theme set` keeps it off.
+*   **Open the lid.** The panel comes back at 3072,648, its windows move back, `sync` empties the
+    rule.
+*   **Wake from suspend with the lid closed and the LG just plugged in.** way-displays sees the LG
+    arrive and the lid closed, and disables the panel.
+*   **A projector.** Native resolution at its highest refresh, scale 1, on the left.
 
 ## Changes
 
 | File | Change |
 |---|---|
-| `mango/.config/mango/monitor.conf` | The LG's rule; drop the `eDP-1` and `DP-2` rules and `hdr_depth`; `Xft.dpi: 120`; `source_optional` last |
-| `mango/.config/mango/bind.conf` | `switchbind` fold and unfold in `common`; Super+M p runs `mango-monitor toggle` |
-| `mango/.local/bin/mango-monitor` | Python rewrite: `apply`, `toggle`, `watch`, `sleep`, `wake` |
-| `mango/.config/systemd/user/mango-monitor.service` | New: `watch`, removes the generated file on stop |
-| `mango/.config/user-tmpfiles.d/mango-monitor.conf` | New: create `~/.local/state/mango/`, remove the generated file at boot |
-| `swayidle/.config/systemd/user/swayidle.service` | Every display off at 10 min, back on through the plan |
-| `docs/apps/mango.md`, `docs/session.md`, `docs/apps/swayidle.md` | Displays, lid and idle behaviour; the LG's sRGB picture mode as a one-time step |
+| `way-displays/packages`, `.config/way-displays/cfg.yaml`, `.config/systemd/user/way-displays.service` | New app |
+| `docs/apps/way-displays.md` | New: what it does here, how to change things |
+| `mango/.local/bin/mango-monitor` | Bash: `sync`, `toggle`, `sleep`, `wake` |
+| `mango/.config/mango/monitor.conf` | No display rules; `Xft.dpi: 120`; `source_optional` last |
+| `mango/.config/mango/bind.conf` | Super+M p runs `mango-monitor toggle` |
+| `mango/.config/user-tmpfiles.d/mango-monitor.conf` | New: create the state directory, remove the generated rule at boot |
+| `thinkpad/root/etc/udev/rules.d/70-lid-switch.rules` | New: the lid switch for the logged-in user |
+| `swayidle/.config/systemd/user/swayidle.service` | Every display off at 10 min through `mango-monitor sleep`/`wake` |
+| `docs/apps/mango.md`, `docs/apps/thinkpad.md`, `docs/session.md`, `docs/apps/swayidle.md`, `docs/keybindings.md` | Displays, lid and idle; the LG's sRGB picture mode as a one-time step |
 
-`tools/docs` regenerates the reference blocks (the new unit and tmpfiles entry); `mango/packages`
-already has `wlr-randr`.
+`tools/docs` regenerates the reference blocks; `tools/docs --snapshot` records the new package.
 
 ## Verification
 
-*   `mango-monitor apply --dry-run` live (it changes nothing): the plan for the LG must be 4K at
-    60 Hz, 1.25, at 0,0, the panel at 3072,648, and with the lid closed the panel off.
-*   The plan function against recorded `wlr-randr` output for a 1440p 144 Hz monitor, a TV with
-    4K at 30 Hz and 1080p at 60 Hz, a projector reporting 0 mm, and two external displays at once.
+*   `way-displays` builds and installs from the AUR (`install.sh`), and its config parses:
+    `way-displays -c <cfg> -g` against a running daemon in the VM.
 *   `mango -c ~/.config/mango/config.conf -p`, `theme lint`, `tools/docs --check`, `tests/run`,
-    `./install.sh --check`.
-*   desktop-vm `up` and `check` (it has no lid and one output): the session starts, the unit runs,
-    `apply` leaves the single output on, and a config reload changes nothing. Needs 6 GB free.
-*   On the T14 (the lid exists only there), by the user after the merge: close the lid with the LG
-    connected (only the LG stays on), `theme set` while closed (the panel stays off), open it
-    (the panel returns at the right), unplug the LG with the lid closed (the laptop suspends), and
-    idle 10 minutes (both displays go dark, and come back with the lid's state).
+    `./install.sh --check`, `systemd-analyze --user verify` on the new and changed units.
+*   desktop-vm `up` and `check` (one output, no lid): the session starts, way-displays runs and
+    keeps the single output on, a config reload changes nothing, `mango-monitor sync` leaves the
+    rule file empty. Needs 6 GB free.
+*   On the T14, by the user after the merge: close the lid with the LG connected (only the LG
+    stays on), `theme set` while closed (the panel stays off), open it (the panel returns at the
+    right), unplug the LG with the lid closed (the laptop suspends), idle 10 minutes (both go dark
+    and come back with the lid's state), Super+M p.
