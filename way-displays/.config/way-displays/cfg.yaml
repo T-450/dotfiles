@@ -1,0 +1,27 @@
+# Display layout, scale, mode and lid rules. Keys: `man 5 way-displays`; how it is used here:
+# docs/apps/way-displays.md. `way-displays -w` rewrites this file and drops these comments.
+ARRANGE: ROW
+ALIGN: BOTTOM
+ORDER:                       # externals left to right, the laptop panel rightmost
+- '!^(DP|HDMI)-'
+- '!^eDP-'
+SCALING: TRUE
+AUTO_SCALE: TRUE
+AUTO_SCALE_DPI: 110          # the density that gives the LG the user's 1.25 (139 / 110 = 1.27)
+AUTO_SCALE_MIN: 1.0
+AUTO_SCALE_MAX: 3.0
+SCALE_ROUND_TO: 0.25
+SCALE_ROUND_STRATEGY: NEAREST
+SCALE:
+  'LG Electronics LG ULTRAFINE 509AZWSGA385': 1.25
+  '!^eDP-': 1.0
+MODE:
+  '!^(DP|HDMI)-':
+    MAX_PREFERRED_REFRESH: TRUE
+VRR_OFF:
+- '!.*'
+DISABLED:
+  '!^eDP-':
+    IF:
+    - LID: CLOSED
+CALLBACK_CMD: ~/.local/bin/mango-monitor sync

@@ -12,6 +12,8 @@ Known fault: the Thunderbolt controller (JHL6240, NVM 23.00, the latest on LVFS)
 
 CPU power: on a lap the firmware's lap sensor (`/sys/devices/platform/thinkpad_acpi/dytc_lapmode` = `1`) drops the sustained limit (PL1, `/sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw`) to 10 W, so all-core load runs near 1.9 GHz at about 65°C. That keeps the case cool on purpose and is left alone; on a desk the limit comes back. The MSR limit (`intel-rapl:0`, 51 W) is not the one that binds. Heat check: temperatures are in `/sys/class/hwmon/*/temp*_input`, the fan in `/proc/acpi/ibm/fan`, throttling in `/sys/devices/system/cpu/cpu0/thermal_throttle/` (the BIOS TCC offset makes it throttle at 97°C).
 
+Lid: `root/etc/udev/rules.d/70-lid-switch.rules` gives the logged-in user the lid switch device only (`uaccess`, not the `input` group, which would expose every keyboard), so [way-displays](way-displays.md) can read the lid through libinput. It takes effect at the next boot, or once after `install.sh --system` with `sudo udevadm trigger --subsystem-match=input`. way-displays logs `Unable to monitor laptop lid via libinput ... usermod -a -G input` once at every start: its discovery opens every input device on the seat and only the lid is readable, which is the intent. `Monitoring lid device: /dev/input/eventN` right after it confirms the lid is read; the warning without that line means the rule is not applied yet. logind is unchanged: lid closed with an enabled external display is docked (ignored), with none the laptop suspends. At idle every display is off, which logind would count as none, so `mango-monitor sleep` holds a `handle-lid-switch` inhibitor while an external display is connected (see [Session](../session.md#idle)).
+
 smartmontools and nvme-cli are diagnostics only: `sudo smartctl -a /dev/nvme0`, `sudo nvme smart-log /dev/nvme0`.
 
 ## Reference
@@ -22,6 +24,7 @@ smartmontools and nvme-cli are diagnostics only: `sudo smartctl -a /dev/nvme0`, 
 **System files** (`thinkpad/root/`, copied by `install.sh --system`):
 
 - `/etc/tlp.d/10-thinkpad.conf`
+- `/etc/udev/rules.d/70-lid-switch.rules`
 
 **`setup.sh`** (run by `install.sh --setup`): TLP manages power (its config comes from thinkpad/root/ via install.sh --system). Not installed on purpose: power-profiles-daemon (conflicts with TLP) and thermald (exits on this T14: "can't run on this platform"; the firmware, thinkpad_acpi DYTC, handles thermals). BIOS settings go through thinklmi (Lenovo WMI, no BIOS admin password set): VT-d and Kernel DMA Protection on, so the kernel turns the IOMMU on (platform opt-in) and a Thunderbolt device can't read memory over DMA. A change takes effect at the next boot. No thinklmi (a VM): nothing to do.
 <!-- end generated -->

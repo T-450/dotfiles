@@ -32,7 +32,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [fonts](apps/fonts.md) | Fonts: IBM Plex Sans for the UI (IBM's face for technical, instrument-like interfaces; its Light cut is the thin sans for annotations), JetBrains Mono Nerd Font for terminals and the bar, Noto for coverage and emoji | inter-font, ttf-jetbrains-mono-nerd, noto-fonts, noto-fonts-cjk, noto-fonts-emoji, ttf-dejavu, ttf-ibm-plex, ttf-ibmplex-mono-nerd, ttf-liberation, ttf-nerd-fonts-symbols, ttf-nerd-fonts-symbols-mono, ttf-terminus-nerd |
 | [ghostty](apps/ghostty.md) | The terminal (super+return), the dropdown terminal (alt+esc) and the floating terminal (super+shift+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | ghostty, xdg-terminal-exec |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS and delta for diffs | git, github-cli, git-delta |
-| [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango |
+| [greeter](apps/greeter.md) | The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships | greetd, sysc-greet-mango, jq, wlr-randr |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and VS Code's Dark+ theme (built into helix, with its own colors rather than the palette's) | jdtls, jre-openjdk |
@@ -57,13 +57,14 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (shift+Print) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
 | [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
-| [swayidle](apps/swayidle.md) | Idle handling: dim, lock, panel off | swayidle, dimland-git |
+| [swayidle](apps/swayidle.md) | Idle handling: dim, lock, displays off | swayidle, dimland-git |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, bolt, tlp, powertop, smartmontools, nvme-cli |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor (its colors follow the terminal's palette) | vim |
+| [way-displays](apps/way-displays.md) | Display manager: each display gets its native resolution at its highest refresh and a scale from its pixel density, the laptop panel sits rightmost with bottom edges aligned, the LG UltraFine is pinned to scale 1.25, and the panel turns off while the lid is closed with an external display connected | way-displays |
 | [waybar](apps/waybar.md) | The bar, at the bottom: one flat "taskbar" surface of 24px controls and quiet chips with 2px level bars, neutral unless a color has something to say | waybar, pamixer |
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
 | [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |

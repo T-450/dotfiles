@@ -29,9 +29,17 @@ There is **no `exec_once` autostart**, on purpose; add new daemons as units the 
 ## Idle
 
 swayidle (`swayidle/.config/systemd/user/swayidle.service`): dim at 4 min (dimland) → lock at 5 min
-(hyprlock) → panel off at 10 min (`mmsg dispatch sleep_monitor`); lock before suspend and on
-`loginctl lock-session`. hyprlock starts only if not already running (`pidof -q hyprlock ||`), always in the background (it runs until unlock and `swayidle -w` waits for each command), and
-`KillMode=process` keeps it alive if swayidle restarts. Keep both.
+(hyprlock) → displays off at 10 min (`mango-monitor sleep` pauses way-displays, then `mmsg dispatch
+sleep_monitor` per display; activity resumes way-displays, which turns back on what the lid allows).
+logind counts only enabled external displays as docked, so with the lid closed and every display
+asleep it would suspend the laptop: while an external display is connected, `sleep` first starts
+`mango-monitor-lid.service` (transient, `systemd-inhibit --what=handle-lid-switch`), which ends when
+`wake` has an external display on again or the last one is unplugged (then a closed lid suspends);
+lock before suspend and on `loginctl lock-session`. hyprlock starts only if not already running
+(`pidof -q hyprlock ||`), always in the background (it runs until unlock and `swayidle -w` waits for
+each command), and `KillMode=process` keeps it alive if swayidle restarts. Keep both. Every swayidle
+start runs `mango-monitor wake`, so a restart while idle can't leave way-displays paused or the lid
+inhibited. `systemd-inhibit --list` shows the inhibitor.
 
 ## Debugging
 

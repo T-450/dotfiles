@@ -1,16 +1,20 @@
 [Unit]
-Description=Idle manager (swayidle): dim 4m, lock 5m, panel off 10m
+Description=Idle manager (swayidle): dim 4m, lock 5m, displays off 10m
 PartOf=graphical-session.target
 After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
+# sleep stops way-displays and holds a lid inhibitor, and only the resume handler undoes both; a
+# swayidle restart while idle would leave them. wake is idempotent: CONT on a running unit is a
+# no-op, and with no inhibitor there is nothing to end.
+ExecStartPre=-%h/.local/bin/mango-monitor wake
 ExecStart=/usr/bin/swayidle -w \
   timeout 240 '/usr/bin/dimland -a 0.3' \
   resume '/usr/bin/pkill -x dimland' \
   timeout 300 '/bin/sh -c "pidof -q hyprlock || /usr/bin/hyprlock &"' \
-  timeout 600 '/usr/bin/mmsg dispatch sleep_monitor,eDP-1' \
-  resume '/usr/bin/mmsg dispatch wakeup_monitor,eDP-1' \
+  timeout 600 '%h/.local/bin/mango-monitor sleep' \
+  resume '%h/.local/bin/mango-monitor wake' \
   before-sleep '/bin/sh -c "pidof -q hyprlock || { /usr/bin/hyprlock --immediate-render --no-fade-in & sleep 1; }"' \
   lock '/bin/sh -c "pidof -q hyprlock || /usr/bin/hyprlock &"'
 Restart=on-failure
