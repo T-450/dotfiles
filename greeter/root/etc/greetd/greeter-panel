@@ -1,0 +1,23 @@
+#!/bin/sh
+# greeter-panel: lid closed with an external display connected -> laptop panel off, so the login
+# prompt lands on the external display; otherwise panel on. Runs as the greeter user in the
+# greeter's mango (session start and lid switch). Never fails: the greeter must start regardless.
+for c in mmsg wlr-randr jq timeout; do command -v "$c" >/dev/null 2>&1 || exit 0; done
+
+lid=open
+for f in /proc/acpi/button/lid/*/state; do
+	[ -r "$f" ] && grep -q closed "$f" && lid=closed
+done
+
+# timeout: wlr-randr blocks if the compositor is not answering yet
+json=$(timeout 5 wlr-randr --json 2>/dev/null) || exit 0
+panel=$(printf '%s' "$json" | jq -r '[.[] | select(.name | test("^(eDP|LVDS|DSI)-"))][0].name // empty' 2>/dev/null)
+[ -n "$panel" ] || exit 0
+ext=$(printf '%s' "$json" | jq -r '[.[] | select((.name | test("^(eDP|LVDS|DSI)-") | not) and .enabled)] | length' 2>/dev/null)
+
+if [ "$lid" = closed ] && [ "${ext:-0}" -gt 0 ]; then
+	mmsg dispatch "disable_monitor,$panel" >/dev/null 2>&1
+else
+	mmsg dispatch "enable_monitor,$panel" >/dev/null 2>&1
+fi
+exit 0
