@@ -4,6 +4,8 @@ The system layer: kernel, bootloader, networking, sudo and the tools install.sh 
 
 archinstall installs most of it; it is declared so a clean install and `tools/docs --drift` agree. NetworkManager uses iwd for Wi-Fi; zram swap compresses with zstd; `vconsole.conf` sets the console keymap and font, which the initramfs embeds (all in `base/root/etc/`).
 
+Memory: swap is a zram device as large as RAM (`etc/systemd/zram-generator.conf`). zstd packs this desktop's pages about 3.5:1, so a full device costs under a third of RAM; the default (half of RAM, at most 4 GiB) filled while a 6 GiB CI guest ran, and the kernel OOM killer then took the VM. `etc/sysctl.d/99-zram.conf` makes the kernel prefer that cheap swap to dropping file pages (`vm.swappiness = 180`) and read it one page at a time (`vm.page-cluster = 0`). `systemd-oomd` (enabled by `setup.sh`) acts before the kernel does: it kills the user cgroup under the most memory pressure once stalls pass 50% (`etc/systemd/system/user@.service.d/oomd.conf`), and the largest swap user once swap is 90% full (`etc/systemd/system/-.slice.d/oomd.conf`). `oomctl` shows what it watches. `/tmp` is RAM too (tmpfs, cleaned after 10 days), so large scratch files belong on disk.
+
 Wi-Fi follows Brazil's channel rules: `wireless-regdb` holds the rules and `base/root/etc/modprobe.d/cfg80211.conf` sets `ieee80211_regdom=BR`. Without them the kernel stays on the world domain `00` (`iw reg get`), where most 5 GHz channels are passive or off.
 
 `kernel-modules-hook` keeps the running kernel's modules when `pacman -Syu` upgrades the kernel, so a driver that loads later (a new USB device, the Thunderbolt driver after resume) still loads until the reboot; `linux-modules-cleanup.service` (enabled by `setup.sh`) deletes the saved copy after it. A reboot is still the way onto the new kernel.
@@ -19,9 +21,12 @@ The firewall is on: `base/root/etc/ufw/ufw.conf` sets `ENABLED=yes` (Arch ships 
 
 - `/etc/NetworkManager/conf.d/wifi_backend.conf`
 - `/etc/modprobe.d/cfg80211.conf`
+- `/etc/sysctl.d/99-zram.conf`
+- `/etc/systemd/system/-.slice.d/oomd.conf`
+- `/etc/systemd/system/user@.service.d/oomd.conf`
 - `/etc/systemd/zram-generator.conf`
 - `/etc/ufw/ufw.conf`
 - `/etc/vconsole.conf`
 
-**`setup.sh`** (run by `install.sh --setup`): system services this desktop relies on (linux-modules-cleanup: kernel-modules-hook deletes the old kernel's saved modules after the reboot), and the XDG user dirs (~/Pictures for screenshots, ~/Downloads for blueman).
+**`setup.sh`** (run by `install.sh --setup`): system services this desktop relies on (linux-modules-cleanup: kernel-modules-hook deletes the old kernel's saved modules after the reboot; systemd-oomd: kills a cgroup under memory pressure before the kernel OOM killer would), and the XDG user dirs (~/Pictures for screenshots, ~/Downloads for blueman).
 <!-- end generated -->

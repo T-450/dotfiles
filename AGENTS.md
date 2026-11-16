@@ -70,6 +70,9 @@ A new need either fits one of these or extends install.sh/theme for **every** ap
   DreamMaoMao's repo and is never pushed to. No PRs. Never skip git hooks (`--no-verify`,
   `-c core.hooksPath=...`). Delete a branch once it is merged; a branch dropped unmerged is
   deleted too, with its reason in the report.
+- `/tmp` (agent scratchpads included) is tmpfs: RAM, then zram swap, cleared only after 10 days.
+  Large scratch output (video frames, VM disks, recordings) goes under `~/.cache/<task>/`, deleted
+  when the task is done.
 - Never add a `Co-Authored-By` trailer or share an agent session (link or ID) in commits, issues,
   comments or anything else sent to another service.
 
