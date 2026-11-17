@@ -88,7 +88,7 @@ Which apps use each role (generated from the templates):
 | `bg_desktop` | claude, firefox, gtk, helix, hyprlock, mango, mousepad, mpv, qutebrowser, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme |
 | `bg_surface` | claude, firefox, ghostty, gtk, helix, hyprlock, mako, mango, mousepad, qutebrowser, rofi, theme |
-| `bg_widget` | claude, firefox, gtk, helix, hyprlock, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, wlogout |
+| `bg_widget` | claude, firefox, gtk, helix, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, wlogout |
 | `border_hairline` | firefox, helix, mako, pi, qutebrowser, rofi, swayosd, theme, waybar |
 | `border_inactive` | claude, fastfetch, firefox, ghostty, helix, lazygit, mako, mango, mousepad, pi, rofi, theme |
 | `error` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, theme, waybar |
@@ -112,7 +112,7 @@ Which apps use each role (generated from the templates):
 | `repo` | runner-up |
 | `selection_bg` | claude, firefox, ghostty, gtk, helix, mako, mango, mousepad, qutebrowser, rofi, theme, waybar |
 | `selection_fg` | firefox, ghostty, gtk, helix, mango, mousepad, qutebrowser, rofi, theme, waybar, wlogout |
-| `shadow` | mango, theme |
+| `shadow` | hyprlock, mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mako, mango, mousepad, mpv, pi, rofi, swayosd, theme, waybar, wlogout |
 | `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, waybar |
 | `term_bg` | claude, ghostty, pi, theme |
