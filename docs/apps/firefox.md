@@ -2,7 +2,7 @@
 
 Firefox with palette-colored browser chrome; Chrome is the default browser.
 
-The profile has a fixed name: `profiles.ini` and `installs.ini` (linked) declare `~/.config/mozilla/firefox/default-release`, so `user.js` (enables `userChrome.css`) and `chrome/userChrome.css` are linked into it like any config, before Firefox first starts. Restart Firefox to see a new palette.
+The profile has a fixed name: `profiles.ini` and `installs.ini` (linked) declare `~/.config/mozilla/firefox/default-release`, so `user.js` (enables `userChrome.css`, turns off touchpad gestures: a two-finger sideways swipe scrolls instead of going back or forward, a pinch does not zoom) and `chrome/userChrome.css` are linked into it like any config, before Firefox first starts. Restart Firefox to see a new palette.
 
 ## Reference
 

@@ -6,6 +6,9 @@ Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock
   (`--ozone-platform-hint=auto`) and VA-API video decode/encode on the Intel GPU
   (`AcceleratedVideoDecodeLinuxGL,AcceleratedVideoEncoder`, the Chrome 143+ names from the Arch wiki).
   Check at `chrome://gpu` (Video Decode: Hardware accelerated).
+  No touchpad gestures, as in mango: `--disable-features=TouchpadOverscrollHistoryNavigation` (a
+  two-finger sideways swipe scrolls instead of going back or forward) and `--disable-pinch` (a pinch
+  does not zoom; ctrl+-/= do). Check at `chrome://version` (Command Line).
 - **Policies** (`/etc/opt/chrome/policies/managed/dotfiles.json`, every profile, shown at
   `chrome://policy`):
   - `ExtensionInstallForcelist`: uBlock Origin Lite (`ddkjiahejlhfcafbddmgiahcphecmpfh`). Chrome no
