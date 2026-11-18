@@ -1,24 +1,22 @@
-/* waybar, "taskbar": a 42px surface (44px window with its 1px ring) on the bottom edge, 8px in
-   from the sides, one control language: 28px controls 4px apart, radius 4, IBM Plex Sans 14 (the mockup's 24px
-   and 13px, opened up for legibility). No boxy pills, no powerline arrows: the design
-   mockup draws each module as a quiet chip on the bar.
-   The bar's ring is an inset hairline (listed last: GTK paints inset shadows in list order, the
-   later one on top, so the ring stays over the sheen), so it moves with the widget and needs no extra column. The
-   1px sheen on row 1 is the design's inset top highlight. The design's bevelled corners are a
-   plain 9px radius on the top corners here (GTK3 has no corner-shape); the bottom corners are
-   square where the bar sits on the screen edge.
-   A module's 2px level bar is its first background layer, a currentColor gradient sized by
-   levels.css from the lN state class that levels.json gives it (see that file). Icons are
-   -gtk-recolor() background layers: GTK's symbolic loader fills every shape, so stroked paths
-   carry class="stroke" (and class="success stroke" for the layout chevron's palette slot).
-   Background images paint above background-color, so the shared hover/pressed overlay sits under
-   a chip's tint exactly as it does in the design. */
+/* waybar, "instrument": a bottom bar after Teenage Engineering's hardware (OP-1, OP-Z, TX-6).
+   One flat, square-cornered 44px panel with a 1px ring; every control is a 28px key, radius 2,
+   drawn as a 1px outline, not a filled pill; IBM Plex Mono throughout, with the tiny spaced
+   capitals of a device's silkscreen for labels (the day, the date, every tooltip's NAME). The
+   viewed tag is a lit key (filled, its number in the bar color); an occupied tag has a 4x4 LED in
+   its corner. Each meter is a segmented 2px strip (2px on, 1px off) and the four encoder hues
+   (colors.css) tell the chips apart. Dividers are dotted rules, like a front panel's printed grid.
+   A module's meter is its first background layer, a currentColor pattern sized by levels.css from
+   the lN state class that levels.json gives it (see that file). Icons are -gtk-recolor()
+   background layers: GTK's symbolic loader fills every shape, so stroked paths carry
+   class="stroke" (and class="success stroke" for the layout chevron's palette slot).
+   Background images paint above background-color, so the shared hover overlay sits under a
+   chip's layers. */
 @import "colors.css";
 @import "levels.css";
 
 * {
-    font-family: "IBM Plex Sans";
-    font-size: 14px;
+    font-family: "IBM Plex Mono";
+    font-size: 13px;
     font-weight: 400;
     min-height: 0;
     border: none;
@@ -31,12 +29,11 @@
 label { background-size: 0% 2px, 14px 14px, 100% 100%; }
 
 window#waybar { background: transparent; color: @text; }
-/* 9px = the design's 8px radius plus the 1px inset ring; the bottom corners sit on the screen
-   edge. 9px padding = ring + 8px, the air above and below the controls */
+/* a square panel: the 1px inset ring, 9px padding = ring + 8px of air at the ends */
 window#waybar > box {
     background-color: @bar;
-    border-radius: 9px 9px 0 0;
-    box-shadow: inset 0 2px 0 alpha(@sheen, 0.05), inset 0 0 0 1px @edge;
+    border-radius: 0;
+    box-shadow: inset 0 0 0 1px @edge;
     padding: 0 9px;
 }
 
@@ -52,12 +49,12 @@ tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
 tooltip box {
     background-color: @bar;
     border: 1px solid @tipline;
-    border-radius: 4px;
+    border-radius: 2px;
     padding: 0;
     margin: -6px 2px -2px 2px;
 }
-tooltip label { color: @text; font-size: 13px; padding: 6px 10px 5px; }
-menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
+tooltip label { color: @text; font-size: 12px; padding: 6px 10px 5px; }
+menu { background-color: @bar; border: 1px solid @tipline; border-radius: 2px; }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
@@ -83,7 +80,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
     min-width: 28px;
     min-height: 28px;
     padding: 0;
-    border-radius: 4px;
+    border-radius: 2px;
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
@@ -116,11 +113,12 @@ box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-
     margin-left: 4px;
     margin-right: 4px;
     padding: 0 9px;
-    border-radius: 4px 0 4px 0;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
     color: @editor;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/power-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
     background-repeat: no-repeat;
     background-position: center, 0 0;
     background-size: 16px 16px, 100% 100%;
@@ -130,75 +128,54 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px @crit;
 }
 
-/* tags: 1-4 (mango's tag_num), 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
-   mark centered at the bottom); .empty resets it, .active and .urgent override it. The viewed
-   tag is the bar's one use of signal (a 14x2 mark and a tint under a bright number); an urgent
-   tag is warn, because a window there is asking. */
+/* tags: 1-4 (mango's tag_num) as a row of 28x28 keys, 2px apart. The base button is an occupied
+   tag: an outlined key with a 4x4 LED in its top-right corner. .empty is an unlit key (a faint
+   outline, a dim number, no LED); the viewed tag is the lit key, filled with signal and its number
+   in the bar color (the bar's one use of signal); an urgent tag is crit, ring and LED, and its
+   ring pulses warn twice. */
 #workspaces { padding: 0; background: transparent; }
-#workspaces button {
+#workspaces button, #custom-special {
     min-width: 28px;
     min-height: 28px;
     margin: 0 2px 0 0;
     padding: 0;
     border: none;
-    border-radius: 4px;
-    box-shadow: none;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
     background-color: transparent;
-    background-image: linear-gradient(@dim, @dim);
+    background-image: linear-gradient(@editor, @editor);
     background-repeat: no-repeat;
-    background-position: center bottom;
-    background-size: 4px 2px;
+    background-position: 20px 4px;
+    background-size: 4px 4px;
     color: @text;
     font-weight: 500;
     font-feature-settings: "tnum";
 }
 #workspaces button label { margin: 0; padding: 0; border: none; box-shadow: none; }
 #workspaces button:last-child { margin-right: 0; }
-#workspaces button.empty {
+#workspaces button.empty, #custom-special.empty {
     color: @dim;
     font-weight: 400;
     background-image: none;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.10);
 }
-#workspaces button.active {
-    color: @text;
-    font-weight: 500;
-    background-image: linear-gradient(@signal, @signal),
-                      linear-gradient(alpha(@signal, 0.24), alpha(@signal, 0.24));
-    background-size: 14px 2px, 100% 100%;
-    background-position: center bottom, 0 0;
+#workspaces button.active, #custom-special.active,
+#workspaces button.active:hover, box:hover > #custom-special.active {
+    color: @bar;
+    font-weight: 600;
+    background-color: @signal;
+    background-image: none;
+    box-shadow: none;
 }
 #workspaces button.urgent {
     color: @crit;
     font-weight: 500;
     background-image: linear-gradient(@crit, @crit);
-    background-size: 4px 2px;
-    background-position: center bottom;
     box-shadow: inset 0 0 0 1px @crit;
     animation: tburg 1.2s ease-in-out 2;
 }
-/* tag 0, mango's special tag (custom/special), after tag 4 as one more tag button: the same
-   occupied mark, empty and active looks */
-#custom-special {
-    min-width: 28px;
-    min-height: 28px;
-    margin-left: -2px;
-    padding: 0;
-    border-radius: 4px;
-    color: @text;
-    font-weight: 500;
-    background-color: transparent;
-    background-image: linear-gradient(@dim, @dim);
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    background-size: 4px 2px;
-}
-#custom-special.empty { color: @dim; font-weight: 400; background-image: none; }
-#custom-special.active {
-    background-image: linear-gradient(@signal, @signal),
-                      linear-gradient(alpha(@signal, 0.24), alpha(@signal, 0.24));
-    background-size: 14px 2px, 100% 100%;
-    background-position: center bottom, 0 0;
-}
+/* tag 0, mango's special tag (custom/special), after tag 4 as one more key */
+#custom-special { margin: 8px 0 8px -2px; }
 box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
 #workspaces button:hover { background-color: alpha(@editor, 0.06); }
 #workspaces button:active { background-color: alpha(@editor, 0.10); }
@@ -209,15 +186,17 @@ box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
     100% { box-shadow: inset 0 0 0 1px @warn; }
 }
 
-/* a 16px rule: 44px window - 2 x 14px margin; the 1px label must not stretch it */
+/* a dotted 16px rule (1px dots, 2px apart), a front panel's printed grid: 44px window - 2 x 14px
+   margin; the 1px label must not stretch it */
 #custom-divider {
     min-width: 1px;
     min-height: 16px;
-    margin: 14px 0;
+    margin: 14px 2px;
     padding: 0;
     border-radius: 0;
     font-size: 1px;
-    background-color: alpha(@editor, 0.28);
+    background-color: transparent;
+    background-image: repeating-linear-gradient(to bottom, alpha(@editor, 0.5) 0px, alpha(@editor, 0.5) 1px, transparent 1px, transparent 3px);
 }
 
 /* 46x28: the drawable layout glyph at 8px and the design's 10px chevron at 30px. The chevron is
@@ -226,7 +205,7 @@ box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
     min-width: 46px;
     min-height: 28px;
     padding: 0;
-    border-radius: 4px;
+    border-radius: 2px;
     color: @text;
     background-repeat: no-repeat;
     background-position: 8px center, 30px center;
@@ -254,14 +233,15 @@ box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
     min-height: 28px;
     margin: 8px 0 8px 4px;
     padding: 0 8px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-weight: 600;
     color: @text;
-    background-color: alpha(@text, 0.08);
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px alpha(@text, 0.30);
 }
 /* a pinned window shows on every tag until unpinned: amber, like its border, so it is never a
    surprise; on top and minimized only describe a window and stay neutral */
-#custom-winstate.pinned { color: @warn; background-color: alpha(@warn, 0.12); }
+#custom-winstate.pinned { color: @warn; box-shadow: inset 0 0 0 1px @warn; }
 
 /* the open key mode (super+esc, super+n, super+m): the chip shows only while a mode is open and
    names it, so it needs no hue of its own */
@@ -269,10 +249,11 @@ box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
     min-height: 28px;
     margin: 8px 0 8px 4px;
     padding: 0 8px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-weight: 600;
     color: @text;
-    background-color: alpha(@text, 0.08);
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px alpha(@text, 0.30);
 }
 
 /* the windows in view, one chip each (custom/win#1..6, fed by waybar-windows): the focused one
@@ -283,47 +264,49 @@ box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
     min-height: 28px;
     margin: 8px 0;
     padding: 0 10px;
-    border-radius: 4px;
+    border-radius: 2px;
     color: @dim;
     background-color: transparent;
 }
-#custom-win.focused { color: @text; font-weight: 500; background-color: alpha(@signal, 0.24); }
+#custom-win.focused { color: @text; font-weight: 500; box-shadow: inset 0 -2px 0 @signal; }
 #custom-win.more { color: @dim; font-feature-settings: "tnum"; }
 box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; background-color: alpha(@editor, 0.06); }
 
-/* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime.
-   The three labels paint the pill (day and date carry its rounded ends) and keep the 8px inset as
-   their own margin, like every other module: GTK3 counts a CSS margin inside the allocation, and
-   the clock anchors its tooltip to the time label's allocation, so a margin on the group would
-   drop the clock's tooltip 8px below every other one. Hovering the group lights all three. */
+/* the clock: the device's display, one recessed 28px strip (waybar names a group's box after the
+   group, so group/datetime is #datetime). The three labels paint it (day and date carry its ends)
+   and keep the 8px inset as their own margin, like every other module: GTK3 counts a CSS margin
+   inside the allocation, and the clock anchors its tooltip to the time label's allocation, so a
+   margin on the group would drop the clock's tooltip 8px below every other one. Day and date are
+   the silkscreen: 10px spaced capitals (date prints them); the time is the readout. */
 #datetime { margin: 0; padding: 0; background: none; }
-#clock, #custom-date {
+#custom-day, #clock, #custom-date {
     min-height: 28px;
     margin: 8px 0;
     border-radius: 0;
     background-color: transparent;
-    background-image: linear-gradient(alpha(@editor, 0.06), alpha(@editor, 0.06));
+    background-image: linear-gradient(alpha(@editor, 0.08), alpha(@editor, 0.08));
     background-repeat: no-repeat;
     background-size: 100% 100%; /* the bare `label` rule zeroes a first layer */
 }
-#datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
-#clock.day { padding: 0 5px 0 12px; border-radius: 4px 0 0 4px; color: @dim; }
-/* the wall clock is live (Quiet Instrument: cyan means real time); the day and date stay labels */
-#clock.time { padding: 0 5px; color: @live; font-weight: 600; font-feature-settings: "tnum"; }
-#custom-date { padding: 0 12px 0 5px; border-radius: 0 4px 4px 0; color: @dim; }
-#datetime:hover #clock.day, #datetime:hover #custom-date { color: @editor; }
+#datetime:hover #custom-day, #datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
+#custom-day { padding: 0 6px 0 12px; border-radius: 2px 0 0 2px; color: @dim; font-size: 10px; letter-spacing: 2px; }
+/* the wall clock is live (Quiet Instrument: real time) */
+#clock.time { padding: 0 6px; color: @live; font-size: 15px; font-weight: 600; font-feature-settings: "tnum"; }
+#custom-date { padding: 0 12px 0 6px; border-radius: 0 2px 2px 0; color: @dim; font-size: 10px; letter-spacing: 2px; }
+#datetime:hover #custom-day, #datetime:hover #custom-date { color: @editor; }
 
 /* chips: 7px left edge, 14px icon, 5px gap, value, 7px right edge. The level, icon and tint layers come from the
    module's own rule; levels.css only changes the first layer's width and range icons/skins. */
 #network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
     min-height: 28px;
     padding: 0 7px 0 26px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-weight: 500;
     font-feature-settings: "tnum";
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: left bottom, 7px center, 0 0;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
 }
 
 /* route: a connected network wears the connection color on its icon, name and signal bar (the
@@ -331,20 +314,20 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
 #network {
     -gtk-icon-palette: success @live;
     color: @live;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 /* skins after the @import win over the lN range at the same id+class specificity */
 #network.ethernet {
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/ethernet-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
     background-size: 100% 2px, 14px 14px, 100% 100%;
 }
 #network.disconnected {
     color: @dim;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/wifi-off-symbolic.svg")),
                       none;
     background-size: 0% 2px, 14px 14px, 100% 100%;
@@ -355,13 +338,13 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     -gtk-icon-palette: success @i_audio;
     color: @editor;
     min-width: 29px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/audio-2-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 #pulseaudio.muted {
     color: @dim;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/audio-muted-symbolic.svg")),
                       none;
     box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
@@ -372,17 +355,17 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     -gtk-icon-palette: success @i_cpu;
     color: @editor;
     min-width: 29px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/cpu-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 #memory {
     -gtk-icon-palette: success @i_mem;
     color: @editor;
     min-width: 29px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/mem-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 /* waybar's built-in temperature module ignores "states" (its chip never gets an lN class), so this
    is custom/temperature: waybar-temperature prints the lN class itself (min(100, C)), and
@@ -391,20 +374,20 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     -gtk-icon-palette: success @i_temp;
     color: @editor;
     min-width: 22px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 #custom-temperature.high {
     color: @warn;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
                       linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #custom-temperature.critical {
     color: @crit;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
                       linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
@@ -413,9 +396,9 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     -gtk-icon-palette: success @i_disk;
     color: @editor;
     min-width: 29px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/disk-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 
 /* battery: level, 23x10 outline at 7px, capacity-wide fill at 9px, bolt at 35px, tint. The
@@ -428,21 +411,21 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     color: @editor;
     min-width: 29px;
     padding: 0 7px 0 35px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
                       none,
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
     background-position: left bottom, 7px center, 9px center, 35px center, 0 0;
     background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%;
 }
 #battery.charging, #battery.plugged, #battery.full, #battery.not-charging {
     padding-left: 50px;
-    background-image: linear-gradient(currentColor, currentColor),
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
                       -gtk-recolor(url("icons/battery-symbolic.svg")),
                       linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/bolt-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
 }
 #battery.charging { color: @ok; }
 
@@ -451,11 +434,12 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     min-width: 14px;
     min-height: 28px;
     padding: 0 7px;
-    border-radius: 4px;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
     color: @editor;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/moon-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+                      none;
     background-repeat: no-repeat;
     background-position: center, 0 0;
     background-size: 14px 14px, 100% 100%;
@@ -474,7 +458,7 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     min-width: 14px;
     min-height: 28px;
     padding: 0 7px;
-    border-radius: 4px;
+    border-radius: 2px;
     color: @crit;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/record-symbolic.svg"));
@@ -490,7 +474,7 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     min-width: 16px;
     min-height: 28px;
     padding: 0 6px;
-    border-radius: 4px;
+    border-radius: 2px;
     background-color: transparent;
     background-image: -gtk-recolor(url("icons/bell-symbolic.svg"));
     background-repeat: no-repeat;
@@ -527,7 +511,7 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     -gtk-icon-palette: success @i_bt;
     min-height: 28px;
     padding: 0 6px 0 22px;
-    border-radius: 4px;
+    border-radius: 2px;
     color: @editor;
     font-feature-settings: "tnum";
     background-color: transparent;

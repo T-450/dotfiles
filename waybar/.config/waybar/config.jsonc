@@ -1,6 +1,6 @@
-// waybar, "taskbar": one flat surface with 28px controls 4px apart (style.css). Left: the launcher,
-// tags 1-4 and tag 0 (the special tag), the layout button, then the windows in view. Center: one
-// clock pill. Right: recording, the live chips (network, volume, cpu, memory, temperature, disk, battery),
+// waybar, "instrument": one flat panel of 28px keys 4px apart (style.css), after Teenage Engineering. Left: the launcher,
+// tags 1-4 and tag 0 (the special tag), the layout button, then the windows in view. Center: the
+// clock display. Right: recording, the live chips (network, volume, cpu, memory, temperature, disk, battery),
 // a divider, night light, wallpaper, bluetooth and the tray, a divider, the notification bell, a
 // divider, and the red power chip in the corner.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
@@ -32,17 +32,17 @@
     // icon-only 24x24 buttons: the label is a zero-width space, style.css draws the SVG
     "custom/start": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>launcher</span>  <span font_desc='IBM Plex Sans Medium 11px' fgalpha='82%'>Super D</span>",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>LAUNCHER</span>  <span font_desc='IBM Plex Mono Medium 10px' letter_spacing='1024' fgalpha='82%'>SUPER D</span>",
         "on-click": "rofi -show drun"
     },
     "custom/wallpaper": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>wallpaper</span>  Open picker  <span font_desc='IBM Plex Sans Medium 11px' fgalpha='82%'>Super W</span>",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>WALLPAPER</span>  Open picker  <span font_desc='IBM Plex Mono Medium 10px' letter_spacing='1024' fgalpha='82%'>SUPER W</span>",
         "on-click": "waypaper"
     },
     "custom/power": {
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>power</span>  Session menu  <span font_desc='IBM Plex Sans Medium 11px' fgalpha='82%'>Super Esc  P</span>",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>POWER</span>  Session menu  <span font_desc='IBM Plex Mono Medium 10px' letter_spacing='1024' fgalpha='82%'>SUPER ESC  P</span>",
         "on-click": "wlogout -b 6 --protocol layer-shell"
     },
 
@@ -158,15 +158,16 @@
     // one pill: day, time (calendar tooltip) and date; style.css styles the group's box as #datetime
     "group/datetime": {
         "orientation": "horizontal",
-        "modules": ["clock#day", "clock#time", "custom/date"]
+        "modules": ["custom/day", "clock#time", "custom/date"]
     },
-    "clock#day": { "format": "{:%a}", "tooltip": false },
+    // the day and date in capitals, a device's silkscreen (waybar's clock can't upper-case)
+    "custom/day": { "exec": "date '+%^a'", "interval": 60, "tooltip": false },
     "clock#time": {
         "format": "{:%H:%M}",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>calendar</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
     },
-    // waybar's clock zero-pads the day; a custom module keeps "12 Nov" (the design's form)
-    "custom/date": { "exec": "date '+%-d %b'", "interval": 60 },
+    // waybar's clock zero-pads the day; a custom module keeps "12 NOV"
+    "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
 
     "network": {
         "format-wifi": "{essid}",
@@ -176,14 +177,14 @@
         // a long SSID ends in an ellipsis before it reaches the centered clock
         "max-length": 16,
         "align": 1,
-        "tooltip-format-wifi": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>wi-fi</span>  {essid} · {signalStrength}%\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click toggles speeds</span>",
-        "tooltip-format-ethernet": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>ethernet</span>  {ifname} · connected\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click toggles speeds</span>",
-        "tooltip-format-disconnected": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>network</span>  Offline\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click toggles speeds</span>"
+        "tooltip-format-wifi": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click toggles speeds</span>",
+        "tooltip-format-ethernet": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click toggles speeds</span>",
+        "tooltip-format-disconnected": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>NETWORK</span>  Offline\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click toggles speeds</span>"
     },
     "pulseaudio": {
         "format": "{volume}%",
         "format-muted": "muted",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>volume</span>  {volume}%\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>VOLUME</span>  {volume}%\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
         "align": 1,
         "on-click": "pamixer -t",
         "on-click-right": "pamixer -t",
@@ -194,14 +195,14 @@
     "cpu": {
         "interval": 5,
         "format": "{usage}%",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>cpu</span>  {usage}%",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>CPU</span>  {usage}%",
         "align": 1
     },
     "memory": {
         "interval": 5,
         "format": "{percentage}%",
         "align": 1,
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>memory</span>  {percentage}%"
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>MEMORY</span>  {percentage}%"
     },
     // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
     // prints the lN level class itself (min(100, C)) and "critical" from 80 C
@@ -216,17 +217,17 @@
         "interval": 30,
         "paths": ["/"],
         "format": "{percentage_used}%",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>disk</span>  {percentage_used}%",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>DISK</span>  {percentage_used}%",
         "align": 1
     },
     "battery": {
         "format": "{capacity}%",
         "format-charging": "{capacity}%",
         "format-plugged": "{capacity}%",
-        "tooltip-format-discharging": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>battery</span>  {capacity}% · on battery\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click opens the session menu</span>",
-        "tooltip-format-charging": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>battery</span>  {capacity}% · charging\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click opens the session menu</span>",
-        "tooltip-format-plugged": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>battery</span>  {capacity}% · plugged in\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click opens the session menu</span>",
-        "tooltip-format-full": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>battery</span>  {capacity}% · full\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-discharging": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BATTERY</span>  {capacity}% · on battery\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-charging": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BATTERY</span>  {capacity}% · charging\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-plugged": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BATTERY</span>  {capacity}% · plugged in\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click opens the session menu</span>",
+        "tooltip-format-full": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BATTERY</span>  {capacity}% · full\n<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click opens the session menu</span>",
         "align": 1,
         "on-click": "wlogout -b 6 --protocol layer-shell"
     },
@@ -247,7 +248,7 @@
         "exec": "~/.local/bin/gpurecord status",
         "signal": 8,
         "format": "\u200b",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>recording</span>  Click stops",
+        "tooltip-format": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>RECORDING</span>  Click stops",
         "on-click": "~/.local/bin/gpurecord"
     },
 
@@ -268,10 +269,10 @@
         "format-off": "\u200b",
         "format-disabled": "\u200b",
         "format-no-controller": "",
-        "tooltip-format-on": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>bluetooth</span>  On · none connected",
-        "tooltip-format-connected": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>bluetooth</span>  {num_connections} connected",
-        "tooltip-format-off": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>bluetooth</span>  Off",
-        "tooltip-format-disabled": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>bluetooth</span>  Off",
+        "tooltip-format-on": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BLUETOOTH</span>  On · none connected",
+        "tooltip-format-connected": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BLUETOOTH</span>  {num_connections} connected",
+        "tooltip-format-off": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BLUETOOTH</span>  Off",
+        "tooltip-format-disabled": "<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>BLUETOOTH</span>  Off",
         "on-click": "blueman-manager"
     },
 
