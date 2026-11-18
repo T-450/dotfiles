@@ -36,7 +36,7 @@ The leader is space. Tools come from mise, so start vim from a terminal ([mise](
 |---|---|
 | `space f` | format the whole file and say what happened: formatted, already formatted, the formatter's error (the file stays as it was), or that the tool is not on `PATH`. A new buffer needs a name first: the formatters read it to pick a language |
 | `gq{motion}` | format a range with the same formatter (`formatprg`); a failing formatter's error replaces the range, `u` undoes it |
-| `space m` | save, then lint the file (`:make`) into the quickfix list, opened when there is something in it, and say the count of problems |
+| `space m` | save, then lint the file (`:make`) into the quickfix list, opened when there is something in it, and say the count of problems, or the linter's own error when it cannot run (cargo outside a crate) |
 | `]q` / `[q` | next / previous quickfix entry |
 
 | Filetype | Formatter | Linter (vim's compiler plugin) |
@@ -45,11 +45,11 @@ The leader is space. Tools come from mise, so start vim from a terminal ([mise](
 | python | ruff format | ruff |
 | javascript, typescript, json, jsonc | biome format | biome |
 | toml | tombi format | tombi |
-| go | gofmt | `go vet` (vim's plugin runs `go build`, which leaves a binary) |
+| go | gofmt | golangci-lint, on the file's package (run inside its module) |
 | yaml | yamlfmt | none |
 | markdown | prettier | none |
-| rust | rustfmt (edition 2024) | none |
-| zig | `zig fmt` | none |
+| rust | rustfmt (edition 2024) | clippy, on the crate (`cargo clippy`; start vim at the workspace root, where cargo's paths begin) |
+| zig | `zig fmt` | `zig ast-check` |
 
 ## Reference
 

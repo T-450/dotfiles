@@ -79,7 +79,8 @@ endfunction
 call s:Colors()
 
 " Formatters and linters from mise, set only when vim can run them (started from zsh): gq and
-" space f format, :make (space m) lints into the quickfix list.
+" space f format, :make (space m) lints into the quickfix list. A linter is a compiler plugin
+" (its errorformat); :make runs its makeprg on the file.
 let s:tools = {
 	\ 'sh': ['shfmt --filename=%:S', 'shellcheck'],
 	\ 'bash': ['shfmt --filename=%:S', 'shellcheck'],
@@ -91,29 +92,47 @@ let s:tools = {
 	\ 'yaml': ['yamlfmt -', ''],
 	\ 'markdown': ['prettier --stdin-filepath=%:S', ''],
 	\ 'go': ['gofmt', 'go'],
-	\ 'rust': ['rustfmt --edition=2024', ''],
-	\ 'zig': ['zig fmt --stdin', ''],
+	\ 'rust': ['rustfmt --edition=2024', 'cargo'],
+	\ 'zig': ['zig fmt --stdin', 'zig'],
 	\ 'toml': ['tombi format -', 'tombi'],
 	\ }
-" go's compiler plugin runs `go build`, which leaves a binary next to a main package; vim's tombi
-" plugin misreads tombi 1's version line and pipes through sed, which :make cannot run.
-let s:makeprg = {'go': 'go vet', 'tombi': 'env NO_COLOR=1 tombi lint'}
+" Linters whose plugin runs the wrong command: [the program, the whole command, an errorformat
+" line to put first, for its own failures]. go's plugin runs
+" `go build` (a binary left next to a main package); golangci-lint lints the file's package and must
+" run inside its module. cargo's plugin runs plain cargo: clippy lints the crate, and reports paths
+" from the workspace root, so vim should run from there. zig's plugin runs `zig <args> file`.
+" vim's tombi plugin misreads tombi 1's version line and pipes through sed, which :make cannot run.
+let s:makeprg = {
+	\ 'go': ['golangci-lint', 'cd %:p:h:S && golangci-lint run --show-stats=false --path-mode=abs --output.text.print-issued-lines=false --output.text.colors=false .', 'level=error msg="%m"'],
+	\ 'cargo': ['cargo', 'cargo clippy --quiet --message-format=short'],
+	\ 'zig': ['zig', 'zig ast-check %:S'],
+	\ 'tombi': ['tombi', 'env NO_COLOR=1 tombi lint %:S'],
+	\ }
+
+" The program a filetype's linter runs: the override's, or the compiler plugin's namesake.
+function s:Linter()
+	let compiler = get(s:tools, &filetype, ['', ''])[1]
+	return get(s:makeprg, compiler, [compiler])[0]
+endfunction
+
 function s:Tools()
-	let [fmt, lint] = get(s:tools, &filetype, ['', ''])
+	let [fmt, compiler] = get(s:tools, &filetype, ['', ''])
 	if !empty(fmt) && executable(split(fmt)[0])
 		let &l:formatprg = fmt
 	endif
-	if !empty(lint) && executable(lint)
-		execute 'compiler' lint
-		if has_key(s:makeprg, lint)
-			let &l:makeprg = s:makeprg[lint]
+	if !empty(compiler) && executable(s:Linter())
+		execute 'compiler' compiler
+		let [cmd, efm] = (get(s:makeprg, compiler, ['', &l:makeprg .. ' %:S']) + [''])[1:2]
+		let &l:makeprg = cmd
+		if !empty(efm)
+			let &l:errorformat = efm .. ',' .. &l:errorformat
 		endif
 	endif
 endfunction
 
 " Why a filetype has no formatter or linter: none in s:tools, or its tool is not on PATH.
 function s:Missing(kind)
-	let tool = get(s:tools, &filetype, ['', ''])[a:kind == 'formatter' ? 0 : 1]
+	let tool = a:kind == 'formatter' ? get(s:tools, &filetype, [''])[0] : s:Linter()
 	if empty(tool)
 		return 'no ' .. a:kind .. ' for ' .. (empty(&filetype) ? 'this file' : &filetype)
 	endif
@@ -175,13 +194,22 @@ function s:Lint()
 		call s:Say('WarningMsg', s:Missing('linter'))
 		return
 	endif
-	let linter = b:current_compiler
+	let linter = s:Linter()
 	update
-	silent make %:S
+	silent make
 	cwindow
 	redraw!
-	let n = len(filter(getqflist(), 'v:val.valid'))
-	call s:Say(n ? 'WarningMsg' : 'MoreMsg', linter .. ': ' .. (n ? n .. (n == 1 ? ' problem' : ' problems') : 'no problems'))
+	" a problem points into a file; an error that points nowhere is the linter itself failing
+	" (cargo outside a crate, golangci-lint outside a module)
+	let errors = filter(getqflist(), 'v:val.valid')
+	let n = len(filter(copy(errors), 'v:val.bufnr'))
+	if n
+		call s:Say('WarningMsg', linter .. ': ' .. n .. (n == 1 ? ' problem' : ' problems'))
+	elseif !empty(errors)
+		call s:Say('ErrorMsg', s:Fit(linter .. ': ' .. s:Summary(map(errors, 'v:val.text'))))
+	else
+		call s:Say('MoreMsg', linter .. ': no problems')
+	endif
 endfunction
 
 " Markdown: wraps at words, continues - * + lists and > quotes on Enter and o, and renders in
