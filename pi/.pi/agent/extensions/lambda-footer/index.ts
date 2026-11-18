@@ -1,8 +1,9 @@
 // lambda-footer: Pi's footer as the shell prompt (zsh/.zshrc: oh-my-zsh's cdimascio-lambda theme),
-// `λ dotfiles git:(main) ✗`, in the theme's own terminal colors (SGR codes, so the terminal's palette
-// draws it exactly as it draws the prompt): λ bold green, or bold red after a failed tool as after a
-// failed command; the directory's last component cyan; git:( bold blue, the branch red, ) blue, and
-// a yellow ✗ when `git status --porcelain` lists anything (oh-my-zsh's parse_git_dirty). Right: the
+// `λ dotfiles git:(main) ✗`, in the prompt's terminal colors (SGR codes, so the terminal's palette
+// draws it exactly as it draws the prompt; .zshrc sets them after Colibri): λ bold bright green, or
+// bold red after a failed tool as after a failed command; the directory's last component bright
+// magenta; git:( ) bright blue, the branch yellow, and a bright red ✗ when `git status --porcelain`
+// lists anything (oh-my-zsh's parse_git_dirty). Right: the
 // model, thinking level, context and session cost, dim.
 import { execFile } from "node:child_process";
 import { basename } from "node:path";
@@ -49,10 +50,10 @@ export default function lambdaFooter(pi: ExtensionAPI) {
 				render(width: number): string[] {
 					const dir = cwd === homedir() ? "~" : basename(cwd);
 					const branch = footerData.getGitBranch();
-					let left = `${sgr(failed ? "1;31" : "1;32")}λ ${RESET}${sgr("36")}${dir}${RESET} `;
+					let left = `${sgr(failed ? "1;31" : "1;92")}λ ${RESET}${sgr("95")}${dir}${RESET} `;
 					if (branch) {
-						left += `${sgr("1;34")}git:(${sgr("31")}${branch}`;
-						left += dirty ? `${sgr("34")}) ${sgr("33")}✗` : `${sgr("34")})`;
+						left += `${sgr("94")}git:(${sgr("33")}${branch}`;
+						left += dirty ? `${sgr("94")}) ${sgr("91")}✗` : `${sgr("94")})`;
 						left += RESET;
 					}
 

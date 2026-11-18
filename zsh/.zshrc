@@ -19,7 +19,7 @@ zstyle ':omz:update' mode disabled
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # cdimascio's lambda (zsh/pkg/zsh-theme-cdimascio-lambda): λ green after success, red after a
-# failure, then the directory and the git branch, in the terminal's palette colors
+# failure, then the directory and the git branch; recolored after oh-my-zsh loads (below)
 ZSH_THEME="cdimascio-lambda"
 
 # Set list of themes to pick from when loading at random
@@ -88,6 +88,16 @@ ZSH_THEME="cdimascio-lambda"
 plugins=(git mise node docker)
 
 source $ZSH/oh-my-zsh.sh
+
+# the lambda prompt in Colibri's colors, as ANSI numbers so every palette draws it: λ mint (bright
+# green), bold red after a failed command; the directory lilac (bright magenta); git:( ) lavender
+# (bright blue), the branch honey (yellow), a dirty ✗ diff red (bright red). Pi's footer
+# (pi/.pi/agent/extensions/lambda-footer) uses the same colors.
+PROMPT='%(?:%B%F{10}λ%f%b :%B%F{1}λ%f%b ) %F{13}%c%f $(git_prompt_info)'
+ZSH_THEME_GIT_PROMPT_PREFIX="%F{12}git:(%F{3}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%f "
+ZSH_THEME_GIT_PROMPT_DIRTY="%F{12}) %F{9}✗"
+ZSH_THEME_GIT_PROMPT_CLEAN="%F{12})"
 
 # the tools from zsh/packages. fzf-tab turns the completion menu into fzf, so it loads after compinit
 # (oh-my-zsh runs it) and before plugins that wrap the line editor's widgets; syntax highlighting
