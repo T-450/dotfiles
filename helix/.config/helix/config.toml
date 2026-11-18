@@ -49,11 +49,15 @@ path = "file"
 [editor.cmdline]
 style = "popup"
 
-# file-type icons in pickers and the explorer, kind icons in completion (JetBrains Mono Nerd Font)
 # notification popups (top right) take their corners from here, not from rounded-corners
 [editor.notifications.border]
 radius = 0
 
+# no drop shadow: the fork paints it as a solid black block offset under each popup
+[editor.notifications.shadow]
+enable = false
+
+# file-type icons in pickers and the explorer, kind icons in completion (JetBrains Mono Nerd Font)
 [icons.mime]
 enabled = true
 
