@@ -137,7 +137,7 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 alias zc="helix ~/.zshrc"
 # the modern tools under the old names; these replace oh-my-zsh's ls and grep aliases. A script or
 # `command grep` still gets the original.
-alias ls='eza --icons'
+alias ls='eza --icons=auto'
 alias cat='bat'
 alias find='fd'
 alias grep='rg'
