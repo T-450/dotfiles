@@ -90,6 +90,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.0.3.u1-1 |
 | hyprlock | `hyprlock` | 0.9.7-2 |
+| imv | `imv` | not installed |
 | lazygit | `lazygit` | 0.66.3-1 |
 | mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.5-1 |
