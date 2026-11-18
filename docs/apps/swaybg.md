@@ -9,7 +9,10 @@ original source and license are unknown, so the repo never holds it.
 as `~/.config/swaybg/wallpaper.png`.
 
 `swaybg.service` shows `~/.local/state/wallpaper/current` with `-m fill` over the palette's desktop
-color, and `theme set` restarts it. That link is the current wallpaper: `wallpaper-set FILE`
+color, softly blurred: `wallpaper-blurred` renders a blurred copy once per image (ImageMagick, at a
+quarter of 4K and scaled back up, about half a second) into `~/.cache/wallpaper/`, so the desktop
+and mango's overview sit on a blur. The lock screen and video wallpapers stay sharp. `theme set`
+restarts it. That link is the current wallpaper: `wallpaper-set FILE`
 points it at FILE and restarts swaybg ([waypaper](waypaper.md) runs it after each pick), and
 `setup.sh` points it back at `wallpaper.png` when it is missing or its file is gone. It lives in
 `~/.local/state`, outside the repo, so a pick survives logins and `theme set`.
@@ -47,6 +50,7 @@ desktop loop is a pick: `wallpaper-set /usr/share/backgrounds/cosmic-storm/cosmi
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/systemd/user/swaybg.service`
+- `~/.local/bin/wallpaper-blurred`
 - `~/.local/bin/wallpaper-is`
 - `~/.local/bin/wallpaper-set`
 
