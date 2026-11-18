@@ -140,7 +140,7 @@ move window left	Move window left
 next tag	Next tag
 previous tag	Previous tag
 tag 3	Show tag
-move to tag	Move window to tag
+move to tag	Carry window to tag
 workspace	Show tag|Tag ▸
 all tags	Show all tags
 monitor	Monitor ▸

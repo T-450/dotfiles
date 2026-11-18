@@ -36,7 +36,7 @@ SELF = os.path.realpath(__file__)
 
 # mango's dispatchers -> a description, for binds without a `#: ` line; {0} is the first argument
 ACTIONS = {
-    "view": "Show tag {0}", "tag": "Move window to tag {0}", "toggleview": "Also show tag {0}",
+    "view": "Show tag {0}", "tag": "Carry window to tag {0}", "toggleview": "Also show tag {0}",
     "toggletag": "Also put window on tag {0}", "killclient": "Close window", "setkeymode": "Mode: {0}",
 }
 SYNONYMS = {  # extra words for the generated rows
