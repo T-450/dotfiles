@@ -62,6 +62,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | firefox | `firefox` | 160.0-1 |
 | fonts | `inter-font` | 4.1-1 |
 | fonts | `ttf-jetbrains-mono-nerd` | 3.5.1-2 |
+| fonts | `ttf-lilex-nerd` | not installed |
 | fonts | `noto-fonts` | 1:2026.11.01-1 |
 | fonts | `noto-fonts-cjk` | 20240730-1 |
 | fonts | `noto-fonts-emoji` | 1:20260924-1 |

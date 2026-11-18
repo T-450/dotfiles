@@ -3,11 +3,11 @@
 # `theme set` reloads every open window (ghostty/reload.sh sends SIGUSR2).
 config-file = colors.ghostty
 
-font-family = JetBrainsMono Nerd Font
+font-family = Lilex Nerd Font
 font-size   = 12
 # text as kitty, the terminal before Ghostty, drew it, pixel for pixel: linear glyph blending
-# (Ghostty's default, linear-corrected, draws it lighter) and 10x22 px cells (Ghostty's own line
-# height for this font is 21 px). fastfetch's logo is sized for these cells.
+# (Ghostty's default, linear-corrected, draws it lighter) and 10x22 px cells (Lilex's line at 12 pt
+# is 20.8 px). fastfetch's logo is sized for these cells.
 alpha-blending     = linear
 adjust-cell-height = 1
 # keep text from vanishing when a program picks a foreground the same as its background. Ghostty
