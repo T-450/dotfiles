@@ -16,7 +16,7 @@ Copy and paste work like in GUI apps:
 - Selecting text fills the primary selection, so middle click pastes it anywhere.
 - **Ctrl+click** opens a link (Ghostty underlines it while Ctrl is held).
 
-Text looks exactly as it did in kitty: `alpha-blending = linear` draws the same glyphs (Ghostty's default draws them lighter), and `adjust-cell-height = 1` makes the cells 10x22 px (Lilex Nerd Font, the terminal's face, has a 20.8 px line at 12 pt and the same 10 px advance as JetBrains Mono). fastfetch's logo is sized for those cells. Window padding is 1 px narrower on the left: Ghostty takes whole points only.
+Text looks exactly as it did in kitty: `alpha-blending = linear` draws the same glyphs (Ghostty's default draws them lighter), and `adjust-cell-height = 1` makes the cells 10x22 px (Lilex Nerd Font, the terminal's face, has a 20.8 px line at 12 pt and the same 10 px advance as JetBrains Mono). Window padding is 1 px narrower on the left: Ghostty takes whole points only.
 
 `minimum-contrast = 1.1` keeps text from disappearing when a program draws it in its own background color. Ghostty snaps text below the floor to pure white, so a higher floor (3) would whiten the palette's deliberate dim tiers: `fg_disabled` on raised panels (2.5-2.8:1) and helix's whitespace dots (1.5:1). No custom shader: each one either runs an animation loop while focused or samples and warps the glyphs, and it runs after the contrast check.
 

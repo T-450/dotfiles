@@ -1,4 +1,5 @@
 # rendered by theme/.local/bin/theme from the matching .tmpl (or by setup.sh); never edit
 /.config/fastfetch/config.jsonc
+/logo.svg
 /.config/fastfetch/logo.png
 /render.stamp
