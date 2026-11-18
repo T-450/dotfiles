@@ -26,7 +26,8 @@ mk foot/palettes/dark.toml
 mk bar/.config/systemd/user/bar.service
 mk bar/.local/bin/barcmd
 mk zsh/.zshrc
-view() { (cd "$HOME" && find . -mindepth 1 \( -type l -printf '%p -> %l\n' \) -o \( -type d -printf '%p/\n' \) -o -printf '%p FILE\n' | sort); }
+# each run adds its own log under ~/.local/state, one per second: not the home's state
+view() { (cd "$HOME" && find . -mindepth 1 -path ./.local/state -prune -o \( -type l -printf '%p -> %l\n' \) -o \( -type d -printf '%p/\n' \) -o -printf '%p FILE\n' | sort); }
 run() { "$repo/install.sh" --home "$HOME"; }
 
 out=$(run) || fail "fresh home links" "$out"
