@@ -1,8 +1,9 @@
 # Colibri: archseer/colibri.vim (colors/colibri.vim, background=dark), by Blaž Hrastnik. Hues
 # sampled from a hummingbird photo: deep purples, lavender text, few accents. The comment on each
 # role is the colibri.vim color and the highlight group it comes from; "derived" marks a tier the
-# scheme doesn't have. [terminal] uses only colibri.vim's colors (and swatch.html's #81CECF);
-# [syntax] is its syntax mapping, so vim and helix read like colibri.vim.
+# scheme doesn't have. [terminal] uses only colibri.vim's colors and swatch.html's alternatives
+# (sinbad, tree, turquoise: green and cyan). [diff] and info are swatch.html's Diff and Warnings;
+# [syntax] is colibri.vim's syntax mapping, so every editor reads like it.
 
 [meta]
 name = "Colibri"
@@ -30,6 +31,7 @@ link            = "#efba5d"  # honey: special
 error           = "#f47868"  # error (ErrorMsg)
 warning         = "#ffcd1c"  # warning (WarningMsg, Search)
 success         = "#35bf86"  # diff_green (MoreMsg, DiffAdded)
+info            = "#6f44f0"  # delta: info (swatch.html Warnings)
 shadow          = "#000000"  # (constant)
 
 [terminal]
@@ -37,11 +39,17 @@ fg     = "#a4a0e8"  # lavender
 bg     = "#3b224c"  # midnight
 cursor = "#dbbfef"  # lilac
 ansi = [
-	# revolver, error, diff_green, honey, diff_change (#69A0F3), light-mode lilac, swatch #81CECF, silver
-	"#281733", "#f47868", "#35bf86", "#efba5d", "#69a0f3", "#c590eb", "#81cecf", "#cccccc",
-	# sirocco, diff_red, mint, chamois, lavender, lilac, neon (SpecialKey), white
-	"#697c81", "#f22c86", "#9ff28f", "#e8dca0", "#a4a0e8", "#dbbfef", "#2cf2f1", "#ffffff",
+	# revolver, apricot, tree, honey, diff_change (#69A0F3), light-mode lilac, sinbad, silver
+	"#281733", "#f47868", "#7fb998", "#efba5d", "#69a0f3", "#c590eb", "#81cecf", "#cccccc",
+	# sirocco, minus, mint, chamois, lavender, lilac, turquoise, white
+	"#697c81", "#f22c86", "#9ff28f", "#e8dca0", "#a4a0e8", "#dbbfef", "#5fe7b7", "#ffffff",
 ]
+
+[diff]
+# swatch.html Diff: plus, minus, delta (DiffAdded, DiffRemoved, DiffText)
+add    = "#35bf86"  # plus
+remove = "#f22c86"  # minus
+change = "#6f44f0"  # delta
 
 [syntax]
 keyword    = "#eccdba"  # almond: Statement, Define
