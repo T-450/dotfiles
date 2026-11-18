@@ -685,46 +685,46 @@ filenames:
   "AUTHORS": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
   "CHANGELOG": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
   # folders eza draws with a logo of their own: the one folder shape
-  ".config": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".exercism": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".git": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".github": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".npm": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".opam": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".ssh": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  ".Trash": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "build": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "config": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Contacts": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.daily": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.hourly": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.minutely": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.monthly": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cron.weekly": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Desktop": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Documents": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Downloads": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "etc": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Favorites": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "hidden": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "home": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "include": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Mail": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Movies": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Music": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "node_modules": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "npm_cache": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "pacman.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "pam.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Pictures": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "src": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "ssh": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "sudoers.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "Videos": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "xbps.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "xorg.conf.d": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
-  "cabal": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
+  ".config": {icon: {glyph: ""}}
+  ".exercism": {icon: {glyph: ""}}
+  ".git": {icon: {glyph: ""}}
+  ".github": {icon: {glyph: ""}}
+  ".npm": {icon: {glyph: ""}}
+  ".opam": {icon: {glyph: ""}}
+  ".ssh": {icon: {glyph: ""}}
+  ".Trash": {icon: {glyph: ""}}
+  "build": {icon: {glyph: ""}}
+  "config": {icon: {glyph: ""}}
+  "Contacts": {icon: {glyph: ""}}
+  "cron.d": {icon: {glyph: ""}}
+  "cron.daily": {icon: {glyph: ""}}
+  "cron.hourly": {icon: {glyph: ""}}
+  "cron.minutely": {icon: {glyph: ""}}
+  "cron.monthly": {icon: {glyph: ""}}
+  "cron.weekly": {icon: {glyph: ""}}
+  "Desktop": {icon: {glyph: ""}}
+  "Documents": {icon: {glyph: ""}}
+  "Downloads": {icon: {glyph: ""}}
+  "etc": {icon: {glyph: ""}}
+  "Favorites": {icon: {glyph: ""}}
+  "hidden": {icon: {glyph: ""}}
+  "home": {icon: {glyph: ""}}
+  "include": {icon: {glyph: ""}}
+  "Mail": {icon: {glyph: ""}}
+  "Movies": {icon: {glyph: ""}}
+  "Music": {icon: {glyph: ""}}
+  "node_modules": {icon: {glyph: ""}}
+  "npm_cache": {icon: {glyph: ""}}
+  "pacman.d": {icon: {glyph: ""}}
+  "pam.d": {icon: {glyph: ""}}
+  "Pictures": {icon: {glyph: ""}}
+  "src": {icon: {glyph: ""}}
+  "ssh": {icon: {glyph: ""}}
+  "sudoers.d": {icon: {glyph: ""}}
+  "Videos": {icon: {glyph: ""}}
+  "xbps.d": {icon: {glyph: ""}}
+  "xorg.conf.d": {icon: {glyph: ""}}
+  "cabal": {icon: {glyph: ""}}
   # files eza draws with a logo of their own: the plain file
   ".CFUserTextEncoding": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
   ".DS_Store": {filename: {foreground: Default}, icon: {glyph: "", style: {foreground: Default}}}
