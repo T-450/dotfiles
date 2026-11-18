@@ -87,8 +87,11 @@ A floating Ghostty window (`com.mitchellh.ghostty-keys`, 1582x930, centered) run
   `super e`, `super ctrl space`. An empty query lists everything in group order. A row's synonyms
   (`close: kill quit exit`) are searchable but not shown.
 - **Speed.** fzf starts the script on every key press and selection move, so start-up is the cost:
-  it loads only `os`, `re` and `sys` up front and runs as `python3 -S` (about 30 ms a call, from
-  50). Parsing bind.conf takes about 1 ms and ranking a few, so nothing is cached.
+  it loads only `os`, `re` and `sys` up front and runs as `python3 -S`, from bytecode the window
+  compiles into `$XDG_RUNTIME_DIR` as it opens (a script run by path is compiled on every call).
+  About 25 ms a call, from 50: 9 ms is Python starting, 10 ms importing `re`, a few ms the work.
+  Parsing bind.conf takes about 1 ms, so nothing is cached. A resident ranking process (fzf
+  calling it over a socket) would also save the start-up, at the cost of a daemon to manage.
 - Esc or Enter closes it. `mango-keys --print` prints the rows as plain text (docs, tests).
 
 ## Input devices

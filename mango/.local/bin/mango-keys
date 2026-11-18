@@ -455,7 +455,12 @@ def tui():
     import shlex
     import shutil
     rs, ink = rows(), Ink(palette())
-    me = f"{shlex.quote(sys.executable)} -S {shlex.quote(SELF)}"
+    # fzf runs this script on every key press: from compiled bytecode, which a script run by path
+    # never gets (it is compiled anew each time, about 6 ms of a 33 ms call)
+    import py_compile
+    code = os.path.join(os.environ.get("XDG_RUNTIME_DIR") or "/tmp", f"mango-keys-{os.getuid()}.pyc")
+    py_compile.compile(SELF, cfile=code, doraise=True)
+    me = f"{shlex.quote(sys.executable)} -S {shlex.quote(code)}"
     c = ink.c
     colors = ",".join([
         f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('link')}", f"fg+:{c('fg_bright')}",
