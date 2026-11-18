@@ -22,6 +22,8 @@ Text looks exactly as it did in kitty: `alpha-blending = linear` draws the same 
 
 Colors come from `colors.ghostty` (the palette's terminal colors, the split divider and the search highlights) and `tabs.css` (the tab bar). `theme set` recolors open windows at once: `reload.sh` sends SIGUSR2, which makes Ghostty re-read its config, `tabs.css` included. Tabs (ctrl+shift+t) show at the top only when there are two or more: `tabs.css` turns libadwaita's rounded tab bar into square segments one cell tall in the terminal's font, the selected one on the focused row's colors (`selection_bg`/`selection_fg`). Search (ctrl+shift+f) marks every match in the route color (`link`) and the one the cursor is on in the `accent`. Splits are Ghostty's defaults (ctrl+shift+o right, ctrl+shift+e down); an unfocused split is dimmed. fastfetch draws its logo through the kitty graphics protocol.
 
+The cursor is a block everywhere, the prompt included (`shell-integration-features = no-cursor`: the shell integration would make it a bar there).
+
 Not carried over from kitty: the cursor trail (Ghostty draws one only with a custom shader, whose animation loop renders every frame while the window has focus, a steady cost on a laptop), the blinking that stops after 15 s, curly link and undercurl styles, and the powerline slants and tab numbers.
 
 ## Reference

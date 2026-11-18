@@ -33,6 +33,8 @@ resize-overlay    = never
 app-notifications = false
 
 cursor-style            = block
+# keep it a block at the prompt too: the shell integration would turn it into a bar there
+shell-integration-features = no-cursor
 mouse-hide-while-typing = true
 scrollback-limit-lines  = 10000
 
