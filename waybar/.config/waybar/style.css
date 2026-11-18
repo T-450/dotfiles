@@ -61,6 +61,14 @@ menu { background-color: @bar; border: 1px solid @tipline; border-radius: 4px; }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
+/* a state change (a threshold, a connection, muting, the viewed tag) fades over 150 ms, mango's
+   animation time, instead of snapping */
+#custom-start, #custom-wallpaper, #custom-power, #workspaces button, #custom-special, #custom-layout,
+#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery, #custom-nightlight,
+#custom-notifications, #bluetooth {
+    transition: color 150ms ease-out, background-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
 /* every control is 28px tall inside the 44px window: 8px of air above and below */
 #custom-start, #custom-wallpaper, #custom-power,
 #workspaces, #custom-special, #custom-layout, #custom-divider,
@@ -391,14 +399,14 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; ba
     color: @warn;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      none;
+                      linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #custom-temperature.critical {
     color: @crit;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      none;
+                      linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
 }
 #disk {

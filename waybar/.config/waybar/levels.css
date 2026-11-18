@@ -432,7 +432,7 @@
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 
-/* threshold skins, the only color a chip takes from its value: no tint, a 1px ring. warn = high
+/* threshold skins, the only color a chip takes from its value: its tint and a 1px ring. warn = high
    (cpu from 85; memory and disk from 80; battery at 20 and below while discharging), crit =
    critical (memory and disk from 90; battery at 10 and below). cpu has no critical tier: full
    load is work, not a failure. Temperature's two tiers are classes from waybar-temperature. */
@@ -454,7 +454,7 @@
 #cpu.l100 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), none;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #memory.l80,
@@ -469,7 +469,7 @@
 #memory.l89 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #memory.l90,
@@ -485,7 +485,7 @@
 #memory.l100 {
     color: @crit;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
 }
 #disk.l80,
@@ -500,7 +500,7 @@
 #disk.l89 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #disk.l90,
@@ -516,7 +516,7 @@
 #disk.l100 {
     color: @crit;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
+    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
 }
 #battery.discharging.l11,
