@@ -1,0 +1,84 @@
+" {{name}}: vim's colorscheme from the active palette, rendered by `theme`; .vimrc selects it.
+" The same roles as helix's palette theme: text and punctuation stay the palette's greys, the syntax
+" takes the terminal's hues made legible on bg_desktop, the selection is the palette's selection fill.
+hi clear
+if exists('syntax_on')
+	syntax reset
+endif
+set background={{variant}}
+let g:colors_name = 'palette'
+
+" --- editor ---
+hi Normal       guifg={{fg_editor}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi NonText      guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
+hi SpecialKey   guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
+hi LineNr       guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
+hi CursorLineNr guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi CursorLine   guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
+hi CursorColumn guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
+hi ColorColumn  guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
+hi SignColumn   guifg={{fg_muted|legible:bg_desktop}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi FoldColumn   guifg={{fg_disabled}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi Folded       guifg={{fg_muted|legible:bg_desktop}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi VertSplit    guifg={{border_inactive}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi WinSeparator guifg={{border_inactive}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi Visual       guifg=NONE guibg={{selection_bg}} gui=NONE cterm=NONE
+hi VisualNOS    guifg=NONE guibg={{selection_bg|mix:bg_desktop:0.4}} gui=NONE cterm=NONE
+hi Search       guifg={{fg_bright}} guibg={{bg_hover}} gui=NONE cterm=NONE
+hi CurSearch    guifg={{bg_desktop}} guibg={{accent}} gui=NONE cterm=NONE
+hi IncSearch    guifg={{bg_desktop}} guibg={{accent}} gui=NONE cterm=NONE
+hi MatchParen   guifg={{fg_bright}} guibg={{border_inactive}} gui=bold cterm=bold
+hi QuickFixLine guifg=NONE guibg={{bg_hover}} gui=NONE cterm=NONE
+hi Directory    guifg={{ansi4|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Title        guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
+hi Conceal      guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+
+" --- statusline, menus, messages ---
+hi StatusLine       guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi StatusLineNC     guifg={{fg_muted|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi StatusLineTerm   guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi StatusLineTermNC guifg={{fg_muted|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi TabLine          guifg={{fg_muted|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi TabLineFill      guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
+hi TabLineSel       guifg={{fg_bright}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi WildMenu         guifg={{selection_fg}} guibg={{selection_bg}} gui=NONE cterm=NONE
+hi Pmenu            guifg={{fg_text}} guibg={{bg_widget}} gui=NONE cterm=NONE
+hi PmenuSel         guifg={{selection_fg}} guibg={{selection_bg}} gui=NONE cterm=NONE
+hi PmenuSbar        guifg=NONE guibg={{bg_widget}} gui=NONE cterm=NONE
+hi PmenuThumb       guifg=NONE guibg={{border_inactive}} gui=NONE cterm=NONE
+hi PopupNotification guifg={{fg_text}} guibg={{bg_widget}} gui=NONE cterm=NONE
+hi ModeMsg          guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
+hi MoreMsg          guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Question         guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi ErrorMsg         guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi WarningMsg       guifg={{warning|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+
+" --- syntax ---
+hi Comment     guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
+hi Constant    guifg={{ansi3|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi String      guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Character   guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Identifier  guifg={{fg_editor}} guibg=NONE gui=NONE cterm=NONE
+hi Function    guifg={{ansi12|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Statement   guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Operator    guifg={{fg_secondary}} guibg=NONE gui=NONE cterm=NONE
+hi PreProc     guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Type        guifg={{ansi13|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Special     guifg={{ansi6|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Delimiter   guifg={{fg_secondary}} guibg=NONE gui=NONE cterm=NONE
+hi Underlined  guifg={{link|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
+hi Error       guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi Todo        guifg={{warning|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi Added       guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Changed     guifg={{ansi4|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Removed     guifg={{error|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+
+" --- diff, spelling ---
+hi DiffAdd    guifg=NONE guibg={{success|mix:bg_desktop:0.8}} gui=NONE cterm=NONE
+hi DiffChange guifg=NONE guibg={{ansi4|mix:bg_desktop:0.85}} gui=NONE cterm=NONE
+hi DiffDelete guifg={{error|legible:bg_desktop}} guibg={{error|mix:bg_desktop:0.85}} gui=NONE cterm=NONE
+hi DiffText   guifg=NONE guibg={{ansi4|mix:bg_desktop:0.65}} gui=NONE cterm=NONE
+hi SpellBad   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{error}}
+hi SpellCap   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{warning}}
+hi SpellRare  guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{ansi6}}
+hi SpellLocal guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{ansi6}}

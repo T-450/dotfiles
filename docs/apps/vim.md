@@ -1,8 +1,35 @@
 # vim
 
-Vim, the fallback editor (its colors follow the terminal's palette).
+Vim, the fallback editor for quick single-file edits, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor).
 
-`.vimrc` keeps vim's `defaults.vim` (a user vimrc would otherwise skip it) and connects the clipboard: Arch's vim is built without X11 or Wayland, so a clipboard provider (`:h clipboard-providers`) runs `wl-copy`/`wl-paste` for the `+` and `*` registers, and `clipboard=unnamedplus` makes plain `y` and `p` use the system clipboard. In Ghostty, Ctrl+V pastes as well; visual-block mode is Ctrl+Shift+Alt+V (or Ctrl+Q).
+No plugins and no packages beyond `vim`: everything comes from vim's own runtime. `.vimrc` keeps vim's `defaults.vim` (a user vimrc would otherwise skip it) and connects the clipboard: Arch's vim is built without X11 or Wayland, so a clipboard provider (`:h clipboard-providers`) runs `wl-copy`/`wl-paste` for the `+` and `*` registers, and `clipboard=unnamedplus` makes plain `y` and `p` use the system clipboard. In Ghostty, Ctrl+V pastes as well; visual-block mode is Ctrl+Shift+Alt+V (or Ctrl+Q).
+
+On top of that: line numbers, smartcase search, splits that open right and below, a one-line statusline (file, flags, filetype, line:column/lines), and undo that survives closing the file. Undo, swap and backup files live in `~/.local/state/vim/`, not next to the file. Vim's bundled packs add `gc` to comment lines (`comment`), `.editorconfig` support, a flash on yanked text (`hlyank`) and search highlighting that clears itself (`nohlsearch`).
+
+Colors: `theme` renders `.vim/colors/palette.vim` from `palette.vim.tmpl` with the same roles as helix's theme (syntax in the terminal's hues, made legible on `bg_desktop`; the selection is `selection_bg`). Vim has no reload signal, so after `theme set` a running vim recolors when its terminal next gains focus.
+
+## Formatting and linting
+
+The leader is space. Tools come from mise, so start vim from a terminal ([mise](mise.md#programs-started-outside-a-terminal-dont-see-the-tools)); a filetype whose tool is not on `PATH` keeps vim's own `gq`.
+
+| Key | Does |
+|---|---|
+| `space f` | format the whole file; if the formatter fails (a syntax error) the file stays as it was and its first error line is shown. A new buffer needs a name first: the formatters read it to pick a language |
+| `gq{motion}` | format a range with the same formatter (`formatprg`); a failing formatter's error replaces the range, `u` undoes it |
+| `space m` | save, then lint the file (`:make`) into the quickfix list, opened when there is something in it |
+| `]q` / `[q` | next / previous quickfix entry |
+
+| Filetype | Formatter | Linter (vim's compiler plugin) |
+|---|---|---|
+| sh, bash | shfmt | shellcheck |
+| python | ruff format | ruff |
+| javascript, typescript, json, jsonc | biome format | biome |
+| toml | tombi format | tombi |
+| go | gofmt | `go vet` (vim's plugin runs `go build`, which leaves a binary) |
+| yaml | yamlfmt | none |
+| markdown | prettier | none |
+| rust | rustfmt (edition 2024) | none |
+| zig | `zig fmt` | none |
 
 ## Reference
 
@@ -11,5 +38,10 @@ Vim, the fallback editor (its colors follow the terminal's palette).
 
 **Linked into your home** (stow, `install.sh --link`):
 
+- `~/.vim/colors/palette.vim`
 - `~/.vimrc`
+
+**Rendered from the palette** (`theme`):
+
+- `vim/.vim/colors/palette.vim.tmpl` → `vim/.vim/colors/palette.vim`: `accent`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `variant`, `warning`
 <!-- end generated -->
