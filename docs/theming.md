@@ -82,20 +82,20 @@ Which apps use each role (generated from the templates):
 | `accent` | claude, firefox, ghostty, gtk, helix, hyprlock, lazygit, mango, pi, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `ansi0` | ghostty |
 | `ansi1` | ghostty, pi |
-| `ansi10` | ghostty, helix, mousepad |
-| `ansi11` | ghostty, helix, mousepad, pi |
+| `ansi10` | ghostty, helix, mousepad, waybar |
+| `ansi11` | ghostty, helix, mousepad, pi, waybar |
 | `ansi12` | ghostty, helix, mousepad, pi, vim, waybar |
 | `ansi13` | claude, ghostty, helix, mousepad, pi, waybar |
-| `ansi14` | ghostty, mousepad, waybar |
+| `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
-| `ansi3` | ghostty, helix |
-| `ansi4` | ghostty, helix, pi, vim, waybar |
-| `ansi5` | ghostty, helix, pi, vim, waybar |
-| `ansi6` | ghostty, helix, vim |
+| `ansi3` | ghostty, helix, waybar |
+| `ansi4` | ghostty, helix, pi, vim |
+| `ansi5` | ghostty, helix, pi, vim |
+| `ansi6` | ghostty, helix, vim, waybar |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
-| `ansi9` | ghostty, helix, mousepad, waybar |
+| `ansi9` | ghostty, helix, mousepad |
 | `badge` | lazygit, mousepad, mpv, theme, waybar |
 | `bg_desktop` | claude, firefox, gtk, hyprlock, mango, mousepad, mpv, qutebrowser, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme, vim |

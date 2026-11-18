@@ -82,7 +82,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
     background-size: 16px 16px;
 }
 /* the launcher's brush lambda is the bar's mark: the signal color, and 20px where the icons are 16 */
-#custom-start { color: @signal; background-size: 20px 20px; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
+#custom-start { color: @lambda; background-size: 20px 20px; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
 #custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 
 /* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it.

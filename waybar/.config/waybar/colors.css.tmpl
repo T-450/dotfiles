@@ -33,13 +33,16 @@
 
 /* Each status chip's icon wears its own terminal hue so the chips read apart at a glance; the
    value and level bar stay neutral, and a threshold or state color (warn, crit, live, dim)
-   takes the icon over. The network icon is live and battery ok, like their states. */
+   takes the icon over. The network icon is live and battery ok, like their states. The slots are
+   the ones that hold Colibri's accents (lilac, mint, chamois, honey, lavender, its soft cyan); the
+   start λ is bright green, the shell prompt's λ (mint on Colibri). */
+@define-color lambda  {{ansi10|legible:bg_desktop}};
 @define-color i_audio {{ansi13|legible:bg_desktop}};
-@define-color i_cpu   {{ansi12|legible:bg_desktop}};
-@define-color i_mem   {{ansi5|legible:bg_desktop}};
-@define-color i_temp  {{ansi9|legible:bg_desktop}};
-@define-color i_disk  {{ansi4|legible:bg_desktop}};
-@define-color i_bt    {{ansi14|legible:bg_desktop}};
+@define-color i_cpu   {{ansi10|legible:bg_desktop}};
+@define-color i_mem   {{ansi11|legible:bg_desktop}};
+@define-color i_temp  {{ansi3|legible:bg_desktop}};
+@define-color i_disk  {{ansi12|legible:bg_desktop}};
+@define-color i_bt    {{ansi6|legible:bg_desktop}};
 
 /* the tooltip's 1px ring, and the selected text in tray menus */
 @define-color tipline {{fg_disabled}};
