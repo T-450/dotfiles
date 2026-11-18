@@ -19,9 +19,9 @@ Rare actions take two steps: super+esc (session), super+n (notifications) or sup
 | keys | action |
 |---|---|
 | h/j/k/l | focus left/down/up/right |
-| 1..9 · left/right | view tag · previous/next tag |
+| 1..4 · left/right | view tag · previous/next tag (four tags: `tag_num=4`) |
 | tab · o · u | overview cycling windows · overview of every window · previous window |
-| s | show/hide the special tag (a scratchpad workspace): its windows tiled over the tag you are on, the rest dimmed |
+| 0 | show/hide tag 0, the special tag (a scratchpad workspace): its windows tiled over the tag you are on, the rest dimmed |
 | return · shift+return | Ghostty · a floating Ghostty (800x600, a throwaway) |
 | d | rofi launcher |
 | b · e | Chrome · Thunar |
@@ -36,8 +36,8 @@ alt+esc is the dropdown terminal: the one persistent shell, on the top edge of w
 | keys | action |
 |---|---|
 | h/j/k/l | move the window that way |
-| 1..9 · left/right | send it to tag · carry it to the previous/next tag |
-| s | send it to the special tag, and you stay; on a special-tag window, back to the tag you are on |
+| 1..4 · left/right | send it to tag · carry it to the previous/next tag |
+| 0 | send it to tag 0, and you stay; on a tag-0 window, back to the tag you are on |
 | q | close |
 
 ## super+alt: window state
@@ -60,7 +60,7 @@ There is no fullscreen key on purpose; maximize covers it.
 | t · s · m · g · d | tile · scroller · monocle · grid · deck |
 | z · = / - | swap with master · more/fewer master windows |
 | w · [ / ] | cycle scroller widths · stack into the left/right column (scroller) |
-| 1..9 · shift+1..9 | add the tag to the view · add the window to the tag |
+| 1..4 · shift+1..4 | add the tag to the view · add the window to the tag |
 | left/right · tab · a | previous/next tag with windows · back to the previous tags · all tags |
 
 ## Capture, media
