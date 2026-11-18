@@ -21,6 +21,7 @@ Rare actions take two steps: super+esc (session), super+n (notifications) or sup
 | h/j/k/l | focus left/down/up/right |
 | 1..9 · left/right | view tag · previous/next tag |
 | tab · o · u | overview cycling windows · overview of every window · previous window |
+| s | show/hide the special tag (a scratchpad workspace): its windows tiled over the tag you are on, the rest dimmed |
 | return · shift+return | Ghostty · a floating Ghostty (800x600, a throwaway) |
 | d | rofi launcher |
 | b · e | Chrome · Thunar |
@@ -36,6 +37,7 @@ alt+esc is the dropdown terminal: the one persistent shell, on the top edge of w
 |---|---|
 | h/j/k/l | move the window that way |
 | 1..9 · left/right | send it to tag · carry it to the previous/next tag |
+| s | send it to the special tag, and you stay; on a special-tag window, back to the tag you are on |
 | q | close |
 
 ## super+alt: window state
