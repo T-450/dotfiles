@@ -23,7 +23,7 @@ Rare actions take two steps: super+esc (session), super+n (notifications) or sup
 | tab · o · u | overview cycling windows · overview of every window · previous window |
 | return · shift+return | Ghostty · a floating Ghostty (800x600, a throwaway) |
 | d | rofi launcher |
-| b · e | Chrome · Thunar (GTK apps open floating at 720x480) |
+| b · e | Chrome · Thunar |
 | v | clipboard history (Enter copies, Shift+Delete removes) |
 | w · p | wallpaper picker · theme picker |
 | / | the cheatsheet (again closes it) |
