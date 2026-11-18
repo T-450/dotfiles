@@ -1,0 +1,24 @@
+# imv: the image viewer, in the palette's colors (rendered by `theme`; windows opened after
+# `theme set` get the new colors). The image sits on the desktop color with nothing around it;
+# d shows a one-line strip at the bottom with the name, size, zoom and position in the folder.
+[options]
+background = {{bg_desktop|bare}}
+# small images stay at their own size; larger ones shrink to fit
+scaling_mode = shrink
+upscaling_method = linear
+overlay = false
+overlay_position_bottom = true
+overlay_font = Lilex Nerd Font:11
+overlay_text = ${imv_current_file##*/}   ${imv_width}×${imv_height}   ${imv_scale}%   ${imv_current_index}/${imv_file_count}
+overlay_text_color = {{fg_text|legible:bg_widget|bare}}
+overlay_text_alpha = ff
+overlay_background_color = {{bg_widget|bare}}
+overlay_background_alpha = e6
+title_text = ${imv_current_file##*/}
+
+[binds]
+# imv's own keys stay (h j k l pan, i o zoom, [ ] or arrows step, d overlay, f fullscreen).
+# y copies the image, Y its path; W makes it the wallpaper
+y = exec wl-copy < "$imv_current_file"
+<Shift+Y> = exec printf %s "$imv_current_file" | wl-copy
+<Shift+W> = exec ~/.local/bin/wallpaper-set "$imv_current_file"

@@ -39,6 +39,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and a theme rendered from the active palette, which `theme set` reloads in running editors | jdtls, jre-openjdk |
 | [hyprlock](apps/hyprlock.md) | The lock screen (super+esc l, the power menu, and after 5 min idle) | hyprlock |
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
+| [imv](apps/imv.md) | imv, the image viewer: just the image on the desktop color, in the palette's colors | imv |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
