@@ -1,7 +1,8 @@
 " {{name}}: vim's colorscheme from the active palette, rendered by `theme`; .vimrc selects it.
 " The same roles as helix's palette theme: syntax from the palette's syn_* roles (its [syntax] table,
 " else text and punctuation in the palette's greys and the terminal's hues), made legible on
-" bg_desktop; the selection is the palette's selection fill.
+" term_bg, the ground: vim runs only in the terminal, so its background meets Ghostty's padding
+" (bg_desktop is the desktop chrome's). The selection is the palette's selection fill.
 hi clear
 if exists('syntax_on')
 	syntax reset
@@ -10,7 +11,7 @@ set background={{variant}}
 let g:colors_name = 'palette'
 
 " --- editor ---
-hi Normal       guifg={{fg_editor}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi Normal       guifg={{fg_editor}} guibg={{term_bg}} gui=NONE cterm=NONE
 hi NonText      guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
 hi SpecialKey   guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
 hi LineNr       guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
@@ -18,21 +19,21 @@ hi CursorLineNr guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=NONE
 hi CursorLine   guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
 hi CursorColumn guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
 hi ColorColumn  guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
-hi SignColumn   guifg={{fg_muted|legible:bg_desktop}} guibg={{bg_desktop}} gui=NONE cterm=NONE
-hi FoldColumn   guifg={{fg_disabled}} guibg={{bg_desktop}} gui=NONE cterm=NONE
-hi Folded       guifg={{fg_muted|legible:bg_desktop}} guibg={{bg_surface}} gui=NONE cterm=NONE
-hi VertSplit    guifg={{border_inactive}} guibg={{bg_desktop}} gui=NONE cterm=NONE
-hi WinSeparator guifg={{border_inactive}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi SignColumn   guifg={{fg_muted|legible:term_bg}} guibg={{term_bg}} gui=NONE cterm=NONE
+hi FoldColumn   guifg={{fg_disabled}} guibg={{term_bg}} gui=NONE cterm=NONE
+hi Folded       guifg={{fg_muted|legible:term_bg}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi VertSplit    guifg={{border_inactive}} guibg={{term_bg}} gui=NONE cterm=NONE
+hi WinSeparator guifg={{border_inactive}} guibg={{term_bg}} gui=NONE cterm=NONE
 hi Visual       guifg=NONE guibg={{selection_bg}} gui=NONE cterm=NONE
-hi VisualNOS    guifg=NONE guibg={{selection_bg|mix:bg_desktop:0.4}} gui=NONE cterm=NONE
+hi VisualNOS    guifg=NONE guibg={{selection_bg|mix:term_bg:0.4}} gui=NONE cterm=NONE
 hi Search       guifg={{fg_bright}} guibg={{bg_hover}} gui=NONE cterm=NONE
-hi CurSearch    guifg={{bg_desktop}} guibg={{accent}} gui=NONE cterm=NONE
-hi IncSearch    guifg={{bg_desktop}} guibg={{accent}} gui=NONE cterm=NONE
+hi CurSearch    guifg={{term_bg}} guibg={{accent}} gui=NONE cterm=NONE
+hi IncSearch    guifg={{term_bg}} guibg={{accent}} gui=NONE cterm=NONE
 hi MatchParen   guifg={{fg_bright}} guibg={{border_inactive}} gui=bold cterm=bold
 hi QuickFixLine guifg=NONE guibg={{bg_hover}} gui=NONE cterm=NONE
-hi Directory    guifg={{ansi4|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Directory    guifg={{ansi4|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 hi Title        guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
-hi Conceal      guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Conceal      guifg={{fg_muted|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 
 " --- statusline, menus, messages ---
 hi StatusLine       guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=NONE
@@ -41,7 +42,7 @@ hi StatusLineTerm   guifg={{fg_secondary}} guibg={{bg_surface}} gui=NONE cterm=N
 hi StatusLineTermNC guifg={{fg_muted|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
 hi TabLine          guifg={{fg_muted|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
 hi TabLineFill      guifg=NONE guibg={{bg_surface}} gui=NONE cterm=NONE
-hi TabLineSel       guifg={{fg_bright}} guibg={{bg_desktop}} gui=NONE cterm=NONE
+hi TabLineSel       guifg={{fg_bright}} guibg={{term_bg}} gui=NONE cterm=NONE
 hi WildMenu         guifg={{selection_fg}} guibg={{selection_bg}} gui=NONE cterm=NONE
 hi Pmenu            guifg={{fg_text}} guibg={{bg_widget}} gui=NONE cterm=NONE
 hi PmenuSel         guifg={{selection_fg}} guibg={{selection_bg}} gui=NONE cterm=NONE
@@ -49,46 +50,46 @@ hi PmenuSbar        guifg=NONE guibg={{bg_widget}} gui=NONE cterm=NONE
 hi PmenuThumb       guifg=NONE guibg={{border_inactive}} gui=NONE cterm=NONE
 hi PopupNotification guifg={{fg_text}} guibg={{bg_widget}} gui=NONE cterm=NONE
 hi ModeMsg          guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
-hi MoreMsg          guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Question         guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi ErrorMsg         guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi WarningMsg       guifg={{warning|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi MoreMsg          guifg={{ansi2|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Question         guifg={{ansi2|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi ErrorMsg         guifg={{error|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi WarningMsg       guifg={{warning|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 hi PopupBorder      guifg={{border_inactive}} guibg={{bg_widget}} gui=NONE cterm=NONE
 " the statusline's mode chip, a hue per mode
-hi StatusNormal     guifg={{bg_desktop}} guibg={{accent}} gui=bold cterm=bold
-hi StatusInsert     guifg={{bg_desktop}} guibg={{success}} gui=bold cterm=bold
-hi StatusVisual     guifg={{bg_desktop}} guibg={{ansi5}} gui=bold cterm=bold
-hi StatusReplace    guifg={{bg_desktop}} guibg={{error}} gui=bold cterm=bold
-hi StatusCommand    guifg={{bg_desktop}} guibg={{warning}} gui=bold cterm=bold
+hi StatusNormal     guifg={{term_bg}} guibg={{accent}} gui=bold cterm=bold
+hi StatusInsert     guifg={{term_bg}} guibg={{success}} gui=bold cterm=bold
+hi StatusVisual     guifg={{term_bg}} guibg={{ansi5}} gui=bold cterm=bold
+hi StatusReplace    guifg={{term_bg}} guibg={{error}} gui=bold cterm=bold
+hi StatusCommand    guifg={{term_bg}} guibg={{warning}} gui=bold cterm=bold
 
 " --- syntax ---
-hi Comment     guifg={{syn_comment|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
-hi Constant    guifg={{syn_constant|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Number      guifg={{syn_number|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Boolean     guifg={{syn_boolean|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi String      guifg={{syn_string|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Character   guifg={{syn_string|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Comment     guifg={{syn_comment|legible:term_bg}} guibg=NONE gui=italic cterm=italic
+hi Constant    guifg={{syn_constant|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Number      guifg={{syn_number|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Boolean     guifg={{syn_boolean|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi String      guifg={{syn_string|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Character   guifg={{syn_string|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 hi Identifier  guifg={{syn_identifier}} guibg=NONE gui=NONE cterm=NONE
-hi Function    guifg={{syn_function|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Statement   guifg={{syn_keyword|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Function    guifg={{syn_function|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Statement   guifg={{syn_keyword|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 hi Operator    guifg={{syn_operator}} guibg=NONE gui=NONE cterm=NONE
-hi PreProc     guifg={{syn_preproc|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Define      guifg={{syn_keyword|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Type        guifg={{syn_type|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Special     guifg={{syn_special|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi PreProc     guifg={{syn_preproc|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Define      guifg={{syn_keyword|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Type        guifg={{syn_type|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Special     guifg={{syn_special|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 hi Delimiter   guifg={{syn_operator}} guibg=NONE gui=NONE cterm=NONE
-hi Underlined  guifg={{link|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
-hi Error       guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi Todo        guifg={{warning|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi Added       guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Changed     guifg={{ansi4|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Removed     guifg={{error|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Underlined  guifg={{link|legible:term_bg}} guibg=NONE gui=underline cterm=underline
+hi Error       guifg={{error|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi Todo        guifg={{warning|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi Added       guifg={{ansi2|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Changed     guifg={{ansi4|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Removed     guifg={{error|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 
 " --- markdown: headings step down in hue, rendered markers (bullets) take Conceal ---
-hi markdownH1             guifg={{accent|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi markdownH2             guifg={{ansi12|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi markdownH3             guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
-hi markdownH4             guifg={{ansi6|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi markdownH1             guifg={{accent|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi markdownH2             guifg={{ansi12|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi markdownH3             guifg={{ansi5|legible:term_bg}} guibg=NONE gui=bold cterm=bold
+hi markdownH4             guifg={{ansi6|legible:term_bg}} guibg=NONE gui=bold cterm=bold
 hi markdownH5             guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
 hi markdownH6             guifg={{fg_secondary}} guibg=NONE gui=bold cterm=bold
 hi markdownHeadingDelimiter guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
@@ -97,17 +98,17 @@ hi markdownItalic         guifg=NONE guibg=NONE gui=italic cterm=italic
 hi markdownBoldItalic     guifg={{fg_bright}} guibg=NONE gui=bold,italic cterm=bold,italic
 hi markdownCode           guifg={{ansi2|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
 hi markdownCodeDelimiter  guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
-hi markdownLinkText       guifg={{link|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
-hi markdownUrl            guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
-hi markdownListMarker     guifg={{accent|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi markdownBlockquote     guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
+hi markdownLinkText       guifg={{link|legible:term_bg}} guibg=NONE gui=underline cterm=underline
+hi markdownUrl            guifg={{fg_muted|legible:term_bg}} guibg=NONE gui=underline cterm=underline
+hi markdownListMarker     guifg={{accent|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi markdownBlockquote     guifg={{fg_muted|legible:term_bg}} guibg=NONE gui=italic cterm=italic
 hi markdownRule           guifg={{border_inactive}} guibg=NONE gui=NONE cterm=NONE
 
 " --- diff, spelling ---
-hi DiffAdd    guifg=NONE guibg={{success|mix:bg_desktop:0.8}} gui=NONE cterm=NONE
-hi DiffChange guifg=NONE guibg={{ansi4|mix:bg_desktop:0.85}} gui=NONE cterm=NONE
-hi DiffDelete guifg={{error|legible:bg_desktop}} guibg={{error|mix:bg_desktop:0.85}} gui=NONE cterm=NONE
-hi DiffText   guifg=NONE guibg={{ansi4|mix:bg_desktop:0.65}} gui=NONE cterm=NONE
+hi DiffAdd    guifg=NONE guibg={{success|mix:term_bg:0.8}} gui=NONE cterm=NONE
+hi DiffChange guifg=NONE guibg={{ansi4|mix:term_bg:0.85}} gui=NONE cterm=NONE
+hi DiffDelete guifg={{error|legible:term_bg}} guibg={{error|mix:term_bg:0.85}} gui=NONE cterm=NONE
+hi DiffText   guifg=NONE guibg={{ansi4|mix:term_bg:0.65}} gui=NONE cterm=NONE
 hi SpellBad   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{error}}
 hi SpellCap   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{warning}}
 hi SpellRare  guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{ansi6}}
