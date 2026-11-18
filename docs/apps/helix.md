@@ -18,7 +18,7 @@ mise installs the language servers, formatters and debuggers (yamlfmt for YAML, 
 
 Go, Rust, Zig, C, C++, Java and Bash use helix's built-in servers. `theme` renders `languages.toml` from `languages.toml.tmpl`, because the tsserver path contains your home directory.
 
-Theme: `themes/palette.toml.tmpl` renders the active palette into a helix theme named `palette` (`theme = "palette"` in `config.toml`). Text and punctuation keep the palette's greys and the syntax takes the terminal's hues, each made legible on `bg_desktop`, so a light palette darkens them: keywords `ansi5`, types `ansi13`, functions `ansi12`, strings `ansi2`, constants `ansi3`, attributes and escapes `ansi6`, lifetimes and labels `ansi9`, comments `fg_muted`. The cursor is `accent`; selections, the picker's row and the selected menu item are `selection_bg`; popups sit on `bg_widget` with `border_inactive` borders. `reload.sh` sends running editors SIGUSR1 (helix's `:config-reload`), so `theme set` recolors them at once. The mode name (NOR/INS/SEL) stays uncolored because `color-modes` is off.
+Theme: `themes/palette.toml.tmpl` renders the active palette into a helix theme named `palette` (`theme = "palette"` in `config.toml`). Syntax comes from the palette's `syn_*` roles (its `[syntax]` table, see [Theming](../theming.md#syntax)); without one, text and punctuation keep the palette's greys and the syntax takes the terminal's hues, each made legible on `bg_desktop`, so a light palette darkens them: keywords `ansi5`, types `ansi13`, functions `ansi12`, strings `ansi2`, constants `ansi3`, attributes and escapes `ansi6`, lifetimes and labels `ansi9`, comments `fg_muted`. The cursor is `accent`; selections, the picker's row and the selected menu item are `selection_bg`; popups sit on `bg_widget` with `border_inactive` borders. `reload.sh` sends running editors SIGUSR1 (helix's `:config-reload`), so `theme set` recolors them at once. The mode name (NOR/INS/SEL) stays uncolored because `color-modes` is off.
 
 ## Keys
 
@@ -86,7 +86,7 @@ To check a language, run `helix --health LANG` in a terminal. No language server
 **Rendered from the palette** (`theme`):
 
 - `helix/.config/helix/languages.toml.tmpl` → `helix/.config/helix/languages.toml`: `home`
-- `helix/.config/helix/themes/palette.toml.tmpl` → `helix/.config/helix/themes/palette.toml`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi9`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `name`, `selection_bg`, `selection_fg`, `warning`
+- `helix/.config/helix/themes/palette.toml.tmpl` → `helix/.config/helix/themes/palette.toml`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi9`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `name`, `selection_bg`, `selection_fg`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `warning`
 
 **`reload.sh`** (run by `theme set`): running helix editors re-read config.toml and the rendered themes/palette.toml; helix reloads its config on SIGUSR1, as :config-reload does. The process is `helix` (the /usr/bin link's name), not `hx`, the binary it points to.
 <!-- end generated -->

@@ -6,7 +6,7 @@ No plugins and no packages beyond `vim`: everything comes from vim's own runtime
 
 On top of that: line numbers and a cursor line, smartcase search with a `[3/12]` match count, splits that open right and below, a statusline that opens with the mode in a color per mode (then file, flags, filetype, line:column/lines), long lines wrapped at words, indent guides (tabs, and space indents at the buffer's `shiftwidth`), and undo that survives closing the file. Completion is a fuzzy popup: on the `:` line as you type (`wildtrigger()`), and in insert mode from the open buffers' words (`autocomplete`). Undo, swap and backup files live in `~/.local/state/vim/`, not next to the file. Vim's bundled packs add `gc` to comment lines (`comment`), `.editorconfig` support, a flash on yanked text (`hlyank`) and search highlighting that clears itself (`nohlsearch`).
 
-Colors: `theme` renders `.vim/colors/palette.vim` from `palette.vim.tmpl` with the same roles as helix's theme (syntax in the terminal's hues, made legible on `bg_desktop`; the selection is `selection_bg`). Vim has no reload signal, so after `theme set` a running vim recolors when its terminal next gains focus.
+Colors: `theme` renders `.vim/colors/palette.vim` from `palette.vim.tmpl` with the same roles as helix's theme (syntax from the palette's `syn_*` roles, made legible on `bg_desktop`; the selection is `selection_bg`). Vim has no reload signal, so after `theme set` a running vim recolors when its terminal next gains focus.
 
 ## Keys
 
@@ -64,5 +64,5 @@ The leader is space. Tools come from mise, so start vim from a terminal ([mise](
 
 **Rendered from the palette** (`theme`):
 
-- `vim/.vim/colors/palette.vim.tmpl` → `vim/.vim/colors/palette.vim`: `accent`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `variant`, `warning`
+- `vim/.vim/colors/palette.vim.tmpl` → `vim/.vim/colors/palette.vim`: `accent`, `ansi12`, `ansi2`, `ansi4`, `ansi5`, `ansi6`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_identifier`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `variant`, `warning`
 <!-- end generated -->

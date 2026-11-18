@@ -1,44 +1,46 @@
 # {{name}}: helix's theme from the active palette, rendered by `theme`; config.toml selects it
-# as "palette". Colour is a cue: text and punctuation stay the palette's greys, and the syntax takes
-# the terminal's hues, each made legible on bg_desktop (light palettes darken them): keywords
-# magenta, types bright magenta, functions bright blue, strings green, constants yellow, attributes
-# and escapes cyan, lifetimes and labels bright red. The cursor is the accent, the selection the
+# as "palette". Syntax comes from the palette's syn_* roles (its [syntax] table), each made legible
+# on bg_desktop. Without the table, colour is a cue: text and punctuation stay the palette's greys,
+# and the syntax takes the terminal's hues (light palettes darken them): keywords magenta, types
+# bright magenta, functions bright blue, strings green, constants yellow, attributes and escapes
+# cyan, lifetimes and labels bright red. The cursor is the accent, the selection the
 # palette's selection fill; popups and menus use the same tiers as the desktop's.
 
 # --- syntax ---
-"comment" = { fg = "muted", modifiers = ["italic"] }
-"keyword" = "purple"
-"keyword.directive" = "purple"
-"keyword.storage.modifier" = "purple"
-"keyword.operator" = "purple"
-"operator" = "secondary"
-"punctuation" = "secondary"
-"punctuation.special" = "cyan"
-"type" = "lilac"
-"type.builtin" = "lilac"
-"type.enum.variant" = "lilac"
-"constructor" = "lilac"
-"namespace" = "lilac"
-"function" = "sky"
-"function.macro" = "sky"
-"function.builtin" = "sky"
-"string" = "mint"
-"string.regexp" = "cyan"
-"string.special" = "cyan"
-"constant" = "yellow"
-"constant.builtin" = "yellow"
-"constant.numeric" = "yellow"
-"constant.character" = "mint"
-"constant.character.escape" = "cyan"
+"comment" = { fg = "syn-comment", modifiers = ["italic"] }
+"keyword" = "syn-keyword"
+"keyword.directive" = "syn-preproc"
+"keyword.storage.modifier" = "syn-keyword"
+"keyword.operator" = "syn-keyword"
+"operator" = "syn-operator"
+"punctuation" = "syn-operator"
+"punctuation.special" = "syn-special"
+"type" = "syn-type"
+"type.builtin" = "syn-type"
+"type.enum.variant" = "syn-type"
+"constructor" = "syn-type"
+"namespace" = "syn-type"
+"function" = "syn-function"
+"function.macro" = "syn-function"
+"function.builtin" = "syn-function"
+"string" = "syn-string"
+"string.regexp" = "syn-special"
+"string.special" = "syn-special"
+"constant" = "syn-constant"
+"constant.builtin" = "syn-constant"
+"constant.builtin.boolean" = "syn-boolean"
+"constant.numeric" = "syn-number"
+"constant.character" = "syn-string"
+"constant.character.escape" = "syn-special"
 "variable" = "text"
-"variable.builtin" = { fg = "purple", modifiers = ["italic"] }
+"variable.builtin" = { fg = "syn-keyword", modifiers = ["italic"] }
 "variable.parameter" = "text"
 "variable.other.member" = "text"
-"attribute" = "cyan"
+"attribute" = "syn-special"
 "label" = "pink"
-"special" = "sky"
-"tag" = "purple"
-"tag.attribute" = "lilac"
+"special" = "syn-function"
+"tag" = "syn-keyword"
+"tag.attribute" = "syn-type"
 
 "markup.heading" = { fg = "bright", modifiers = ["bold"] }
 "markup.list" = "purple"
@@ -153,3 +155,14 @@ mint-light = "{{ansi10|legible:bg_desktop}}"
 yellow = "{{ansi3|legible:bg_desktop}}"
 yellow-light = "{{ansi11|legible:bg_desktop}}"
 pink = "{{ansi9|legible:bg_desktop}}"
+syn-keyword = "{{syn_keyword|legible:bg_desktop}}"
+syn-preproc = "{{syn_preproc|legible:bg_desktop}}"
+syn-type = "{{syn_type|legible:bg_desktop}}"
+syn-function = "{{syn_function|legible:bg_desktop}}"
+syn-string = "{{syn_string|legible:bg_desktop}}"
+syn-constant = "{{syn_constant|legible:bg_desktop}}"
+syn-number = "{{syn_number|legible:bg_desktop}}"
+syn-boolean = "{{syn_boolean|legible:bg_desktop}}"
+syn-special = "{{syn_special|legible:bg_desktop}}"
+syn-operator = "{{syn_operator}}"
+syn-comment = "{{syn_comment|legible:bg_desktop}}"

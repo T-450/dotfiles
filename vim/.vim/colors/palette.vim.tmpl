@@ -1,6 +1,7 @@
 " {{name}}: vim's colorscheme from the active palette, rendered by `theme`; .vimrc selects it.
-" The same roles as helix's palette theme: text and punctuation stay the palette's greys, the syntax
-" takes the terminal's hues made legible on bg_desktop, the selection is the palette's selection fill.
+" The same roles as helix's palette theme: syntax from the palette's syn_* roles (its [syntax] table,
+" else text and punctuation in the palette's greys and the terminal's hues), made legible on
+" bg_desktop; the selection is the palette's selection fill.
 hi clear
 if exists('syntax_on')
 	syntax reset
@@ -61,18 +62,21 @@ hi StatusReplace    guifg={{bg_desktop}} guibg={{error}} gui=bold cterm=bold
 hi StatusCommand    guifg={{bg_desktop}} guibg={{warning}} gui=bold cterm=bold
 
 " --- syntax ---
-hi Comment     guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
-hi Constant    guifg={{ansi3|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi String      guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Character   guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Identifier  guifg={{fg_editor}} guibg=NONE gui=NONE cterm=NONE
-hi Function    guifg={{ansi12|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Statement   guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Operator    guifg={{fg_secondary}} guibg=NONE gui=NONE cterm=NONE
-hi PreProc     guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Type        guifg={{ansi13|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Special     guifg={{ansi6|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
-hi Delimiter   guifg={{fg_secondary}} guibg=NONE gui=NONE cterm=NONE
+hi Comment     guifg={{syn_comment|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
+hi Constant    guifg={{syn_constant|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Number      guifg={{syn_number|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Boolean     guifg={{syn_boolean|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi String      guifg={{syn_string|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Character   guifg={{syn_string|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Identifier  guifg={{syn_identifier}} guibg=NONE gui=NONE cterm=NONE
+hi Function    guifg={{syn_function|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Statement   guifg={{syn_keyword|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Operator    guifg={{syn_operator}} guibg=NONE gui=NONE cterm=NONE
+hi PreProc     guifg={{syn_preproc|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Define      guifg={{syn_keyword|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Type        guifg={{syn_type|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Special     guifg={{syn_special|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi Delimiter   guifg={{syn_operator}} guibg=NONE gui=NONE cterm=NONE
 hi Underlined  guifg={{link|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
 hi Error       guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
 hi Todo        guifg={{warning|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold

@@ -36,7 +36,7 @@ PALETTES = REPO / "theme" / "palettes"
 CURRENT = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state") / "theme" / "current"
 # not apps: never searched for templates or hooks
 NOT_APPS = {".git", ".github", "plans", "tests", "tools", "docs", "__pycache__"}
-DEFAULT = "dark-2026"
+DEFAULT = "colibri"
 
 ROLES = [
     "bg_desktop", "bg_surface", "bg_widget", "bg_hover", "border_hairline", "border_inactive",
@@ -48,6 +48,14 @@ TERMINAL = ["fg", "bg", "cursor"]
 # Optional [keycaps] table: the keybinding cheatsheet's keycaps (mango-keys), as `key_<name>` roles.
 # A palette without it gets them from its own roles (KEYCAP_DEFAULTS).
 KEYCAPS = ["mod", "cap", "accent", "legend", "frame"]
+# Optional [syntax] table: the editors' syntax colors (vim, helix), as `syn_<name>` roles, for a
+# palette that comes from an editor scheme and maps syntax its own way. A palette without it takes
+# them from its terminal hues and greys (the default, in order: a default may name an earlier key).
+SYNTAX = {
+    "keyword": "ansi5", "preproc": "keyword", "type": "ansi13", "function": "ansi12",
+    "identifier": "fg_editor", "string": "ansi2", "constant": "ansi3", "number": "constant",
+    "boolean": "constant", "special": "ansi6", "operator": "fg_secondary", "comment": "fg_muted",
+}
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
@@ -201,6 +209,14 @@ def load_palette(slug, path=None):
         if contrast(v["key_legend"], v[f"key_{k}"]) < TEXT_CONTRAST:
             raise ThemeError(f"{path.name}: keycaps.legend reads at {contrast(v['key_legend'], v[f'key_{k}']):.2f}:1 "
                              f"on keycaps.{k} (needs {TEXT_CONTRAST}); make the cap more opaque or darker")
+
+    syntax = data.get("syntax", {})
+    unknown = sorted(set(syntax) - set(SYNTAX))
+    if unknown:
+        raise ThemeError(f"{path.name}: unknown syntax {', '.join(unknown)} (have: {', '.join(SYNTAX)})")
+    for k, default in SYNTAX.items():
+        v[f"syn_{k}"] = (rgb(syntax[k], f"{path.name} syntax.{k}") if k in syntax
+                         else v[default] if default in v else v[f"syn_{default}"])
 
     dark = variant == "dark"
     words = {
