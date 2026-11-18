@@ -16,21 +16,16 @@ neutrals (THEME_KEY_*: dark modifiers, grey letters) and group names are quiet l
 for what it means: the signal (accent) on the pointer, the selected row's mark and its action key
 (key_accent); the route color (link) under the letters a search matched.
 """
-import html
-import json
+# fzf starts this script on every key press (--rank) and selection move (--card), so start-up is the
+# cost: only os, re and sys load up front; each mode imports the rest itself, and fzf runs it with
+# python3 -S (no site module). Parsing bind.conf takes about a millisecond, so nothing is cached.
 import os
 import re
-import shlex
-import shutil
-import subprocess
 import sys
-import textwrap
-from pathlib import Path
 
-CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-CONF = Path(os.environ.get("MANGO_KEYS_CONF", CONFIG / "mango/bind.conf"))
-COLORS = Path(os.environ.get("MANGO_KEYS_COLORS", CONFIG / "theme/colors.sh"))
-CACHE = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / f"mango-keys-{os.getuid()}.json"
+CONFIG = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+CONF = os.environ.get("MANGO_KEYS_CONF") or os.path.join(CONFIG, "mango/bind.conf")
+COLORS = os.environ.get("MANGO_KEYS_COLORS") or os.path.join(CONFIG, "theme/colors.sh")
 APP_ID = "com.mitchellh.ghostty-keys"
 SELF = os.path.realpath(__file__)
 
@@ -142,20 +137,8 @@ def collapse(rows):
 
 
 def rows():
-    """The parsed rows, cached per bind.conf change (fzf reruns the ranking on every key press)."""
-    stamp = f"{CONF.stat().st_mtime_ns}:{CONF.stat().st_size}:{os.stat(SELF).st_mtime_ns}"
-    try:
-        c = json.loads(CACHE.read_text())
-        if c["stamp"] == stamp:
-            return c["rows"]
-    except (OSError, ValueError, KeyError):
-        pass
-    r = parse(CONF.read_text())
-    try:
-        CACHE.write_text(json.dumps({"stamp": stamp, "rows": r}))
-    except OSError:
-        pass
-    return r
+    with open(CONF) as f:
+        return parse(f.read())
 
 
 # ---------------------------------------------------------------- search
@@ -269,7 +252,8 @@ def rank(query, rs):
 def palette():
     out = {}
     try:
-        text = COLORS.read_text()
+        with open(COLORS) as f:
+            text = f.read()
     except OSError:
         text = ""
     for line in text.splitlines():
@@ -399,9 +383,10 @@ def card_caps(ink, group, sel=None):
 def card(i):
     """A group's keys for fzf's preview pane: its title, then a row of caps on every other line (the
     lines the list's rows are on)."""
-    rs, ink = rows(), Ink(palette())
     if not i.isdigit():  # no row: nothing matched the query
         return ""
+    import textwrap
+    rs, ink = rows(), Ink(palette())
     sel = rs[int(i)]
     group = [r for r in rs if r["group"] == sel["group"]]
     caps, signal = card_caps(ink, group, sel), ink.c("accent")
@@ -435,7 +420,10 @@ def pango(mode):
     group = [r for r in rs if r["mode"] == mode]
     if not group:
         return ""
-    e, frame = html.escape, ink.c("key_frame")
+    frame = ink.c("key_frame")
+
+    def e(text):  # Pango markup escapes; html.escape would cost its import
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
 
     def cap(label, role):
         face, edge, legend = ink.cap_colors(role)
@@ -464,7 +452,10 @@ LAYERS = [("Super", ("go", "open")), ("+Shift", ("carry",)), ("+Alt", ("window",
 
 
 def tui():
-    rs, ink, me = rows(), Ink(palette()), SELF
+    import shlex
+    import shutil
+    rs, ink = rows(), Ink(palette())
+    me = f"{shlex.quote(sys.executable)} -S {shlex.quote(SELF)}"
     c = ink.c
     colors = ",".join([
         f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('link')}", f"fg+:{c('fg_bright')}",
@@ -490,7 +481,7 @@ def tui():
     pane = in_card + max(min(max(len(r["desc"]) for r in rs), free // 2), 10)
     rank_cmd = f"{me} --rank {{q}}"
     # the first list: fzf runs this when its input is a terminal (instead of its default `find`)
-    os.environ["FZF_DEFAULT_COMMAND"] = f"{shlex.quote(me)} --rank ''"
+    os.environ["FZF_DEFAULT_COMMAND"] = f"{me} --rank ''"
     # top to bottom: a margin, the input, a blank line (an empty header), the rows with a blank line
     # after each (--gap; the last one sets the legend apart), the legend, a margin. The rows need an
     # even number of lines or the last one loses its blank line: the bottom margin takes an odd one.
@@ -509,6 +500,8 @@ def tui():
 
 def toggle():
     """Close the cheatsheet if it is open, else open it."""
+    import shutil
+    import subprocess
     if subprocess.run(["pkill", "-f", f"{SELF} --tui"], check=False).returncode == 0:
         return
     term = shutil.which("ghostty") or "ghostty"
