@@ -10,11 +10,11 @@ variant = "dark"
 source = "https://github.com/archseer/colibri.vim"
 
 [colors]
-bg_desktop      = "#3b224c"  # midnight: background (Normal)
+bg_desktop      = "#281733"  # revolver: background_dark (the bar and desktop chrome, a step below the terminal)
 bg_surface      = "#452859"  # bossanova: background_light (CursorLine, TabLine, window)
 bg_widget       = "#452859"  # bossanova: window (Pmenu)
 bg_hover        = "#533a6e"  # derived: bossanova 15% toward lavender
-border_hairline = "#281733"  # revolver: background_dark
+border_hairline = "#3b224c"  # midnight: background (Normal)
 border_inactive = "#5a5977"  # comet: linenr
 fg_text         = "#a4a0e8"  # lavender: foreground (Normal)
 fg_editor       = "#a4a0e8"  # lavender: foreground (Normal)

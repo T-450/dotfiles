@@ -15,7 +15,9 @@ theme lint                 # no color literals; rendered files gitignored; no se
 The default palette is **Colibri**, from `archseer/colibri.vim` (`colors/colibri.vim`, its dark
 branch): each role, ANSI color and syntax color is one of that scheme's named colors (the comments
 in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
-`fg_secondary`), mixed from its own. The other palette is Tokyo Night (`theme import-omarchy`).
+`fg_secondary`), mixed from its own. The desktop (`bg_desktop`: bar, lock screen, GTK, browsers)
+sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
+editor background. The other palette is Tokyo Night (`theme import-omarchy`).
 
 ## Keycaps
 
@@ -38,7 +40,7 @@ An optional `[syntax]` table gives the editors (vim, helix) their syntax colors,
 `syn_constant`, `syn_number`, `syn_boolean`, `syn_special`, `syn_operator`, `syn_comment`: for a
 palette taken from an editor scheme that maps syntax its own way (Colibri: keywords almond, types
 and functions white, strings silver, constants mint, numbers chamois, punctuation lilac). The
-templates still push each to 4.5:1 on `bg_desktop` (`|legible`; Colibri's sirocco comments, 3.2:1
+templates still push each to 4.5:1 on `term_bg` (`|legible`; Colibri's sirocco comments, 3.2:1
 in colibri.vim, come out lighter). A palette without the table takes them from its terminal hues
 and greys: keyword `ansi5`, type `ansi13`, function `ansi12`, string `ansi2`, constant `ansi3`,
 special `ansi6`, identifier `fg_editor`, operator `fg_secondary`, comment `fg_muted`; preproc
@@ -95,7 +97,7 @@ Which apps use each role (generated from the templates):
 | `ansi8` | ghostty |
 | `ansi9` | ghostty, helix, mousepad, waybar |
 | `badge` | lazygit, mousepad, mpv, theme, waybar |
-| `bg_desktop` | claude, firefox, gtk, helix, hyprlock, mango, mousepad, mpv, qutebrowser, theme, vim, waybar, wlogout |
+| `bg_desktop` | claude, firefox, gtk, hyprlock, mango, mousepad, mpv, qutebrowser, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme, vim |
 | `bg_surface` | claude, firefox, ghostty, gtk, helix, hyprlock, mako, mango, mousepad, qutebrowser, rofi, theme, vim |
 | `bg_widget` | claude, firefox, gtk, helix, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, vim, wlogout |
@@ -137,7 +139,7 @@ Which apps use each role (generated from the templates):
 | `syn_special` | helix, vim |
 | `syn_string` | helix, vim |
 | `syn_type` | helix, vim |
-| `term_bg` | claude, ghostty, pi, theme |
+| `term_bg` | claude, ghostty, helix, pi, theme, vim |
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme, vim |
