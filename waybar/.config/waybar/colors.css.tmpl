@@ -1,9 +1,7 @@
 /* waybar colors from {{name}} (palette {{slug}}); rendered by theme from colors.css.tmpl, never edit. */
-/* The surface, its 1px ring and the design's 1px sheen: the ring is the hairline mixed toward the
-   inactive border, the sheen is white at 5% in style.css. */
+/* The surface and its 1px ring: the hairline mixed toward the inactive border. */
 @define-color bar     {{bg_desktop}};
 @define-color edge    {{border_hairline|mix:border_inactive:0.3}};
-@define-color sheen   {{selection_fg}};
 
 /* Text: text is the editor color lifted toward the bright foreground, dim the same color blended
    with the muted one. text = primary facts (occupied tags, the layout), editor =
@@ -31,18 +29,18 @@
 @define-color warn    {{warning|legible:bg_desktop}};
 @define-color crit    {{error|legible:bg_desktop}};
 
-/* Each status chip's icon wears its own terminal hue so the chips read apart at a glance; the
-   value and level bar stay neutral, and a threshold or state color (warn, crit, live, dim)
-   takes the icon over. The network icon is live and battery ok, like their states. The slots are
-   the ones that hold Colibri's accents (lilac, mint, chamois, honey, lavender, its soft cyan); the
-   start λ is bright green, the shell prompt's λ (mint on Colibri). */
+/* Each status chip's icon wears one of four encoder hues, cycled like the four knobs on a Teenage
+   Engineering OP-1 (blue, green, white, orange), so the chips read apart at a glance; the value and
+   meter stay neutral, and a threshold or state color (warn, crit, live, dim) takes the icon over.
+   The network icon is live and battery ok, like their states. The start λ is bright green, the
+   shell prompt's λ (mint on Colibri). */
 @define-color lambda  {{ansi10|legible:bg_desktop}};
-@define-color i_audio {{ansi13|legible:bg_desktop}};
+@define-color i_audio {{ansi4|legible:bg_desktop}};
 @define-color i_cpu   {{ansi10|legible:bg_desktop}};
-@define-color i_mem   {{ansi11|legible:bg_desktop}};
+@define-color i_mem   {{fg_bright|legible:bg_desktop}};
 @define-color i_temp  {{ansi3|legible:bg_desktop}};
-@define-color i_disk  {{ansi12|legible:bg_desktop}};
-@define-color i_bt    {{ansi6|legible:bg_desktop}};
+@define-color i_disk  {{ansi4|legible:bg_desktop}};
+@define-color i_bt    {{ansi10|legible:bg_desktop}};
 
 /* the tooltip's 1px ring, and the selected text in tray menus */
 @define-color tipline {{fg_disabled}};

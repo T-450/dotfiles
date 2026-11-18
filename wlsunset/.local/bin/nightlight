@@ -44,8 +44,8 @@ status() {
 		text=󰖔 class=auto tip="Automatic · ${NIGHT_TEMP} K after sunset"
 	fi
 	# the design's tooltip line (dim name, value, dim hint); single quotes keep the JSON unescaped
-	local name="<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>night light</span>"
-	local hint="<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Click toggles · Right-click options</span>"
+	local name="<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>NIGHT LIGHT</span>"
+	local hint="<span font_desc='IBM Plex Mono 10px' fgalpha='66%'>Click toggles · Right-click options</span>"
 	printf '{"text":"%s","class":"%s","tooltip":"%s  %s\\n%s"}\n' "$text" "$class" "$name" "$tip" "$hint"
 }
 

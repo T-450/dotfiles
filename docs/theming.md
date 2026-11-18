@@ -92,16 +92,16 @@ Which apps use each role (generated from the templates):
 | `ansi0` | ghostty |
 | `ansi1` | ghostty |
 | `ansi10` | fastfetch, ghostty, helix, mousepad, waybar |
-| `ansi11` | ghostty, helix, waybar |
-| `ansi12` | ghostty, helix, mousepad, vim, waybar |
-| `ansi13` | claude, ghostty, helix, mousepad, pi, waybar |
+| `ansi11` | ghostty, helix |
+| `ansi12` | ghostty, helix, mousepad, vim |
+| `ansi13` | claude, ghostty, helix, mousepad, pi |
 | `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
 | `ansi3` | ghostty, helix, waybar |
-| `ansi4` | ghostty, helix, vim |
+| `ansi4` | ghostty, helix, vim, waybar |
 | `ansi5` | ghostty, helix, vim |
-| `ansi6` | ghostty, helix, vim, waybar |
+| `ansi6` | ghostty, helix, vim |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
 | `ansi9` | ghostty, helix |
@@ -116,7 +116,7 @@ Which apps use each role (generated from the templates):
 | `diff_change` | helix, mousepad, vim |
 | `diff_remove` | git, helix, mousepad, pi, vim |
 | `error` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, theme, vim, waybar |
-| `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim |
+| `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim, waybar |
 | `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim, waybar |
 | `fg_editor` | gtk, helix, mousepad, pi, theme, vim, waybar |
 | `fg_muted` | claude, fastfetch, helix, hyprlock, mousepad, pi, qutebrowser, rofi, theme, vim |

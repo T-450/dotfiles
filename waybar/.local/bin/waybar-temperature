@@ -5,7 +5,7 @@
 # package throttles at 100).
 
 # the design's tooltip line: dim uppercase name, then the value (see docs/apps/waybar.md)
-name="<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>temperature</span>  "
+name="<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>TEMPERATURE</span>  "
 
 for label in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 	[[ -r $label ]] || continue

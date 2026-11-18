@@ -223,7 +223,7 @@
 #network.l7,
 #network.l8,
 #network.l9 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-0-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/wifi-0-symbolic.svg")), none;
 }
 #network.l10,
 #network.l11,
@@ -250,7 +250,7 @@
 #network.l32,
 #network.l33,
 #network.l34 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-1-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/wifi-1-symbolic.svg")), none;
 }
 #network.l35,
 #network.l36,
@@ -277,7 +277,7 @@
 #network.l57,
 #network.l58,
 #network.l59 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/wifi-2-symbolic.svg")), none;
 }
 #network.l60,
 #network.l61,
@@ -320,12 +320,12 @@
 #network.l98,
 #network.l99,
 #network.l100 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/wifi-3-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/wifi-3-symbolic.svg")), none;
 }
 
 /* pulseaudio: no wave at 0, one below 50, two from 50 */
 #pulseaudio.l0 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-0-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/audio-0-symbolic.svg")), none;
 }
 #pulseaudio.l1,
 #pulseaudio.l2,
@@ -376,7 +376,7 @@
 #pulseaudio.l47,
 #pulseaudio.l48,
 #pulseaudio.l49 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-1-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/audio-1-symbolic.svg")), none;
 }
 #pulseaudio.l50,
 #pulseaudio.l51,
@@ -429,7 +429,7 @@
 #pulseaudio.l98,
 #pulseaudio.l99,
 #pulseaudio.l100 {
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/audio-2-symbolic.svg")), linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/audio-2-symbolic.svg")), none;
 }
 
 /* threshold skins, the only color a chip takes from its value: its tint and a 1px ring. warn = high
@@ -454,7 +454,7 @@
 #cpu.l100 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/cpu-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #memory.l80,
@@ -469,7 +469,7 @@
 #memory.l89 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #memory.l90,
@@ -485,7 +485,7 @@
 #memory.l100 {
     color: @crit;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/mem-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
 }
 #disk.l80,
@@ -500,7 +500,7 @@
 #disk.l89 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
     box-shadow: inset 0 0 0 1px @warn;
 }
 #disk.l90,
@@ -516,7 +516,7 @@
 #disk.l100 {
     color: @crit;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/disk-symbolic.svg")), linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
     box-shadow: inset 0 0 0 1px @crit;
 }
 #battery.discharging.l11,
@@ -531,7 +531,7 @@
 #battery.discharging.l20 {
     color: @warn;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
     box-shadow: inset 0 0 0 1px @warn;
 }
 #battery.discharging.l0,
@@ -547,6 +547,6 @@
 #battery.discharging.l10 {
     color: @crit;
     -gtk-icon-palette: success currentColor;
-    background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
+    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
     box-shadow: inset 0 0 0 1px @crit;
 }
