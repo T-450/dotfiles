@@ -159,7 +159,7 @@ super ctrl s	Scroller
 shift print	Screenshot of a region
 super esc	Session ▸
 maximise window	Maximize
-super alt l	Wider
+super r	Resize ▸
 alt tab	Jump to a window by its hint
 drag	Drag a window
 overview	Overview: every window at once|Overview, cycle windows

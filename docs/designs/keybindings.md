@@ -24,10 +24,10 @@ named nothing); (3) these modifier layers.
 |---|---|
 | super: go/open | h/j/k/l focus · 1..9 view tag · left/right previous/next tag · tab overview cycle · o overview · u previous window · return terminal · shift+return floating terminal · d launcher · b browser · e files · v clipboard · w wallpaper · p theme · / cheatsheet |
 | super+shift: carry | h/j/k/l move · 1..9 send to tag · left/right carry to previous/next tag · q close |
-| super+alt: window | m maximize · t float/tile · c center · z minimize · shift+z restore · s show/hide minimized · o on top · p pin · h/j/k/l resize (repeats) · q force kill |
+| super+alt: window | m maximize · t float/tile · c center · z minimize · shift+z restore · s show/hide minimized · o on top · p pin · q force kill |
 | super+ctrl: layout/view | space next layout · t tile · s scroller · m monocle · g grid · d deck · z swap with master · = / - masters · w scroller widths · [ / ] scroller stack · 1..9 add tag to view · shift+1..9 add window to tag · left/right tag with windows · tab previous tags · a all tags |
 | Print: capture | Print screen · shift+Print region · ctrl+Print record |
-| two steps | super+esc session: l lock · e log out · p power · r reload · b bar; super+n notifications: r restore · d dismiss all · z do not disturb; super+m monitor: h/l focus · shift+h/l send · p laptop panel |
+| two steps | super+esc session: l lock · e log out · p power · r reload · b bar; super+n notifications: r restore · d dismiss all · z do not disturb; super+m monitor: h/l focus · shift+h/l send · p laptop panel; super+r resize (stays open): [ / ] width · - / = height · r, return or esc done |
 
 alt+esc dropdown terminal and alt+tab jump hints stay; media keys and mouse drags are
 unchanged. No touchpad gestures: every action has a key.

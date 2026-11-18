@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# mango-resize grow|shrink width|height [STEP]: resize the focused window by STEP px (default 40),
+# whatever the layout (resize mode: super+r, then [ ] width, - = height). On a tiled window
+# mango's resizewin moves a shared edge in the direction of its sign, so the same sign grows one
+# window and shrinks its neighbor. The sign that grows the window points away from a tiled
+# neighbor on the left (width) or above (height); scroller widths and floating windows always
+# grow with +.
+set -euo pipefail
+verb=${1:?usage: mango-resize grow|shrink width|height [STEP]} axis=${2:?usage: mango-resize grow|shrink width|height [STEP]}
+step=${3:-40}
+[[ $verb == grow || $verb == shrink ]] && [[ $axis == width || $axis == height ]] || {
+	echo "usage: mango-resize grow|shrink width|height [STEP]" >&2
+	exit 2
+}
+
+focused=$(mmsg get focusing-client)
+layout=$(mmsg get tags "$(jq -r .monitor <<<"$focused")" | jq -r '.tags[] | select(.is_active) | .layout' | head -n 1)
+sign=$(mmsg get all-clients | jq -r --argjson f "$focused" --arg axis "$axis" --arg layout "$layout" '
+	if $f.is_floating or ($layout == "S" and $axis == "width") then "+"
+	elif $axis == "width" then
+		if any(.clients[]; .is_visible and (.is_floating | not) and .id != $f.id
+			and .x + .width <= $f.x and .y < $f.y + $f.height and .y + .height > $f.y) then "-" else "+" end
+	else
+		if any(.clients[]; .is_visible and (.is_floating | not) and .id != $f.id
+			and .y + .height <= $f.y and .x < $f.x + $f.width and .x + .width > $f.x) then "-" else "+" end
+	end')
+[[ $verb == shrink ]] && { [[ $sign == + ]] && sign=- || sign=+; }
+if [[ $axis == width ]]; then
+	mmsg dispatch "resizewin,$sign$step,+0" >/dev/null
+else
+	mmsg dispatch "resizewin,+0,$sign$step" >/dev/null
+fi

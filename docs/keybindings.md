@@ -12,7 +12,7 @@ The modifier names the group, the key names the action, pressed together:
 | super+ctrl | layout and view |
 | Print | capture |
 
-Rare actions take two steps: super+esc (session), super+n (notifications) or super+m (monitors), then one key. Esc leaves; a popup at the bottom shows the keys and the bar shows the group while it is open.
+Rare actions take two steps: super+esc (session), super+n (notifications) or super+m (monitors), then one key. super+r (resize) stays open until esc, r or return, so its keys repeat. Esc leaves; a popup at the bottom shows the keys and the bar shows the group while it is open.
 
 ## super: go and open
 
@@ -46,7 +46,6 @@ alt+esc is the dropdown terminal: the one persistent shell, on the top edge of w
 | t · c | float/tile · center a floating window |
 | z · shift+z · s | minimize · restore · show/hide minimized windows |
 | o · p | keep on top · pin to all tags (the bar shows on top / pinned; minimized windows are counted too) |
-| h/l · k/j | narrower/wider · shorter/taller (hold to repeat; on a tiled window it moves the split) |
 | q | force kill |
 
 There is no fullscreen key on purpose; maximize covers it.
@@ -76,6 +75,7 @@ There is no fullscreen key on purpose; maximize covers it.
 |---|---|
 | super+esc session | **l** lock · **e** log out (`mango-quit`) · **p** power menu · **r** reload mango's config (it also reloads on save) · **b** show/hide the bar |
 | super+n notifications | **r** restore the last · **d** dismiss all · **z** do not disturb |
+| super+r resize | **[**/**]** narrower/wider · **-**/**=** shorter/taller (niri's keys; hold to repeat; the focused window grows or shrinks whatever its place in the layout, `mango-resize`) · **r**, return or esc done |
 | super+m monitor | **h**/**l** focus the left/right monitor · **shift+h**/**shift+l** send the window there · **p** laptop panel on/off (way-displays, until the lid changes) |
 
 The second key works with super still held or released.
