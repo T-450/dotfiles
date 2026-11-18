@@ -1,12 +1,32 @@
 # vim
 
-Vim, the fallback editor for quick single-file edits, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor).
+Vim, the fallback editor for quick edits and jumping between a project's files, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor; no LSP or tree-sitter here).
 
 No plugins and no packages beyond `vim`: everything comes from vim's own runtime. `.vimrc` keeps vim's `defaults.vim` (a user vimrc would otherwise skip it) and connects the clipboard: Arch's vim is built without X11 or Wayland, so a clipboard provider (`:h clipboard-providers`) runs `wl-copy`/`wl-paste` for the `+` and `*` registers, and `clipboard=unnamedplus` makes plain `y` and `p` use the system clipboard. In Ghostty, Ctrl+V pastes as well; visual-block mode is Ctrl+Shift+Alt+V (or Ctrl+Q).
 
-On top of that: line numbers, smartcase search, splits that open right and below, a one-line statusline (file, flags, filetype, line:column/lines), and undo that survives closing the file. Undo, swap and backup files live in `~/.local/state/vim/`, not next to the file. Vim's bundled packs add `gc` to comment lines (`comment`), `.editorconfig` support, a flash on yanked text (`hlyank`) and search highlighting that clears itself (`nohlsearch`).
+On top of that: line numbers and a cursor line, smartcase search with a `[3/12]` match count, splits that open right and below, a statusline that opens with the mode in a color per mode (then file, flags, filetype, line:column/lines), long lines wrapped at words, indent guides (tabs, and space indents at the buffer's `shiftwidth`), and undo that survives closing the file. Completion is a fuzzy popup: on the `:` line as you type (`wildtrigger()`), and in insert mode from the open buffers' words (`autocomplete`). Undo, swap and backup files live in `~/.local/state/vim/`, not next to the file. Vim's bundled packs add `gc` to comment lines (`comment`), `.editorconfig` support, a flash on yanked text (`hlyank`) and search highlighting that clears itself (`nohlsearch`).
 
 Colors: `theme` renders `.vim/colors/palette.vim` from `palette.vim.tmpl` with the same roles as helix's theme (syntax in the terminal's hues, made legible on `bg_desktop`; the selection is `selection_bg`). Vim has no reload signal, so after `theme set` a running vim recolors when its terminal next gains focus.
+
+## Keys
+
+The leader is space; `space ?` shows every key below in a popup. One table in `.vimrc` (`s:keys`) makes both the mappings and the popup, so a new key goes there.
+
+| Key | Does |
+|---|---|
+| `space space` | open a project file: `:find` with `fd`'s file list (honoring `.gitignore`), fuzzy-ranked as you type; Enter opens the top match |
+| `space b` | switch to an open buffer, fuzzy |
+| `space e` | browse the file's directory (netrw) |
+| `space w` | save |
+| `space r` | markdown: rendered or source |
+| `space ?` | the key sheet; any key closes it |
+| `j` / `k` | move by screen line through wrapped text (`5j` still counts real lines) |
+
+## Markdown
+
+Markdown renders in the buffer: emphasis, inline code and heading markers are hidden, links show only their text, bullets are drawn as `•`, headings step down in hue by level. The cursor line always shows its source, and `space r` switches the whole buffer between rendered and source. Fenced code blocks (`sh`, `python`, `json`, `toml`, `yaml`, `go`, `rust` and more: `g:markdown_fenced_languages`) take their language's colors. Enter or `o` on a `-`, `*`, `+` or `>` line continues it; Enter on an empty item ends the list.
+
+Vim wraps lines by their source width, so a line holding a long hidden link URL wraps earlier than its rendered text needs.
 
 ## Formatting and linting
 
@@ -14,9 +34,9 @@ The leader is space. Tools come from mise, so start vim from a terminal ([mise](
 
 | Key | Does |
 |---|---|
-| `space f` | format the whole file; if the formatter fails (a syntax error) the file stays as it was and its first error line is shown. A new buffer needs a name first: the formatters read it to pick a language |
+| `space f` | format the whole file and say what happened: formatted, already formatted, the formatter's error (the file stays as it was), or that the tool is not on `PATH`. A new buffer needs a name first: the formatters read it to pick a language |
 | `gq{motion}` | format a range with the same formatter (`formatprg`); a failing formatter's error replaces the range, `u` undoes it |
-| `space m` | save, then lint the file (`:make`) into the quickfix list, opened when there is something in it |
+| `space m` | save, then lint the file (`:make`) into the quickfix list, opened when there is something in it, and say the count of problems |
 | `]q` / `[q` | next / previous quickfix entry |
 
 | Filetype | Formatter | Linter (vim's compiler plugin) |

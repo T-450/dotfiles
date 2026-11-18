@@ -52,6 +52,13 @@ hi MoreMsg          guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm
 hi Question         guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
 hi ErrorMsg         guifg={{error|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
 hi WarningMsg       guifg={{warning|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi PopupBorder      guifg={{border_inactive}} guibg={{bg_widget}} gui=NONE cterm=NONE
+" the statusline's mode chip, a hue per mode
+hi StatusNormal     guifg={{bg_desktop}} guibg={{accent}} gui=bold cterm=bold
+hi StatusInsert     guifg={{bg_desktop}} guibg={{success}} gui=bold cterm=bold
+hi StatusVisual     guifg={{bg_desktop}} guibg={{ansi5}} gui=bold cterm=bold
+hi StatusReplace    guifg={{bg_desktop}} guibg={{error}} gui=bold cterm=bold
+hi StatusCommand    guifg={{bg_desktop}} guibg={{warning}} gui=bold cterm=bold
 
 " --- syntax ---
 hi Comment     guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
@@ -72,6 +79,25 @@ hi Todo        guifg={{warning|legible:bg_desktop}} guibg=NONE gui=bold cterm=bo
 hi Added       guifg={{ansi2|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
 hi Changed     guifg={{ansi4|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
 hi Removed     guifg={{error|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+
+" --- markdown: headings step down in hue, rendered markers (bullets) take Conceal ---
+hi markdownH1             guifg={{accent|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi markdownH2             guifg={{ansi12|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi markdownH3             guifg={{ansi5|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi markdownH4             guifg={{ansi6|legible:bg_desktop}} guibg=NONE gui=bold cterm=bold
+hi markdownH5             guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
+hi markdownH6             guifg={{fg_secondary}} guibg=NONE gui=bold cterm=bold
+hi markdownHeadingDelimiter guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
+hi markdownBold           guifg={{fg_bright}} guibg=NONE gui=bold cterm=bold
+hi markdownItalic         guifg=NONE guibg=NONE gui=italic cterm=italic
+hi markdownBoldItalic     guifg={{fg_bright}} guibg=NONE gui=bold,italic cterm=bold,italic
+hi markdownCode           guifg={{ansi2|legible:bg_surface}} guibg={{bg_surface}} gui=NONE cterm=NONE
+hi markdownCodeDelimiter  guifg={{fg_disabled}} guibg=NONE gui=NONE cterm=NONE
+hi markdownLinkText       guifg={{link|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
+hi markdownUrl            guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=underline cterm=underline
+hi markdownListMarker     guifg={{accent|legible:bg_desktop}} guibg=NONE gui=NONE cterm=NONE
+hi markdownBlockquote     guifg={{fg_muted|legible:bg_desktop}} guibg=NONE gui=italic cterm=italic
+hi markdownRule           guifg={{border_inactive}} guibg=NONE gui=NONE cterm=NONE
 
 " --- diff, spelling ---
 hi DiffAdd    guifg=NONE guibg={{success|mix:bg_desktop:0.8}} gui=NONE cterm=NONE
