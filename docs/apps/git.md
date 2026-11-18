@@ -2,7 +2,7 @@
 
 git, with the GitHub CLI as the credential helper for GitHub over HTTPS and delta for diffs.
 
-Diffs, logs, `git show` and `git add -p` page through delta: syntax-highlighted, with `n`/`N` to jump between files. It draws in the terminal's ANSI colors (`syntax-theme = ansi`), so it follows the palette.
+Diffs, logs, `git show` and `git add -p` page through delta: syntax-highlighted, with `n`/`N` to jump between files. It draws code in the terminal's ANSI colors (`syntax-theme = ansi`) on the palette's diff tints (`diff_add`, `diff_remove`; changed words a step stronger), so it follows the palette.
 
 `config.tmpl` holds no personal values. Your name and email come from its `git_name` and `git_email` tags, which `theme` fills from your existing git config, else from `GIT_AUTHOR_NAME` and `GIT_AUTHOR_EMAIL`, else by asking once. Run `gh auth login` once before git pushes to GitHub.
 
@@ -17,5 +17,5 @@ Diffs, logs, `git show` and `git add -p` page through delta: syntax-highlighted,
 
 **Rendered from the palette** (`theme`):
 
-- `git/.config/git/config.tmpl` → `git/.config/git/config`: `git_email`, `git_name`
+- `git/.config/git/config.tmpl` → `git/.config/git/config`: `diff_add`, `diff_remove`, `git_email`, `git_name`
 <!-- end generated -->

@@ -56,6 +56,12 @@ SYNTAX = {
     "identifier": "fg_editor", "string": "ansi2", "constant": "ansi3", "number": "constant",
     "boolean": "constant", "special": "ansi6", "operator": "fg_secondary", "comment": "fg_muted",
 }
+# Optional [diff] table: added, removed and changed lines (vim, helix, delta, Pi, Claude Code,
+# Mousepad), as `diff_<name>` roles; without it, the status colors and the terminal's blue.
+DIFF = {"add": "success", "remove": "error", "change": "ansi4"}
+# Optional roles in [colors], each defaulting to another role: `info`, the third diagnostic tier
+# after error and warning (helix, Mousepad).
+OPTIONAL = {"info": "ansi4"}
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
@@ -210,6 +216,17 @@ def load_palette(slug, path=None):
             raise ThemeError(f"{path.name}: keycaps.legend reads at {contrast(v['key_legend'], v[f'key_{k}']):.2f}:1 "
                              f"on keycaps.{k} (needs {TEXT_CONTRAST}); make the cap more opaque or darker")
 
+    for k, default in OPTIONAL.items():
+        v[k] = rgb(colors[k], f"{path.name} colors.{k}") if k in colors else v[default]
+    unknown = sorted(set(colors) - set(ROLES) - set(OPTIONAL))
+    if unknown:
+        raise ThemeError(f"{path.name}: unknown colors {', '.join(unknown)} (have: {', '.join(ROLES + list(OPTIONAL))})")
+    diff = data.get("diff", {})
+    unknown = sorted(set(diff) - set(DIFF))
+    if unknown:
+        raise ThemeError(f"{path.name}: unknown diff {', '.join(unknown)} (have: {', '.join(DIFF)})")
+    for k, default in DIFF.items():
+        v[f"diff_{k}"] = rgb(diff[k], f"{path.name} diff.{k}") if k in diff else v[default]
     syntax = data.get("syntax", {})
     unknown = sorted(set(syntax) - set(SYNTAX))
     if unknown:

@@ -2,7 +2,7 @@
 
 Mousepad, the plain-text editor GTK apps open text files with.
 
-Its editor colors come from the palette: `theme` renders the GtkSourceView scheme `mango.xml` (surfaces from the palette roles; syntax from the terminal's ANSI colors through `|legible:bg_desktop`, so every color reads at 4.5:1 on the editor background), and `setup.sh` selects it (`org.xfce.mousepad.preferences.view color-scheme`). Open windows keep their colors after `theme set`; reopen Mousepad. The window chrome is GTK's ([gtk](gtk.md)).
+Its editor colors come from the palette: `theme` renders the GtkSourceView scheme `mango.xml` (surfaces from the palette roles; syntax from the palette's `syn_*` roles and diffs from its `diff_*` ones (the same as vim's and helix's), through `|legible:bg_desktop`, so every color reads at 4.5:1 on the editor background), and `setup.sh` selects it (`org.xfce.mousepad.preferences.view color-scheme`). Open windows keep their colors after `theme set`; reopen Mousepad. The window chrome is GTK's ([gtk](gtk.md)).
 
 ## Reference
 
@@ -15,7 +15,7 @@ Its editor colors come from the palette: `theme` renders the GtkSourceView schem
 
 **Rendered from the palette** (`theme`):
 
-- `mousepad/.local/share/gtksourceview-4/styles/mango.xml.tmpl` → `mousepad/.local/share/gtksourceview-4/styles/mango.xml`: `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi9`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `term_cursor`, `warning`
+- `mousepad/.local/share/gtksourceview-4/styles/mango.xml.tmpl` → `mousepad/.local/share/gtksourceview-4/styles/mango.xml`: `ansi10`, `ansi12`, `ansi13`, `ansi14`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `border_inactive`, `diff_add`, `diff_change`, `diff_remove`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_identifier`, `syn_keyword`, `syn_number`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `term_cursor`, `warning`
 
 **`setup.sh`** (run by `install.sh --setup`): syntax colors from the palette (the "mango" GtkSourceView scheme, rendered by theme). Mousepad keeps its settings in GSettings; needs a dbus session, skipped without one.
 <!-- end generated -->

@@ -81,9 +81,9 @@ hi Delimiter   guifg={{syn_operator}} guibg=NONE gui=NONE cterm=NONE
 hi Underlined  guifg={{link|legible:term_bg}} guibg=NONE gui=underline cterm=underline
 hi Error       guifg={{error|legible:term_bg}} guibg=NONE gui=bold cterm=bold
 hi Todo        guifg={{warning|legible:term_bg}} guibg=NONE gui=bold cterm=bold
-hi Added       guifg={{ansi2|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
-hi Changed     guifg={{ansi4|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
-hi Removed     guifg={{error|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Added       guifg={{diff_add|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Changed     guifg={{diff_change|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
+hi Removed     guifg={{diff_remove|legible:term_bg}} guibg=NONE gui=NONE cterm=NONE
 
 " --- markdown: headings step down in hue, rendered markers (bullets) take Conceal ---
 hi markdownH1             guifg={{accent|legible:term_bg}} guibg=NONE gui=bold cterm=bold
@@ -105,10 +105,10 @@ hi markdownBlockquote     guifg={{fg_muted|legible:term_bg}} guibg=NONE gui=ital
 hi markdownRule           guifg={{border_inactive}} guibg=NONE gui=NONE cterm=NONE
 
 " --- diff, spelling ---
-hi DiffAdd    guifg=NONE guibg={{success|mix:term_bg:0.8}} gui=NONE cterm=NONE
-hi DiffChange guifg=NONE guibg={{ansi4|mix:term_bg:0.85}} gui=NONE cterm=NONE
-hi DiffDelete guifg={{error|legible:term_bg}} guibg={{error|mix:term_bg:0.85}} gui=NONE cterm=NONE
-hi DiffText   guifg=NONE guibg={{ansi4|mix:term_bg:0.65}} gui=NONE cterm=NONE
+hi DiffAdd    guifg=NONE guibg={{diff_add|mix:term_bg:0.8}} gui=NONE cterm=NONE
+hi DiffChange guifg=NONE guibg={{diff_change|mix:term_bg:0.85}} gui=NONE cterm=NONE
+hi DiffDelete guifg={{diff_remove|legible:term_bg}} guibg={{diff_remove|mix:term_bg:0.85}} gui=NONE cterm=NONE
+hi DiffText   guifg=NONE guibg={{diff_change|mix:term_bg:0.65}} gui=NONE cterm=NONE
 hi SpellBad   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{error}}
 hi SpellCap   guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{warning}}
 hi SpellRare  guifg=NONE guibg=NONE gui=undercurl cterm=undercurl guisp={{ansi6}}

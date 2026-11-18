@@ -46,6 +46,15 @@ and greys: keyword `ansi5`, type `ansi13`, function `ansi12`, string `ansi2`, co
 special `ansi6`, identifier `fg_editor`, operator `fg_secondary`, comment `fg_muted`; preproc
 follows keyword, number and boolean follow constant.
 
+## Diff and info
+
+An optional `[diff]` table (`add`, `remove`, `change`; roles `diff_add`, `diff_remove`,
+`diff_change`) colors added, removed and changed lines in vim, helix, delta (git's pager and
+lazygit's), Pi, Claude Code and Mousepad; without it they are `success`, `error` and `ansi4`. An
+optional `info` in `[colors]` is the third diagnostic tier after error and warning (helix); without
+it, `ansi4`. Colibri sets both from swatch.html: plus, minus and delta. Every editor (vim, helix,
+Mousepad, Pi) takes its syntax from the `syn_*` roles.
+
 ## Roles
 
 A palette names colors by what they do, not by app. The VS Code key is where
@@ -81,21 +90,21 @@ Which apps use each role (generated from the templates):
 |---|---|
 | `accent` | claude, firefox, ghostty, gtk, helix, hyprlock, lazygit, mango, pi, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `ansi0` | ghostty |
-| `ansi1` | ghostty, pi |
+| `ansi1` | ghostty |
 | `ansi10` | ghostty, helix, mousepad, waybar |
-| `ansi11` | ghostty, helix, mousepad, pi, waybar |
-| `ansi12` | ghostty, helix, mousepad, pi, vim, waybar |
+| `ansi11` | ghostty, helix, waybar |
+| `ansi12` | ghostty, helix, mousepad, vim, waybar |
 | `ansi13` | claude, ghostty, helix, mousepad, pi, waybar |
 | `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
 | `ansi3` | ghostty, helix, waybar |
-| `ansi4` | ghostty, helix, pi, vim |
-| `ansi5` | ghostty, helix, pi, vim |
+| `ansi4` | ghostty, helix, vim |
+| `ansi5` | ghostty, helix, vim |
 | `ansi6` | ghostty, helix, vim, waybar |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
-| `ansi9` | ghostty, helix, mousepad |
+| `ansi9` | ghostty, helix |
 | `badge` | lazygit, mousepad, mpv, theme, waybar |
 | `bg_desktop` | claude, firefox, gtk, hyprlock, mango, mousepad, mpv, qutebrowser, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme, vim |
@@ -103,6 +112,9 @@ Which apps use each role (generated from the templates):
 | `bg_widget` | claude, firefox, gtk, helix, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, vim, wlogout |
 | `border_hairline` | firefox, helix, mako, pi, qutebrowser, rofi, swayosd, theme, waybar |
 | `border_inactive` | claude, fastfetch, firefox, ghostty, helix, lazygit, mako, mango, mousepad, pi, rofi, theme, vim |
+| `diff_add` | git, helix, mousepad, pi, vim |
+| `diff_change` | helix, mousepad, vim |
+| `diff_remove` | git, helix, mousepad, pi, vim |
 | `error` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, theme, vim, waybar |
 | `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim |
 | `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim, waybar |
@@ -113,6 +125,7 @@ Which apps use each role (generated from the templates):
 | `git_email` | git |
 | `git_name` | git |
 | `home` | helix, hyprlock, runner-up |
+| `info` | helix |
 | `key_accent` | theme |
 | `key_cap` | theme |
 | `key_frame` | theme |
@@ -127,18 +140,18 @@ Which apps use each role (generated from the templates):
 | `shadow` | hyprlock, mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mako, mango, mousepad, mpv, pi, rofi, swayosd, theme, waybar, wlogout |
 | `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim, waybar |
-| `syn_boolean` | helix, vim |
-| `syn_comment` | helix, vim |
-| `syn_constant` | helix, vim |
-| `syn_function` | helix, vim |
-| `syn_identifier` | vim |
-| `syn_keyword` | helix, vim |
-| `syn_number` | helix, vim |
-| `syn_operator` | helix, vim |
-| `syn_preproc` | helix, vim |
-| `syn_special` | helix, vim |
-| `syn_string` | helix, vim |
-| `syn_type` | helix, vim |
+| `syn_boolean` | helix, mousepad, vim |
+| `syn_comment` | helix, mousepad, pi, vim |
+| `syn_constant` | helix, mousepad, vim |
+| `syn_function` | helix, mousepad, pi, vim |
+| `syn_identifier` | mousepad, vim |
+| `syn_keyword` | helix, mousepad, pi, vim |
+| `syn_number` | helix, mousepad, pi, vim |
+| `syn_operator` | helix, pi, vim |
+| `syn_preproc` | helix, mousepad, vim |
+| `syn_special` | helix, mousepad, vim |
+| `syn_string` | helix, mousepad, pi, vim |
+| `syn_type` | helix, mousepad, pi, vim |
 | `term_bg` | claude, ghostty, helix, pi, theme, vim |
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |

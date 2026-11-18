@@ -64,5 +64,5 @@ The leader is space. Tools come from mise, so start vim from a terminal ([mise](
 
 **Rendered from the palette** (`theme`):
 
-- `vim/.vim/colors/palette.vim.tmpl` → `vim/.vim/colors/palette.vim`: `accent`, `ansi12`, `ansi2`, `ansi4`, `ansi5`, `ansi6`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_identifier`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `term_bg`, `variant`, `warning`
+- `vim/.vim/colors/palette.vim.tmpl` → `vim/.vim/colors/palette.vim`: `accent`, `ansi12`, `ansi2`, `ansi4`, `ansi5`, `ansi6`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `diff_add`, `diff_change`, `diff_remove`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `success`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_identifier`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `term_bg`, `variant`, `warning`
 <!-- end generated -->

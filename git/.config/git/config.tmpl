@@ -11,7 +11,8 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 # diffs, logs and `git add -p` through delta (git/packages), in the terminal's ANSI colors so they
-# follow the palette; n and N jump between files
+# follow the palette, on the palette's diff tints (added, removed; the changed words a step
+# stronger); n and N jump between files
 [core]
 	pager = delta
 [interactive]
@@ -19,3 +20,7 @@
 [delta]
 	navigate = true
 	syntax-theme = ansi
+	plus-style = syntax "{{diff_add|mix:term_bg:0.8}}"
+	minus-style = syntax "{{diff_remove|mix:term_bg:0.8}}"
+	plus-emph-style = syntax "{{diff_add|mix:term_bg:0.6}}"
+	minus-emph-style = syntax "{{diff_remove|mix:term_bg:0.6}}"

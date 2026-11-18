@@ -53,18 +53,18 @@
 "markup.quote" = { fg = "muted", modifiers = ["italic"] }
 "markup.raw" = "mint"
 
-"diff.plus" = "mint"
-"diff.minus" = "error"
-"diff.delta" = "blue"
+"diff.plus" = "diff-add"
+"diff.minus" = "diff-remove"
+"diff.delta" = "diff-change"
 
 # --- diagnostics ---
 "error" = "error"
 "warning" = "warning"
-"info" = "cyan"
+"info" = "info"
 "hint" = "muted"
 "diagnostic.error" = { underline = { color = "error", style = "curl" } }
 "diagnostic.warning" = { underline = { color = "warning", style = "curl" } }
-"diagnostic.info" = { underline = { color = "cyan", style = "curl" } }
+"diagnostic.info" = { underline = { color = "info", style = "curl" } }
 "diagnostic.hint" = { underline = { color = "muted", style = "curl" } }
 "diagnostic.unnecessary" = { modifiers = ["dim"] }
 "diagnostic.deprecated" = { modifiers = ["crossed_out"] }
@@ -167,3 +167,7 @@ syn-boolean = "{{syn_boolean|legible:term_bg}}"
 syn-special = "{{syn_special|legible:term_bg}}"
 syn-operator = "{{syn_operator}}"
 syn-comment = "{{syn_comment|legible:term_bg}}"
+diff-add = "{{diff_add|legible:term_bg}}"
+diff-remove = "{{diff_remove|legible:term_bg}}"
+diff-change = "{{diff_change|legible:term_bg}}"
+info = "{{info|legible:term_bg}}"

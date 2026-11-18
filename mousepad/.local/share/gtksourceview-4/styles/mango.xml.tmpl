@@ -22,30 +22,30 @@
   <style name="search-match"          foreground="{{badge|ink}}" background="{{badge}}"/>
   <style name="map-overlay"           background="{{bg_hover}}"/>
 
-  <style name="def:comment"           foreground="{{fg_muted|legible:bg_desktop}}" italic="true"/>
+  <style name="def:comment"           foreground="{{syn_comment|legible:bg_desktop}}" italic="true"/>
   <style name="def:shebang"           foreground="{{fg_muted|legible:bg_desktop}}" bold="true"/>
   <style name="def:doc-comment-element" foreground="{{fg_secondary|legible:bg_desktop}}" italic="true"/>
-  <style name="def:keyword"           foreground="{{ansi13|legible:bg_desktop}}"/>
-  <style name="def:statement"         foreground="{{ansi13|legible:bg_desktop}}"/>
-  <style name="def:type"              foreground="{{ansi11|legible:bg_desktop}}"/>
-  <style name="def:function"          foreground="{{ansi12|legible:bg_desktop}}"/>
-  <style name="def:builtin"           foreground="{{ansi14|legible:bg_desktop}}"/>
-  <style name="def:string"            foreground="{{ansi10|legible:bg_desktop}}"/>
-  <style name="def:special-char"      foreground="{{ansi14|legible:bg_desktop}}"/>
-  <style name="def:character"         foreground="{{ansi10|legible:bg_desktop}}"/>
-  <style name="def:constant"          foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="def:special-constant"  foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="def:boolean"           foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="def:number"            foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="def:floating-point"    foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="def:preprocessor"      foreground="{{ansi14|legible:bg_desktop}}"/>
-  <style name="def:identifier"        foreground="{{fg_editor}}"/>
+  <style name="def:keyword"           foreground="{{syn_keyword|legible:bg_desktop}}"/>
+  <style name="def:statement"         foreground="{{syn_keyword|legible:bg_desktop}}"/>
+  <style name="def:type"              foreground="{{syn_type|legible:bg_desktop}}"/>
+  <style name="def:function"          foreground="{{syn_function|legible:bg_desktop}}"/>
+  <style name="def:builtin"           foreground="{{syn_identifier|legible:bg_desktop}}"/>
+  <style name="def:string"            foreground="{{syn_string|legible:bg_desktop}}"/>
+  <style name="def:special-char"      foreground="{{syn_special|legible:bg_desktop}}"/>
+  <style name="def:character"         foreground="{{syn_string|legible:bg_desktop}}"/>
+  <style name="def:constant"          foreground="{{syn_constant|legible:bg_desktop}}"/>
+  <style name="def:special-constant"  foreground="{{syn_constant|legible:bg_desktop}}"/>
+  <style name="def:boolean"           foreground="{{syn_boolean|legible:bg_desktop}}"/>
+  <style name="def:number"            foreground="{{syn_number|legible:bg_desktop}}"/>
+  <style name="def:floating-point"    foreground="{{syn_number|legible:bg_desktop}}"/>
+  <style name="def:preprocessor"      foreground="{{syn_preproc|legible:bg_desktop}}"/>
+  <style name="def:identifier"        foreground="{{syn_identifier}}"/>
   <style name="def:net-address"       foreground="{{link|legible:bg_desktop}}" underline="true"/>
   <style name="def:error"             foreground="{{error|legible:bg_desktop}}" underline="error"/>
   <style name="def:warning"           foreground="{{warning|legible:bg_desktop}}"/>
   <style name="def:note"              foreground="{{warning|ink}}" background="{{warning}}" bold="true"/>
-  <style name="def:insertion"         foreground="{{ansi10|legible:bg_desktop}}"/>
-  <style name="def:deletion"          foreground="{{ansi9|legible:bg_desktop}}" strikethrough="true"/>
+  <style name="def:insertion"         foreground="{{diff_add|legible:bg_desktop}}"/>
+  <style name="def:deletion"          foreground="{{diff_remove|legible:bg_desktop}}" strikethrough="true"/>
 
   <style name="def:heading"           foreground="{{ansi12|legible:bg_desktop}}" bold="true"/>
   <style name="def:emphasis"          italic="true"/>
@@ -58,9 +58,9 @@
   <style name="def:list-marker"       foreground="{{ansi13|legible:bg_desktop}}" bold="true"/>
   <style name="def:thematic-break"    foreground="{{fg_muted|legible:bg_desktop}}"/>
 
-  <style name="diff:added-line"       foreground="{{ansi10|legible:bg_desktop}}"/>
-  <style name="diff:removed-line"     foreground="{{ansi9|legible:bg_desktop}}"/>
-  <style name="diff:changed-line"     foreground="{{ansi11|legible:bg_desktop}}"/>
+  <style name="diff:added-line"       foreground="{{diff_add|legible:bg_desktop}}"/>
+  <style name="diff:removed-line"     foreground="{{diff_remove|legible:bg_desktop}}"/>
+  <style name="diff:changed-line"     foreground="{{diff_change|legible:bg_desktop}}"/>
   <style name="diff:location"         foreground="{{ansi14|legible:bg_desktop}}"/>
   <style name="diff:diff-file"        foreground="{{ansi12|legible:bg_desktop}}" bold="true"/>
   <style name="diff:special-case"     foreground="{{fg_muted|legible:bg_desktop}}"/>
