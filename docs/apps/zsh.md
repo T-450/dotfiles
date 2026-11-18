@@ -8,6 +8,8 @@ oh-my-zsh comes from the AUR package `oh-my-zsh-git` (`/usr/share/oh-my-zsh`, up
 
 The prompt is [cdimascio's lambda theme](https://github.com/cdimascio/lambda-zsh-theme): a `λ` (green after a command that succeeded, red after one that failed), the current directory's name, and `git:(branch)` inside a repository, with a `✗` when it has changes. No package ships it, so `pkg/zsh-theme-cdimascio-lambda` builds it from a pinned commit into oh-my-zsh's custom themes (`/usr/share/oh-my-zsh/custom/themes`). `.zshrc` recolors it after oh-my-zsh loads, in Colibri's colors as ANSI numbers so every palette draws it: the `λ` mint (bright green; bold red after a failure), the directory lilac (bright magenta), `git:(` `)` lavender (bright blue), the branch honey (yellow), the `✗` diff red (bright red).
 
+`ls` is `eza --icons`, with `.config/eza/theme.yml`: one icon family (eza's own filled file and folder shapes; no per-language logos), colored by kind in ANSI colors (code blue, scripts green, config cyan, media purple, archives and PDFs red, keys yellow, locks and git files grey), and plain file names.
+
 `.zshrc` is the only shell file. It is public with this repo, so API keys stay out of it and out of every tracked file (`theme lint` fails on a pasted token); an app keeps its key in its own credential store, e.g. `gh auth login`. A key that must be an environment variable goes in `~/.config/zsh/private.zsh` (untracked, mode 600), which `.zshrc` sources when it exists (`$ANTHROPIC_API`, for [Pi](pi.md)).
 
 The `mise` plugin activates [mise](mise.md) in every interactive shell. It puts the toolchain on `PATH`, switches versions when you `cd` into a project that pins them, and adds `mise` completions (cached in `~/.cache/oh-my-zsh/completions`). It adds about 65 ms to each new shell on battery, for two mise runs (`mise activate`, then the first `mise hook-env`). The plugin does nothing when `mise` isn't installed.
@@ -21,6 +23,7 @@ The `mise` plugin activates [mise](mise.md) in every interactive shell. It puts 
 
 **Linked into your home** (stow, `install.sh --link`):
 
+- `~/.config/eza/theme.yml`
 - `~/.zshrc`
 
 **`setup.sh`** (run by `install.sh --setup`): zsh as the login shell (~/.zshrc is linked, oh-my-zsh comes from zsh/packages).
