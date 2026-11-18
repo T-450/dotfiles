@@ -1,1 +1,2 @@
 vim
+yamllint                 # yaml linter for space m (pacman: mise allows no pypi backend)

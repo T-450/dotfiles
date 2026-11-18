@@ -1,0 +1,9 @@
+# yamllint: user defaults; a project's .yamllint overrides them. Rules match what yamlfmt writes.
+extends: default
+rules:
+  comments:
+    min-spaces-from-content: 1 # yamlfmt puts one space before a comment
+  document-start: disable # yamlfmt adds no ---, and most config files have none
+  line-length: disable # yamlfmt does not wrap
+  truthy:
+    check-keys: false # GitHub Actions' `on:` key

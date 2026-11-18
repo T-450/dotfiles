@@ -4,6 +4,13 @@ Language toolchains, build systems and editor tooling, pinned by a committed loc
 
 [`config.toml`](../../mise/.config/mise/config.toml) names each tool and the version channel it follows (`go = "1.27"`, `node = "26"`). `mise.lock` next to it pins the exact version of each, plus the URL and SHA-256 of every download. `locks/` holds the dependency lockfiles of the npm tools. mise writes both, so never edit them by hand. `setup.sh` runs `mise install --locked` from `/` when the lockfile pins a tool that isn't installed, then prunes versions nothing uses. Running from `/` keeps a `mise.toml` or `.nvmrc` in your home or working directory out of the install.
 
+## Linter defaults
+
+Two linters get user defaults here, so they agree with the formatters that run next to them (vim's `space f` and `space m`); a project's own config replaces them.
+
+- `~/.config/yamllint/config`: the default rules, minus what yamlfmt does differently (one space before a comment, no `---`, no wrapping) and GitHub Actions' `on:` key.
+- `~/.config/rumdl/rumdl.toml`: markdownlint's rules without line length, since prettier keeps long lines.
+
 ## Where a tool comes from
 
 mise installs every tool except these, which come from pacman:
@@ -54,6 +61,8 @@ oh-my-zsh's `mise` plugin puts the tools on `PATH` in zsh, so only programs star
 
 - `~/.config/mise/config.toml`
 - `~/.config/mise/mise.lock`
+- `~/.config/rumdl/rumdl.toml`
+- `~/.config/yamllint/config`
 
 **`setup.sh`** (run by `install.sh --setup`): install the tools ~/.config/mise/config.toml requests, at the exact versions and checksums mise.lock pins (--locked: no version lookups), then delete versions nothing uses.
 <!-- end generated -->

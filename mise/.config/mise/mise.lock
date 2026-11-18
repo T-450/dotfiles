@@ -266,6 +266,17 @@ url = "https://github.com/astral-sh/ruff/releases/download/0.17.4/ruff-x86_64-un
 url_api = "https://api.github.com/repos/astral-sh/ruff/releases/assets/714447482"
 provenance = "github-attestations"
 
+[[tools.rumdl]]
+version = "0.3.4"
+backend = "aqua:rvben/rumdl"
+specifiers = ["0"]
+
+[tools.rumdl."platforms.linux-x64"]
+checksum = "sha256:36f1524f0cfaf33f5dfe68ac19220e1bd57ded1f0f9205931f6ee1de32f4a040"
+url = "https://github.com/rvben/rumdl/releases/download/v0.3.4/rumdl-v0.3.4-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/741227513"
+provenance = "github-attestations"
+
 [[tools.rust]]
 version = "1.99.1"
 backend = "core:rust"

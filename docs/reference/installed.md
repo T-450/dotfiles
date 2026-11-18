@@ -172,6 +172,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `7zip` | 26.06-1 |
 | thunar | `unrar` | 1:7.3.2-1 |
 | vim | `vim` | 9.2.1178-1 |
+| vim | `yamllint` | not installed |
 | way-displays | `way-displays` | 2.0.1-1 |
 | waybar | `waybar` | 0.16.0-1 |
 | waybar | `pamixer` | 1.6-4 |
@@ -190,4 +191,4 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | zsh | `bat` | 0.26.1-3 |
 | zsh | `fd` | 10.5.0-3 |
 | zsh | `ripgrep` | 15.2.0-1 |
-| zsh | `btop` | not installed |
+| zsh | `btop` | 1.4.8-1 |

@@ -1,0 +1,4 @@
+# rumdl, the markdown linter: user defaults; a project's .rumdl.toml overrides them.
+# prettier formats markdown and keeps long lines as they are, so line length is not a lint.
+[MD013]
+enabled = false
