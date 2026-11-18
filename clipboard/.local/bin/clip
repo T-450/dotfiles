@@ -13,7 +13,7 @@ rows() {
 	while IFS=$'\t' read -r id preview; do
 		if [[ $preview =~ $image ]]; then
 			t=$thumbs/$id.png
-			[[ -e $t ]] || cliphist decode "$id" | magick - -thumbnail 64x64 "$t" 2>/dev/null || t=image-x-generic
+			[[ -e $t ]] || cliphist decode "$id" | magick - -thumbnail 64x64 "$t" 2>/dev/null || t='image-x-generic'
 			keep[$id.png]=1
 			printf '%s\t%s\0icon\x1f%s\n' "$id" "${BASH_REMATCH[2]} ${BASH_REMATCH[1]} image" "$t"
 		else
@@ -25,6 +25,9 @@ rows() {
 	done
 	return 0
 }
+
+# rofi -dmenu closes at once on no input, so an empty history would look like a dead key
+[[ -n $(cliphist list | head -n 1) ]] || { notify-send -a clip "Clipboard history is empty"; exit 0; }
 
 while :; do
 	rc=0
