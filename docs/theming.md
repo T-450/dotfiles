@@ -7,32 +7,42 @@ palettes; `theme lint` fails if one shows up anywhere else in the repo.
 
 ```bash
 theme list                 # palettes (* = active)
-theme set light-2026       # switch everything (also: super+shift+t picker)
+theme set tokyo-night      # switch everything (also: super+shift+t picker)
 theme init                 # render the active palette without reloading (install.sh)
 theme lint                 # no color literals; rendered files gitignored; no secrets tracked
 ```
 
-The default palette is **Dark 2026**, from VS Code's
-`microsoft/vscode` → `extensions/theme-defaults/themes/2026-dark.json`. Its terminal colors
-(`[terminal]`: foreground, background, cursor, ANSI 0-15) and selection come from the dark-2026
-Ghostty theme instead (`github.com/dark-2026-theme/nvim`, `themes/dark-2026.conf`); Light 2026
-takes the same from `themes/light-2026.conf`. Re-importing either from VS Code drops them.
+The default palette is **Colibri**, from `archseer/colibri.vim` (`colors/colibri.vim`, its dark
+branch): each role, ANSI color and syntax color is one of that scheme's named colors (the comments
+in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
+`fg_secondary`), mixed from its own. The other palette is Tokyo Night (`theme import-omarchy`).
 
 ## Keycaps
 
 An optional `[keycaps]` table gives the keybinding cheatsheet (`mango-keys`) its keycap colors, as
 roles `key_mod`, `key_cap`, `key_accent`, `key_legend`, `key_frame` (and
-`THEME_KEY_*` in `colors.sh`). The bundled palettes set them from the NuPhy Air60 HE: black modifier
+`THEME_KEY_*` in `colors.sh`). Tokyo Night sets them from the NuPhy Air60 HE: black modifier
 caps, grey letter caps, white legends, the aluminium frame. `key_accent` is the one lit cap, under
-the selected row's action key only: the board's violet, except on Anodized Keylight, where it is
-the signal (blue toward cobalt). Cosmic Storm Haze takes them from the Keychron Q1 Navy instead:
-navy modifiers, space-gray letters, the lit key in its royal cobalt signal. A cap may be
+the selected row's action key only: the board's violet. A cap may be
 translucent (`#rrggbbaa`): `theme` composites it over `bg_desktop`, as you see the plate through
 the board's violet keys (85% on dark palettes; opaque on light ones, where blending would wash the
 legend out). `theme` fails a palette whose legend reads
 below WCAG AA (4.5:1) on any cap. A palette without the table
 (an import) derives them from its own roles: modifiers on its hover grey, the selected row's
 action key on its accent.
+
+## Syntax
+
+An optional `[syntax]` table gives the editors (vim, helix) their syntax colors, as roles
+`syn_keyword`, `syn_preproc`, `syn_type`, `syn_function`, `syn_identifier`, `syn_string`,
+`syn_constant`, `syn_number`, `syn_boolean`, `syn_special`, `syn_operator`, `syn_comment`: for a
+palette taken from an editor scheme that maps syntax its own way (Colibri: keywords almond, types
+and functions white, strings silver, constants mint, numbers chamois, punctuation lilac). The
+templates still push each to 4.5:1 on `bg_desktop` (`|legible`; Colibri's sirocco comments, 3.2:1
+in colibri.vim, come out lighter). A palette without the table takes them from its terminal hues
+and greys: keyword `ansi5`, type `ansi13`, function `ansi12`, string `ansi2`, constant `ansi3`,
+special `ansi6`, identifier `fg_editor`, operator `fg_secondary`, comment `fg_muted`; preproc
+follows keyword, number and boolean follow constant.
 
 ## Roles
 
@@ -73,11 +83,11 @@ Which apps use each role (generated from the templates):
 | `ansi10` | ghostty, helix, mousepad |
 | `ansi11` | ghostty, helix, mousepad, pi |
 | `ansi12` | ghostty, helix, mousepad, pi, vim, waybar |
-| `ansi13` | claude, ghostty, helix, mousepad, pi, vim, waybar |
+| `ansi13` | claude, ghostty, helix, mousepad, pi, waybar |
 | `ansi14` | ghostty, mousepad, waybar |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
-| `ansi3` | ghostty, helix, vim |
+| `ansi3` | ghostty, helix |
 | `ansi4` | ghostty, helix, pi, vim, waybar |
 | `ansi5` | ghostty, helix, pi, vim, waybar |
 | `ansi6` | ghostty, helix, vim |
@@ -115,6 +125,18 @@ Which apps use each role (generated from the templates):
 | `shadow` | hyprlock, mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mako, mango, mousepad, mpv, pi, rofi, swayosd, theme, waybar, wlogout |
 | `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim, waybar |
+| `syn_boolean` | helix, vim |
+| `syn_comment` | helix, vim |
+| `syn_constant` | helix, vim |
+| `syn_function` | helix, vim |
+| `syn_identifier` | vim |
+| `syn_keyword` | helix, vim |
+| `syn_number` | helix, vim |
+| `syn_operator` | helix, vim |
+| `syn_preproc` | helix, vim |
+| `syn_special` | helix, vim |
+| `syn_string` | helix, vim |
+| `syn_type` | helix, vim |
 | `term_bg` | claude, ghostty, pi, theme |
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
@@ -123,7 +145,7 @@ Which apps use each role (generated from the templates):
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (Ghostty; zsh
-follows Ghostty; helix's and vim's rendered themes take their syntax colors from them, see [helix](apps/helix.md) and [vim](apps/vim.md)). VS Code themes rarely set ANSI colors, so the importer falls
+follows Ghostty; helix's and vim's rendered themes take their syntax colors from them unless the palette has a `[syntax]` table, see [helix](apps/helix.md) and [vim](apps/vim.md)). VS Code themes rarely set ANSI colors, so the importer falls
 back to VS Code's own defaults (`terminalColorRegistry.ts`). `meta.variant` (`dark`/`light`) drives GTK `color-scheme` and `prefer-dark` (Qt and Firefox follow
 `color-scheme` through the settings portal).
 
@@ -136,14 +158,14 @@ theme import-base24 <base16/base24 YAML file or URL> catppuccin-mocha
 ```
 
 Imports follow VS Code `include` chains and flatten alpha onto the right background.
-Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
+Missing tiers are derived with `mix`. Or copy `colibri.toml` and edit by hand.
 
 ## How it fits together
 
 - Templates: any `<app>/**/NAME.tmpl` renders to `NAME` beside it (listed in `<app>/.gitignore`)
   from the active palette. A `NAME` with `{palette}` in it renders once per palette instead, each
   from its own palette, with the slug in place of `{palette}`: for an app that keeps a theme per
-  palette and picks one itself (Pi's `{palette}.json.tmpl` → `dark-2026.json`, `light-2026.json`, …).
+  palette and picks one itself (Pi's `{palette}.json.tmpl` → `colibri.json`, `tokyo-night.json`).
   `{{role}}` → `#rrggbb`. Filters: `|bare` (`rrggbb`), `|hex:88` / `|bare:88` (alpha), `|0x` /
   `|0x:33` (mango `0xRRGGBBAA`), `|rgb` (`r, g, b`), `|rgba:0.9`, `|mix:<role>:<0-1>` (chainable,
   before the format). Contrast filters, also chainable: `|ink` turns a background into its text
@@ -155,7 +177,7 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
   THEME_SLUG THEME_VARIANT THEME_ROOT`; a failure shows a critical notification.
 - `~/.config/theme/colors.sh` is the palette as `THEME_*` shell variables, for scripts
   (`. ~/.config/theme/colors.sh`) and units (`EnvironmentFile=%h/.config/theme/colors.sh`).
-- The active palette's name is in `~/.local/state/theme/current` (default `dark-2026`).
+- The active palette's name is in `~/.local/state/theme/current` (default `colibri`).
 
 | app | how it gets colors | applies |
 |---|---|---|
@@ -173,9 +195,9 @@ Missing tiers are derived with `mix`. Or copy `dark-2026.toml` and edit by hand.
 | fastfetch | `config.jsonc` rendered (keys, title, bars, separators); the logo keeps its colors | next run |
 | lazygit | `config.yml` rendered (borders, selection, cherry-pick and rebase marks; `colorScheme` and delta's `--dark`/`--light` from `variant`) | next start |
 | zsh, vim | terminal ANSI colors (Ghostty) | at once (Ghostty reloads) |
-| helix | `themes/palette.toml` rendered (syntax from the ANSI colors, interface from the roles), selected as `theme = "palette"` | at once (`helix/reload.sh`: SIGUSR1, helix's `:config-reload`) |
+| helix | `themes/palette.toml` rendered (syntax from the `syn_*` roles, interface from the roles), selected as `theme = "palette"` | at once (`helix/reload.sh`: SIGUSR1, helix's `:config-reload`) |
 | Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session (`claude/reload.sh` says so while one runs) |
-| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked; catppuccin-mocha comes from LazyPi's theme pack instead); `pi/setup.sh` selects the pair `light-2026/dark-2026` | at once: Pi picks the pair's theme by the terminal's background, which follows `theme set` |
+| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked); `pi/setup.sh` selects `colibri` | at once (Pi hot-reloads its theme files) |
 
 To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore`, an include
 line in its config, and a `reload.sh`: one that reloads it live, or, for an app that reads its colors

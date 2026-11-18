@@ -8,7 +8,7 @@ scratch_home
 conf=$ROOT/mango/.config/mango/bind.conf
 keys=$ROOT/mango/.local/bin/mango-keys
 # the palette the views draw with
-"$ROOT/theme/.local/bin/theme" init dark-2026 --to "$TEST_TMP/r" >/dev/null
+"$ROOT/theme/.local/bin/theme" init colibri --to "$TEST_TMP/r" >/dev/null
 export MANGO_KEYS_COLORS=$TEST_TMP/r/theme/.config/theme/colors.sh
 
 # every mode is opened from somewhere and binds Escape; every one-shot ends with setkeymode,default

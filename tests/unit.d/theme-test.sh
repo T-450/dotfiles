@@ -20,8 +20,8 @@ for p in $("$theme" list | tr -d '* '); do
 done
 pass "every palette renders all $n_tmpl files, no token left"
 
-rm -rf "$out" && "$theme" init dark-2026 --to "$out" >/dev/null && a=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
-rm -rf "$out" && "$theme" init dark-2026 --to "$out" >/dev/null && b=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
+rm -rf "$out" && "$theme" init colibri --to "$out" >/dev/null && a=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
+rm -rf "$out" && "$theme" init colibri --to "$out" >/dev/null && b=$(cd "$out" && find . -type f -exec sha256sum {} + | sort)
 [[ $a == "$b" ]] || fail "rendering is deterministic"
 pass "rendering is deterministic"
 
@@ -35,7 +35,7 @@ pass "--to renders without touching the active palette"
 cp -r "$ROOT" "$TEST_TMP/repo" && rm -rf "$TEST_TMP/repo/.git"
 echo 'x={{no_such_role}}' >"$TEST_TMP/repo/ghostty/bad.conf.tmpl"
 rm -rf "$out"
-if "$TEST_TMP/repo/theme/.local/bin/theme" init dark-2026 --to "$out" >/dev/null 2>&1; then
+if "$TEST_TMP/repo/theme/.local/bin/theme" init colibri --to "$out" >/dev/null 2>&1; then
 	fail "an unknown role is an error"
 fi
 [[ ! -e $out ]] || [[ -z $(find "$out" -type f) ]] || fail "nothing is written when a template fails"

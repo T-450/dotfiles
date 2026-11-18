@@ -1,7 +1,7 @@
 # dotfiles: Arch + mangowm on a ThinkPad T14
 
 An Arch Linux desktop on [mangowm](https://github.com/mangowm/mango) (a wlroots compositor), themed
-from one switchable palette (default: VS Code's **Dark 2026**). Every app has its own folder in this
+from one switchable palette (default: **Colibri**, after archseer/colibri.vim). Every app has its own folder in this
 repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your home.
 
 - [Get started](onboarding.md): install, check, change the colors, and add a program, step by step

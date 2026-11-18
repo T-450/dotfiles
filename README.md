@@ -1,7 +1,7 @@
 # dotfiles: Arch + mangowm (ThinkPad T14)
 
-An Arch Linux desktop on mangowm, themed from one switchable palette (default: VS Code's
-**Dark 2026**). Each app has its own folder; GNU stow links them into `~/.config` and `~/.local`.
+An Arch Linux desktop on mangowm, themed from one switchable palette (default:
+**Colibri**, after archseer/colibri.vim). Each app has its own folder; GNU stow links them into `~/.config` and `~/.local`.
 
 ```bash
 git clone https://github.com/T-450/dotfiles ~/dotfiles

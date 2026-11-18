@@ -2,7 +2,7 @@
 
 The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps.
 
-See [Theming](../theming.md). Palettes: `palettes/*.toml` (dark-2026 default, light-2026, tokyo-night, catppuccin-mocha, anodized-keylight: the Quiet Instrument philosophy, alloy blacks and one lit cyan-blue-violet band; cosmic-storm-haze: Keychron Q1 Navy blues and GMK purple, lilac, pink, mint and yellow as cues on navy-tinted space grays, tuned to stay distinct under wlsunset down to 3000 K). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
+See [Theming](../theming.md). Palettes: `palettes/*.toml` (colibri default: archseer/colibri.vim's dark scheme, lavender on hummingbird purples, with its own `[syntax]` table; tokyo-night). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
 
 ## Reference
 

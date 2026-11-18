@@ -66,11 +66,7 @@ Every later change uses these two checks, so run them once now.
 	```
 
 	```
-	  anodized-keylight
-	  catppuccin-mocha
-	  cosmic-storm-haze
-	* dark-2026
-	  light-2026
+	* colibri
 	  tokyo-night
 	```
 
@@ -80,14 +76,14 @@ Every later change uses these two checks, so run them once now.
 	theme set tokyo-night
 	```
 
-	You see `tokyo-night: rendered 22 files`. Window borders, waybar, and notifications change at
+	You see `tokyo-night: rendered 28 files`. Window borders, waybar, and notifications change at
 	once. The wallpaper stays, because every dark palette uses the same image. Open a new terminal
 	to see its new colors.
 
 3. The login screen lives outside your home, so it changes only when you run
    `./install.sh --system`, which asks for sudo. `theme set` reminds you.
 
-4. Switch back with `theme set dark-2026`, or pick a palette with super+p.
+4. Switch back with `theme set colibri`, or pick a palette with super+p.
 
 ## Add a program
 
