@@ -13,8 +13,8 @@
 @define-color dim     {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
 @define-color editor  {{fg_editor|legible:bg_desktop}};
 
-/* Colour carries meaning or is absent (the Quiet Instrument rule). Everything on the bar is one
-   of the three neutrals above unless it is one of these, each kept legible on the bar:
+/* Colour carries meaning (the Quiet Instrument rule), plus the chip icon hues below. Text on the bar
+   is one of the three neutrals above unless it is one of these, each kept legible on the bar:
    signal = the one thing that matters now: the viewed tag
    live   = real time and live connections: the wall clock, network up (its name and strength),
             a bluetooth device connected
@@ -30,6 +30,16 @@
 @define-color ok      {{success|legible:bg_desktop}};
 @define-color warn    {{warning|legible:bg_desktop}};
 @define-color crit    {{error|legible:bg_desktop}};
+
+/* Each status chip's icon wears its own terminal hue so the chips read apart at a glance; the
+   value and level bar stay neutral, and a threshold or state color (warn, crit, live, dim)
+   takes the icon over. The network icon is live and battery ok, like their states. */
+@define-color i_audio {{ansi13|legible:bg_desktop}};
+@define-color i_cpu   {{ansi12|legible:bg_desktop}};
+@define-color i_mem   {{ansi5|legible:bg_desktop}};
+@define-color i_temp  {{ansi9|legible:bg_desktop}};
+@define-color i_disk  {{ansi4|legible:bg_desktop}};
+@define-color i_bt    {{ansi14|legible:bg_desktop}};
 
 /* the tooltip's 1px ring, and the selected text in tray menus */
 @define-color tipline {{fg_disabled}};

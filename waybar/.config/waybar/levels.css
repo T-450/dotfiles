@@ -453,6 +453,7 @@
 #cpu.l99,
 #cpu.l100 {
     color: @warn;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/cpu-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px @warn;
 }
@@ -467,6 +468,7 @@
 #memory.l88,
 #memory.l89 {
     color: @warn;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px @warn;
 }
@@ -482,6 +484,7 @@
 #memory.l99,
 #memory.l100 {
     color: @crit;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/mem-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px @crit;
 }
@@ -496,6 +499,7 @@
 #disk.l88,
 #disk.l89 {
     color: @warn;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px @warn;
 }
@@ -511,6 +515,7 @@
 #disk.l99,
 #disk.l100 {
     color: @crit;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/disk-symbolic.svg")), none;
     box-shadow: inset 0 0 0 1px @crit;
 }
@@ -525,6 +530,7 @@
 #battery.discharging.l19,
 #battery.discharging.l20 {
     color: @warn;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
     box-shadow: inset 0 0 0 1px @warn;
 }
@@ -540,6 +546,7 @@
 #battery.discharging.l9,
 #battery.discharging.l10 {
     color: @crit;
+    -gtk-icon-palette: success currentColor;
     background-image: linear-gradient(currentColor, currentColor), -gtk-recolor(url("icons/battery-symbolic.svg")), linear-gradient(currentColor, currentColor), none, none;
     box-shadow: inset 0 0 0 1px @crit;
 }

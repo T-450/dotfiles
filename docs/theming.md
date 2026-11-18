@@ -72,18 +72,18 @@ Which apps use each role (generated from the templates):
 | `ansi1` | ghostty, pi |
 | `ansi10` | ghostty, helix, mousepad |
 | `ansi11` | ghostty, helix, mousepad, pi |
-| `ansi12` | ghostty, helix, mousepad, pi, vim |
-| `ansi13` | claude, ghostty, helix, mousepad, pi, vim |
-| `ansi14` | ghostty, mousepad |
+| `ansi12` | ghostty, helix, mousepad, pi, vim, waybar |
+| `ansi13` | claude, ghostty, helix, mousepad, pi, vim, waybar |
+| `ansi14` | ghostty, mousepad, waybar |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
 | `ansi3` | ghostty, helix, vim |
-| `ansi4` | ghostty, helix, pi, vim |
-| `ansi5` | ghostty, helix, pi, vim |
+| `ansi4` | ghostty, helix, pi, vim, waybar |
+| `ansi5` | ghostty, helix, pi, vim, waybar |
 | `ansi6` | ghostty, helix, vim |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
-| `ansi9` | ghostty, helix, mousepad |
+| `ansi9` | ghostty, helix, mousepad, waybar |
 | `badge` | lazygit, mousepad, mpv, theme, waybar |
 | `bg_desktop` | claude, firefox, gtk, helix, hyprlock, mango, mousepad, mpv, qutebrowser, theme, vim, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme, vim |

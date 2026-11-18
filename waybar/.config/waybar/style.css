@@ -63,8 +63,8 @@ menuitem:hover { background-color: @sel; color: @selfg; }
 
 /* every control is 28px tall inside the 44px window: 8px of air above and below */
 #custom-start, #custom-wallpaper, #custom-power,
-#workspaces, #custom-layout, #custom-divider,
-#network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery,
+#workspaces, #custom-special, #custom-layout, #custom-divider,
+#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery,
 #custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray > * {
     margin-top: 8px;
     margin-bottom: 8px;
@@ -81,7 +81,8 @@ menuitem:hover { background-color: @sel; color: @selfg; }
     background-position: center;
     background-size: 16px 16px;
 }
-#custom-start { color: @editor; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
+/* the launcher's brush lambda is the bar's mark: the signal color, and 20px where the icons are 16 */
+#custom-start { color: @signal; background-size: 20px 20px; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
 #custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 
 /* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it.
@@ -89,7 +90,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
    built-in modules, but a custom module's label sits inside a box (AIconLabel), and GTK3 doesn't
    pass the hover state down, so custom modules match on their box. Waybar never sets :active on
    a label, so the design's pressed overlay has no hook here (the tags are buttons and keep it). */
-#network:hover, #pulseaudio:hover, #backlight:hover, #battery:hover,
+#network:hover, #pulseaudio:hover, #battery:hover,
 #bluetooth:hover,
 box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-wallpaper, box:hover > #custom-power,
 box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-notifications {
@@ -121,7 +122,7 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px @crit;
 }
 
-/* tags: all nine, 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
+/* tags: 1-4 (mango's tag_num), 28x28 and 2px apart. The base button is an occupied tag (bright text, a 4x2
    mark centered at the bottom); .empty resets it, .active and .urgent override it. The viewed
    tag is the bar's one use of signal (a 14x2 mark and a tint under a bright number); an urgent
    tag is warn, because a window there is asking. */
@@ -154,7 +155,7 @@ box:hover > #custom-power {
     color: @text;
     font-weight: 500;
     background-image: linear-gradient(@signal, @signal),
-                      linear-gradient(alpha(@signal, 0.16), alpha(@signal, 0.16));
+                      linear-gradient(alpha(@signal, 0.24), alpha(@signal, 0.24));
     background-size: 14px 2px, 100% 100%;
     background-position: center bottom, 0 0;
 }
@@ -167,6 +168,30 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px @crit;
     animation: tburg 1.2s ease-in-out 2;
 }
+/* tag 0, mango's special tag (custom/special), after tag 4 as one more tag button: the same
+   occupied mark, empty and active looks */
+#custom-special {
+    min-width: 28px;
+    min-height: 28px;
+    margin-left: -2px;
+    padding: 0;
+    border-radius: 4px;
+    color: @text;
+    font-weight: 500;
+    background-color: transparent;
+    background-image: linear-gradient(@dim, @dim);
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 4px 2px;
+}
+#custom-special.empty { color: @dim; font-weight: 400; background-image: none; }
+#custom-special.active {
+    background-image: linear-gradient(@signal, @signal),
+                      linear-gradient(alpha(@signal, 0.24), alpha(@signal, 0.24));
+    background-size: 14px 2px, 100% 100%;
+    background-position: center bottom, 0 0;
+}
+box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
 #workspaces button:hover { background-color: alpha(@editor, 0.06); }
 #workspaces button:active { background-color: alpha(@editor, 0.10); }
 /* GTK3 keyframes take one selector per block: "0%, 100%" is a parse error that drops the sheet */
@@ -242,13 +267,21 @@ box:hover > #custom-power {
     background-color: alpha(@text, 0.08);
 }
 
-/* the focused window: 8px from the layout button (4px spacing + 4px margin) */
-#window {
+/* the windows in view, one chip each (custom/win#1..6, fed by waybar-windows): the focused one
+   on the active tag's signal tint with bright text, the rest dim with no fill. The feed module
+   (custom/windows) prints nothing and stays hidden; the first chip sits 8px from the layout button
+   like every module (4px spacing + 4px margin). */
+#custom-win {
     min-height: 28px;
-    margin: 8px 0 8px 4px;
-    padding: 0;
+    margin: 8px 0;
+    padding: 0 10px;
+    border-radius: 4px;
     color: @dim;
+    background-color: transparent;
 }
+#custom-win.focused { color: @text; font-weight: 500; background-color: alpha(@signal, 0.24); }
+#custom-win.more { color: @dim; font-feature-settings: "tnum"; }
+box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; background-color: alpha(@editor, 0.06); }
 
 /* the clock pill: waybar names a group's box after the group, so group/datetime is #datetime.
    The three labels paint the pill (day and date carry its rounded ends) and keep the 8px inset as
@@ -274,7 +307,7 @@ box:hover > #custom-power {
 
 /* chips: 7px left edge, 14px icon, 5px gap, value, 7px right edge. The level, icon and tint layers come from the
    module's own rule; levels.css only changes the first layer's width and range icons/skins. */
-#network, #pulseaudio, #backlight, #cpu, #memory, #custom-temperature, #disk, #battery {
+#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
     min-height: 28px;
     padding: 0 7px 0 26px;
     border-radius: 4px;
@@ -288,6 +321,7 @@ box:hover > #custom-power {
 /* route: a connected network wears the connection color on its icon, name and signal bar (the
    name is the route's); the tint stays neutral like every chip's */
 #network {
+    -gtk-icon-palette: success @live;
     color: @live;
     background-image: linear-gradient(currentColor, currentColor),
                       -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
@@ -310,6 +344,7 @@ box:hover > #custom-power {
 }
 
 #pulseaudio {
+    -gtk-icon-palette: success @i_audio;
     color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
@@ -324,15 +359,9 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
 }
 
-#backlight {
-    color: @editor;
-    min-width: 29px;
-    background-image: linear-gradient(currentColor, currentColor),
-                      -gtk-recolor(url("icons/sun-symbolic.svg")),
-                      linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
-}
 
 #cpu {
+    -gtk-icon-palette: success @i_cpu;
     color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
@@ -340,6 +369,7 @@ box:hover > #custom-power {
                       linear-gradient(alpha(@editor, 0.12), alpha(@editor, 0.12));
 }
 #memory {
+    -gtk-icon-palette: success @i_mem;
     color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
@@ -350,6 +380,7 @@ box:hover > #custom-power {
    is custom/temperature: waybar-temperature prints the lN class itself (min(100, C)), and
    .high (from 80 C) and .critical (from 95 C) below are the threshold skins. */
 #custom-temperature {
+    -gtk-icon-palette: success @i_temp;
     color: @editor;
     min-width: 22px;
     background-image: linear-gradient(currentColor, currentColor),
@@ -371,6 +402,7 @@ box:hover > #custom-power {
     box-shadow: inset 0 0 0 1px @crit;
 }
 #disk {
+    -gtk-icon-palette: success @i_disk;
     color: @editor;
     min-width: 29px;
     background-image: linear-gradient(currentColor, currentColor),
@@ -384,6 +416,7 @@ box:hover > #custom-power {
    in); plugged in without charging (full, or held at the charge threshold) is no news, so it keeps
    the bolt and stays neutral. */
 #battery {
+    -gtk-icon-palette: success @ok;
     color: @editor;
     min-width: 29px;
     padding: 0 7px 0 35px;
@@ -483,6 +516,7 @@ box:hover > #custom-power {
 
 /* bluetooth: icon only (28px), then the 16px icon + 6px gap + connection count */
 #bluetooth {
+    -gtk-icon-palette: success @i_bt;
     min-height: 28px;
     padding: 0 6px 0 22px;
     border-radius: 4px;
@@ -495,6 +529,12 @@ box:hover > #custom-power {
     background-size: 16px 16px;
 }
 #bluetooth.connected { padding-left: 28px; color: @live; }
+/* a state that recolors its chip (off, muted, offline, hot, charging, connected) takes the icon
+   along, over the chip's own icon hue */
+#network.disconnected, #pulseaudio.muted, #custom-temperature.high, #custom-temperature.critical,
+#battery.charging, #bluetooth.connected, #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
+    -gtk-icon-palette: success currentColor;
+}
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     color: @dim;
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));

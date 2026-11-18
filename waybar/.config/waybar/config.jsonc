@@ -1,6 +1,6 @@
 // waybar, "taskbar": one flat surface with 28px controls 4px apart (style.css). Left: the launcher,
-// the nine tags and the layout button, then the focused window. Center: one clock pill. Right:
-// recording, the live chips (network, volume, brightness, cpu, memory, temperature, disk, battery),
+// tags 1-4 and tag 0 (the special tag), the layout button, then the windows in view. Center: one
+// clock pill. Right: recording, the live chips (network, volume, cpu, memory, temperature, disk, battery),
 // a divider, night light, wallpaper, bluetooth and the tray, a divider, the notification bell, a
 // divider, and the red power chip in the corner.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
@@ -19,10 +19,11 @@
     // its settings here. The states live apart because they are 7 x 101 repetitive lines.
     "include": ["~/.config/waybar/levels.json"],
 
-    "modules-left": ["custom/start", "mango/workspaces", "custom/divider#left", "custom/layout", "mango/keymode", "custom/winstate", "mango/window"],
+    "modules-left": ["custom/start", "mango/workspaces", "custom/special", "custom/divider#left", "custom/layout", "mango/keymode", "custom/winstate", "custom/windows",
+        "custom/win#1", "custom/win#2", "custom/win#3", "custom/win#4", "custom/win#5", "custom/win#6"],
     "modules-center": ["group/datetime"],
     "modules-right": [
-        "custom/record", "network", "pulseaudio", "backlight", "cpu", "memory",
+        "custom/record", "network", "pulseaudio", "cpu", "memory",
         "custom/temperature", "disk", "battery", "custom/divider#tray", "custom/nightlight",
         "custom/wallpaper", "bluetooth", "tray", "custom/divider#bell", "custom/notifications",
         "custom/divider#power", "custom/power"
@@ -45,9 +46,10 @@
         "on-click": "wlogout -b 6 --protocol layer-shell"
     },
 
-    // all nine tags; style.css gives .empty, occupied, .active and .urgent their own marks
+    // tags 1-4 (super+1..4); style.css gives .empty, occupied, .active and .urgent their own marks
     "mango/workspaces": {
         "format": "{name}",
+        "tag-filter": [1, 2, 3, 4],
         "on-click": "activate",
         "on-click-right": "toggle"
     },
@@ -79,9 +81,78 @@
         "format-default": ""
     },
 
-    "mango/window": {
-        "format": "{title}",
-        "max-length": 64
+    // the windows in view by title, one chip each (mango has no wlr-foreign-toplevel-management for
+    // waybar's taskbar). custom/windows is the hidden feed: it follows mango's window stream and
+    // signals the six slots (12); a click focuses that window, the wheel moves focus along
+    "custom/windows": {
+        "exec": "~/.local/bin/waybar-windows feed",
+        "restart-interval": 1,
+        "tooltip": false
+    },
+    "custom/win#1": {
+        "exec": "~/.local/bin/waybar-windows slot 1",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 1",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+    "custom/win#2": {
+        "exec": "~/.local/bin/waybar-windows slot 2",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 2",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+    "custom/win#3": {
+        "exec": "~/.local/bin/waybar-windows slot 3",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 3",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+    "custom/win#4": {
+        "exec": "~/.local/bin/waybar-windows slot 4",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 4",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+    "custom/win#5": {
+        "exec": "~/.local/bin/waybar-windows slot 5",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 5",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+    "custom/win#6": {
+        "exec": "~/.local/bin/waybar-windows slot 6",
+        "return-type": "json",
+        "signal": 12,
+        "tooltip": false,
+        "on-click": "~/.local/bin/waybar-windows focus 6",
+        "on-scroll-up": "mmsg dispatch focusstack,prev",
+        "on-scroll-down": "mmsg dispatch focusstack,next"
+    },
+
+    // tag 0, mango's special tag (super+0 shows it over the view, super+shift+0 sends a window);
+    // its state comes with the window list's signal
+    "custom/special": {
+        "exec": "~/.local/bin/waybar-windows special",
+        "return-type": "json",
+        "signal": 12,
+        "format": "0",
+        "tooltip": false,
+        "on-click": "mmsg dispatch toggle_special_tag"
     },
 
     // one pill: day, time (calendar tooltip) and date; style.css styles the group's box as #datetime
@@ -119,13 +190,6 @@
         "on-click-middle": "pamixer -t",
         "on-scroll-up": "pamixer -i 5",
         "on-scroll-down": "pamixer -d 5"
-    },
-    "backlight": {
-        "format": "{percent}%",
-        "tooltip-format": "<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>brightness</span>  {percent}%\n<span font_desc='IBM Plex Sans 11px' fgalpha='66%'>Scroll ±1</span>",
-        "align": 1,
-        "on-scroll-up": "~/.local/bin/osd-brightness bup",
-        "on-scroll-down": "~/.local/bin/osd-brightness bdown"
     },
     "cpu": {
         "interval": 5,

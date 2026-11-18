@@ -26,15 +26,15 @@ A threshold skin drops the chip's tint and rings it 1px in its color. Cpu has no
 
 ## Modules
 
-Left: `custom/start` (click: `rofi -show drun`), the nine mango tags (`mango/workspaces`; click views, right-click toggles; `.empty` dim, occupied bright with a 4x2 mark, `.active` a bright number on the `signal` mark and tint, `.urgent` `warn` with a ring that pulses twice), a divider, the layout button (`custom/layout`, fed by `waybar-layout`; click: `mmsg dispatch switch_layout`), the focused window title (`mango/window`, 64 chars).
+Left: `custom/start` (a brush λ in `signal` at 20px; click: `rofi -show drun`), mango's four tags (`mango/workspaces`, `tag_num=4`; click views, right-click toggles; `.empty` dim, occupied bright with a 4x2 mark, `.active` a bright number on the `signal` mark and tint, `.urgent` `warn` with a ring that pulses twice), tag 0, mango's special tag (`custom/special`, one more tag button: `.active` while it is shown over the view, occupied while it holds windows; click toggles it), a divider, the layout button (`custom/layout`, fed by `waybar-layout`; click: `mmsg dispatch switch_layout`), and the windows in view (`custom/windows`): every visible window's title, oldest first, cut at 32 characters, the focused one on the `selection_bg` fill with `selection_fg` text and the rest `fg_muted` with no fill. Mango has no wlr-foreign-toplevel-management, so waybar's taskbar can't run: `waybar-windows` follows `mmsg watch all-clients` and prints Pango spans, and one module takes one click, so a click opens alt+tab's hints and the wheel moves focus.
 
 Center: one clock pill (`group/datetime`): day, time (its tooltip is the design's CALENDAR line with the month calendar kept below it, because the design's calendar is a click popover waybar can't open), date (`custom/date`, because waybar's clock zero-pads the day).
 
-Right: recording (`custom/record`, only while `gpurecord` prints), then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), brightness (scroll: `osd-brightness bup/bdown`), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected) and the tray. Then a divider, the notification bell (`custom/notifications`), a divider, and power (`custom/power`; click: wlogout) in the corner.
+Right: recording (`custom/record`, only while `gpurecord` prints), then the live chips: network (SSID, max 16 chars; click: speeds), volume (click, right, middle: mute; scroll 5%), cpu, memory, temperature, disk (`/`), battery (click: wlogout). Then a divider and the tray area: night light (`custom/nightlight`; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (click: blueman-manager; the count shows while connected) and the tray. Then a divider, the notification bell (`custom/notifications`), a divider, and power (`custom/power`; click: wlogout) in the corner.
 
 Power is the one control that ends the session, so it reads apart by placement and shape: cut on two corners (round top-left and bottom-right), 8px from its divider and 4px further from the bar's end than other modules. It is a neutral chip at rest; under the pointer its icon and a 1px ring turn `crit`. Do-not-disturb is the bell's right-click only.
 
-Kept beyond the mockup: recording before the chips, brightness among them, night light and the tray in the tray area, and the power chip's dividers.
+Kept beyond the mockup: recording before the chips, night light and the tray in the tray area, and the power chip's dividers.
 
 ## Tooltips
 
@@ -129,11 +129,12 @@ Icon-only buttons carry a zero-width space (`\u200b`) as their label: waybar hid
 - `~/.local/bin/waybar-notifications`
 - `~/.local/bin/waybar-temperature`
 - `~/.local/bin/waybar-toggle`
+- `~/.local/bin/waybar-windows`
 - `~/.local/bin/waybar-winstate`
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `badge`, `bg_desktop`, `border_hairline`, `error`, `fg_disabled`, `fg_editor`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `ansi12`, `ansi13`, `ansi14`, `ansi4`, `ansi5`, `ansi9`, `badge`, `bg_desktop`, `border_hairline`, `error`, `fg_disabled`, `fg_editor`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

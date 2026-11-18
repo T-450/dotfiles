@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# waybar-windows: the window list and the tag-0 button from mango's window stream. Mango has no
+# wlr-foreign-toplevel-management, so waybar's taskbar can't run; one module is one label, so each
+# window gets its own slot module (a real chip, styled by style.css, that focuses its window).
+#   feed      custom/windows: follows `mmsg watch all-clients` (one JSON line per change), writes
+#             the state file and signals the slots (RTMIN+12) when what they show changed; prints
+#             nothing, so the module stays hidden. Exits with mango; waybar restarts it.
+#   slot N    custom/win#N: the Nth window in view (oldest first), class focused or other; empty
+#             (hidden) when there is none. Past the last slot, the last one reads "+K" (class more).
+#   focus N   click on slot N: focus its window; on "+K", alt+tab's hints
+#   special   custom/special: tag 0, mango's special tag: .active while shown, .occupied when it
+#             holds windows, .empty otherwise
+# usage: waybar-windows feed | slot N | focus N | special
+state=${XDG_RUNTIME_DIR:-/tmp}/waybar-windows.json
+slots=6
+
+case ${1:-} in
+feed)
+	prev=
+	mmsg watch all-clients | jq --unbuffered -c '
+		{windows: [.clients[] | select(.is_visible and (.is_minimized | not) and (.is_namedscratchpad | not))]
+			| sort_by(.id) | map({id, focused: .is_focused,
+				title: (if (.title // "") != "" then .title else (.appid // "window") end)}),
+		 special: ([.clients[] | select(.tags == [0])] as $w
+			| if any($w[]; .is_visible) then "active" elif ($w | length) > 0 then "occupied" else "empty" end)}' |
+		while IFS= read -r line; do
+			[[ $line == "$prev" ]] && continue
+			prev=$line
+			printf '%s\n' "$line" > "$state.tmp" && mv "$state.tmp" "$state"
+			pkill -RTMIN+12 -x waybar
+		done
+	;;
+slot)
+	n=${2:?usage: waybar-windows slot N}
+	jq -c --argjson n "$n" --argjson slots "$slots" '
+		def esc: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
+		def cut: if length > 28 then .[0:27] + "…" else . end;
+		.windows as $w
+		| if ($w | length) > $slots and $n == $slots then {text: "+\(($w | length) - $slots + 1)", class: "more"}
+		  elif ($w | length) >= $n then $w[$n - 1] | {text: (.title | cut | esc), class: (if .focused then "focused" else "other" end)}
+		  else {text: ""} end' "$state" 2>/dev/null || echo '{"text":""}'
+	;;
+focus)
+	n=${2:?usage: waybar-windows focus N}
+	id=$(jq -r --argjson n "$n" --argjson slots "$slots" \
+		'if (.windows | length) > $slots and $n == $slots then "" else .windows[$n - 1].id // "" end' "$state")
+	if [[ -n $id ]]; then mmsg dispatch focusid "client,$id" >/dev/null; else mmsg dispatch togglejump >/dev/null; fi
+	;;
+special)
+	jq -c '{text: "0", class: .special}' "$state" 2>/dev/null || echo '{"text":"0","class":"empty"}'
+	;;
+*)
+	echo 'usage: waybar-windows feed | slot N | focus N | special' >&2
+	exit 2
+	;;
+esac
