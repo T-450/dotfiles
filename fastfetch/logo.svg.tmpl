@@ -5,13 +5,15 @@
      fastfetch/render.sh.
 
      Drawn on the logo's 34x22 terminal cells at 10x22.5 units a cell (the terminal fits the picture
-     to the cells), so the 300-unit tile is square on screen. The tile is the muted grey pushed into
+     to the cells). The tile spans the summary's rows exactly (rows 1 to 20 of the 22: 22.5 units a
+     row, 3 units inside each edge) and the logo's width less 8 units a side, so its edges line up
+     with the first and last line of text. The tile is the muted grey pushed into
      shadow with a fine grain (turbulence), lighter at the top left. The λ is one closed outline
      (hook, stem, leg, flat feet, a sharp crotch) whose edges a noise map roughens, over a speckled,
      blurred overspray of the same paint; three drips run from its lowest corners. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 495">
 	<defs>
-		<linearGradient id="graphite" gradientUnits="userSpaceOnUse" x1="20" y1="97.5" x2="320" y2="397.5">
+		<linearGradient id="graphite" gradientUnits="userSpaceOnUse" x1="8" y1="25.5" x2="332" y2="469.5">
 			<stop offset="0" stop-color="{{fg_muted|mix:shadow:0.5}}"/>
 			<stop offset="1" stop-color="{{fg_muted|mix:shadow:0.8}}"/>
 		</linearGradient>
@@ -32,8 +34,8 @@
 			<feComposite in="haze" in2="mask" operator="in"/>
 		</filter>
 	</defs>
-	<rect x="20" y="97.5" width="300" height="300" rx="18" fill="url(#graphite)" filter="url(#grain)"/>
-	<g transform="translate(20 97.5)" fill="none" stroke="{{ansi10}}" stroke-linejoin="miter" stroke-miterlimit="8">
+	<rect x="8" y="25.5" width="324" height="444" rx="18" fill="url(#graphite)" filter="url(#grain)"/>
+	<g transform="translate(170 247.5) scale(1.22) translate(-150 -168)" fill="none" stroke="{{ansi10}}" stroke-linejoin="miter" stroke-miterlimit="8">
 		<path filter="url(#overspray)" opacity="0.9" stroke-width="22"
 			d="M70 52H152L244 248H198L162.9 173.3L100 248H56L147.3 140L122.9 88H70Z"/>
 		<g filter="url(#paint)">
