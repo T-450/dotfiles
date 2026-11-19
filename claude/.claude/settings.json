@@ -1,4 +1,8 @@
 {
+  "env": {
+    "CLAUDE_CODE_SHELL": "/usr/bin/bash",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
   "model": "opus",
   "enabledPlugins": {
     "superpowers@anthropic-plugin-directory": true,
@@ -23,20 +27,13 @@
     "agent-army@synced": false,
     "agent-smith@synced": false,
     "ai-firstify@synced": false,
-    "agentic-harness@synced": false
+    "agentic-harness@synced": false,
+    "compounded@anthropic-plugin-directory": true,
+    "compound-engineering@compound-engineering-plugin": true,
+    "zizi-skills@synced": false,
+    "agentic-harness@anthropic-plugin-directory": true,
+    "claude-reflect@claude-reflect-marketplace": true
   },
-  "env": {
-    "CLAUDE_CODE_SHELL": "/usr/bin/bash",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
-  },
-  "modelSettings": {
-    "claude-opus-5-5": {
-      "effortLevel": "xhigh",
-      "autoCompactWindow": 400000
-    }
-  },
-  "tui": "fullscreen",
-  "theme": "custom:mango",
   "extraKnownMarketplaces": {
     "cursor-plugins": {
       "source": {
@@ -49,8 +46,28 @@
         "source": "github",
         "repo": "google/elephant-goldfish-model"
       }
+    },
+    "compound-engineering-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "EveryInc/compound-engineering-plugin"
+      }
+    },
+    "claude-reflect-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "bayramannakov/claude-reflect"
+      }
     }
   },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium",
+      "autoCompactWindow": 400000
+    }
+  },
+  "tui": "fullscreen",
+  "theme": "custom:mango",
   "agentPushNotifEnabled": true,
   "autoMode": {
     "allow": [
