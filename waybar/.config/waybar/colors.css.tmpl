@@ -1,48 +1,28 @@
 /* waybar colors from {{name}} (palette {{slug}}); rendered by theme from colors.css.tmpl, never edit. */
-/* The surface and its 1px ring: the hairline mixed toward the inactive border. */
-@define-color bar     {{bg_desktop}};
-@define-color edge    {{border_hairline|mix:border_inactive:0.3}};
+/* The strip, and the stripe pair on its top edge: the palette's two brand colors, as the teal and
+   cobalt stripes run along a cassette J-card (on a palette whose badge is its accent, one band). */
+@define-color bar      {{bg_desktop}};
+@define-color stripe_a {{accent}};
+@define-color stripe_b {{badge}};
 
-/* Text: text is the editor color lifted toward the bright foreground, dim the same color blended
-   with the muted one. text = primary facts (occupied tags, the layout), editor =
-   secondary facts and controls (every chip's icon, value and level bar), dim = labels and
-   whatever is off or empty (day, date, title, empty tags, muted, disconnected). */
-@define-color text    {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
-@define-color dim     {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
-@define-color editor  {{fg_editor|legible:bg_desktop}};
+/* Type: text = values, occupied tags, the λ, the focused window, the time; dim = what is empty,
+   off or in the background (empty tags, other windows, icons at rest, muted, offline). Labels are
+   text at 55% (Pango fgalpha in the formats), so they need no role. rule = the 1px dividers. */
+@define-color text     {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
+@define-color dim      {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
+@define-color rule     {{border_hairline|mix:border_inactive:0.5}};
 
-/* Colour carries meaning (the Quiet Instrument rule), plus the chip icon hues below. Text on the bar
-   is one of the three neutrals above unless it is one of these, each kept legible on the bar:
-   signal = the one thing that matters now: the viewed tag
-   live   = real time and live connections: the wall clock, network up (its name and strength),
-            a bluetooth device connected
-   held   = time held by hand: the night light forced warm ("warm now"), whatever the hour
-   ok     = success in progress: battery charging
-   warn   = pending: cpu/memory/disk/temperature high, battery low, a window pinned to every tag
-   crit   = failure, irreversible, or asking now: memory/disk/temperature critical, battery nearly
-            empty, an urgent tag, a held critical notification, a recording in progress, power under
-            the pointer */
-@define-color signal  {{accent|legible:bg_desktop}};
-@define-color live    {{link|legible:bg_desktop}};
-@define-color held    {{badge|legible:bg_desktop}};
-@define-color ok      {{success|legible:bg_desktop}};
-@define-color warn    {{warning|legible:bg_desktop}};
-@define-color crit    {{error|legible:bg_desktop}};
-
-/* Each status chip's icon wears one of four encoder hues, cycled like the four knobs on a Teenage
-   Engineering OP-1 (blue, green, white, orange), so the chips read apart at a glance; the value and
-   meter stay neutral, and a threshold or state color (warn, crit, live, dim) takes the icon over.
-   The network icon is live and battery ok, like their states. The start λ is bright green, the
-   shell prompt's λ (mint on Colibri). */
-@define-color lambda  {{ansi10|legible:bg_desktop}};
-@define-color i_audio {{ansi4|legible:bg_desktop}};
-@define-color i_cpu   {{ansi10|legible:bg_desktop}};
-@define-color i_mem   {{fg_bright|legible:bg_desktop}};
-@define-color i_temp  {{ansi3|legible:bg_desktop}};
-@define-color i_disk  {{ansi4|legible:bg_desktop}};
-@define-color i_bt    {{ansi10|legible:bg_desktop}};
+/* Color only where it means something. A warning has no hue: it is the chip inverted (text block,
+   bar type), which reads on every palette.
+   signal = the viewed tag (a block, its number in bar)
+   held   = time held by hand: the night light forced warm
+   crit   = critical or asking now: a crit block, an urgent tag, a held critical notification,
+            recording in progress, power under the pointer */
+@define-color signal   {{accent|legible:bg_desktop}};
+@define-color held     {{badge|legible:bg_desktop}};
+@define-color crit     {{error|legible:bg_desktop}};
 
 /* the tooltip's 1px ring, and the selected text in tray menus */
-@define-color tipline {{fg_disabled}};
-@define-color sel     {{selection_bg}};
-@define-color selfg   {{selection_fg}};
+@define-color tipline  {{fg_disabled}};
+@define-color sel      {{selection_bg}};
+@define-color selfg    {{selection_fg}};

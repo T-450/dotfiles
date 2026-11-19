@@ -1,33 +1,33 @@
 #!/usr/bin/env bash
 # waybar-temperature: print the CPU package temperature as one waybar JSON line (custom/temperature)
-# Waybar's own temperature module ignores "states", so the lN level class (min(100, C), sized by
-# levels.css) comes from here; "high" is added from 80 C and "critical" replaces it from 95 C (the
-# package throttles at 100).
+# Waybar's own temperature module ignores "states", so the classes come from here: "high" from
+# 80 C, "critical" in its place from 95 C (the package throttles at 100). The text is the chip's
+# TMP label and the degrees, like the other status chips.
 
-# the design's tooltip line: dim uppercase name, then the value (see docs/apps/waybar.md)
-name="<span font_desc='IBM Plex Mono 10px' letter_spacing='1536' fgalpha='66%'>TEMPERATURE</span>  "
+# the bar's label and the tooltip's NAME (see docs/apps/waybar.md)
+label="<span font_desc='Inter SemiBold 9px' letter_spacing='2048' fgalpha='55%'>TMP</span>"
+name="<span font_desc='Inter SemiBold 9px' letter_spacing='2048' fgalpha='55%'>TEMPERATURE</span>  "
 
-for label in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
-	[[ -r $label ]] || continue
-	[[ $(<"$label") == "Package id 0" ]] || continue
-	milli=$(<"${label%_label}_input")
+for sensor in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
+	[[ -r $sensor ]] || continue
+	[[ $(<"$sensor") == "Package id 0" ]] || continue
+	milli=$(<"${sensor%_label}_input")
 	break
 done
 
 if [[ -z ${milli:-} ]]; then
-	printf '{"text": "n/a", "class": ["l0"], "tooltip": "%sn/a"}\n' "$name"
+	printf '{"text": "%s n/a", "class": [], "tooltip": "%sn/a"}\n' "$label" "$name"
 	exit 0
 fi
 
 c=$(((milli + 500) / 1000))
-level=$((c > 100 ? 100 : c))
-class="\"l$level\""
+class=""
 tip="$c °C"
 if ((c >= 95)); then
-	class+=", \"critical\""
+	class='"critical"'
 	tip+=" · critical"
 elif ((c >= 80)); then
-	class+=", \"high\""
+	class='"high"'
 	tip+=" · high"
 fi
-printf '{"text": "%d°", "class": [%s], "tooltip": "%s%s"}\n' "$c" "$class" "$name" "$tip"
+printf '{"text": "%s %d", "class": [%s], "tooltip": "%s%s"}\n' "$label" "$c" "$class" "$name" "$tip"

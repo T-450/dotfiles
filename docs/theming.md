@@ -20,6 +20,8 @@ sits on its darkest shade, revolver, a step below the terminal and the editors o
 editor background. The others:
 
 - Tokyo Night (`theme import-omarchy`).
+- Cassette, by hand from a cassette J-card's tokens: black card, silver paper, a teal and a
+  cobalt stripe.
 - Written by hand the way Colibri is, each role named after its scheme's color and highlight
   group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
   name) and `[syntax]` and `[diff]` from its highlight groups: Doom One
@@ -104,15 +106,15 @@ Which apps use each role (generated from the templates):
 | `accent` | claude, firefox, ghostty, gtk, helix, hyprlock, lazygit, mako, mango, pi, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `ansi0` | ghostty |
 | `ansi1` | fastfetch, ghostty |
-| `ansi10` | ghostty, helix, mousepad, waybar |
+| `ansi10` | ghostty, helix, mousepad |
 | `ansi11` | ghostty, helix |
 | `ansi12` | ghostty, helix, mousepad, vim |
 | `ansi13` | claude, ghostty, helix, mousepad, pi |
 | `ansi14` | ghostty, mousepad |
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
-| `ansi3` | ghostty, helix, waybar |
-| `ansi4` | ghostty, helix, vim, waybar |
+| `ansi3` | ghostty, helix |
+| `ansi4` | ghostty, helix, vim |
 | `ansi5` | ghostty, helix, vim |
 | `ansi6` | ghostty, helix, vim |
 | `ansi7` | ghostty |
@@ -129,7 +131,7 @@ Which apps use each role (generated from the templates):
 | `diff_change` | helix, mousepad, vim |
 | `diff_remove` | git, helix, mousepad, pi, vim |
 | `error` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, theme, vim, waybar |
-| `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim, waybar |
+| `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim |
 | `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim, waybar |
 | `fg_editor` | gtk, helix, mousepad, pi, theme, vim, waybar |
 | `fg_muted` | claude, helix, hyprlock, mousepad, pi, qutebrowser, rofi, theme, vim |
@@ -144,7 +146,7 @@ Which apps use each role (generated from the templates):
 | `key_frame` | theme |
 | `key_legend` | theme |
 | `key_mod` | theme |
-| `link` | claude, ghostty, lazygit, mousepad, mpv, pi, qutebrowser, rofi, theme, vim, waybar |
+| `link` | claude, ghostty, lazygit, mousepad, mpv, pi, qutebrowser, rofi, theme, vim |
 | `name` | claude, fastfetch, firefox, ghostty, gtk, helix, hyprlock, mako, mango, mousepad, mpv, qutebrowser, rofi, swayosd, theme, vim, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
@@ -152,7 +154,7 @@ Which apps use each role (generated from the templates):
 | `selection_fg` | firefox, ghostty, gtk, helix, mango, mousepad, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `shadow` | hyprlock, mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mako, mango, mousepad, mpv, pi, rofi, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim, waybar |
+| `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim |
 | `syn_boolean` | helix, mousepad, vim |
 | `syn_comment` | helix, mako, mousepad, pi, vim |
 | `syn_constant` | fastfetch, helix, mousepad, swayosd, vim |
@@ -169,7 +171,7 @@ Which apps use each role (generated from the templates):
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme, vim |
-| `warning` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mango, mousepad, pi, qutebrowser, theme, vim, waybar |
+| `warning` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mango, mousepad, pi, qutebrowser, theme, vim |
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (Ghostty; zsh

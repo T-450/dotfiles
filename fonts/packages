@@ -1,4 +1,4 @@
-inter-font               # the previous UI face, unused (IBM Plex Sans replaced it): sudo pacman -Rns inter-font, then drop this line
+inter-font               # the bar (waybar's Stripe: labels, values, tooltips)
 ttf-jetbrains-mono-nerd  # mono (bar, lock screen, notifications)
 ttf-lilex-nerd           # mono (terminal)
 noto-fonts

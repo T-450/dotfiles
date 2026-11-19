@@ -27,7 +27,7 @@ archinstall's minimal profile is enough.
 	and a likely fix.
 
 3. Reboot. The login screen is sysc-greet, stock. Log in to start mango, with
-   waybar at the bottom.
+   waybar at the top.
 
 ## Check that it matches the repo
 
@@ -67,6 +67,7 @@ Every later change uses these two checks, so run them once now.
 
 	```
 	  alabaster
+	  cassette
 	* colibri
 	  deep-blue
 	  deep-blue-flat
@@ -83,7 +84,7 @@ Every later change uses these two checks, so run them once now.
 	theme set tokyo-night
 	```
 
-	You see `tokyo-night: rendered 28 files`. Window borders, waybar, and notifications change at
+	You see `tokyo-night: rendered 31 files`. Window borders, waybar, and notifications change at
 	once. The wallpaper stays, because every dark palette uses the same image. Open a new terminal
 	to see its new colors.
 
