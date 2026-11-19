@@ -17,7 +17,11 @@ branch): each role, ANSI color and syntax color is one of that scheme's named co
 in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
 `fg_secondary`), mixed from its own. The desktop (`bg_desktop`: bar, lock screen, GTK, browsers)
 sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
-editor background. The other palette is Tokyo Night (`theme import-omarchy`).
+editor background. The others: Tokyo Night (`theme import-omarchy`), and two written by hand
+the way Colibri is, each role named after its scheme's color and highlight group: Doom One
+(`NTBBloodbath/doom-one.nvim`) and Gruber Darker (`blazkowolf/gruber-darker.nvim`). Both take
+their `[terminal]` from the scheme's own terminal extras and their `[syntax]` and `[diff]` from
+its highlight groups. Neither sets `[keycaps]`, so the cheatsheet derives its caps.
 
 ## Keycaps
 

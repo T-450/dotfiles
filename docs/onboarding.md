@@ -67,6 +67,8 @@ Every later change uses these two checks, so run them once now.
 
 	```
 	* colibri
+	  doom-one
+	  gruber-darker
 	  tokyo-night
 	```
 
