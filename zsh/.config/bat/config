@@ -1,0 +1,3 @@
+# bat (the `cat` alias in .zshrc) in the terminal's ANSI colors, so it follows the palette through
+# Ghostty like delta does (git/.config/git/config.tmpl); its default is Monokai Extended whatever the palette
+--theme=ansi

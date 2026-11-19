@@ -4,6 +4,8 @@ The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and do
 
 Tab completes through fzf (fzf-tab): a filterable list instead of oh-my-zsh's menu. Autosuggestions offer the rest of a matching earlier command in grey (right arrow takes it). Syntax highlighting colors the line as you type, in the terminal's palette. fzf's key bindings search history (ctrl+r), files (ctrl+t) and directories to cd into (alt+c). zoxide learns the directories you use: `z dot` jumps to `~/dotfiles`. Interactive shells alias the old names to the modern tools: `ls` is `eza --icons`, `cat` is `bat`, `find` is `fd` and `grep` is `rg` (their flags differ; `command grep` runs the original, and scripts never see the aliases). btop is the process monitor. These load after oh-my-zsh, in the order the plugins need, and add about 50 ms to a new shell. zsh-completions adds completions for many commands on its own.
 
+Colors follow the palette through the terminal: fzf (its keys and fzf-tab's menu) runs with `--color=16` and bat with `--theme=ansi` (`~/.config/bat/config`), so both draw in Ghostty's 16 ANSI colors, which `theme` renders from the palette, as delta and eza do. Their defaults are fixed schemes (fzf's 256-color one, bat's Monokai Extended) that no palette changes.
+
 oh-my-zsh comes from the AUR package `oh-my-zsh-git` (`/usr/share/oh-my-zsh`, updated with the package; cache in `~/.cache/oh-my-zsh`). `.zshrc` puts `~/.local/bin` first on `PATH`, so this repo's commands (`theme`, `screenshot`, `osd-volume` …) work by name. It also sets `DOCKER_HOST` to rootless podman's socket for Docker API clients, unless one is already set ([podman](podman.md)). `setup.sh` makes zsh the login shell.
 
 The prompt is [cdimascio's lambda theme](https://github.com/cdimascio/lambda-zsh-theme): a `λ` (green after a command that succeeded, red after one that failed), the current directory's name, and `git:(branch)` inside a repository, with a `✗` when it has changes. No package ships it, so `pkg/zsh-theme-cdimascio-lambda` builds it from a pinned commit into oh-my-zsh's custom themes (`/usr/share/oh-my-zsh/custom/themes`). `.zshrc` recolors it after oh-my-zsh loads, in Colibri's colors as ANSI numbers so every palette draws it: the `λ` mint (bright green; bold red after a failure), the directory lilac (bright magenta), `git:(` `)` lavender (bright blue), the branch honey (yellow), the `✗` diff red (bright red).
@@ -23,6 +25,7 @@ The `mise` plugin activates [mise](mise.md) in every interactive shell. It puts 
 
 **Linked into your home** (stow, `install.sh --link`):
 
+- `~/.config/bat/config`
 - `~/.config/eza/theme.yml`
 - `~/.zshrc`
 

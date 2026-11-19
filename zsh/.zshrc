@@ -102,6 +102,11 @@ ZSH_THEME_GIT_PROMPT_CLEAN="%F{12})"
 # the tools from zsh/packages. fzf-tab turns the completion menu into fzf, so it loads after compinit
 # (oh-my-zsh runs it) and before plugins that wrap the line editor's widgets; syntax highlighting
 # wraps them all, so it loads last. eza, bat and fd are plain commands.
+# fzf (ctrl+r, ctrl+t, alt+c and fzf-tab's menu) in the terminal's 16 ANSI colors, which theme
+# renders into Ghostty from the palette; fzf's own default is a fixed 256-color scheme, and
+# fzf-tab ignores FZF_DEFAULT_OPTS unless told
+export FZF_DEFAULT_OPTS='--color=16'
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
 source /usr/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/fzf/key-bindings.zsh # ctrl+r history, ctrl+t files, alt+c directories
