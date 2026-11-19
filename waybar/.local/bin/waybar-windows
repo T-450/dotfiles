@@ -34,7 +34,7 @@ slot)
 	n=${2:?usage: waybar-windows slot N}
 	jq -c --argjson n "$n" --argjson slots "$slots" '
 		def esc: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
-		def cut: if length > 28 then .[0:27] + "…" else . end;
+		def cut: if length > 32 then .[0:31] + "…" else . end;
 		.windows as $w
 		| if ($w | length) > $slots and $n == $slots then {text: "+\(($w | length) - $slots + 1)", class: "more"}
 		  elif ($w | length) >= $n then $w[$n - 1] | {text: (.title | cut | esc), class: (if .focused then "focused" else "other" end)}
