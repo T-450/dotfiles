@@ -1,0 +1,65 @@
+# Oxide: oxidescheme/nvim (lua/oxide/colors.lua), MIT license. Neutral greys stepped in OKLCH
+# lightness and ten accents at one lightness and chroma (oklch 0.70 15), each with one job: purple
+# keywords, teal functions, sky types, green strings, orange constants. The comment on each role is
+# the Oxide color and the highlight group it comes from. [terminal] is the scheme's own
+# set_terminal_colors (lua/oxide/init.lua); [syntax] is lua/oxide/highlights/syntax.lua; [diff]
+# uses the accents of its diff backgrounds (diff_add green, diff_delete red, diff_change blue).
+
+[meta]
+name = "Oxide"
+variant = "dark"
+source = "https://github.com/oxidescheme/nvim"
+
+[colors]
+bg_desktop      = "#121212"  # mantle (StatusLine: the chrome a step below the editor)
+bg_surface      = "#161616"  # base (Normal)
+bg_widget       = "#222222"  # surface0 (Pmenu, CursorLine)
+bg_hover        = "#2e2e2e"  # surface1 (PmenuSel, Visual)
+border_hairline = "#222222"  # surface0
+border_inactive = "#3a3a3a"  # surface2 (WinSeparator, FloatBorder)
+fg_text         = "#cecece"  # text (Normal)
+fg_editor       = "#cecece"  # text (Normal)
+fg_secondary    = "#aeaeae"  # subtext0 (StatusLine, Delimiter)
+fg_muted        = "#808080"  # subtext1 (Comment)
+fg_bright       = "#eeeeee"  # bright_text (TabLineSel)
+fg_disabled     = "#555555"  # subtext2 (LineNr)
+accent          = "#3ba6f5"  # blue (Search, Directory, info)
+badge           = "#968ff7"  # purple (Keyword)
+selection_bg    = "#2e2e2e"  # surface1 (Visual)
+selection_fg    = "#eeeeee"  # bright_text
+link            = "#00b3d6"  # sky (URLs)
+error           = "#ed756e"  # red
+warning         = "#e48233"  # orange (warnings)
+success         = "#5bb661"  # green
+info            = "#3ba6f5"  # blue
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#cecece"  # text
+bg     = "#161616"  # base
+cursor = "#cecece"  # text (Cursor)
+ansi = [
+	# surface0, red, green, yellow, blue, purple, teal, text
+	"#222222", "#ed756e", "#5bb661", "#c39900", "#3ba6f5", "#968ff7", "#00baaa", "#cecece",
+	# subtext1, bright_red, bright_green, bright_yellow, bright_blue, bright_purple, bright_teal, bright_text
+	"#808080", "#ff9890", "#7bd77f", "#e3b831", "#6fc6ff", "#b5b2ff", "#00dcca", "#eeeeee",
+]
+
+[diff]
+add    = "#5bb661"  # green
+remove = "#ed756e"  # red
+change = "#3ba6f5"  # blue
+
+[syntax]
+keyword    = "#968ff7"  # purple: Keyword, Statement
+preproc    = "#968ff7"  # purple: PreProc (links Keyword)
+type       = "#00b3d6"  # sky: Type
+function   = "#00baaa"  # teal: Function
+identifier = "#cecece"  # text: Identifier
+string     = "#5bb661"  # green: String
+constant   = "#e48233"  # orange: Constant
+number     = "#e48233"  # orange: Number
+boolean    = "#e48233"  # orange: Boolean
+special    = "#cecece"  # text: Special
+operator   = "#cecece"  # text: Operator
+comment    = "#808080"  # subtext1: Comment

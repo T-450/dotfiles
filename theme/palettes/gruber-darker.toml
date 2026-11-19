@@ -1,0 +1,65 @@
+# Gruber Darker: blazkowolf/gruber-darker.nvim (lua/gruber-darker/palette.lua), after
+# rexim's gruber-darker Emacs theme and John Gruber's BBEdit scheme. MIT license. Near-black
+# grounds, warm yellow for keywords and the cursor, brown comments. The comment on each role is
+# the palette name and the highlight group it comes from; "derived" marks a tier the scheme
+# doesn't have. [terminal] is the repo's extras/ghostty/gruber-darker; [syntax] and [diff] are its
+# highlight mapping (lua/gruber-darker/highlights/vim.lua), so every editor reads like it.
+
+[meta]
+name = "Gruber Darker"
+variant = "dark"
+source = "https://github.com/blazkowolf/gruber-darker.nvim"
+
+[colors]
+bg_desktop      = "#101010"  # bg-1 (the chrome a step below the editor)
+bg_surface      = "#181818"  # bg (Normal)
+bg_widget       = "#282828"  # bg+1 (Pmenu, StatusLine, CursorLine)
+bg_hover        = "#453d41"  # bg+2 (PmenuSel, Visual)
+border_hairline = "#202020"  # derived: bg halfway to bg+1
+border_inactive = "#52494e"  # bg+4 (LineNr)
+fg_text         = "#e4e4e4"  # fg (Normal)
+fg_editor       = "#e4e4e4"  # fg (Normal)
+fg_secondary    = "#95a99f"  # quartz (StatusLineNC, Title)
+fg_muted        = "#565f73"  # niagara-1
+fg_bright       = "#f4f4ff"  # fg+1
+fg_disabled     = "#52494e"  # bg+4 (LineNr)
+accent          = "#ffdd33"  # yellow (Keyword, CursorLineNr, the cursor)
+badge           = "#96a6c8"  # niagara (Function)
+selection_bg    = "#453d41"  # bg+2 (Visual)
+selection_fg    = "#f4f4ff"  # fg+1
+link            = "#96a6c8"  # niagara
+error           = "#f43841"  # red
+warning         = "#ffdd33"  # yellow
+success         = "#73d936"  # green
+info            = "#96a6c8"  # niagara
+shadow          = "#000000"  # black
+
+[terminal]
+fg     = "#e4e4e4"
+bg     = "#181818"
+cursor = "#ffdd33"
+ansi = [
+	# black is bg-1, not the background itself as upstream, so black text and blocks stay visible
+	"#101010", "#f43841", "#73d936", "#ffdd33", "#96a6c8", "#9e95c7", "#95a99f", "#f5f5f5",
+	"#52494e", "#f43841", "#73d936", "#ffdd33", "#96a6c8", "#9e95c7", "#95a99f", "#ffffff",
+]
+
+[diff]
+# DiffAdd, DiffDelete, DiffChange
+add    = "#73d936"  # green
+remove = "#ff4f58"  # red+1
+change = "#ffdd33"  # yellow
+
+[syntax]
+keyword    = "#ffdd33"  # yellow: Keyword, Statement
+preproc    = "#95a99f"  # quartz: PreProc
+type       = "#95a99f"  # quartz: Type
+function   = "#96a6c8"  # niagara: Function
+identifier = "#f4f4ff"  # fg+1: Identifier
+string     = "#73d936"  # green: String
+constant   = "#95a99f"  # quartz: Constant
+number     = "#9e95c7"  # wisteria: Number
+boolean    = "#ffdd33"  # yellow: Boolean
+special    = "#ffdd33"  # yellow: Special
+operator   = "#e4e4e4"  # fg: Operator
+comment    = "#cc8c3c"  # brown: Comment

@@ -66,8 +66,15 @@ Every later change uses these two checks, so run them once now.
 	```
 
 	```
+	  alabaster
 	  cassette
 	* colibri
+	  deep-blue
+	  deep-blue-flat
+	  deep-blue-night
+	  doom-one
+	  gruber-darker
+	  oxide
 	  tokyo-night
 	```
 

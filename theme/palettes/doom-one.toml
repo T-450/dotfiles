@@ -1,0 +1,64 @@
+# Doom One: NTBBloodbath/doom-one.nvim (lua/doom-one/colors.lua, dark), after Doom Emacs's
+# doom-one, itself after Atom's One Dark. MIT license. The comment on each role is the doom-one
+# palette name and the highlight group it comes from; "derived" marks a tier the scheme doesn't
+# have. [terminal] is the repo's extras/alacritty-dark.toml; [syntax] and [diff] are its
+# highlight mapping (lua/doom-one/init.lua), so every editor reads like it.
+
+[meta]
+name = "Doom One"
+variant = "dark"
+source = "https://github.com/NTBBloodbath/doom-one.nvim"
+
+[colors]
+bg_desktop      = "#21242b"  # bg_alt (TabLine, Pmenu: the chrome a step below the editor)
+bg_surface      = "#282c34"  # bg (Normal)
+bg_widget       = "#30343c"  # derived: bg 35% toward base4
+bg_hover        = "#363a41"  # derived: bg 60% toward base4
+border_hairline = "#1b2229"  # base0
+border_inactive = "#3f444a"  # grey (VertSplit, LineNr)
+fg_text         = "#bbc2cf"  # fg (Normal)
+fg_editor       = "#bbc2cf"  # fg (Normal)
+fg_secondary    = "#9ca0a4"  # base7 (TextMuted)
+fg_muted        = "#5b6268"  # base5 (Comment)
+fg_bright       = "#dfdfdf"  # base8 (StatusLine)
+fg_disabled     = "#3f444a"  # grey (LineNr)
+accent          = "#51afef"  # blue (PmenuSel, TabLineSel, the cursor)
+badge           = "#c678dd"  # magenta (Function)
+selection_bg    = "#2257a0"  # dark_blue (Visual, Search, WildMenu)
+selection_fg    = "#dfdfdf"  # base8
+link            = "#4db5bd"  # teal
+error           = "#ff6c6b"  # red (TextError)
+warning         = "#ecbe7b"  # yellow (TextWarning)
+success         = "#98be65"  # green (TextSuccess)
+info            = "#51afef"  # blue (TextInfo)
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#bbc2cf"
+bg     = "#282c34"
+cursor = "#51afef"
+ansi = [
+	# black is base0, not the background itself as upstream, so black text and blocks stay visible
+	"#1b2229", "#ff6c6b", "#98be65", "#ecbe7b", "#51afef", "#a9a1e1", "#46d9ff", "#bbc2cf",
+	"#3f444a", "#ff6c6b", "#98be65", "#da8548", "#51afef", "#a9a1e1", "#46d9ff", "#efefef",
+]
+
+[diff]
+# DiffAddedGutter, DiffRemovedGutter, DiffModifiedGutter
+add    = "#98be65"  # green
+remove = "#ff6c6b"  # red
+change = "#da8548"  # orange
+
+[syntax]
+keyword    = "#51afef"  # blue: Keyword, Statement
+preproc    = "#a9a1e1"  # violet: PreProc
+type       = "#ecbe7b"  # yellow: Type
+function   = "#c678dd"  # magenta: Function
+identifier = "#ffa8ff"  # magenta lightened 40%: Identifier
+string     = "#98be65"  # green: String
+constant   = "#a9a1e1"  # violet: Constant
+number     = "#da8548"  # orange: Number
+boolean    = "#da8548"  # orange: Boolean
+special    = "#a9a1e1"  # violet: Special
+operator   = "#51afef"  # blue: Operator
+comment    = "#5b6268"  # base5: Comment
