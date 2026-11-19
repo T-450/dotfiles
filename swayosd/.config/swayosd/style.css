@@ -34,5 +34,8 @@ window#osd segment.active {
 	border: none;
 	background: @osd_fill;
 }
+/* GTK's theme pulls the fill 1px past each end of a bordered trough (margin: 0 -1px); this trough
+   has no border, and the negative margin gives the fill a min width of -2 (a GtkGizmo warning). */
+window#osd progress { margin: 0; }
 window#osd segment { margin-left: 8px; }
 window#osd segment:first-child { margin-left: 0; }
