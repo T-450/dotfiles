@@ -107,10 +107,11 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
   - a specular edge in `text` where the ribbon faces you
   - a phosphor glow on its edges
   - a dotted floor in `grid`
+- Beats: every frame splits the 48 bars into lows (0-11, under ~200 Hz), mids (12-35, to ~4 kHz) and highs (36-47). A band whose level jumps above its mean over the last 0.25s gets a beat that snaps to full and fades (140, 100, 60 ms). A kick swells the ribbon 30%, flashes it and snaps the twist forward; mids push the color up the CLUT and light the rungs, and sustained mids turn the twist faster; highs make the strands shimmer apart and the specular edge sparkle. A steady loud passage sets no beats, so only hits stand out.
 - Color by energy comes from `clut0`..`clut15`. All strands at one x share one color, so where their summed intensity takes that color past 1, it is scaled down by its brightest channel: where they bunch (silence, the tapered ends), the ribbon keeps its hue instead of clipping to white.
 - The module reads the CLUT, `grid` and `text` from the GTK style context, and again when waybar re-creates its modules: `theme set` runs `waybar/reload.sh`, which sends waybar SIGUSR2, so the ribbons recolor with the rest of the bar.
 - Its one key is `channel` (`left` or `right`). Left is drawn mirrored, so the lows meet at the player.
-- Data: each instance runs its own `cava`. The config is written to `$XDG_RUNTIME_DIR/waybar-ribbons/<channel>.conf`: pipewire input, raw binary 16-bit mono output, 48 bars, 30 fps, `sleep_timer = 1`.
+- Data: each instance runs its own `cava`. The config is written to `$XDG_RUNTIME_DIR/waybar-ribbons/<channel>.conf`: pipewire input, raw binary 16-bit mono output, 48 bars, 60 fps, `noise_reduction = 30` (cava's default 77 smooths a kick's attack away), `sleep_timer = 1`.
 - cava's capture node is passive (`active = 0`), so it never keeps the sink awake by itself. Its first-run files go under `$XDG_RUNTIME_DIR/waybar-ribbons` (its `XDG_CONFIG_HOME`), not `~/.config/cava`. It dies with waybar (`PR_SET_PDEATHSIG`).
 - A frame equal to the one on screen is not drawn, so silence costs no GPU time.
 - If cava exits, the ribbon goes flat and cava starts again after 1s. The delay doubles up to 30s while it keeps failing.
