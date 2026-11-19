@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # waypaper/setup.sh: the waypaper settings this desktop needs, in ~/.config/waypaper/config.ini:
-# pictures from ~/Pictures/Wallpapers and ~/.config/swaybg (the palette's own), and each pick
-# handed to wallpaper-set (swaybg/) instead of a backend of waypaper's. waypaper rewrites the whole
-# file on every pick, so the repo can't link it: only these keys are set, when they differ.
+# pictures from ~/Pictures/Wallpapers, ~/Pictures/walls (the collection) and ~/.config/swaybg (the
+# palette's own), and each pick handed to wallpaper-set (swaybg/) instead of a backend of
+# waypaper's. waypaper rewrites the whole file on every pick, so the repo can't link it: only these
+# keys are set, when they differ.
 . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
 [[ -d $HOME/Pictures/Wallpapers ]] || { mkdir -p "$HOME/Pictures/Wallpapers" && echo "mkdir   ~/Pictures/Wallpapers"; }
 python3 -I - "$HOME/.config/waypaper/config.ini" <<'EOF'
@@ -11,7 +12,7 @@ from pathlib import Path
 
 path = Path(sys.argv[1])
 want = {
-    "folder": ["~/Pictures/Wallpapers", "~/.config/swaybg"],
+    "folder": ["~/Pictures/Wallpapers", "~/Pictures/walls", "~/.config/swaybg"],
     "backend": "none",  # waypaper sets nothing itself, it only runs post_command
     "post_command": "~/.local/bin/wallpaper-set $wallpaper",
 }
