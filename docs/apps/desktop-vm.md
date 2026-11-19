@@ -106,7 +106,9 @@ delivered commit, and each guest command's log (`install-1.log`, `install-2.log`
 `deliver.log`, …). A `check` adds `session.png`, `tests.log`, `failed-system.txt`, `failed-user.txt`,
 `journal-errors.txt`, `verdict.json` (and `login-failed.png` when the login did not work). An `up`
 run also holds `boot-NN-<seconds>s.png` (the distinct frames of the reboot, seconds counted from the
-reboot command) and `greeter.png` (the settled greeter).
+reboot command) and `greeter.png` (the settled greeter). A failed `base` keeps its `build.qcow2`
+and `vars.fd` in its run directory to debug the failure; the next `base` deletes them (each is up to
+`diskGB`), so at most one failed disk stays, while every run keeps its logs.
 `$XDG_RUNTIME_DIR/desktop-vm/` (mode 0700) holds `qmp.sock`, `qga.sock`, `vnc.sock` and the `run`
 symlink to the current run directory.
 

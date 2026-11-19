@@ -89,15 +89,29 @@ plugins=(git mise node docker)
 
 source $ZSH/oh-my-zsh.sh
 
-# the lambda prompt in Colibri's colors, as ANSI numbers so every palette draws it: λ mint (bright
-# green), bold red after a failed command; the directory lilac (bright magenta); git:( ) lavender
-# (bright blue), the branch honey (yellow), a dirty ✗ diff red (bright red). Pi's footer
-# (pi/.pi/agent/extensions/lambda-footer) uses the same colors.
-PROMPT='%(?:%B%F{10}λ%f%b :%B%F{1}λ%f%b ) %F{13}%c%f $(git_prompt_info)'
-ZSH_THEME_GIT_PROMPT_PREFIX="%F{12}git:(%F{3}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%f "
-ZSH_THEME_GIT_PROMPT_DIRTY="%F{12}) %F{9}✗"
-ZSH_THEME_GIT_PROMPT_CLEAN="%F{12})"
+# the lambda prompt in the palette's roles, from ~/.config/theme/colors.sh: λ success, error after a
+# failed command (both bold); the directory fg_bright; git:( ) fg_text, the branch link, a dirty ✗
+# error. ANSI slots were picked for Colibri and fell under 3:1 on light palettes; these roles pass
+# 4.5:1 (text) and 3:1 (λ, ✗) on every palette's terminal background. `theme set` rewrites
+# colors.sh, so an open shell re-reads it at its next prompt. Pi's footer
+# (pi/.pi/agent/extensions/lambda-footer) uses the same roles. Without colors.sh (before the first
+# `theme set`) the cdimascio-lambda theme's own colors stay.
+zmodload -F zsh/stat b:zstat
+_theme_prompt() {
+	local f=~/.config/theme/colors.sh
+	local -a mtime
+	zstat -A mtime +mtime -- $f 2>/dev/null || return
+	[[ $mtime[1] == $_theme_prompt_mtime ]] && return
+	typeset -g _theme_prompt_mtime=$mtime[1]
+	source $f
+	PROMPT="%(?:%B%F{$THEME_SUCCESS}λ%f%b :%B%F{$THEME_ERROR}λ%f%b ) %F{$THEME_FG_BRIGHT}%c%f \$(git_prompt_info)"
+	ZSH_THEME_GIT_PROMPT_PREFIX="%F{$THEME_FG_TEXT}git:(%F{$THEME_LINK}"
+	ZSH_THEME_GIT_PROMPT_SUFFIX="%f "
+	ZSH_THEME_GIT_PROMPT_DIRTY="%F{$THEME_FG_TEXT}) %F{$THEME_ERROR}✗"
+	ZSH_THEME_GIT_PROMPT_CLEAN="%F{$THEME_FG_TEXT})"
+}
+# first: oh-my-zsh's async git prompt forks from its own precmd hook with the colors it has then
+precmd_functions=(_theme_prompt $precmd_functions)
 
 # the tools from zsh/packages. fzf-tab turns the completion menu into fzf, so it loads after compinit
 # (oh-my-zsh runs it) and before plugins that wrap the line editor's widgets; syntax highlighting
