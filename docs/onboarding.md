@@ -67,14 +67,21 @@ Every later change uses these two checks, so run them once now.
 
 	```
 	  alabaster
+	  alchemist
+	  apprentice
 	  cassette
 	* colibri
 	  deep-blue
 	  deep-blue-flat
 	  deep-blue-night
 	  doom-one
+	  elysian
 	  gruber-darker
+	  metro
 	  oxide
+	  rain
+	  saturnite
+	  space
 	  tokyo-night
 	```
 

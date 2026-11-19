@@ -26,8 +26,17 @@ editor background. The others:
   group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
   name) and `[syntax]` and `[diff]` from its highlight groups: Doom One
   (`NTBBloodbath/doom-one.nvim`), Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
-  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), the one light palette.
+  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), a light palette.
   Alabaster's `warning` is derived: the scheme's orange is a highlight fill, unreadable as text.
+- Written by hand the same way from Vim schemes: Apprentice (`romainl/Apprentice`), Alchemist
+  (`habamax/vim-alchemist`) and Saturnite (`habamax/vim-saturnite`) from their colortemplates,
+  `[terminal]` from their Term colors; Elysian (`Aszarsha/elysian.vim`) from its xterm-256
+  indexes, `[terminal]` from its `elysian.itermcolors`, with bright black and bright yellow
+  (greys upstream) made readable.
+- Space, Rain and Metro, by hand from COLOURlovers palettes (CC BY-NC-SA 3.0: each file credits
+  its author) the way Cassette is: four or five colors, every other tier derived and marked so.
+  Rain and Metro are light; their yellows and Metro's blue read below 3:1 on white, so they stay
+  fills (badge, selection) and the text roles are them darkened.
 - Deep Blue, Deep Blue Night and Deep Blue Flat (`kinqert/deep-blue-theme`): `theme
   import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults. The
   three share Flat's terminal and git colors and one set of token colors.

@@ -1,0 +1,63 @@
+# Alchemist: habamax/vim-alchemist (colortemplate/alchemist.colortemplate), a dark mid-contrast
+# scheme by Maxim Kim. No license stated. Grey grounds, a teal status line, an orange cursor,
+# golden keywords. The comment on each role is the scheme's color name and the highlight group it
+# comes from; "derived" marks a tier the scheme doesn't have. [terminal] is its own Term colors;
+# [syntax] and [diff] are its highlight mapping, so every editor reads like it.
+
+[meta]
+name = "Alchemist"
+variant = "dark"
+source = "https://github.com/habamax/vim-alchemist"
+
+[colors]
+bg_desktop      = "#1c1c1c"  # color00 (LineNr, SignColumn, Folded)
+bg_surface      = "#262626"  # background (Normal)
+bg_widget       = "#3a3a3a"  # color16 (CursorLine)
+bg_hover        = "#444444"  # color08 (Pmenu, TabLine)
+border_hairline = "#303030"  # derived: background halfway to color16
+border_inactive = "#444444"  # color08 (VertSplit, NonText)
+fg_text         = "#bcbcbc"  # foreground (Normal)
+fg_editor       = "#bcbcbc"  # foreground (Normal)
+fg_secondary    = "#949494"  # derived: color07 halfway to foreground
+fg_muted        = "#6c6c6c"  # color07 (LineNr, Comment)
+fg_bright       = "#ffffff"  # color15 (Title)
+fg_disabled     = "#444444"  # color08 (NonText)
+accent          = "#d7af5f"  # color11 (Statement, PmenuSel, WildMenu)
+badge           = "#5f8787"  # color06 (Statusline, TabLineSel)
+selection_bg    = "#87afd7"  # color12 (Visual)
+selection_fg    = "#262626"  # background (Visual)
+link            = "#87afd7"  # color12 (Underlined)
+error           = "#af5f5f"  # color01 (ErrorMsg)
+warning         = "#d7875f"  # color09 (WarningMsg)
+success         = "#87af87"  # color10 (MoreMsg)
+info            = "#87afaf"  # color14 (Directory)
+shadow          = "#000000"  # black
+
+[terminal]
+fg     = "#bcbcbc"
+bg     = "#262626"
+cursor = "#ffaf5f"  # colorC (Cursor)
+ansi = [
+	"#1c1c1c", "#af5f5f", "#5f875f", "#af8700", "#5f87af", "#5f5f87", "#5f8787", "#6c6c6c",
+	"#444444", "#d7875f", "#87af87", "#d7af5f", "#87afd7", "#8787af", "#87afaf", "#ffffff",
+]
+
+[diff]
+# DiffAdd, DiffDelete, DiffText (DiffChange has no color)
+add    = "#87af87"  # color10
+remove = "#af5f5f"  # color01
+change = "#8787af"  # color13
+
+[syntax]
+keyword    = "#d7af5f"  # color11: Statement
+preproc    = "#5f8787"  # color06: PreProc
+type       = "#8787af"  # color13: Type
+function   = "#87afd7"  # color12: Function
+identifier = "#5f87af"  # color04: Identifier
+string     = "#87af87"  # color10: String
+constant   = "#d7875f"  # color09: Constant
+number     = "#d7875f"  # color09: Number -> Constant
+boolean    = "#d7875f"  # color09: Boolean -> Constant
+special    = "#5f875f"  # color02: Special
+operator   = "#d7af5f"  # color11: Operator -> Statement
+comment    = "#6c6c6c"  # color07: Comment
