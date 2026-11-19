@@ -22,6 +22,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [audio](apps/audio.md) | PipeWire audio: the server, its ALSA/JACK/Pulse front ends and WirePlumber | pipewire, pipewire-alsa, pipewire-jack, pipewire-pulse, wireplumber, gst-plugin-pipewire, libpulse, rtkit, sox, playerctl |
 | [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, kernel-modules-hook, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, wireless-regdb, ufw, less, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python |
 | [bluetooth](apps/bluetooth.md) | BlueZ and the Blueman applet | bluez, bluez-utils, blueman |
+| [btop](apps/btop.md) | btop, the system monitor (CPU, memory, disks, network, processes), in the palette's colors | btop |
 | [chrome](apps/chrome.md) | Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite | google-chrome |
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
 | [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code, claude-desktop |
@@ -71,7 +72,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
 | [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
-| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd, ripgrep, btop |
+| [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd, ripgrep |
 <!-- end generated -->
 
 ## Layout
