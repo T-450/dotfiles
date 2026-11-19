@@ -1,14 +1,14 @@
 # waybar-ribbons: the media bar's audio visualizer (waybar config.jsonc, cffi/ribbons#left and
-# #right), a waybar CFFI module: cava's spectrum drawn as GL wireframe ribbons (ribbons.c).
+# #right), a waybar CFFI module: cava's spectrum drawn as GL wireframe ribbons (ribbons.c, surfaceless EGL + cairo).
 # The sources live in this folder; any change to them bumps pkgrel, since install.sh rebuilds a
 # pkg/ package only when its version changes.
 pkgname=waybar-ribbons
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Waybar CFFI module: cava spectrum as GL wireframe ribbons'
 arch=(x86_64)
 license=(MIT)
-depends=(waybar gtk3 libepoxy cava)
+depends=(waybar gtk3 libepoxy libglvnd mesa cava)
 # local files tracked in this repo, not downloads
 source=(ribbons.c ribbons.frag waybar_cffi_module.h)
 sha256sums=(SKIP SKIP SKIP)

@@ -98,7 +98,8 @@ Icon-only buttons carry a zero-width space (`​`) as their label: waybar hides 
 
 The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a waybar CFFI module in C installed to `/usr/lib/waybar-ribbons/ribbons.so`.
 
-- Each instance (`cffi/ribbons#left`, `#right`) draws one channel as a twisted wireframe ribbon in a `GtkGLArea`. One fragment shader (`ribbons.frag`, embedded at build time) measures each pixel's distance to 9 strands. Per frame, only the spectrum goes to the GPU.
+- Each instance (`cffi/ribbons#left`, `#right`) draws one channel as a twisted wireframe ribbon. One fragment shader (`ribbons.frag`, embedded at build time) measures each pixel's distance to 9 strands. Per frame, only the spectrum goes to the GPU.
+- Each instance renders in its own GLES 3 context on Mesa's surfaceless EGL platform, into a framebuffer object, and paints the pixels with cairo in a `GtkDrawingArea`; other redraws repaint the last frame. It is not a `GtkGLArea`: GTK3 picks its EGL config without `EGL_RENDERABLE_TYPE`, whose default is the GLES1 bit, and Mesa 26.3 dropped GLES1, so the area found no config and printed "No available configurations for the given pixel format" in the bar.
 - The look comes from SGI CAD viewports:
   - the width follows the energy
   - depth-cued strands, with a stippled far side

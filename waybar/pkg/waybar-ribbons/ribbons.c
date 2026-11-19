@@ -14,9 +14,13 @@
 // Colors: @clut0..@clut15, @grid and @text from the GTK style context (waybar's colors.css,
 // rendered by theme), read at start and on a GTK style change; `theme set` recolors them through
 // waybar/reload.sh, whose SIGUSR2 makes waybar re-create its modules.
-// Shader: ribbons.frag, embedded at build time; the #version line is chosen at runtime because
-// GTK may hand out desktop GL even when GLES is asked for.
+// Shader: ribbons.frag, embedded at build time. GL: each instance owns a GLES 3 context on Mesa's
+// surfaceless EGL platform, renders into a framebuffer object and hands the pixels to cairo in a
+// GtkDrawingArea. Not GtkGLArea: GTK3 chooses its EGL config without EGL_RENDERABLE_TYPE, whose
+// default is the GLES1 bit, and Mesa 26.3 dropped GLES1, so no config matches and the area shows
+// "No available configurations for the given pixel format". The readback is width x 30 px.
 #include "waybar_cffi_module.h"
+#include <epoxy/egl.h>
 #include <epoxy/gl.h>
 #include <glib-unix.h>
 #include <errno.h>
@@ -49,7 +53,11 @@ static const float SPEED = 1.3f;   // twist phase, radians per second of music
 typedef struct {
 	GtkWidget *area;               // NULL once GTK has finalized it
 	char channel[6];               // "left" | "right"
-	GLuint prog, vao, tex;
+	EGLContext ctx;
+	GLuint prog, vao, tex, fbo, rbo;
+	cairo_surface_t *img;          // the last frame, painted again on any other redraw
+	guint8 *pixels;                // glReadPixels' RGBA rows, bottom row first
+	gboolean dirty;                // a new frame or new colors: render on the next draw
 	GLint u_spec, u_width, u_scale, u_fbh, u_phase, u_mirror, u_clut, u_grid, u_spark;
 	float colors[NCOLORS * 4];
 	gboolean warned[NCOLORS];
@@ -82,11 +90,22 @@ static void read_colors(Ribbons *r) {
 	}
 }
 
+static void redraw(Ribbons *r) {
+	r->dirty = TRUE;
+	if (r->area) gtk_widget_queue_draw(r->area);
+}
+
+static void on_realize(GtkWidget *w, Ribbons *r) {
+	(void)w;
+	read_colors(r);
+	redraw(r);
+}
+
 static void on_style_updated(GtkWidget *w, Ribbons *r) {
 	// before realize the widget may not be anchored yet; on_realize reads the colors then
 	if (!gtk_widget_get_realized(w)) return;
 	read_colors(r);
-	gtk_gl_area_queue_render(GTK_GL_AREA(r->area));
+	redraw(r);
 }
 
 // ---------------------------------------------------------------- cava
@@ -95,7 +114,7 @@ static void on_style_updated(GtkWidget *w, Ribbons *r) {
 static void go_flat(Ribbons *r) {
 	memset(r->newest, 0, sizeof r->newest);
 	r->have = 0;
-	if (r->area) gtk_gl_area_queue_render(GTK_GL_AREA(r->area));
+	redraw(r);
 }
 
 static gboolean on_data(int fd, GIOCondition cond, gpointer data) {
@@ -123,8 +142,7 @@ static gboolean on_data(int fd, GIOCondition cond, gpointer data) {
 	(void)cond;
 	if (got) {
 		r->backoff = 1000;
-		if (memcmp(r->newest, r->drawn, sizeof r->drawn) && r->area)
-			gtk_gl_area_queue_render(GTK_GL_AREA(r->area));
+		if (memcmp(r->newest, r->drawn, sizeof r->drawn)) redraw(r);
 	}
 	return G_SOURCE_CONTINUE;
 }
@@ -241,15 +259,32 @@ static GLuint compile(GLenum type, const char *head, const char *body) {
 	return s;
 }
 
-static void on_realize(GtkGLArea *area, Ribbons *r) {
-	gtk_gl_area_make_current(area);
-	if (gtk_gl_area_get_error(area)) {
-		fprintf(stderr, "waybar-ribbons: GL: %s\n", gtk_gl_area_get_error(area)->message);
-		return;
+// one EGL display for every instance in this waybar; never terminated, like libEGL's own state
+static EGLDisplay display(void) {
+	static EGLDisplay d = EGL_NO_DISPLAY;
+	static gboolean tried;
+	if (tried) return d;
+	tried = TRUE;
+	// the EXT entry point: epoxy resolves EGL 1.5's eglGetPlatformDisplay only once a display
+	// reports 1.5, and aborts the process (waybar) when asked before that
+	if (!epoxy_has_egl_extension(EGL_NO_DISPLAY, "EGL_EXT_platform_base") ||
+			!epoxy_has_egl_extension(EGL_NO_DISPLAY, "EGL_MESA_platform_surfaceless")) {
+		fprintf(stderr, "waybar-ribbons: EGL: no surfaceless platform\n");
+		return d;
 	}
-	gboolean es = gdk_gl_context_get_use_es(gtk_gl_area_get_context(area));
-	const char *head = es ? "#version 300 es\nprecision highp float;\nprecision highp sampler2D;\n"
-	                      : "#version 330 core\n";
+	EGLDisplay e = eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, NULL);
+	if (e == EGL_NO_DISPLAY || !eglInitialize(e, NULL, NULL))
+		fprintf(stderr, "waybar-ribbons: EGL: no surfaceless display (0x%x)\n", eglGetError());
+	else d = e;
+	return d;
+}
+
+static gboolean make_current(Ribbons *r) {
+	return r->ctx && eglMakeCurrent(display(), EGL_NO_SURFACE, EGL_NO_SURFACE, r->ctx);
+}
+
+static GLuint build_program(void) {
+	const char *head = "#version 300 es\nprecision highp float;\nprecision highp sampler2D;\n";
 	GLuint vs = compile(GL_VERTEX_SHADER, head, VERT), fs = compile(GL_FRAGMENT_SHADER, head, FRAG);
 	GLuint prog = glCreateProgram();
 	glAttachShader(prog, vs);
@@ -259,47 +294,80 @@ static void on_realize(GtkGLArea *area, Ribbons *r) {
 	glDeleteShader(fs);
 	GLint ok;
 	glGetProgramiv(prog, GL_LINK_STATUS, &ok);
-	if (!ok) {
-		char log[2048];
-		glGetProgramInfoLog(prog, sizeof log, NULL, log);
-		fprintf(stderr, "waybar-ribbons: link: %s\n", log);
-		glDeleteProgram(prog);
+	if (ok) return prog;
+	char log[2048];
+	glGetProgramInfoLog(prog, sizeof log, NULL, log);
+	fprintf(stderr, "waybar-ribbons: link: %s\n", log);
+	glDeleteProgram(prog);
+	return 0;
+}
+
+// every attribute that matters is named: an unnamed EGL_RENDERABLE_TYPE or EGL_SURFACE_TYPE takes
+// a default (GLES1, a window) that this context neither needs nor may find
+static void gl_init(Ribbons *r) {
+	EGLDisplay d = display();
+	if (d == EGL_NO_DISPLAY) return;
+	const EGLint want[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT, EGL_SURFACE_TYPE, 0, EGL_NONE};
+	const EGLint version[] = {EGL_CONTEXT_MAJOR_VERSION, 3, EGL_NONE};
+	EGLConfig cfg;
+	EGLint n = 0;
+	if (!eglBindAPI(EGL_OPENGL_ES_API) || !eglChooseConfig(d, want, &cfg, 1, &n) || n < 1 ||
+			(r->ctx = eglCreateContext(d, cfg, EGL_NO_CONTEXT, version)) == EGL_NO_CONTEXT) {
+		fprintf(stderr, "waybar-ribbons: EGL: no GLES 3 context (0x%x)\n", eglGetError());
+		r->ctx = NULL;
 		return;
 	}
-	r->prog = prog;
-	r->u_spec = glGetUniformLocation(prog, "spec");
-	r->u_width = glGetUniformLocation(prog, "width");
-	r->u_scale = glGetUniformLocation(prog, "scale");
-	r->u_fbh = glGetUniformLocation(prog, "fbh");
-	r->u_phase = glGetUniformLocation(prog, "phase");
-	r->u_mirror = glGetUniformLocation(prog, "mirror");
-	r->u_clut = glGetUniformLocation(prog, "clut");
-	r->u_grid = glGetUniformLocation(prog, "grid");
-	r->u_spark = glGetUniformLocation(prog, "spark");
+	if (!make_current(r) || !(r->prog = build_program())) return;
+	r->u_spec = glGetUniformLocation(r->prog, "spec");
+	r->u_width = glGetUniformLocation(r->prog, "width");
+	r->u_scale = glGetUniformLocation(r->prog, "scale");
+	r->u_fbh = glGetUniformLocation(r->prog, "fbh");
+	r->u_phase = glGetUniformLocation(r->prog, "phase");
+	r->u_mirror = glGetUniformLocation(r->prog, "mirror");
+	r->u_clut = glGetUniformLocation(r->prog, "clut");
+	r->u_grid = glGetUniformLocation(r->prog, "grid");
+	r->u_spark = glGetUniformLocation(r->prog, "spark");
 	glGenVertexArrays(1, &r->vao);
 	glGenTextures(1, &r->tex);
 	glBindTexture(GL_TEXTURE_2D, r->tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, BARS, 1, 0, GL_RED, GL_FLOAT, NULL);
-	read_colors(r);
+	glGenFramebuffers(1, &r->fbo);
+	glGenRenderbuffers(1, &r->rbo);
 	r->last = g_get_monotonic_time();
 }
 
-static void on_unrealize(GtkGLArea *area, Ribbons *r) {
-	gtk_gl_area_make_current(area);
-	if (gtk_gl_area_get_error(area)) return;
-	glDeleteTextures(1, &r->tex);
-	glDeleteVertexArrays(1, &r->vao);
-	glDeleteProgram(r->prog);
-	r->prog = r->vao = r->tex = 0;
+static void gl_free(Ribbons *r) {
+	if (make_current(r)) {
+		glDeleteFramebuffers(1, &r->fbo);
+		glDeleteRenderbuffers(1, &r->rbo);
+		glDeleteTextures(1, &r->tex);
+		glDeleteVertexArrays(1, &r->vao);
+		glDeleteProgram(r->prog);
+		eglMakeCurrent(display(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	}
+	if (r->ctx) eglDestroyContext(display(), r->ctx);
+	if (r->img) cairo_surface_destroy(r->img);
+	g_free(r->pixels);
 }
 
-static gboolean on_render(GtkGLArea *area, GdkGLContext *ctx, Ribbons *r) {
-	(void)ctx;
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	if (!r->prog) return TRUE;
+// the framebuffer and the cairo image follow the widget's size in device pixels
+static void fit(Ribbons *r, int w, int h, int sc) {
+	if (r->img && cairo_image_surface_get_width(r->img) == w && cairo_image_surface_get_height(r->img) == h)
+		return;
+	glBindRenderbuffer(GL_RENDERBUFFER, r->rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+	glBindFramebuffer(GL_FRAMEBUFFER, r->fbo);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, r->rbo);
+	if (r->img) cairo_surface_destroy(r->img);
+	r->img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+	cairo_surface_set_device_scale(r->img, sc, sc);
+	r->pixels = g_realloc(r->pixels, (size_t)w * h * 4);
+	r->dirty = TRUE;
+}
+
+static void render(Ribbons *r, int w, int h, int sc) {
 	gint64 now = g_get_monotonic_time();
 	if (memcmp(r->newest, r->drawn, sizeof r->drawn)) {
 		// the twist moves with the music only; a long pause does not jump it
@@ -310,16 +378,18 @@ static gboolean on_render(GtkGLArea *area, GdkGLContext *ctx, Ribbons *r) {
 	float level[BARS];
 	for (int i = 0; i < BARS; i++) level[i] = r->drawn[i] / 65535.0f;
 
-	GtkWidget *w = GTK_WIDGET(area);
-	int sc = gtk_widget_get_scale_factor(w);
+	glBindFramebuffer(GL_FRAMEBUFFER, r->fbo);
+	glViewport(0, 0, w, h);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(r->prog);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, r->tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, BARS, 1, GL_RED, GL_FLOAT, level);
 	glUniform1i(r->u_spec, 0);
-	glUniform1f(r->u_width, gtk_widget_get_allocated_width(w));
+	glUniform1f(r->u_width, (float)w / sc);
 	glUniform1f(r->u_scale, sc);
-	glUniform1f(r->u_fbh, gtk_widget_get_allocated_height(w) * sc);
+	glUniform1f(r->u_fbh, h);
 	glUniform1f(r->u_phase, r->phase);
 	glUniform1f(r->u_mirror, !strcmp(r->channel, "left"));
 	glUniform4fv(r->u_clut, 16, r->colors);
@@ -327,7 +397,31 @@ static gboolean on_render(GtkGLArea *area, GdkGLContext *ctx, Ribbons *r) {
 	glUniform4fv(r->u_spark, 1, &r->colors[17 * 4]);
 	glBindVertexArray(r->vao);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	return TRUE;
+	glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, r->pixels);
+
+	// GL's rows run bottom up, cairo's top down; the shader's output is already premultiplied,
+	// which is what CAIRO_FORMAT_ARGB32 holds (one native-endian 0xAARRGGBB word per pixel)
+	cairo_surface_flush(r->img);
+	guint8 *dst = cairo_image_surface_get_data(r->img);
+	int stride = cairo_image_surface_get_stride(r->img);
+	for (int y = 0; y < h; y++) {
+		const guint8 *s = r->pixels + (size_t)(h - 1 - y) * w * 4;
+		guint32 *d = (guint32 *)(dst + (size_t)y * stride);
+		for (int x = 0; x < w; x++, s += 4) d[x] = (guint32)s[3] << 24 | s[0] << 16 | s[1] << 8 | s[2];
+	}
+	cairo_surface_mark_dirty(r->img);
+}
+
+static gboolean on_draw(GtkWidget *w, cairo_t *cr, Ribbons *r) {
+	int sc = gtk_widget_get_scale_factor(w);
+	int fw = gtk_widget_get_allocated_width(w) * sc, fh = gtk_widget_get_allocated_height(w) * sc;
+	if (!r->prog || fw < 1 || fh < 1 || !make_current(r)) return FALSE;
+	fit(r, fw, fh, sc);
+	if (r->dirty) render(r, fw, fh, sc);
+	r->dirty = FALSE;
+	cairo_set_source_surface(cr, r->img, 0, 0);
+	cairo_paint(cr);
+	return FALSE;
 }
 
 // ---------------------------------------------------------------- waybar ABI
@@ -351,17 +445,12 @@ void *wbcffi_init(const wbcffi_init_info *info, const wbcffi_config_entry *cfg, 
 		g_free(v);
 	}
 
-	r->area = gtk_gl_area_new();
+	gl_init(r);
+	r->area = gtk_drawing_area_new();
 	g_object_add_weak_pointer(G_OBJECT(r->area), (gpointer *)&r->area);
-	gtk_gl_area_set_use_es(GTK_GL_AREA(r->area), TRUE);
-	gtk_gl_area_set_required_version(GTK_GL_AREA(r->area), 3, 0);
-	gtk_gl_area_set_has_alpha(GTK_GL_AREA(r->area), TRUE);
-	// draw only when asked (a new frame, a style change); other redraws reuse the last image
-	gtk_gl_area_set_auto_render(GTK_GL_AREA(r->area), FALSE);
 	gtk_widget_set_hexpand(r->area, TRUE);
 	g_signal_connect(r->area, "realize", G_CALLBACK(on_realize), r);
-	g_signal_connect(r->area, "unrealize", G_CALLBACK(on_unrealize), r);
-	g_signal_connect(r->area, "render", G_CALLBACK(on_render), r);
+	g_signal_connect(r->area, "draw", G_CALLBACK(on_draw), r);
 	g_signal_connect(r->area, "style-updated", G_CALLBACK(on_style_updated), r);
 	gtk_container_add(info->get_root_widget(info->obj), r->area);
 	gtk_widget_show(r->area);
@@ -375,11 +464,12 @@ void wbcffi_deinit(void *instance) {
 	Ribbons *r = instance;
 	stop_cava(r);
 	// waybar calls this before it destroys the module's widgets: destroy the area now, while
-	// its handlers can still use r (unrealize frees the GL objects)
+	// its handlers can still use r
 	if (r->area) {
 		g_object_remove_weak_pointer(G_OBJECT(r->area), (gpointer *)&r->area);
 		gtk_widget_destroy(r->area);
 	}
+	gl_free(r);
 	g_free(r->conf);
 	g_free(r);
 }
