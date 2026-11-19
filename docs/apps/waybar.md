@@ -43,7 +43,7 @@ Each hue has one job across both bars:
 
 Cpu has no critical tier: full load is work, not a failure. The battery label says which state it is in: `BAT` on battery, `CHG` charging, `AC` plugged in or full. A chip fades between states over 150 ms, mango's animation time. The key-mode and window-state chips exist only while their state does, so their presence is the message: bold type in a 1px outline of their color. The exception is a pinned window: it shows on every tag until unpinned, so its chip is a `warn` block.
 
-All roles assume a dark palette, and every palette here is one. The bar is the desktop mixed 60% toward black.
+The bar color depends on the palette (`colors.css.tmpl`, `prefer_dark`): on a dark palette it is the desktop mixed 60% toward black, on a light one it is the desktop itself. Every role is made legible on the desktop, so it stays legible on either bar.
 
 ## Modules
 
@@ -67,11 +67,11 @@ Left to right:
 - `cffi/ribbons#right`: the right channel's ribbon.
 - `custom/clut`: the CLUT key, the ribbons' 16 colors as a 5x16 strip, low at the bottom (one CSS gradient over `clut0`..`clut15`).
 
-The triad and the CLUT key are zero-width labels with no tooltip, like the icon buttons.
+The triad and the CLUT key are zero-width labels, like the icon buttons; each has a tooltip (AXES, CLUT) with a one-line note.
 
 ## Tooltips
 
-Every module but the tags (`mango/workspaces` sets none and offers no option) and the day label has a tooltip: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, without a color literal:
+Every module has a tooltip but the tags (`mango/workspaces` sets none and offers no option) and those `config.jsonc` sets to `"tooltip": false`: the window slots (`custom/windows`, `custom/win#1..6`), `custom/special`, the day label, and the player's prev, play, next, artist and time: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, without a color literal:
 
 - NAME: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>`. On the bar the same span has no `fgalpha`: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span>`.
 - VALUE: plain text (14px).
@@ -107,7 +107,7 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
   - a phosphor glow on its edges
   - a dotted floor in `grid`
 - Color by energy comes from `clut0`..`clut15`. All strands at one x share one color, so where their summed intensity takes that color past 1, it is scaled down by its brightest channel: where they bunch (silence, the tapered ends), the ribbon keeps its hue instead of clipping to white.
-- The module reads the CLUT, `grid` and `text` from the GTK style context, and again on every style change, so `theme set` recolors the ribbons with the rest of the bar.
+- The module reads the CLUT, `grid` and `text` from the GTK style context, and again when waybar re-creates its modules: `theme set` runs `waybar/reload.sh`, which sends waybar SIGUSR2, so the ribbons recolor with the rest of the bar.
 - Its one key is `channel` (`left` or `right`). Left is drawn mirrored, so the lows meet at the player.
 - Data: each instance runs its own `cava`. The config is written to `$XDG_RUNTIME_DIR/waybar-ribbons/<channel>.conf`: pipewire input, raw binary 16-bit mono output, 48 bars, 30 fps, `sleep_timer = 1`.
 - cava's capture node is passive (`active = 0`), so it never keeps the sink awake by itself. Its first-run files go under `$XDG_RUNTIME_DIR/waybar-ribbons` (its `XDG_CONFIG_HOME`), not `~/.config/cava`. It dies with waybar (`PR_SET_PDEATHSIG`).

@@ -80,9 +80,12 @@ void main() {
 		if (fract(x / 15.0) * 15.0 < 1.0) k += 0.30;                // rungs
 	}
 	vec3 rib = lut(a) * k;
-	col += rib / max(1.0, max(rib.r, max(rib.g, rib.b)));
+	rib /= max(1.0, max(rib.r, max(rib.g, rib.b)));
 	if (front > 0.6 && a > 0.15)                                    // specular on the face-on front edge
-		col += spark.rgb * spark.a * 0.5 * (front - 0.6) / 0.4 * (1.0 - smoothstep(0.2, 0.9, fy));
+		rib += spark.rgb * spark.a * 0.5 * (front - 0.6) / 0.4 * (1.0 - smoothstep(0.2, 0.9, fy));
+	// the ribbon starts 16-32px in from its outer end (the triad, the CLUT key), as in the
+	// reference; the floor runs on to the edge
+	col += rib * smoothstep(16.0, 32.0, mirror > 0.5 ? x : width - x);
 	col = min(col, 1.0);
 	// premultiplied: the bar's own background and rule show through where nothing is drawn
 	frag = vec4(col, max(col.r, max(col.g, col.b)));

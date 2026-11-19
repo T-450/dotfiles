@@ -8,17 +8,17 @@
 // Data: each instance runs its own cava (raw binary 16-bit, mono, that channel) and reads the
 // newest frame from its stdout. cava's capture node is passive (active = 0), so it never keeps
 // the sink awake on its own; cava dies with waybar (PR_SET_PDEATHSIG) and keeps its first-run
-// files under $XDG_RUNTIME_DIR/waybar-ribbons, not in ~/.config/cava. A frame that equals the one drawn is not drawn again, so silence
-// (cava's sleep_timer) costs nothing. If cava exits, the ribbon goes flat and cava is started
+// files under $XDG_RUNTIME_DIR/waybar-ribbons, not in ~/.config/cava. A frame that equals the one
+// drawn is not drawn again, so silence (cava's sleep_timer) costs nothing. If cava exits, the ribbon goes flat and cava is started
 // again after 1s, backing off to 30s while it keeps failing.
 // Colors: @clut0..@clut15, @grid and @text from the GTK style context (waybar's colors.css,
-// rendered by theme), read again on every style change, so `theme set` recolors the ribbons.
+// rendered by theme), read at start and on a GTK style change; `theme set` recolors them through
+// waybar/reload.sh, whose SIGUSR2 makes waybar re-create its modules.
 // Shader: ribbons.frag, embedded at build time; the #version line is chosen at runtime because
 // GTK may hand out desktop GL even when GLES is asked for.
 #include "waybar_cffi_module.h"
 #include <epoxy/gl.h>
 #include <glib-unix.h>
-#include <glib/gstdio.h>
 #include <errno.h>
 #include <math.h>
 #include <signal.h>
