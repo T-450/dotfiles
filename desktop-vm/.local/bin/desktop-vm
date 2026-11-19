@@ -710,6 +710,11 @@ def base_disk(p, version):
     Returns the exit code; on failure the VM is stopped and the disk and run directory are kept."""
     state = state_dir()
     state.mkdir(parents=True, exist_ok=True)
+    # a failed build's disk is kept to debug that failure; a new build supersedes it (each is
+    # up to diskGB), so only the newest failed disk stays; the logs stay in every run
+    for old in (state / "runs").glob("*-base/build.qcow2"):
+        old.unlink()
+        old.with_name("vars.fd").unlink(missing_ok=True)
     rt = prepare_runtime()
     run = new_run("base")
     disk, vars_file = run / "build.qcow2", run / "vars.fd"
