@@ -73,9 +73,9 @@ box:hover > #custom-record {
     box-shadow: inset 0 -1px 0 @cyan;
 }
 
-/* the λ, the shell prompt's: the action mark, orange like play; it glows under the pointer */
-#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; letter-spacing: 0; font-weight: 700; color: @orange; }
-box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 0.7); }
+/* the λ, the shell prompt's: plain type, cyan under the pointer like every other control */
+#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; letter-spacing: 0; font-weight: 700; color: @text; }
+box:hover > #custom-start { color: @cyan; }
 
 /* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is
    text bold, empty dim regular, the viewed tag a glowing signal block with its number in bar, an
@@ -103,7 +103,6 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
 #workspaces button.active:hover, box:hover > #custom-special.active {
     color: @bar;
     background-color: @signal;
-    box-shadow: 0 0 7px alpha(@signal, 0.55);
 }
 #workspaces button.urgent { color: @crit; box-shadow: inset 0 0 0 1px @crit, 0 0 7px alpha(@crit, 0.6); }
 
@@ -158,7 +157,7 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
     background-color: transparent;
 }
 #keymode { color: @orange; box-shadow: inset 0 0 0 1px alpha(@orange, 0.7); }
-#custom-winstate { color: @magenta; box-shadow: inset 0 0 0 1px alpha(@magenta, 0.7); }
+#custom-winstate { color: @cyan; box-shadow: inset 0 0 0 1px alpha(@cyan, 0.7); }
 #custom-winstate.pinned { color: @bar; background-color: @warn; box-shadow: none; }
 
 /* the windows in view (custom/win#1..6, fed by waybar-windows): the focused one in text bold on
@@ -179,7 +178,6 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
     font-weight: 700;
     font-feature-settings: "tnum";
     color: @text;
-    text-shadow: 0 0 6px alpha(@cyan, 0.6);
 }
 
 /* status chips: a 12px label and a 14px bold value, both cyan, 6px inside a 20px box. Every chip

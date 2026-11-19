@@ -1,6 +1,6 @@
 # mako
 
-Notifications. Urgency reads at a glance in the editors' syntax colors: a normal one has the accent border and its summary in the keyword color, a low one the inactive border and a comment-colored summary, a critical one the error color for both (and it stays until dismissed).
+Notifications. The accent marks focus only, so a notification is common UI: a normal one has a muted cool border (`ansi6` halfway to its background) and a bright summary, a low one the inactive border and a comment-colored summary, a critical one the error color for both (and it stays until dismissed).
 
 super+n r restores the last one, super+n d dismisses all, super+n z toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon. A mako that hangs on stop is aborted after 10s, so a logout waits at most that long and `coredumpctl info mako` has the stack of the hang.
 
@@ -17,7 +17,7 @@ super+n r restores the last one, super+n d dismisses all, super+n z toggles do-n
 
 **Rendered from the palette** (`theme`):
 
-- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `accent`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`, `syn_comment`, `syn_keyword`
+- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `ansi6`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`, `syn_comment`
 
 **User units** (enabled by `install.sh --units`): `mako.service`
 

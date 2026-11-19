@@ -1,6 +1,6 @@
 # swayosd
 
-On-screen display for volume and brightness, and the commands the keys run. The level fill is the editors' constant color (`syn_constant`, mint on Colibri): a value, as a constant is in code. The border is `border_inactive`, so the box reads on any background.
+On-screen display for volume and brightness, and the commands the keys run. The level fill is the cool `ansi6`, kept legible: common UI, so it never competes with the accent. The border is `border_inactive`, so the box reads on any background.
 
 `osd-volume up|down|mute|micmute` and `osd-brightness up|down` (keys, with the OSD) or `bup|bdown` (bar scroll, plain brightnessctl at 1% steps).
 
@@ -21,7 +21,7 @@ Brightness needs write access to `/sys/class/backlight/*/brightness` (root:video
 
 **Rendered from the palette** (`theme`):
 
-- `swayosd/.config/swayosd/colors.css.tmpl` → `swayosd/.config/swayosd/colors.css`: `bg_hover`, `bg_widget`, `border_inactive`, `fg_text`, `name`, `slug`, `syn_constant`
+- `swayosd/.config/swayosd/colors.css.tmpl` → `swayosd/.config/swayosd/colors.css`: `ansi6`, `bg_hover`, `bg_widget`, `border_inactive`, `fg_text`, `name`, `slug`
 
 **User units** (enabled by `install.sh --units`): `swayosd.service`
 

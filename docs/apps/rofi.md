@@ -17,5 +17,5 @@ The launcher (super+d) and every menu: clipboard history, theme picker, night li
 
 **Rendered from the palette** (`theme`):
 
-- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`
+- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `accent`, `ansi6`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`
 <!-- end generated -->

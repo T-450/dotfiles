@@ -15,9 +15,9 @@ Two 30px bars frame the screen like an SGI CAD viewport: a status line at the to
 - Tags are 24x20 keys of type:
   - occupied: `text` bold
   - empty: `dim` regular
-  - the viewed tag: a `signal` block with its number in `bar` and a 7px glow
+  - the viewed tag: a `signal` block with its number in `bar`, no glow (the accent marks focus only)
   - an urgent tag: `crit` in a 1px `crit` outline with a glow
-- Dividers are 1x12 rules (`cyan` 70%). The clock is centered: day and date as `cyan` labels around the time, in `text` with a `cyan` phosphor glow.
+- Dividers are 1x12 rules (`cyan` 70%). The clock is centered: day and date as `cyan` labels around the time, in `text`.
 - Roles come from `colors.css.tmpl`, each kept legible on the desktop (`|legible`). No color literal lives in `style.css`. The roles: `bar`, `text`, `dim`, `cyan`, `magenta`, `orange`, `green`, `warn`, `crit`, `signal`, `grid`, `clut0`..`clut15`, `sel`, `selfg`.
 - Hover, on everything clickable, is a 14% `cyan` fill with a 1px `cyan` bottom edge, the type in `text`.
   - Power under the pointer is `crit`, with a 16% `crit` fill and a `crit` edge.
@@ -30,11 +30,11 @@ Each hue has one job across both bars:
 
 | color | role | job | where |
 |---|---|---|---|
-| `cyan` | `ansi6` | chrome and telemetry | chip labels and values, the ruler and rules, the layout glyph, day and date, bluetooth while connected; on the media bar the rule, prev/next and the track time |
-| `text` | `fg_editor` toward `fg_bright` | the one fact in focus | occupied tags, the focused window, the time, power; the track title |
+| `cyan` | `ansi6` | chrome and telemetry | chip labels and values, the ruler and rules, the layout glyph, day and date, window states, the λ under the pointer, bluetooth while connected; on the media bar the rule, prev/next and the track time |
+| `text` | `fg_editor` toward `fg_bright` | the one fact in focus | occupied tags, the focused window, the time, the λ, power; the track title |
 | `dim` | `fg_editor` toward `fg_muted` | empty, off or in the background | empty tags, other windows, icons at rest, muted, offline |
-| `orange` | `warning` toward `error` (0.4) | action | the λ, an armed key mode, night light held warm; play |
-| `magenta` | `ansi5` | someone else's state | window states, held notifications; the artist |
+| `orange` | `warning` toward `error` (0.4) | action | an armed key mode, night light held warm; play |
+| `magenta` | `ansi5` | someone else's state | held notifications; the artist |
 | `signal` | `accent` | the one place you are | the viewed tag, the focused window's underline |
 | `warn` block | `warning`, `bar` type | high, or a standing exception | cpu from 85%; memory and disk from 80%; temperature from 80 C; battery at 20% and below on battery; the window-state chip while a window is pinned |
 | `crit` | `error` | critical, irreversible, or asking now | a crit block: memory and disk from 90%, temperature from 95 C, battery at 10% and below on battery; an urgent tag; a held critical notification (bell, count and dot); recording in progress; power under the pointer |
