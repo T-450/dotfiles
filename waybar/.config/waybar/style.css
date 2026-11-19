@@ -96,7 +96,8 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
     font-weight: 700;
     font-feature-settings: "tnum";
 }
-#workspaces button label { margin: 0; padding: 0; }
+/* the button's label is a node of its own: without inherit, `*` sets it to 400 */
+#workspaces button label { margin: 0; padding: 0; font-weight: inherit; }
 #workspaces button.empty, #custom-special.empty { color: @dim; font-weight: 400; }
 #workspaces button.active, #custom-special.active,
 #workspaces button.active:hover, box:hover > #custom-special.active {
