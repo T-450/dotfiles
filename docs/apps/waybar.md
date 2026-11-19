@@ -67,11 +67,11 @@ Left to right:
 - `cffi/ribbons#right`: the right channel's ribbon.
 - `custom/clut`: the CLUT key, the ribbons' 16 colors as a 5x16 strip, low at the bottom (one CSS gradient over `clut0`..`clut15`).
 
-The triad and the CLUT key are zero-width labels with no tooltip, like the icon buttons.
+The triad and the CLUT key are zero-width labels, like the icon buttons; each has a tooltip (AXES, CLUT) with a one-line note.
 
 ## Tooltips
 
-Every module but the tags (`mango/workspaces` sets none and offers no option) and the day label has a tooltip: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, without a color literal:
+Every module has a tooltip but the tags (`mango/workspaces` sets none and offers no option) and those `config.jsonc` sets to `"tooltip": false`: the window slots (`custom/windows`, `custom/win#1..6`), `custom/special`, the day label, and the player's prev, play, next, artist and time: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, without a color literal:
 
 - NAME: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>`. On the bar the same span has no `fgalpha`: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span>`.
 - VALUE: plain text (14px).

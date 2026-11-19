@@ -306,9 +306,15 @@
         "modules-center": ["mpris#prev", "mpris#play", "mpris#next", "mpris#title", "mpris#artist", "mpris#time"],
         "modules-right": ["cffi/ribbons#right", "custom/clut"],
 
-        // the axis triad and the CLUT key are drawn by style.css: zero-width labels, no tooltip
-        "custom/triad": { "format": "\u200b", "tooltip": false },
-        "custom/clut": { "format": "\u200b", "tooltip": false },
+        // the axis triad and the CLUT key are drawn by style.css: zero-width labels with a tooltip
+        "custom/triad": {
+            "format": "\u200b",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>AXES</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>X orange · Y green · Z cyan · origin in the text color</span>"
+        },
+        "custom/clut": {
+            "format": "\u200b",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CLUT</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>The ribbons' 16 energy colors, low at the bottom, high at the top</span>"
+        },
 
         "cffi/ribbons#left": { "module_path": "/usr/lib/waybar-ribbons/ribbons.so", "channel": "left", "expand": true },
         "cffi/ribbons#right": { "module_path": "/usr/lib/waybar-ribbons/ribbons.so", "channel": "right", "expand": true },
@@ -322,7 +328,7 @@
         "mpris#title": {
             "format": "{title}",
             "title-len": 20,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>PLAYING</span>  {title} · {artist} · {player}\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>PLAYING</span>  {title} · {player}\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
         },
         "mpris#artist": { "format": "{artist}", "artist-len": 14, "tooltip": false },
         "mpris#time": { "format": "{position}/{length}", "interval": 1, "tooltip": false }
