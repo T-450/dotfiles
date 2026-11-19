@@ -90,8 +90,8 @@ Which apps use each role (generated from the templates):
 |---|---|
 | `accent` | claude, firefox, ghostty, gtk, helix, hyprlock, lazygit, mako, mango, pi, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `ansi0` | ghostty |
-| `ansi1` | ghostty |
-| `ansi10` | fastfetch, ghostty, helix, mousepad, waybar |
+| `ansi1` | fastfetch, ghostty |
+| `ansi10` | ghostty, helix, mousepad, waybar |
 | `ansi11` | ghostty, helix |
 | `ansi12` | ghostty, helix, mousepad, vim |
 | `ansi13` | claude, ghostty, helix, mousepad, pi |
@@ -119,7 +119,7 @@ Which apps use each role (generated from the templates):
 | `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim, waybar |
 | `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim, waybar |
 | `fg_editor` | gtk, helix, mousepad, pi, theme, vim, waybar |
-| `fg_muted` | claude, fastfetch, helix, hyprlock, mousepad, pi, qutebrowser, rofi, theme, vim |
+| `fg_muted` | claude, helix, hyprlock, mousepad, pi, qutebrowser, rofi, theme, vim |
 | `fg_secondary` | claude, firefox, ghostty, helix, lazygit, mako, mango, mousepad, pi, qutebrowser, rofi, theme, vim, wlogout |
 | `fg_text` | claude, fastfetch, firefox, gtk, imv, mako, mousepad, mpv, pi, qutebrowser, rofi, swayosd, theme, vim, wlogout |
 | `git_email` | git |
@@ -152,7 +152,7 @@ Which apps use each role (generated from the templates):
 | `syn_special` | fastfetch, helix, mousepad, vim |
 | `syn_string` | helix, mousepad, pi, vim |
 | `syn_type` | helix, mousepad, pi, vim |
-| `term_bg` | claude, ghostty, helix, pi, theme, vim |
+| `term_bg` | claude, fastfetch, ghostty, helix, pi, theme, vim |
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme, vim |
