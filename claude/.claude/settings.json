@@ -3,6 +3,18 @@
     "CLAUDE_CODE_SHELL": "/usr/bin/bash",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CLAUDE_ENV_FILE\" ] && ! grep -qs 'mise hook-env' \"$CLAUDE_ENV_FILE\" && echo 'eval \"$(MISE_VERBOSE=0 mise hook-env -s bash)\"' >> \"$CLAUDE_ENV_FILE\"; true"
+          }
+        ]
+      }
+    ]
+  },
   "model": "opus",
   "enabledPlugins": {
     "superpowers@anthropic-plugin-directory": true,
