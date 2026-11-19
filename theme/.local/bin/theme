@@ -820,6 +820,9 @@ def main(argv):
         if cmd == "set" and not args:
             raise ThemeError("usage: theme set NAME")
         slug = args[0] if args else current()
+        if not args and slug not in palette_names():  # saved state from another branch: not a request
+            print(f"theme: no palette '{slug}' in this checkout; rendering {DEFAULT}", file=sys.stderr)
+            slug = DEFAULT
         before = system_digest()
         words, outs = render_all(slug, to or REPO)
         if to:
