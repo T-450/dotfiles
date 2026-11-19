@@ -5,8 +5,8 @@
 # TMP label and the degrees, like the other status chips.
 
 # the bar's label and the tooltip's NAME (see docs/apps/waybar.md)
-label="<span font_desc='Inter SemiBold 9px' letter_spacing='2048' fgalpha='55%'>TMP</span>"
-name="<span font_desc='Inter SemiBold 9px' letter_spacing='2048' fgalpha='55%'>TEMPERATURE</span>  "
+label="<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>TMP</span>"
+name="<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>TEMPERATURE</span>  "
 
 for sensor in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 	[[ -r $sensor ]] || continue
