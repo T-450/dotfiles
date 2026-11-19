@@ -4,7 +4,7 @@
 config-file = colors.ghostty
 
 font-family = Lilex Nerd Font
-font-size   = 12
+font-size   = 13
 # text as kitty, the terminal before Ghostty, drew it, pixel for pixel: linear glyph blending
 # (Ghostty's default, linear-corrected, draws it lighter) and 10x22 px cells (Lilex's line at 12 pt
 # is 20.8 px). fastfetch's logo is sized for these cells.
