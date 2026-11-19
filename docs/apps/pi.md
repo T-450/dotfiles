@@ -6,7 +6,7 @@ Pi comes from AUR (`pi-coding-agent-bin`, the release binary), so LazyPi doesn't
 
 Instructions: `~/.pi/agent/APPEND_SYSTEM.md` links to `claude/.claude/CLAUDE.md`, so Pi and Claude Code follow the same global rules; `~/.pi/agent/AGENTS.md` stays the compound plugin's file.
 
-Themes: `{palette}.json.tmpl` renders once per palette into `~/.pi/agent/themes/` (`colibri`, `tokyo-night`). `setup.sh` sets Pi's `theme` to `colibri`; Pi hot-reloads it, and another palette's theme is one `/settings` pick away.
+Themes: `{palette}.json.tmpl` renders once per palette into `~/.pi/agent/themes/` (`cassette`, `colibri`, `tokyo-night`). `setup.sh` sets Pi's `theme` to `colibri`; Pi hot-reloads it, and another palette's theme is one `/settings` pick away.
 
 Look: Claude Code's, from `pi-claude-code-ui` (pinned; `setup.sh` installs it after the catalog). Consecutive tool calls fold into one line (`Read 2 files, ran 1 shell command`; Ctrl+O expands), edits show a syntax-highlighted diff with word-level marks, finished thinking collapses to `Thought for Ns`, prompts carry a `❯`, and the spinner names what runs. Bash rows show a label the model writes with each call (`bashIntent: model`, a few output tokens per call; `/cc-tools intent off` turns it off). `setup.sh` sets `terminalTheme: false` before the extension first loads, because it would otherwise switch Pi to its `system` theme over the palette pair, plus `themeAdaptive: true` so its diffs, connectors and spinner take the pair's colors, and `quietStartup: "header"` so a session opens on Pi's header without the list of every loaded resource.
 

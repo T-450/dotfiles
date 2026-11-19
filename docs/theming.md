@@ -17,7 +17,8 @@ branch): each role, ANSI color and syntax color is one of that scheme's named co
 in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
 `fg_secondary`), mixed from its own. The desktop (`bg_desktop`: bar, lock screen, GTK, browsers)
 sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
-editor background. The other palette is Tokyo Night (`theme import-omarchy`).
+editor background. The others are Tokyo Night (`theme import-omarchy`) and Cassette, by hand from a
+cassette J-card's tokens: black card, silver paper, a teal and a cobalt stripe.
 
 ## Keycaps
 

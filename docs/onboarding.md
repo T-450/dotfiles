@@ -66,6 +66,7 @@ Every later change uses these two checks, so run them once now.
 	```
 
 	```
+	  cassette
 	* colibri
 	  tokyo-night
 	```
@@ -76,7 +77,7 @@ Every later change uses these two checks, so run them once now.
 	theme set tokyo-night
 	```
 
-	You see `tokyo-night: rendered 28 files`. Window borders, waybar, and notifications change at
+	You see `tokyo-night: rendered 31 files`. Window borders, waybar, and notifications change at
 	once. The wallpaper stays, because every dark palette uses the same image. Open a new terminal
 	to see its new colors.
 

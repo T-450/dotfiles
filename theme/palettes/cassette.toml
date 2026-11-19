@@ -1,0 +1,45 @@
+# Cassette: the design tokens of a cassette J-card poster (black card, silver paper, a teal and a
+# cobalt stripe, bold grotesk capitals). The card has five colors; every other tier is derived
+# from them and marked so. It has no red, amber or green, so error, warning and success are muted
+# ones picked to sit beside teal and cobalt, and the terminal blue is the cobalt lifted to 4.5:1
+# (the card's own cobalt reads at 2.2:1 on black: it stays a background, the badge and selection).
+
+[meta]
+name = "Cassette"
+variant = "dark"
+source = "https://br.pinterest.com/pin/764274999243241531/"
+
+[colors]
+bg_desktop      = "#131313"  # card black (the bar and desktop chrome)
+bg_surface      = "#1b1b1b"  # derived: card black, one step up
+bg_widget       = "#222222"  # derived: card black, two steps up
+bg_hover        = "#2c2c2c"  # derived: card black, three steps up
+border_hairline = "#2a2a2a"  # derived: the card's panel seams
+border_inactive = "#3d3d3d"  # derived
+fg_text         = "#dcdcdc"  # silver paper
+fg_editor       = "#c9c7c5"  # warm paper (the center panel)
+fg_secondary    = "#8c8b89"  # derived: paper toward black (ash)
+fg_muted        = "#6a6967"  # derived: ash toward black, 3:1 on the card (smoke)
+fg_bright       = "#f2f2f2"  # derived: paper, lit
+fg_disabled     = "#4a4a4a"  # derived
+accent          = "#3e96ab"  # teal stripe
+badge           = "#2a46a0"  # cobalt stripe
+selection_bg    = "#2a46a0"  # cobalt stripe
+selection_fg    = "#f2f2f2"  # paper, lit
+link            = "#3e96ab"  # teal stripe
+error           = "#d9584a"  # picked: muted vermilion
+warning         = "#d8a838"  # picked: muted amber
+success         = "#5aa882"  # picked: sea green
+info            = "#6681e0"  # derived: cobalt lifted to 4.5:1
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#c9c7c5"  # warm paper
+bg     = "#161616"  # derived: card black, a step above the desktop
+cursor = "#3e96ab"  # teal stripe
+ansi = [
+	# card, vermilion, sea green, amber, cobalt lifted, violet, teal, warm paper
+	"#222222", "#d9584a", "#5aa882", "#d8a838", "#6681e0", "#8b7fd6", "#3e96ab", "#c9c7c5",
+	# smoke, then each hue lightened, paper lit
+	"#6a6967", "#e8776a", "#7cc09e", "#e8c160", "#7f96e6", "#a99ce4", "#62b3c6", "#f2f2f2",
+]
