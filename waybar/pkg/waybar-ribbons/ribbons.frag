@@ -11,6 +11,7 @@ uniform float mirror;       // 1: lows at the right end (the left channel, lows 
 uniform vec4 clut[16];      // the palette's CLUT (colors.css @clut0..15); alpha 0 = missing
 uniform vec4 grid;          // the floor (@grid)
 uniform vec4 spark;         // the specular edge (@text)
+uniform vec3 beat;          // lows, mids, highs: 0..1, set by a hit in that band, then fading
 out vec4 frag;
 
 const float H = 30.0, D = 40.0, TWIST = 360.0, SPINE = 540.0;
@@ -31,12 +32,15 @@ vec2 strand(float x, int j, out float a) {
 	if (mirror > 0.5) u = 1.0 - u;
 	a = amp(u);
 	float env = clamp(min(u / 0.05, (1.0 - u) / 0.03), 0.0, 1.0);
-	float hw = (0.6 + 6.0 * a) * env + 0.4;
+	// a kick swells the ribbon; 30% keeps its widest, nearest edge inside the 30px bar
+	float hw = (0.6 + 6.0 * a) * env * (1.0 + 0.3 * beat.x) + 0.4;
 	float th = 6.2831853 * u * width / TWIST + phase;
 	float yc = H * 0.5 - 0.5 + 2.2 * sin(6.2831853 * u * width / SPINE + phase * 0.6);
 	float s = -1.0 + 2.0 * float(j) / float(STRANDS - 1);
 	float z = s * hw * sin(th);
-	return vec2(yc - s * hw * cos(th) * D / (D - z), z / hw);
+	// highs: each strand ripples out of step with its neighbours
+	float shimmer = 0.8 * beat.z * env * sin(x * 1.7 + float(j) * 2.1 + phase * 9.0);
+	return vec2(yc - s * hw * cos(th) * D / (D - z) + shimmer, z / hw);
 }
 
 vec3 lut(float a) {
@@ -77,12 +81,13 @@ void main() {
 	}
 	if (y > top && y < bot) {
 		k += 0.10;                                                  // translucent surface
-		if (fract(x / 15.0) * 15.0 < 1.0) k += 0.30;                // rungs
+		if (fract(x / 15.0) * 15.0 < 1.0) k += 0.30 + 0.6 * beat.y;  // rungs, lit by mids
 	}
-	vec3 rib = lut(a) * k;
+	// mids push the color up the CLUT, a kick flashes the whole ribbon
+	vec3 rib = lut(a + 0.3 * beat.y) * k * (1.0 + 0.8 * beat.x);
 	rib /= max(1.0, max(rib.r, max(rib.g, rib.b)));
 	if (front > 0.6 && a > 0.15)                                    // specular on the face-on front edge
-		rib += spark.rgb * spark.a * 0.5 * (front - 0.6) / 0.4 * (1.0 - smoothstep(0.2, 0.9, fy));
+		rib += spark.rgb * spark.a * (0.5 + 1.2 * beat.z) * (front - 0.6) / 0.4 * (1.0 - smoothstep(0.2, 0.9, fy));
 	// the ribbon starts 16-32px in from its outer end (the triad, the CLUT key), as in the
 	// reference; the floor runs on to the edge
 	col += rib * smoothstep(16.0, 32.0, mirror > 0.5 ? x : width - x);

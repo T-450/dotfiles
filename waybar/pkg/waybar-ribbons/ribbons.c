@@ -11,6 +11,10 @@
 // files under $XDG_RUNTIME_DIR/waybar-ribbons, not in ~/.config/cava. A frame that equals the one
 // drawn is not drawn again, so silence (cava's sleep_timer) costs nothing. If cava exits, the ribbon goes flat and cava is started
 // again after 1s, backing off to 30s while it keeps failing.
+// Beats: each frame splits the bars into lows, mids and highs; a band whose level jumps above its
+// own recent mean sets that band's beat (0..1), which then fades. The shader swells the ribbon on
+// lows, shifts its color on mids and makes the strands shimmer on highs; a kick also snaps the
+// twist forward. cava runs at 60 fps with light smoothing so a hit is still sharp when it arrives.
 // Colors: @clut0..@clut15, @grid and @text from the GTK style context (waybar's colors.css,
 // rendered by theme), read at start and on a GTK style change; `theme set` recolors them through
 // waybar/reload.sh, whose SIGUSR2 makes waybar re-create its modules.
@@ -50,6 +54,15 @@ static const char VERT[] =
 	"}\n";
 static const float SPEED = 1.3f;   // twist phase, radians per second of music
 
+// cava spaces its bars logarithmically over 50 Hz-10 kHz: bars 0-11 are under ~200 Hz (kick, bass),
+// 12-35 reach ~4 kHz (snare, voice), 36-47 are above (hats, cymbals). fade: a beat's time constant
+enum { LOWS, MIDS, HIGHS, NBANDS };
+static const struct { int lo, hi; float fade; } BAND[NBANDS] = {
+	[LOWS] = {0, 12, 0.14f}, [MIDS] = {12, 36, 0.10f}, [HIGHS] = {36, 48, 0.06f},
+};
+static const float MEAN = 0.25f;   // s: how far back a band's mean reaches
+static const float RISE = 4.0f;    // beat per unit of level above that mean
+
 typedef struct {
 	GtkWidget *area;               // NULL once GTK has finalized it
 	char channel[6];               // "left" | "right"
@@ -58,14 +71,15 @@ typedef struct {
 	cairo_surface_t *img;          // the last frame, painted again on any other redraw
 	guint8 *pixels;                // glReadPixels' RGBA rows, bottom row first
 	gboolean dirty;                // a new frame or new colors: render on the next draw
-	GLint u_spec, u_width, u_scale, u_fbh, u_phase, u_mirror, u_clut, u_grid, u_spark;
+	GLint u_spec, u_width, u_scale, u_fbh, u_phase, u_mirror, u_clut, u_grid, u_spark, u_beat;
 	float colors[NCOLORS * 4];
 	gboolean warned[NCOLORS];
 	guint16 newest[BARS], drawn[BARS];
 	guint8 buf[FRAME];
 	size_t have;
 	float phase;
-	gint64 last;                   // when the last frame was drawn
+	float mean[NBANDS], beat[NBANDS];
+	gint64 last;                   // when the last frame arrived
 	char *conf;                    // cava's config, in $XDG_RUNTIME_DIR/waybar-ribbons/
 	GPid pid;
 	int fd;
@@ -113,8 +127,26 @@ static void on_style_updated(GtkWidget *w, Ribbons *r) {
 // all bars to zero: the flat ribbon of silence or of a missing cava
 static void go_flat(Ribbons *r) {
 	memset(r->newest, 0, sizeof r->newest);
+	memset(r->beat, 0, sizeof r->beat);
 	r->have = 0;
 	redraw(r);
+}
+
+// a new frame moves the music's state: each band's mean and beat, and the twist, which turns
+// only while the spectrum changes (a long pause does not jump it) and faster on kicks and mids
+static void listen(Ribbons *r) {
+	gint64 now = g_get_monotonic_time();
+	float dt = MIN((now - r->last) / 1e6f, 0.1f);
+	r->last = now;
+	for (int b = 0; b < NBANDS; b++) {
+		float e = 0;
+		for (int i = BAND[b].lo; i < BAND[b].hi; i++) e += r->newest[i] / 65535.0f;
+		e /= BAND[b].hi - BAND[b].lo;
+		r->beat[b] = MAX(r->beat[b] * expf(-dt / BAND[b].fade), CLAMP((e - r->mean[b]) * RISE, 0.0f, 1.0f));
+		r->mean[b] += (e - r->mean[b]) * (1.0f - expf(-dt / MEAN));
+	}
+	if (memcmp(r->newest, r->drawn, sizeof r->drawn))
+		r->phase = fmodf(r->phase + dt * SPEED * (1.0f + 3.0f * r->beat[LOWS] + r->mean[MIDS]), 6.2831853f * 60);
 }
 
 static gboolean on_data(int fd, GIOCondition cond, gpointer data) {
@@ -142,7 +174,10 @@ static gboolean on_data(int fd, GIOCondition cond, gpointer data) {
 	(void)cond;
 	if (got) {
 		r->backoff = 1000;
-		if (memcmp(r->newest, r->drawn, sizeof r->drawn)) redraw(r);
+		listen(r);
+		// a fading beat keeps drawing after the spectrum has settled
+		if (memcmp(r->newest, r->drawn, sizeof r->drawn) || MAX(r->beat[LOWS], MAX(r->beat[MIDS], r->beat[HIGHS])) > 0.01f)
+			redraw(r);
 	}
 	return G_SOURCE_CONTINUE;
 }
@@ -177,7 +212,7 @@ static void write_conf(Ribbons *r) {
 	g_free(dir);
 	char *text = g_strdup_printf(
 		"# written by waybar-ribbons for its %s ribbon; rewritten on every start\n"
-		"[general]\nframerate = 30\nbars = %d\nsleep_timer = 1\n"
+		"[general]\nframerate = 60\nbars = %d\nsleep_timer = 1\n[smoothing]\nnoise_reduction = 30\n"
 		"[input]\nmethod = pipewire\nsource = auto\nactive = 0\n"
 		"[output]\nmethod = raw\nchannels = mono\nmono_option = %s\nraw_target = /dev/stdout\n"
 		"data_format = binary\nbit_format = 16bit\n",
@@ -327,6 +362,7 @@ static void gl_init(Ribbons *r) {
 	r->u_clut = glGetUniformLocation(r->prog, "clut");
 	r->u_grid = glGetUniformLocation(r->prog, "grid");
 	r->u_spark = glGetUniformLocation(r->prog, "spark");
+	r->u_beat = glGetUniformLocation(r->prog, "beat");
 	glGenVertexArrays(1, &r->vao);
 	glGenTextures(1, &r->tex);
 	glBindTexture(GL_TEXTURE_2D, r->tex);
@@ -368,13 +404,7 @@ static void fit(Ribbons *r, int w, int h, int sc) {
 }
 
 static void render(Ribbons *r, int w, int h, int sc) {
-	gint64 now = g_get_monotonic_time();
-	if (memcmp(r->newest, r->drawn, sizeof r->drawn)) {
-		// the twist moves with the music only; a long pause does not jump it
-		r->phase = fmodf(r->phase + MIN((now - r->last) / 1e6f, 0.1f) * SPEED, 6.2831853f * 60);
-		memcpy(r->drawn, r->newest, sizeof r->drawn);
-	}
-	r->last = now;
+	memcpy(r->drawn, r->newest, sizeof r->drawn);
 	float level[BARS];
 	for (int i = 0; i < BARS; i++) level[i] = r->drawn[i] / 65535.0f;
 
@@ -395,6 +425,7 @@ static void render(Ribbons *r, int w, int h, int sc) {
 	glUniform4fv(r->u_clut, 16, r->colors);
 	glUniform4fv(r->u_grid, 1, &r->colors[16 * 4]);
 	glUniform4fv(r->u_spark, 1, &r->colors[17 * 4]);
+	glUniform3fv(r->u_beat, 1, r->beat);
 	glBindVertexArray(r->vao);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, r->pixels);

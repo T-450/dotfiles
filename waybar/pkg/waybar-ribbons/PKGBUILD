@@ -4,7 +4,7 @@
 # pkg/ package only when its version changes.
 pkgname=waybar-ribbons
 pkgver=0.1.0
-pkgrel=4
+pkgrel=5
 pkgdesc='Waybar CFFI module: cava spectrum as GL wireframe ribbons'
 arch=(x86_64)
 license=(MIT)
