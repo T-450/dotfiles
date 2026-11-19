@@ -1,538 +1,270 @@
-/* waybar, "instrument": a bottom bar after Teenage Engineering's hardware (OP-1, OP-Z, TX-6).
-   One flat, square-cornered 44px panel with a 1px ring; every control is a 28px key, radius 2,
-   drawn as a 1px outline, not a filled pill; IBM Plex Mono throughout, with the tiny spaced
-   capitals of a device's silkscreen for labels (the day, the date, every tooltip's NAME). The
-   viewed tag is a lit key (filled, its number in the bar color); an occupied tag has a 4x4 LED in
-   its corner. Each meter is a segmented 2px strip (2px on, 1px off) and the four encoder hues
-   (colors.css) tell the chips apart. Dividers are dotted rules, like a front panel's printed grid.
-   A module's meter is its first background layer, a currentColor pattern sized by levels.css from
-   the lN state class that levels.json gives it (see that file). Icons are -gtk-recolor()
-   background layers: GTK's symbolic loader fills every shape, so stroked paths carry
-   class="stroke" (and class="success stroke" for the layout chevron's palette slot).
-   Background images paint above background-color, so the shared hover overlay sits under a
-   chip's layers. */
+/* waybar, "Stripe": a top bar after a cassette J-card. One black 34px strip, full width, with the
+   card's paired stripes on its top edge (2px stripe_a over 2px stripe_b), then a 30px row of type:
+   Inter, bold where it is a fact, 9px spaced capitals where it is a label (the labels are Pango
+   spans in config.jsonc and the helper scripts). Status chips are a label and a value with a ★
+   between them, like the card's "★ LOW NOISE ★ HIGH OUTPUT ★". Color only where it means
+   something (colors.css): the viewed tag, a warning (the chip inverted), critical, night light
+   held warm. Icons are -gtk-recolor() background layers; GTK's symbolic loader fills every shape,
+   so stroked paths carry class="stroke", and a path in a palette slot (class="success") takes
+   -gtk-icon-palette instead of the label's color (the ★, bluetooth). */
 @import "colors.css";
-@import "levels.css";
 
 * {
-    font-family: "IBM Plex Mono";
-    font-size: 13px;
-    font-weight: 400;
+    font-family: "Inter";
+    font-size: 12px;
+    font-weight: 500;
     min-height: 0;
     border: none;
     border-radius: 0;
 }
 
-/* The no-level fallback: a chip without an lN class draws no bar (0% first layer). It must stay a
-   bare type selector: any id or class here would outrank levels.css's .lN rules and hide every
-   bar, since the cascade picks background-size by specificity before source order. */
-label { background-size: 0% 2px, 14px 14px, 100% 100%; }
-
 window#waybar { background: transparent; color: @text; }
-/* a square panel: the 1px inset ring, 9px padding = ring + 8px of air at the ends */
+/* inset shadows paint over the background, the first on top: 2px stripe_a, then stripe_b down
+   to 4px. The 4px top padding keeps every module in the 30px row under the stripe. */
 window#waybar > box {
     background-color: @bar;
-    border-radius: 0;
-    box-shadow: inset 0 0 0 1px @edge;
-    padding: 0 9px;
+    box-shadow: inset 0 2px 0 @stripe_a, inset 0 4px 0 @stripe_b;
+    padding: 4px 0 0 0;
 }
 
-/* the design's tooltip: 6px 10px around one 16px line, 30px tall with its ring, 8px above the bar
-   and never past the bar's ends. GTK places the tooltip window itself (4px above the bar, clamped
-   to the screen) and ignores CSS margins on it, so the window stays transparent and the visible
-   tooltip is its inner box: the box's margins are the transparent offsets. GtkTooltipWindow gives
-   that box 6px widget margins on top of CSS, hence -6px top (none), 2px sides (8px: the bar's
-   inset from the screen edges) and -2px bottom (4px more above the bar). Pango sets IBM Plex Sans 13px on
-   a 17px line where the design has 16, so the label's bottom padding is 5px. Tooltips keep the
-   design's 13px; only the bar grew. */
+/* Tooltips open 6px under the bar, square, with a 1px ring. GTK places the tooltip window 4px
+   below the module and gives its box 6px widget margins on top of CSS, so the window stays
+   transparent and the visible tooltip is that box: -4px on top makes the 6px gap, 1px at the
+   sides keeps it 7px from the screen's ends (mango's outer gap), -6px at the bottom is none. */
 tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
 tooltip box {
     background-color: @bar;
     border: 1px solid @tipline;
-    border-radius: 2px;
     padding: 0;
-    margin: -6px 2px -2px 2px;
+    margin: -4px 1px -6px 1px;
 }
-tooltip label { color: @text; font-size: 12px; padding: 6px 10px 5px; }
-menu { background-color: @bar; border: 1px solid @tipline; border-radius: 2px; }
+tooltip label { color: @text; font-size: 12px; padding: 6px 10px; }
+menu { background-color: @bar; border: 1px solid @tipline; }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
-/* a state change (a threshold, a connection, muting, the viewed tag) fades over 150 ms, mango's
-   animation time, instead of snapping */
-#custom-start, #custom-wallpaper, #custom-power, #workspaces button, #custom-special, #custom-layout,
-#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery, #custom-nightlight,
-#custom-notifications, #bluetooth {
-    transition: color 150ms ease-out, background-color 150ms ease-out, box-shadow 150ms ease-out;
-}
-
-/* every control is 28px tall inside the 44px window: 8px of air above and below */
-#custom-start, #custom-wallpaper, #custom-power,
-#workspaces, #custom-special, #custom-layout, #custom-divider,
+/* a state change fades over 150 ms, mango's animation time, instead of snapping */
+#custom-start, #workspaces button, #custom-special, #custom-layout, #custom-win,
 #network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery,
-#custom-nightlight, #custom-record, #custom-notifications, #bluetooth, #tray > * {
-    margin-top: 8px;
-    margin-bottom: 8px;
+#custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power {
+    transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
-/* icon-only 28x28 buttons: the label is a zero-width space, the SVG is the background */
-#custom-start, #custom-wallpaper {
-    min-width: 28px;
-    min-height: 28px;
-    padding: 0;
-    border-radius: 2px;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 16px 16px;
-}
-/* the launcher's brush lambda is the bar's mark: the signal color, and 20px where the icons are 16 */
-#custom-start { color: @lambda; background-size: 20px 20px; background-image: -gtk-recolor(url("icons/start-symbolic.svg")); }
-#custom-wallpaper { color: @editor; background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
-
-/* the design's .hb: a translucent editor overlay under every chip's tint, never instead of it.
-   Waybar sets the hover state on its event box's child. That child is the label itself for
-   built-in modules, but a custom module's label sits inside a box (AIconLabel), and GTK3 doesn't
-   pass the hover state down, so custom modules match on their box. Waybar never sets :active on
-   a label, so the design's pressed overlay has no hook here (the tags are buttons and keep it). */
-#network:hover, #pulseaudio:hover, #battery:hover,
-#bluetooth:hover,
-box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-wallpaper, box:hover > #custom-power,
-box:hover > #custom-nightlight, box:hover > #custom-record, box:hover > #custom-notifications {
-    background-color: alpha(@editor, 0.06);
+/* hover: a faint text overlay under the label. Waybar sets the hover state on its event box's
+   child: the label itself for built-in modules, but a custom module's label sits inside a box
+   (AIconLabel) and GTK3 doesn't pass the state down, so custom modules match on their box. */
+#network:hover, #pulseaudio:hover, #battery:hover, #bluetooth:hover,
+#workspaces button:hover, box:hover > #custom-special,
+box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-win,
+box:hover > #custom-nightlight, box:hover > #custom-wallpaper, box:hover > #custom-notifications,
+box:hover > #custom-power, box:hover > #custom-record {
+    background-color: alpha(@text, 0.06);
 }
 
-/* power: the one control that ends the session, so it reads apart from everything else, by
-   placement and shape, not hue: it takes the bar's corner behind its own divider, 8px from it
-   (4px margin + 4px spacing) and 4px more than anything else from the bar's end, cut on two
-   corners (round top-left and bottom-right, square elsewhere). At rest it is a neutral chip; the
-   pointer over it turns icon and ring crit: the color says what the click would do. */
-#custom-power {
-    min-width: 16px;
-    min-height: 28px;
-    margin-left: 4px;
-    margin-right: 4px;
-    padding: 0 9px;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
-    color: @editor;
-    background-color: transparent;
-    background-image: -gtk-recolor(url("icons/power-symbolic.svg")),
-                      none;
-    background-repeat: no-repeat;
-    background-position: center, 0 0;
-    background-size: 16px 16px, 100% 100%;
-}
-box:hover > #custom-power {
-    color: @crit;
-    box-shadow: inset 0 0 0 1px @crit;
-}
+/* the λ, the shell prompt's: the bar's mark, set in type like everything else */
+#custom-start { min-width: 40px; padding: 0; font-size: 15px; font-weight: 800; color: @text; }
 
-/* tags: 1-4 (mango's tag_num) as a row of 28x28 keys, 2px apart. The base button is an occupied
-   tag: an outlined key with a 4x4 LED in its top-right corner. .empty is an unlit key (a faint
-   outline, a dim number, no LED); the viewed tag is the lit key, filled with signal and its number
-   in the bar color (the bar's one use of signal); an urgent tag is crit, ring and LED, and its
-   ring pulses warn twice. */
+/* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is text,
+   empty dim, the viewed tag a signal block with its number in bar, an urgent tag crit with a 2px
+   crit underline. GTK's button theme is cleared (its gradient, shadow and text shadow). */
 #workspaces { padding: 0; background: transparent; }
 #workspaces button, #custom-special {
-    min-width: 28px;
-    min-height: 28px;
-    margin: 0 2px 0 0;
+    min-width: 24px;
+    min-height: 20px;
+    margin: 5px 0;
     padding: 0;
     border: none;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
     background-color: transparent;
-    background-image: linear-gradient(@editor, @editor);
-    background-repeat: no-repeat;
-    background-position: 20px 4px;
-    background-size: 4px 4px;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
     color: @text;
-    font-weight: 500;
+    font-weight: 700;
     font-feature-settings: "tnum";
 }
-#workspaces button label { margin: 0; padding: 0; border: none; box-shadow: none; }
-#workspaces button:last-child { margin-right: 0; }
-#workspaces button.empty, #custom-special.empty {
-    color: @dim;
-    font-weight: 400;
-    background-image: none;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.10);
-}
+#workspaces button label { margin: 0; padding: 0; }
+#workspaces button.empty, #custom-special.empty { color: @dim; }
 #workspaces button.active, #custom-special.active,
 #workspaces button.active:hover, box:hover > #custom-special.active {
     color: @bar;
-    font-weight: 600;
     background-color: @signal;
-    background-image: none;
-    box-shadow: none;
 }
-#workspaces button.urgent {
-    color: @crit;
-    font-weight: 500;
-    background-image: linear-gradient(@crit, @crit);
-    box-shadow: inset 0 0 0 1px @crit;
-    animation: tburg 1.2s ease-in-out 2;
-}
-/* tag 0, mango's special tag (custom/special), after tag 4 as one more key */
-#custom-special { margin: 8px 0 8px -2px; }
-box:hover > #custom-special { background-color: alpha(@editor, 0.06); }
-#workspaces button:hover { background-color: alpha(@editor, 0.06); }
-#workspaces button:active { background-color: alpha(@editor, 0.10); }
-/* GTK3 keyframes take one selector per block: "0%, 100%" is a parse error that drops the sheet */
-@keyframes tburg {
-    0% { box-shadow: inset 0 0 0 1px @warn; }
-    50% { box-shadow: inset 0 0 0 1px alpha(@warn, 0.25); }
-    100% { box-shadow: inset 0 0 0 1px @warn; }
-}
+#workspaces button.urgent { color: @crit; box-shadow: inset 0 -2px 0 @crit; }
 
-/* a dotted 16px rule (1px dots, 2px apart), a front panel's printed grid: 44px window - 2 x 14px
-   margin; the 1px label must not stretch it */
+/* a 1x12 rule; the zero-width label must not widen it */
 #custom-divider {
     min-width: 1px;
-    min-height: 16px;
-    margin: 14px 2px;
+    min-height: 12px;
+    margin: 9px 14px;
     padding: 0;
-    border-radius: 0;
     font-size: 1px;
-    background-color: transparent;
-    background-image: repeating-linear-gradient(to bottom, alpha(@editor, 0.5) 0px, alpha(@editor, 0.5) 1px, transparent 1px, transparent 3px);
+    background-color: @rule;
 }
 
-/* 46x28: the drawable layout glyph at 8px and the design's 10px chevron at 30px. The chevron is
-   a palette-slot stroke, so -gtk-icon-palette colors it @dim while the glyph follows color. */
+/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints */
 #custom-layout {
-    min-width: 46px;
-    min-height: 28px;
-    padding: 0;
-    border-radius: 2px;
-    color: @text;
-    background-repeat: no-repeat;
-    background-position: 8px center, 30px center;
-    background-size: 16px 16px, 10px 10px;
-    -gtk-icon-palette: success @dim;
-}
-#custom-layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")),       -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")),    -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")),     -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")), -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")),        -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")),           -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-#custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")),  -gtk-recolor(url("icons/chevron-up-symbolic.svg")); }
-
-/* window states nothing else shows (pinned, on top, minimized). The chip exists only while a
-   window is in one, so its presence is the message: neutral, set apart by weight */
-#custom-winstate {
-    min-height: 28px;
-    margin: 8px 0 8px 4px;
-    padding: 0 8px;
-    border-radius: 2px;
-    font-weight: 600;
-    color: @text;
-    background-color: transparent;
-    box-shadow: inset 0 0 0 1px alpha(@text, 0.30);
-}
-/* a pinned window shows on every tag until unpinned: amber, like its border, so it is never a
-   surprise; on top and minimized only describe a window and stay neutral */
-#custom-winstate.pinned { color: @warn; box-shadow: inset 0 0 0 1px @warn; }
-
-/* the open key mode (super+esc, super+n, super+m): the chip shows only while a mode is open and
-   names it, so it needs no hue of its own */
-#keymode {
-    min-height: 28px;
-    margin: 8px 0 8px 4px;
-    padding: 0 8px;
-    border-radius: 2px;
-    font-weight: 600;
-    color: @text;
-    background-color: transparent;
-    box-shadow: inset 0 0 0 1px alpha(@text, 0.30);
-}
-
-/* the windows in view, one chip each (custom/win#1..6, fed by waybar-windows): the focused one
-   on the active tag's signal tint with bright text, the rest dim with no fill. The feed module
-   (custom/windows) prints nothing and stays hidden; the first chip sits 8px from the layout button
-   like every module (4px spacing + 4px margin). */
-#custom-win {
-    min-height: 28px;
-    margin: 8px 0;
-    padding: 0 10px;
-    border-radius: 2px;
-    color: @dim;
-    background-color: transparent;
-}
-#custom-win.focused { color: @text; font-weight: 500; box-shadow: inset 0 -2px 0 @signal; }
-#custom-win.more { color: @dim; font-feature-settings: "tnum"; }
-box:hover > #custom-win.other, box:hover > #custom-win.more { color: @editor; background-color: alpha(@editor, 0.06); }
-
-/* the clock: the device's display, one recessed 28px strip (waybar names a group's box after the
-   group, so group/datetime is #datetime). The three labels paint it (day and date carry its ends)
-   and keep the 8px inset as their own margin, like every other module: GTK3 counts a CSS margin
-   inside the allocation, and the clock anchors its tooltip to the time label's allocation, so a
-   margin on the group would drop the clock's tooltip 8px below every other one. Day and date are
-   the silkscreen: 10px spaced capitals (date prints them); the time is the readout. */
-#datetime { margin: 0; padding: 0; background: none; }
-#custom-day, #clock, #custom-date {
-    min-height: 28px;
-    margin: 8px 0;
-    border-radius: 0;
-    background-color: transparent;
-    background-image: linear-gradient(alpha(@editor, 0.08), alpha(@editor, 0.08));
-    background-repeat: no-repeat;
-    background-size: 100% 100%; /* the bare `label` rule zeroes a first layer */
-}
-#datetime:hover #custom-day, #datetime:hover #clock, #datetime:hover #custom-date { background-color: alpha(@editor, 0.06); }
-#custom-day { padding: 0 6px 0 12px; border-radius: 2px 0 0 2px; color: @dim; font-size: 10px; letter-spacing: 2px; }
-/* the wall clock is live (Quiet Instrument: real time) */
-#clock.time { padding: 0 6px; color: @live; font-size: 15px; font-weight: 600; font-feature-settings: "tnum"; }
-#custom-date { padding: 0 12px 0 6px; border-radius: 0 2px 2px 0; color: @dim; font-size: 10px; letter-spacing: 2px; }
-#datetime:hover #custom-day, #datetime:hover #custom-date { color: @editor; }
-
-/* chips: 7px left edge, 14px icon, 5px gap, value, 7px right edge. The level, icon and tint layers come from the
-   module's own rule; levels.css only changes the first layer's width and range icons/skins. */
-#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
-    min-height: 28px;
-    padding: 0 7px 0 26px;
-    border-radius: 2px;
-    font-weight: 500;
-    font-feature-settings: "tnum";
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: left bottom, 7px center, 0 0;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
-}
-
-/* route: a connected network wears the connection color on its icon, name and signal bar (the
-   name is the route's); the tint stays neutral like every chip's */
-#network {
-    -gtk-icon-palette: success @live;
-    color: @live;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/wifi-0-symbolic.svg")),
-                      none;
-}
-/* skins after the @import win over the lN range at the same id+class specificity */
-#network.ethernet {
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/ethernet-symbolic.svg")),
-                      none;
-    background-size: 100% 2px, 14px 14px, 100% 100%;
-}
-#network.disconnected {
-    color: @dim;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/wifi-off-symbolic.svg")),
-                      none;
-    background-size: 0% 2px, 14px 14px, 100% 100%;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
-}
-
-#pulseaudio {
-    -gtk-icon-palette: success @i_audio;
-    color: @editor;
-    min-width: 29px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/audio-2-symbolic.svg")),
-                      none;
-}
-#pulseaudio.muted {
-    color: @dim;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/audio-muted-symbolic.svg")),
-                      none;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
-}
-
-
-#cpu {
-    -gtk-icon-palette: success @i_cpu;
-    color: @editor;
-    min-width: 29px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/cpu-symbolic.svg")),
-                      none;
-}
-#memory {
-    -gtk-icon-palette: success @i_mem;
-    color: @editor;
-    min-width: 29px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/mem-symbolic.svg")),
-                      none;
-}
-/* waybar's built-in temperature module ignores "states" (its chip never gets an lN class), so this
-   is custom/temperature: waybar-temperature prints the lN class itself (min(100, C)), and
-   .high (from 80 C) and .critical (from 95 C) below are the threshold skins. */
-#custom-temperature {
-    -gtk-icon-palette: success @i_temp;
-    color: @editor;
-    min-width: 22px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      none;
-}
-#custom-temperature.high {
-    color: @warn;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      linear-gradient(alpha(@warn, 0.12), alpha(@warn, 0.12));
-    box-shadow: inset 0 0 0 1px @warn;
-}
-#custom-temperature.critical {
-    color: @crit;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/temp-symbolic.svg")),
-                      linear-gradient(alpha(@crit, 0.12), alpha(@crit, 0.12));
-    box-shadow: inset 0 0 0 1px @crit;
-}
-#disk {
-    -gtk-icon-palette: success @i_disk;
-    color: @editor;
-    min-width: 29px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/disk-symbolic.svg")),
-                      none;
-}
-
-/* battery: level, 23x10 outline at 7px, capacity-wide fill at 9px, bolt at 35px, tint. The
-   fill's width is in levels.css; charging shows the bolt and pushes the value right by 15px, so
-   the layer stays in the same list as `none` while discharging. Charging is ok (energy is coming
-   in); plugged in without charging (full, or held at the charge threshold) is no news, so it keeps
-   the bolt and stays neutral. */
-#battery {
-    -gtk-icon-palette: success @ok;
-    color: @editor;
-    min-width: 29px;
-    padding: 0 7px 0 35px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/battery-symbolic.svg")),
-                      linear-gradient(currentColor, currentColor),
-                      none,
-                      none;
-    background-position: left bottom, 7px center, 9px center, 35px center, 0 0;
-    background-size: 0% 2px, 23px 10px, 1px 6px, 10px 10px, 100% 100%;
-}
-#battery.charging, #battery.plugged, #battery.full, #battery.not-charging {
-    padding-left: 50px;
-    background-image: repeating-linear-gradient(to right, currentColor 0px, currentColor 2px, transparent 2px, transparent 3px),
-                      -gtk-recolor(url("icons/battery-symbolic.svg")),
-                      linear-gradient(currentColor, currentColor),
-                      -gtk-recolor(url("icons/bolt-symbolic.svg")),
-                      none;
-}
-#battery.charging { color: @ok; }
-
-/* icon-only chips keep the chips' 7px edges */
-#custom-nightlight {
     min-width: 14px;
-    min-height: 28px;
-    padding: 0 7px;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.22);
-    color: @editor;
-    background-color: transparent;
-    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")),
-                      none;
-    background-repeat: no-repeat;
-    background-position: center, 0 0;
-    background-size: 14px 14px, 100% 100%;
-}
-/* time: "warm now" holds night on the screen whatever the hour, so on-screen colors are not true.
-   Automatic (the schedule) is the resting state and stays neutral. */
-#custom-nightlight.warm { color: @held; }
-#custom-nightlight.off {
+    min-height: 20px;
+    margin: 5px 6px 5px 0;
+    padding: 0 4px;
     color: @dim;
-    background-image: -gtk-recolor(url("icons/moon-symbolic.svg")), none;
-    box-shadow: inset 0 0 0 1px alpha(@editor, 0.28);
-}
-/* recording shows only while the screen is being captured: crit, the one live state a glance must
-   never miss */
-#custom-record {
-    min-width: 14px;
-    min-height: 28px;
-    padding: 0 7px;
-    border-radius: 2px;
-    color: @crit;
-    background-color: transparent;
-    background-image: -gtk-recolor(url("icons/record-symbolic.svg"));
     background-repeat: no-repeat;
     background-position: center;
     background-size: 14px 14px;
-    box-shadow: inset 0 0 0 1px @crit;
 }
+box:hover > #custom-layout { color: @text; }
+#custom-layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
+#custom-layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
+#custom-layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
+#custom-layout.M  { background-image: -gtk-recolor(url("layouts/monocle-symbolic.svg")); }
+#custom-layout.K  { background-image: -gtk-recolor(url("layouts/deck-symbolic.svg")); }
+#custom-layout.CT { background-image: -gtk-recolor(url("layouts/center_tile-symbolic.svg")); }
+#custom-layout.RT { background-image: -gtk-recolor(url("layouts/right_tile-symbolic.svg")); }
+#custom-layout.VS { background-image: -gtk-recolor(url("layouts/vertical_scroller-symbolic.svg")); }
+#custom-layout.VT { background-image: -gtk-recolor(url("layouts/vertical_tile-symbolic.svg")); }
+#custom-layout.VG { background-image: -gtk-recolor(url("layouts/vertical_grid-symbolic.svg")); }
+#custom-layout.VK { background-image: -gtk-recolor(url("layouts/vertical_deck-symbolic.svg")); }
+#custom-layout.DW { background-image: -gtk-recolor(url("layouts/dwindle-symbolic.svg")); }
+#custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
+#custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
-/* the bell: 28px with no count, 48px with one. The icon is a palette-slot stroke so it can stay
-   @text while the count is @editor; the count itself is the label's text color. */
-#custom-notifications {
-    min-width: 16px;
-    min-height: 28px;
+/* the key mode and the window states: chips that exist only while their state does, so their
+   presence is the message: bold type in a 1px outline. A pinned window shows on every tag until
+   unpinned, so its chip is inverted, the bar's warning. */
+#keymode, #custom-winstate {
+    min-height: 18px;
+    margin: 6px 8px 6px 0;
     padding: 0 6px;
-    border-radius: 2px;
-    background-color: transparent;
-    background-image: -gtk-recolor(url("icons/bell-symbolic.svg"));
-    background-repeat: no-repeat;
-    background-position: 6px center;
-    background-size: 16px 16px;
-    -gtk-icon-palette: success @dim, error @crit;
-}
-#custom-notifications.unread {
-    min-width: 14px;
-    padding-left: 28px;
-    color: @editor;
     font-size: 11px;
+    font-weight: 700;
+    color: @text;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px alpha(@text, 0.5);
+}
+#custom-winstate.pinned { color: @bar; background-color: @text; box-shadow: none; }
+
+/* the windows in view (custom/win#1..6, fed by waybar-windows): the focused one in text, the
+   rest dim; the feed module (custom/windows) prints nothing and stays hidden */
+#custom-win { min-height: 20px; margin: 5px 0; padding: 0 8px; color: @dim; }
+#custom-win.focused { color: @text; font-weight: 600; }
+#custom-win.more { font-feature-settings: "tnum"; }
+box:hover > #custom-win.other, box:hover > #custom-win.more { color: @text; }
+
+/* the clock (group/datetime is #datetime): day and date are labels, the time the one big fact */
+#datetime { margin: 0; padding: 0; background: none; }
+#custom-day, #custom-date { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: @dim; }
+#custom-day { padding: 0 6px 0 0; }
+#custom-date { padding: 0 0 0 6px; }
+#clock.time { padding: 0 6px; font-size: 13px; font-weight: 800; letter-spacing: 1px; font-feature-settings: "tnum"; }
+
+/* status chips: a label and a value, 6px inside a 20px box. Every chip after the first carries the
+   ★ in a 19px transparent left border: the star layer paints the border box, the fill layer only
+   the padding box, so an inverted (warning) or crit chip never fills behind its star. The star is a
+   palette-slot path, dim whatever the label's color. */
+#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
+    min-height: 20px;
+    margin: 5px 0;
+    padding: 0 6px;
+    font-weight: 600;
     font-feature-settings: "tnum";
-    -gtk-icon-palette: success @text, error @crit;
+    color: @text;
+    background-color: transparent;
 }
-#custom-notifications.critical { color: @crit; }
-#custom-notifications.dnd {
-    background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg"));
-    -gtk-icon-palette: success @dim, error @crit;
+#pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
+    border-left: 19px solid transparent;
+    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), none;
+    background-origin: border-box, padding-box;
+    background-clip: border-box, padding-box;
+    background-repeat: no-repeat;
+    background-position: 6px center, 0 0;
+    background-size: 8px 8px, 100% 100%;
+    -gtk-icon-palette: success @dim;
 }
-#custom-notifications.critical {
-    background-image: -gtk-recolor(url("icons/bell-symbolic.svg")),
-                      -gtk-recolor(url("icons/dot-symbolic.svg"));
-    background-position: 6px center, right top;
-    background-size: 16px 16px, 6px 6px;
+#network.disconnected, #pulseaudio.muted { color: @dim; }
+
+/* thresholds: waybar's states (config.jsonc) and waybar-temperature's high/critical. A warning is
+   the chip inverted; critical is a crit block. Battery counts down (warning 20, critical 10) and
+   only warns on battery: charging or plugged in, low charge is already being fixed. */
+#cpu.warning, #memory.warning, #disk.warning, #battery.warning, #custom-temperature.high {
+    color: @bar;
+    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), linear-gradient(@text, @text);
 }
-#custom-notifications.dnd.critical {
-    background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")),
-                      -gtk-recolor(url("icons/dot-symbolic.svg"));
+#memory.critical, #disk.critical, #battery.critical, #custom-temperature.critical {
+    color: @bar;
+    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), linear-gradient(@crit, @crit);
+}
+#battery.charging, #battery.plugged, #battery.full, #battery.not-charging {
+    color: @text;
+    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), none;
 }
 
-/* bluetooth: icon only (28px), then the 16px icon + 6px gap + connection count */
-#bluetooth {
-    -gtk-icon-palette: success @i_bt;
-    min-height: 28px;
-    padding: 0 6px 0 22px;
-    border-radius: 2px;
-    color: @editor;
+/* the tray area and the corner: 14px icons, dim at rest, text under the pointer; 14px apart */
+#custom-record, #custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power {
+    min-width: 14px;
+    min-height: 20px;
+    margin: 5px 0;
+    padding: 0 7px;
+    color: @dim;
+    font-size: 11px;
+    font-weight: 600;
     font-feature-settings: "tnum";
     background-color: transparent;
-    background-image: -gtk-recolor(url("icons/bt-symbolic.svg"));
     background-repeat: no-repeat;
-    background-position: 6px center;
-    background-size: 16px 16px;
+    background-position: center;
+    background-size: 14px 14px;
 }
-#bluetooth.connected { padding-left: 28px; color: @live; }
-/* a state that recolors its chip (off, muted, offline, hot, charging, connected) takes the icon
-   along, over the chip's own icon hue */
-#network.disconnected, #pulseaudio.muted, #custom-temperature.high, #custom-temperature.critical,
-#battery.charging, #bluetooth.connected, #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
+box:hover > #custom-nightlight, box:hover > #custom-wallpaper, #bluetooth:hover,
+box:hover > #custom-notifications { color: @text; }
+
+/* recording shows only while the screen is captured: crit, the one live state a glance must never miss */
+#custom-record { color: @crit; background-image: -gtk-recolor(url("icons/record-symbolic.svg")); }
+
+/* night light: automatic (the schedule) rests; "warm now" holds night on the screen whatever the
+   hour, so on-screen colors are not true (held); off is faded */
+#custom-nightlight { background-image: -gtk-recolor(url("icons/moon-symbolic.svg")); }
+#custom-nightlight.warm { color: @held; }
+#custom-nightlight.off { color: alpha(@dim, 0.5); }
+
+#custom-wallpaper { background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
+
+/* bluetooth: the icon alone, or the icon and the connection count in text while connected; off
+   has its own glyph */
+#bluetooth {
+    background-image: -gtk-recolor(url("icons/bt-symbolic.svg"));
     -gtk-icon-palette: success currentColor;
 }
+#bluetooth.connected { padding-left: 25px; background-position: 7px center; color: @text; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
-    color: @dim;
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
 }
 
-/* the inset sits on the tray items, not the tray: each item anchors its own tooltip to its
-   allocation, which includes its CSS margin (see the clock) */
+/* the bell: alone at rest, the icon and the count in text while notifications are held,
+   bell-off under do-not-disturb, crit with a dot while a critical one is held */
+#custom-notifications { background-image: -gtk-recolor(url("icons/bell-symbolic.svg")); }
+#custom-notifications.unread { padding-left: 25px; background-position: 7px center; color: @text; }
+#custom-notifications.dnd { background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")); }
+#custom-notifications.critical {
+    color: @crit;
+    background-image: -gtk-recolor(url("icons/bell-symbolic.svg")), -gtk-recolor(url("icons/dot-symbolic.svg"));
+    background-position: 7px center, right 5px;
+    background-size: 14px 14px, 5px 5px;
+    -gtk-icon-palette: error @crit;
+}
+#custom-notifications.dnd.critical {
+    background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")), -gtk-recolor(url("icons/dot-symbolic.svg"));
+}
+
+/* power ends the session, so it reads apart by place: the corner, 7px further in than the rest.
+   It is text at rest and turns crit only under the pointer, where the color says what the click
+   would do. */
+#custom-power {
+    margin-left: 4px;
+    margin-right: 7px;
+    color: @text;
+    background-image: -gtk-recolor(url("icons/power-symbolic.svg"));
+}
+box:hover > #custom-power { color: @crit; }
+
+/* the tray items carry their own spacing: each anchors its tooltip to its own allocation */
 #tray { margin: 0; padding: 0; }
-#tray > * { min-height: 28px; }
+#tray > * { padding: 0 6px; }

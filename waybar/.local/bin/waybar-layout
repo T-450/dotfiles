@@ -24,7 +24,7 @@ mmsg watch monitor "$out" | jq --unbuffered -c '
 	| {
 		text: "  ",
 		class: [$s],
-		tooltip: ("<span font_desc=\u0027IBM Plex Mono 10px\u0027 letter_spacing=\u00271536\u0027 fgalpha=\u002766%\u0027>LAYOUT</span>  "
+		tooltip: ("<span font_desc=\u0027Inter SemiBold 9px\u0027 letter_spacing=\u00272048\u0027 fgalpha=\u002755%\u0027>LAYOUT</span>  "
 			+ ($n | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;"))
-			+ "\n<span font_desc=\u0027IBM Plex Mono 10px\u0027 fgalpha=\u002766%\u0027>Click, or Super Ctrl Space: next layout</span>")
+			+ "\n<span font_desc=\u0027Inter 10px\u0027 fgalpha=\u002760%\u0027>Click, or Super Ctrl Space: next layout</span>")
 	}'

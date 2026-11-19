@@ -27,7 +27,7 @@ archinstall's minimal profile is enough.
 	and a likely fix.
 
 3. Reboot. The login screen is sysc-greet, stock. Log in to start mango, with
-   waybar at the bottom.
+   waybar at the top.
 
 ## Check that it matches the repo
 
