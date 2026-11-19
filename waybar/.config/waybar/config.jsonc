@@ -166,13 +166,14 @@
         "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
 
         "network": {
-            "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {essid}",
+            // a long SSID is cut at 16 characters before it reaches the centered clock (the full one is
+            // in the tooltip). The cut is fmt precision, not max-length: max-length makes GTK
+            // ellipsize, and an ellipsizing label with letter spacing drops its last glyph even when
+            // the text fits (Pango), so every SSID lost its last letter.
+            "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {essid:.16}",
             "format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {ifname}",
             "format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>OFFLINE</span>",
             "format-alt": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DN</span> {bandwidthDownBytes} <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>UP</span> {bandwidthUpBytes}",
-            // a long SSID ends in an ellipsis before it reaches the centered clock (16 characters of
-            // SSID after the 4 of "NET ")
-            "max-length": 20,
             "align": 1,
             "tooltip-format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
             "tooltip-format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
