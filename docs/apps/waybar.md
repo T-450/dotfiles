@@ -106,7 +106,7 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
   - a specular edge in `text` where the ribbon faces you
   - a phosphor glow on its edges
   - a dotted floor in `grid`
-- Color by energy comes from `clut0`..`clut15`. All strands at one x share one color, so their summed intensity is capped at that color: where they bunch (silence, the tapered ends), the ribbon keeps its hue instead of clipping to white.
+- Color by energy comes from `clut0`..`clut15`. All strands at one x share one color, so where their summed intensity takes that color past 1, it is scaled down by its brightest channel: where they bunch (silence, the tapered ends), the ribbon keeps its hue instead of clipping to white.
 - The module reads the CLUT, `grid` and `text` from the GTK style context, and again on every style change, so `theme set` recolors the ribbons with the rest of the bar.
 - Its one key is `channel` (`left` or `right`). Left is drawn mirrored, so the lows meet at the player.
 - Data: each instance runs its own `cava`. The config is written to `$XDG_RUNTIME_DIR/waybar-ribbons/<channel>.conf`: pipewire input, raw binary 16-bit mono output, 48 bars, 30 fps, `sleep_timer = 1`.
