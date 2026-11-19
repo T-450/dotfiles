@@ -17,11 +17,20 @@ branch): each role, ANSI color and syntax color is one of that scheme's named co
 in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
 `fg_secondary`), mixed from its own. The desktop (`bg_desktop`: bar, lock screen, GTK, browsers)
 sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
-editor background. The others: Tokyo Night (`theme import-omarchy`), and two written by hand
-the way Colibri is, each role named after its scheme's color and highlight group: Doom One
-(`NTBBloodbath/doom-one.nvim`) and Gruber Darker (`blazkowolf/gruber-darker.nvim`). Both take
-their `[terminal]` from the scheme's own terminal extras and their `[syntax]` and `[diff]` from
-its highlight groups. Neither sets `[keycaps]`, so the cheatsheet derives its caps.
+editor background. The others:
+
+- Tokyo Night (`theme import-omarchy`).
+- Written by hand the way Colibri is, each role named after its scheme's color and highlight
+  group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
+  name) and `[syntax]` and `[diff]` from its highlight groups: Doom One
+  (`NTBBloodbath/doom-one.nvim`), Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
+  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), the one light palette.
+  Alabaster's `warning` is derived: the scheme's orange is a highlight fill, unreadable as text.
+- Deep Blue, Deep Blue Night and Deep Blue Flat (`kinqert/deep-blue-theme`): `theme
+  import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults. The
+  three share Flat's terminal and git colors and one set of token colors.
+
+None sets `[keycaps]`, so the cheatsheet derives its caps.
 
 ## Keycaps
 

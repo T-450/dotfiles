@@ -1,0 +1,63 @@
+# Deep Blue Flat: kinqert/deep-blue-theme (themes/deep-blue-flat.json), MIT license. Imported with
+# `theme import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults:
+# the three variants share one accent family (Flat's terminal and git colors, the same 15 token
+# colors), so warning, success, error, the ANSI colors, [diff] and [syntax] come from it. accent is
+# the family's text blue (textLink, git modified) rather than focusBorder #2b5278/#254a6b, the
+# selection fill, which is 2:1 as text.
+
+[meta]
+name = "Deep Blue Flat"
+variant = "dark"
+source = "https://github.com/kinqert/deep-blue-theme"
+
+[colors]
+bg_desktop      = "#0d1115"  # editor.background
+bg_surface      = "#0d1115"  # statusBar.background
+bg_widget       = "#0d1115"  # quickInput.background
+bg_hover        = "#202933"  # statusBarItem.hoverBackground
+border_hairline = "#1b2128"  # widget.border
+border_inactive = "#1b2128"  # input.border
+fg_text         = "#d3dae3"  # foreground
+fg_editor       = "#d3dae3"  # editor.foreground
+fg_secondary    = "#9298a5"  # descriptionForeground
+fg_muted        = "#666a73"  # editorLineNumber.foreground
+fg_bright       = "#edf2f7"  # terminal.ansiBrightWhite (Flat)
+fg_disabled     = "#9298a5"  # disabledForeground
+accent          = "#5d88ca"  # textLink.foreground (family blue)
+badge           = "#2b5278"  # activityBarBadge.background
+selection_bg    = "#2b5278"  # list.activeSelectionBackground
+selection_fg    = "#d3dae3"  # list.activeSelectionForeground
+link            = "#5d88ca"  # textLink.foreground
+error           = "#da4453"  # errorForeground, terminal.ansiRed
+warning         = "#f67400"  # inputValidation.warningBorder, terminal.ansiYellow
+success         = "#27ae60"  # gitDecoration.addedResourceForeground (Flat)
+shadow          = "#000000"  # constant
+
+[terminal]
+fg     = "#d3dae3"
+bg     = "#0d1115"
+cursor = "#d3dae3"
+ansi = [
+	# Deep Blue Flat's terminal colors (the family's only set)
+	"#10151a", "#da4453", "#27ae60", "#f67400", "#5d88ca", "#93a7c7", "#7dcfff", "#d3dae3",
+	"#666a73", "#f06a79", "#45c27b", "#ff922b", "#7aa2d1", "#b2c0dd", "#a2e7ff", "#edf2f7",
+]
+
+[diff]
+add    = "#27ae60"  # gitDecoration.addedResourceForeground (Flat)
+remove = "#da4453"  # gitDecoration.deletedResourceForeground (Flat)
+change = "#5d88ca"  # gitDecoration.modifiedResourceForeground (Flat)
+
+[syntax]
+keyword    = "#4f79b7"  # keyword, storage
+preproc    = "#4f79b7"  # keyword (no preprocessor scope of its own)
+type       = "#9db2c8"  # entity.name.type, support.class
+function   = "#62b4d8"  # entity.name.function, support.function
+identifier = "#d1d8e0"  # variable
+string     = "#8fcb6c"  # string
+constant   = "#de7c2c"  # constant.language
+number     = "#de7c2c"  # constant.numeric
+boolean    = "#de7c2c"  # constant.language.boolean
+special    = "#d7b65f"  # constant.character.escape
+operator   = "#8fa0b3"  # keyword.operator, punctuation
+comment    = "#68727e"  # comment
