@@ -1,12 +1,12 @@
 // lambda-footer: Pi's footer as the shell prompt (zsh/.zshrc: oh-my-zsh's cdimascio-lambda theme),
-// `λ dotfiles git:(main) ✗`, in the prompt's terminal colors (SGR codes, so the terminal's palette
-// draws it exactly as it draws the prompt; .zshrc sets them after Colibri): λ bold bright green, or
-// bold red after a failed tool as after a failed command; the directory's last component bright
-// magenta; git:( ) bright blue, the branch yellow, and a bright red ✗ when `git status --porcelain`
-// lists anything (oh-my-zsh's parse_git_dirty). Right: the
-// model, thinking level, context and session cost, dim.
+// `λ dotfiles git:(main) ✗`, in the prompt's palette roles from ~/.config/theme/colors.sh (re-read
+// when `theme set` rewrites it): λ bold success, or bold error after a failed tool as after a failed
+// command; the directory's last component fg_bright; git:( ) fg_text, the branch link, and an error
+// ✗ when `git status --porcelain` lists anything (oh-my-zsh's parse_git_dirty). Right: the model,
+// thinking level, context and session cost, dim.
 import { execFile } from "node:child_process";
-import { basename } from "node:path";
+import { readFileSync, statSync } from "node:fs";
+import { basename, join } from "node:path";
 import { homedir } from "node:os";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -15,6 +15,28 @@ import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 const sgr = (codes: string) => `\x1b[${codes}m`;
 const RESET = sgr("0");
 const GIT_REFRESH_MS = 10_000;
+const COLORS = join(homedir(), ".config/theme/colors.sh");
+
+// before the first `theme set` there is no colors.sh: the terminal's ANSI colors, as zsh's theme
+const ANSI: Record<string, string> = { SUCCESS: "92", ERROR: "31", FG_BRIGHT: "95", FG_TEXT: "94", LINK: "33" };
+let colors = { mtime: -1, sgr: ANSI };
+
+// SGR foreground codes for the prompt's roles, keyed by colors.sh's THEME_<ROLE> names
+function roles(): Record<string, string> {
+	let mtime: number;
+	try {
+		mtime = statSync(COLORS).mtimeMs;
+	} catch {
+		return ANSI;
+	}
+	if (mtime === colors.mtime) return colors.sgr;
+	const sgr = { ...ANSI };
+	for (const [, role, hex] of readFileSync(COLORS, "utf8").matchAll(/^THEME_(\w+)="#([0-9a-f]{6})"/gim)) {
+		if (role in ANSI) sgr[role] = `38;2;${[0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(";")}`;
+	}
+	colors = { mtime, sgr };
+	return sgr;
+}
 
 export default function lambdaFooter(pi: ExtensionAPI) {
 	let failed = false; // the last tool failed: λ turns red, as zsh's does after a failed command
@@ -50,10 +72,11 @@ export default function lambdaFooter(pi: ExtensionAPI) {
 				render(width: number): string[] {
 					const dir = cwd === homedir() ? "~" : basename(cwd);
 					const branch = footerData.getGitBranch();
-					let left = `${sgr(failed ? "1;31" : "1;92")}λ ${RESET}${sgr("95")}${dir}${RESET} `;
+					const c = roles();
+					let left = `${sgr(`1;${failed ? c.ERROR : c.SUCCESS}`)}λ ${RESET}${sgr(c.FG_BRIGHT)}${dir}${RESET} `;
 					if (branch) {
-						left += `${sgr("94")}git:(${sgr("33")}${branch}`;
-						left += dirty ? `${sgr("94")}) ${sgr("91")}✗` : `${sgr("94")})`;
+						left += `${sgr(c.FG_TEXT)}git:(${sgr(c.LINK)}${branch}`;
+						left += dirty ? `${sgr(c.FG_TEXT)}) ${sgr(c.ERROR)}✗` : `${sgr(c.FG_TEXT)})`;
 						left += RESET;
 					}
 
