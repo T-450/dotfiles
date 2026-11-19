@@ -8,9 +8,14 @@
    -gtk-icon-palette instead of the label's color (the registration cross, bluetooth). */
 @import "colors.css";
 
+/* Terminess draws 14px from its 8x14 bitmap strike, but its advance is 0.5em, 7px: Pango steps by
+   the advance, so 14px glyphs overlap 1px and bold ones fuse. 1px of letter spacing puts them back
+   on their 8px grid. 12px and 16px strikes match their advance (6px, 8px): a rule or a markup span
+   that changes the size sets its own spacing. */
 * {
     font-family: "Terminess Nerd Font";
     font-size: 14px;
+    letter-spacing: 1px;
     font-weight: 400;
     min-height: 0;
     border: none;
@@ -68,7 +73,7 @@ box:hover > #custom-record {
 }
 
 /* the λ, the shell prompt's: the action mark, orange like play; it glows under the pointer */
-#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; font-weight: 700; color: @orange; }
+#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; letter-spacing: 0; font-weight: 700; color: @orange; }
 box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 0.7); }
 
 /* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is
@@ -165,6 +170,7 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
 #clock.time {
     padding: 0 10px;
     font-size: 16px;
+    letter-spacing: 0;
     font-weight: 700;
     font-feature-settings: "tnum";
     color: @text;

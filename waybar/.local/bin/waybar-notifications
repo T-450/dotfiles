@@ -18,9 +18,9 @@ jq -c --argjson dnd "$dnd" '
 		class: ([if $n > 0 then "unread" else empty end,
 			if $dnd then "dnd" else empty end,
 			if $crit then "critical" else empty end]),
-		tooltip: ("<span font_desc=\u0027Terminess Nerd Font 12px\u0027 letter_spacing=\u0027768\u0027 fgalpha=\u002760%\u0027>NOTIFICATIONS</span>  "
+		tooltip: ("<span font_desc=\u0027Terminess Nerd Font 12px\u0027 letter_spacing=\u00271024\u0027 fgalpha=\u002760%\u0027>NOTIFICATIONS</span>  "
 			+ (if $dnd then "Do not disturb · \($n) held"
 				elif $n > 0 then "\($n) unread"
 				else "None" end)
-			+ "\n<span font_desc=\u0027Terminess Nerd Font 12px\u0027 fgalpha=\u002760%\u0027>Click restores · Middle-click dismisses all · Right-click toggles do not disturb</span>")
+			+ "\n<span font_desc=\u0027Terminess Nerd Font 12px\u0027 letter_spacing=\u00270\u0027 fgalpha=\u002760%\u0027>Click restores · Middle-click dismisses all · Right-click toggles do not disturb</span>")
 	}' <<<"$list"

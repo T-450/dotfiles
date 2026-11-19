@@ -73,10 +73,12 @@ The triad and the CLUT key are zero-width labels with no tooltip, like the icon 
 
 Every module but the tags (`mango/workspaces` sets none and offers no option) and the day label has a tooltip: one row of NAME, two spaces, VALUE and optionally two spaces and the KEYS, then an optional HINT row. They are Pango markup, written with single quotes so the JSON needs no escaping. The tooltip label is `text`; the dimmer tones are `fgalpha` over the tooltip's `bar` background, without a color literal:
 
-- NAME: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>CPU</span>`. On the bar the same span has no `fgalpha`: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>CPU</span>`.
+- NAME: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>`. On the bar the same span has no `fgalpha`: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span>`.
 - VALUE: plain text (14px).
-- KEYS: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='80%'>SUPER D</span>`: this machine's binds (`mango/.config/mango/bind.conf`), space separated.
-- HINT: `\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Scroll ±5</span>`.
+- KEYS: `<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER D</span>`: this machine's binds (`mango/.config/mango/bind.conf`), space separated.
+- HINT: `\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Scroll ±5</span>`.
+
+Every 12px span states its letter spacing because `style.css` gives all text 1px (`letter_spacing` counts 1024ths of a pixel, so `1024` is 1px). Terminess draws 14px from its 8x14 bitmap strike, but its advance is 7px. Pango steps by the advance, so without the 1px, 14px glyphs overlap by 1px and bold ones fuse. The 12px and 16px strikes already match their advances, so the 16px time and λ reset the spacing to 0. NAME and KEYS keep 1px by design, and HINT sets 0.
 
 Scripts that print a tooltip (`waybar-temperature`, `waybar-notifications`, `waybar-layout`, `waybar-winstate`, `nightlight status`) build the same markup; text that can hold `& < >` is escaped there (waybar escapes its own placeholders such as `{essid}`).
 

@@ -28,17 +28,17 @@
         // draws the SVG
         "custom/start": {
             "format": "λ",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>LAUNCHER</span>  <span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='80%'>SUPER D</span>",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>LAUNCHER</span>  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER D</span>",
             "on-click": "rofi -show drun"
         },
         "custom/wallpaper": {
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>WALLPAPER</span>  Open picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='80%'>SUPER W</span>",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WALLPAPER</span>  Open picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER W</span>",
             "on-click": "waypaper"
         },
         "custom/power": {
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>POWER</span>  Session menu  <span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='80%'>SUPER ESC  P</span>",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>POWER</span>  Session menu  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER ESC  P</span>",
             "on-click": "wlogout -b 6 --protocol layer-shell"
         },
 
@@ -160,28 +160,28 @@
         "custom/day": { "exec": "date '+%^a'", "interval": 60, "tooltip": false },
         "clock#time": {
             "format": "{:%H:%M}",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
         },
         // waybar's clock zero-pads the day; a custom module keeps "12 NOV"
         "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
 
         "network": {
-            "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>NET</span> {essid}",
-            "format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>NET</span> {ifname}",
-            "format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>OFFLINE</span>",
-            "format-alt": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>DN</span> {bandwidthDownBytes} <span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>UP</span> {bandwidthUpBytes}",
+            "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {essid}",
+            "format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {ifname}",
+            "format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>OFFLINE</span>",
+            "format-alt": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DN</span> {bandwidthDownBytes} <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>UP</span> {bandwidthUpBytes}",
             // a long SSID ends in an ellipsis before it reaches the centered clock (16 characters of
             // SSID after the 4 of "NET ")
             "max-length": 20,
             "align": 1,
-            "tooltip-format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click toggles speeds</span>",
-            "tooltip-format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click toggles speeds</span>",
-            "tooltip-format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>NETWORK</span>  Offline\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click toggles speeds</span>"
+            "tooltip-format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
+            "tooltip-format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
+            "tooltip-format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>NETWORK</span>  Offline\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>"
         },
         "pulseaudio": {
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>VOL</span> {volume}",
-            "format-muted": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>MUTE</span>",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>VOLUME</span>  {volume}%\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>VOL</span> {volume}",
+            "format-muted": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MUTE</span>",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>VOLUME</span>  {volume}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
             "align": 1,
             "on-click": "pamixer -t",
             "on-click-right": "pamixer -t",
@@ -191,18 +191,18 @@
         },
         "cpu": {
             "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>CPU</span> {usage}",
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span> {usage}",
             // full load is work, not a failure: a warning, no critical tier
             "states": { "warning": 85 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>CPU</span>  {usage}%",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>  {usage}%",
             "align": 1
         },
         "memory": {
             "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>MEM</span> {percentage}",
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MEM</span> {percentage}",
             "states": { "warning": 80, "critical": 90 },
             "align": 1,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>MEMORY</span>  {percentage}%"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>MEMORY</span>  {percentage}%"
         },
         // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
         // prints the label and its own classes: "high" from 80 C, "critical" from 95 C
@@ -216,24 +216,24 @@
         "disk": {
             "interval": 30,
             "paths": ["/"],
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>DSK</span> {percentage_used}",
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DSK</span> {percentage_used}",
             "states": { "warning": 80, "critical": 90 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>DISK</span>  {percentage_used}%",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>DISK</span>  {percentage_used}%",
             "align": 1
         },
         "battery": {
             // charge counts down: a warning at 20% and below, critical at 10% (style.css shows them on
             // battery only)
             "states": { "warning": 20, "critical": 10 },
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>BAT</span> {capacity}",
-            "format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>CHG</span> {capacity}",
-            "format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>AC</span> {capacity}",
-            "format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>AC</span> {capacity}",
-            "format-not-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768'>AC</span> {capacity}",
-            "tooltip-format-discharging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BATTERY</span>  {capacity}% · on battery\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BATTERY</span>  {capacity}% · charging\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BATTERY</span>  {capacity}% · plugged in\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BATTERY</span>  {capacity}% · full\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click opens the session menu</span>",
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>BAT</span> {capacity}",
+            "format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CHG</span> {capacity}",
+            "format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
+            "format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
+            "format-not-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
+            "tooltip-format-discharging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · on battery\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
+            "tooltip-format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · charging\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
+            "tooltip-format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · plugged in\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
+            "tooltip-format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · full\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
             "align": 1,
             "on-click": "wlogout -b 6 --protocol layer-shell"
         },
@@ -254,7 +254,7 @@
             "exec": "~/.local/bin/gpurecord status",
             "signal": 8,
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>RECORDING</span>  Click stops",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>RECORDING</span>  Click stops",
             "on-click": "~/.local/bin/gpurecord"
         },
 
@@ -275,10 +275,10 @@
             "format-off": "\u200b",
             "format-disabled": "\u200b",
             "format-no-controller": "",
-            "tooltip-format-on": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BLUETOOTH</span>  On · none connected",
-            "tooltip-format-connected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BLUETOOTH</span>  {num_connections} connected",
-            "tooltip-format-off": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BLUETOOTH</span>  Off",
-            "tooltip-format-disabled": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>BLUETOOTH</span>  Off",
+            "tooltip-format-on": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  On · none connected",
+            "tooltip-format-connected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  {num_connections} connected",
+            "tooltip-format-off": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  Off",
+            "tooltip-format-disabled": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  Off",
             "on-click": "blueman-manager"
         },
 
@@ -321,7 +321,7 @@
         "mpris#title": {
             "format": "{title}",
             "title-len": 20,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='768' fgalpha='60%'>PLAYING</span>  {title} · {artist} · {player}\n<span font_desc='Terminess Nerd Font 12px' fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>PLAYING</span>  {title} · {artist} · {player}\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
         },
         "mpris#artist": { "format": "{artist}", "artist-len": 14, "tooltip": false },
         "mpris#time": { "format": "{position}/{length}", "interval": 1, "tooltip": false }
