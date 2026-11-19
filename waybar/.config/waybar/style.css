@@ -1,45 +1,54 @@
-/* waybar, "Stripe": a top bar after a cassette J-card. One black 34px strip, full width, with the
-   card's paired stripes on its top edge (2px stripe_a over 2px stripe_b), then a 30px row of type:
-   Inter, bold where it is a fact, 9px spaced capitals where it is a label (the labels are Pango
-   spans in config.jsonc and the helper scripts). Status chips are a label and a value with a ★
-   between them, like the card's "★ LOW NOISE ★ HIGH OUTPUT ★". Color only where it means
-   something (colors.css): the viewed tag, a warning (the chip inverted), critical, night light
-   held warm. Icons are -gtk-recolor() background layers; GTK's symbolic loader fills every shape,
-   so stroked paths carry class="stroke", and a path in a palette slot (class="success") takes
-   -gtk-icon-palette instead of the label's color (the ★, bluetooth). */
+/* waybar, "Viewport": two 30px bars framing the screen like an SGI CAD viewport. The top bar
+   (position top) is its ruler and status line, the bottom bar (position bottom) its floor: the
+   axis triad, cava ribbons and the player. Same bar color, same pixel face (Terminess), same
+   hues with the same jobs (colors.css): cyan = chrome and telemetry, text = the one fact in
+   focus, orange = action, magenta = someone else's state, warn/crit blocks = level.
+   Icons are -gtk-recolor() background layers; GTK's symbolic loader fills every shape, so stroked
+   paths carry class="stroke", and a path in a palette slot (class="success") takes
+   -gtk-icon-palette instead of the label's color (the registration cross, bluetooth). */
 @import "colors.css";
 
+/* Terminess draws 14px from its 8x14 bitmap strike, but its advance is 0.5em, 7px: Pango steps by
+   the advance, so 14px glyphs overlap 1px and bold ones fuse. 1px of letter spacing puts them back
+   on their 8px grid. 12px and 16px strikes match their advance (6px, 8px): a rule or a markup span
+   that changes the size or the face sets its own spacing, and so does a label whose text is only
+   room for an icon. */
 * {
-    font-family: "Inter";
-    font-size: 12px;
-    font-weight: 500;
+    font-family: "Terminess Nerd Font";
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-weight: 400;
     min-height: 0;
     border: none;
     border-radius: 0;
 }
 
 window#waybar { background: transparent; color: @text; }
-/* inset shadows paint over the background, the first on top: 2px stripe_a, then stripe_b down
-   to 4px. The 4px top padding keeps every module in the 30px row under the stripe. */
-window#waybar > box {
+/* the status bar's bottom edge is a ruler: a 1px rule, ticks every 8px (2px) and 32px (4px),
+   in step with the desktop's 32px dot grid. Chips sit 20px tall at y 5-25, over the ticks. */
+window#waybar.top > box {
     background-color: @bar;
-    box-shadow: inset 0 2px 0 @stripe_a, inset 0 4px 0 @stripe_b;
-    padding: 4px 0 0 0;
+    background-image: linear-gradient(90deg, alpha(@cyan, 0.55) 1px, transparent 1px),
+                      linear-gradient(90deg, alpha(@cyan, 0.25) 1px, transparent 1px);
+    background-size: 32px 4px, 8px 2px;
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    box-shadow: inset 0 -1px 0 alpha(@cyan, 0.45);
 }
 
-/* Tooltips open 6px under the bar, square, with a 1px ring. GTK places the tooltip window 4px
+/* Tooltips open 6px under the bar, square, with a 1px cyan ring. GTK places the tooltip window 4px
    below the module and gives its box 6px widget margins on top of CSS, so the window stays
    transparent and the visible tooltip is that box: -4px on top makes the 6px gap, 1px at the
    sides keeps it 7px from the screen's ends (mango's outer gap), -6px at the bottom is none. */
 tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
 tooltip box {
     background-color: @bar;
-    border: 1px solid @tipline;
+    border: 1px solid alpha(@cyan, 0.45);
     padding: 0;
     margin: -4px 1px -6px 1px;
 }
-tooltip label { color: @text; font-size: 12px; padding: 6px 10px; }
-menu { background-color: @bar; border: 1px solid @tipline; }
+tooltip label { color: @text; padding: 6px 10px; }
+menu { background-color: @bar; border: 1px solid alpha(@cyan, 0.45); }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
@@ -50,23 +59,28 @@ menuitem:hover { background-color: @sel; color: @selfg; }
     transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
-/* hover: a faint text overlay under the label. Waybar sets the hover state on its event box's
-   child: the label itself for built-in modules, but a custom module's label sits inside a box
-   (AIconLabel) and GTK3 doesn't pass the state down, so custom modules match on their box. */
-#network:hover, #pulseaudio:hover, #battery:hover, #bluetooth:hover,
+/* hover, on everything clickable: a 14% cyan fill, a 1px cyan bottom edge, the type in text.
+   Waybar sets the hover state on its event box's child: the label itself for built-in modules,
+   but a custom module's label sits inside a box (AIconLabel) and GTK3 doesn't pass the state
+   down, so custom modules match on their box. */
+#network:hover, #bluetooth:hover, #mpris:hover,
 #workspaces button:hover, box:hover > #custom-special,
 box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-win,
 box:hover > #custom-nightlight, box:hover > #custom-wallpaper, box:hover > #custom-notifications,
-box:hover > #custom-power, box:hover > #custom-record {
-    background-color: alpha(@text, 0.06);
+box:hover > #custom-record {
+    color: @text;
+    background-color: alpha(@cyan, 0.14);
+    box-shadow: inset 0 -1px 0 @cyan;
 }
 
-/* the λ, the shell prompt's: the bar's mark, set in type like everything else */
-#custom-start { min-width: 40px; padding: 0; font-size: 15px; font-weight: 800; color: @text; }
+/* the λ, the shell prompt's: the action mark, orange like play; it glows under the pointer */
+#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; letter-spacing: 0; font-weight: 700; color: @orange; }
+box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 0.7); }
 
-/* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is text,
-   empty dim, the viewed tag a signal block with its number in bar, an urgent tag crit with a 2px
-   crit underline. GTK's button theme is cleared (its gradient, shadow and text shadow). */
+/* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is
+   text bold, empty dim regular, the viewed tag a glowing signal block with its number in bar, an
+   urgent tag crit in a 1px crit outline. GTK's button theme is cleared (its gradient, shadow and
+   text shadow). */
 #workspaces { padding: 0; background: transparent; }
 #workspaces button, #custom-special {
     min-width: 24px;
@@ -82,14 +96,16 @@ box:hover > #custom-power, box:hover > #custom-record {
     font-weight: 700;
     font-feature-settings: "tnum";
 }
-#workspaces button label { margin: 0; padding: 0; }
-#workspaces button.empty, #custom-special.empty { color: @dim; }
+/* the button's label is a node of its own: without inherit, `*` sets it to 400 */
+#workspaces button label { margin: 0; padding: 0; font-weight: inherit; }
+#workspaces button.empty, #custom-special.empty { color: @dim; font-weight: 400; }
 #workspaces button.active, #custom-special.active,
 #workspaces button.active:hover, box:hover > #custom-special.active {
     color: @bar;
     background-color: @signal;
+    box-shadow: 0 0 7px alpha(@signal, 0.55);
 }
-#workspaces button.urgent { color: @crit; box-shadow: inset 0 -2px 0 @crit; }
+#workspaces button.urgent { color: @crit; box-shadow: inset 0 0 0 1px @crit, 0 0 7px alpha(@crit, 0.6); }
 
 /* a 1x12 rule; the zero-width label must not widen it */
 #custom-divider {
@@ -98,21 +114,23 @@ box:hover > #custom-power, box:hover > #custom-record {
     margin: 9px 14px;
     padding: 0;
     font-size: 1px;
-    background-color: @rule;
+    background-color: alpha(@cyan, 0.7);
 }
 
-/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints */
+/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints. Its
+   label is two spaces: letter spacing would widen it to an odd width and center the glyph on a
+   half pixel, blurring it. */
 #custom-layout {
+    letter-spacing: 0;
     min-width: 14px;
     min-height: 20px;
     margin: 5px 6px 5px 0;
     padding: 0 4px;
-    color: @dim;
+    color: alpha(@cyan, 0.7);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 14px 14px;
 }
-box:hover > #custom-layout { color: @text; }
 #custom-layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
 #custom-layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
 #custom-layout.G  { background-image: -gtk-recolor(url("layouts/grid-symbolic.svg")); }
@@ -129,73 +147,87 @@ box:hover > #custom-layout { color: @text; }
 #custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
 /* the key mode and the window states: chips that exist only while their state does, so their
-   presence is the message: bold type in a 1px outline. A pinned window shows on every tag until
-   unpinned, so its chip is inverted, the bar's warning. */
+   presence is the message: bold type in a 1px outline. An armed key mode is an action (orange);
+   window states are the windows' own (magenta). A pinned window shows on every tag until
+   unpinned, so its chip is a warn block. */
 #keymode, #custom-winstate {
     min-height: 18px;
     margin: 6px 8px 6px 0;
     padding: 0 6px;
-    font-size: 11px;
     font-weight: 700;
-    color: @text;
     background-color: transparent;
-    box-shadow: inset 0 0 0 1px alpha(@text, 0.5);
 }
-#custom-winstate.pinned { color: @bar; background-color: @text; box-shadow: none; }
+#keymode { color: @orange; box-shadow: inset 0 0 0 1px alpha(@orange, 0.7); }
+#custom-winstate { color: @magenta; box-shadow: inset 0 0 0 1px alpha(@magenta, 0.7); }
+#custom-winstate.pinned { color: @bar; background-color: @warn; box-shadow: none; }
 
-/* the windows in view (custom/win#1..6, fed by waybar-windows): the focused one in text, the
-   rest dim; the feed module (custom/windows) prints nothing and stays hidden */
+/* the windows in view (custom/win#1..6, fed by waybar-windows): the focused one in text bold on
+   a 1px signal underline, the rest dim; the feed module (custom/windows) prints nothing and
+   stays hidden */
 #custom-win { min-height: 20px; margin: 5px 0; padding: 0 8px; color: @dim; }
-#custom-win.focused { color: @text; font-weight: 600; }
+#custom-win.focused { color: @text; font-weight: 700; box-shadow: inset 0 -1px 0 @signal; }
 #custom-win.more { font-feature-settings: "tnum"; }
-box:hover > #custom-win.other, box:hover > #custom-win.more { color: @text; }
 
-/* the clock (group/datetime is #datetime): day and date are labels, the time the one big fact */
+/* the clock (group/datetime is #datetime): day and date are cyan labels, the time the one big
+   fact, in text with a phosphor glow */
 #datetime { margin: 0; padding: 0; background: none; }
-#custom-day, #custom-date { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: @dim; }
-#custom-day { padding: 0 6px 0 0; }
-#custom-date { padding: 0 0 0 6px; }
-#clock.time { padding: 0 6px; font-size: 13px; font-weight: 800; letter-spacing: 1px; font-feature-settings: "tnum"; }
+#custom-day, #custom-date { font-size: 12px; letter-spacing: 1px; color: @cyan; }
+#clock.time {
+    padding: 0 10px;
+    font-size: 16px;
+    letter-spacing: 0;
+    font-weight: 700;
+    font-feature-settings: "tnum";
+    color: @text;
+    text-shadow: 0 0 6px alpha(@cyan, 0.6);
+}
 
-/* status chips: a label and a value, 6px inside a 20px box. Every chip after the first carries the
-   ★ in a 19px transparent left border: the star layer paints the border box, the fill layer only
-   the padding box, so an inverted (warning) or crit chip never fills behind its star. The star is a
-   palette-slot path, dim whatever the label's color. */
+/* status chips: a 12px label and a 14px bold value, both cyan, 6px inside a 20px box. Every chip
+   after the first carries a 7px registration cross in a 19px transparent left border: the cross
+   layer paints the border box, the fill layer only the padding box, so a warn or crit block never
+   fills behind its cross. The cross is a palette-slot path, cyan at 70% whatever the type. */
 #network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
     min-height: 20px;
     margin: 5px 0;
     padding: 0 6px;
-    font-weight: 600;
+    font-weight: 700;
     font-feature-settings: "tnum";
-    color: @text;
+    color: @cyan;
     background-color: transparent;
 }
 #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
     border-left: 19px solid transparent;
-    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), none;
+    background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), none;
     background-origin: border-box, padding-box;
     background-clip: border-box, padding-box;
     background-repeat: no-repeat;
     background-position: 6px center, 0 0;
-    background-size: 8px 8px, 100% 100%;
-    -gtk-icon-palette: success @dim;
+    background-size: 7px 7px, 100% 100%;
+    -gtk-icon-palette: success alpha(@cyan, 0.7);
 }
 #network.disconnected, #pulseaudio.muted { color: @dim; }
+/* under the pointer the fill takes the padding box only, like a block: the cross stays clear */
+#pulseaudio:hover, #battery:hover {
+    color: @text;
+    background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(alpha(@cyan, 0.14), alpha(@cyan, 0.14));
+    box-shadow: inset 0 -1px 0 @cyan;
+}
 
-/* thresholds: waybar's states (config.jsonc) and waybar-temperature's high/critical. A warning is
-   the chip inverted; critical is a crit block. Battery counts down (warning 20, critical 10) and
-   only warns on battery: charging or plugged in, low charge is already being fixed. */
+/* thresholds: waybar's states (config.jsonc) and waybar-temperature's high/critical. A warning
+   is a warn block, critical a crit block, both with the type in bar. Battery counts down (warning
+   20, critical 10) and only warns on battery: charging or plugged in, low charge is already being
+   fixed, so those are green. */
 #cpu.warning, #memory.warning, #disk.warning, #battery.warning, #custom-temperature.high {
     color: @bar;
-    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), linear-gradient(@text, @text);
+    background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(@warn, @warn);
 }
 #memory.critical, #disk.critical, #battery.critical, #custom-temperature.critical {
     color: @bar;
-    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), linear-gradient(@crit, @crit);
+    background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(@crit, @crit);
 }
 #battery.charging, #battery.plugged, #battery.full, #battery.not-charging {
-    color: @text;
-    background-image: -gtk-recolor(url("icons/star-symbolic.svg")), none;
+    color: @green;
+    background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), none;
 }
 
 /* the tray area and the corner: 14px icons, dim at rest, text under the pointer; 14px apart */
@@ -205,43 +237,40 @@ box:hover > #custom-win.other, box:hover > #custom-win.more { color: @text; }
     margin: 5px 0;
     padding: 0 7px;
     color: @dim;
-    font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     font-feature-settings: "tnum";
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 14px 14px;
 }
-box:hover > #custom-nightlight, box:hover > #custom-wallpaper, #bluetooth:hover,
-box:hover > #custom-notifications { color: @text; }
 
 /* recording shows only while the screen is captured: crit, the one live state a glance must never miss */
 #custom-record { color: @crit; background-image: -gtk-recolor(url("icons/record-symbolic.svg")); }
 
-/* night light: automatic (the schedule) rests; "warm now" holds night on the screen whatever the
-   hour, so on-screen colors are not true (held); off is faded */
+/* night light: automatic (the schedule) rests; "warm now" is held by hand, an action, so orange;
+   off is faded */
 #custom-nightlight { background-image: -gtk-recolor(url("icons/moon-symbolic.svg")); }
-#custom-nightlight.warm { color: @held; }
+#custom-nightlight.warm { color: @orange; }
 #custom-nightlight.off { color: alpha(@dim, 0.5); }
 
 #custom-wallpaper { background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 
-/* bluetooth: the icon alone, or the icon and the connection count in text while connected; off
-   has its own glyph */
+/* bluetooth: the icon alone, or the icon and the connection count in cyan while connected (a
+   link is telemetry); off has its own glyph */
 #bluetooth {
     background-image: -gtk-recolor(url("icons/bt-symbolic.svg"));
     -gtk-icon-palette: success currentColor;
 }
-#bluetooth.connected { padding-left: 25px; background-position: 7px center; color: @text; }
+#bluetooth.connected { padding-left: 25px; background-position: 7px center; color: @cyan; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
 }
 
-/* the bell: alone at rest, the icon and the count in text while notifications are held,
-   bell-off under do-not-disturb, crit with a dot while a critical one is held */
+/* the bell: alone at rest, the icon and the count in magenta while notifications are held (other
+   people's messages), bell-off under do-not-disturb, crit with a dot while a critical one is held */
 #custom-notifications { background-image: -gtk-recolor(url("icons/bell-symbolic.svg")); }
-#custom-notifications.unread { padding-left: 25px; background-position: 7px center; color: @text; }
+#custom-notifications.unread { padding-left: 25px; background-position: 7px center; color: @magenta; }
 #custom-notifications.dnd { background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")); }
 #custom-notifications.critical {
     color: @crit;
@@ -263,8 +292,92 @@ box:hover > #custom-notifications { color: @text; }
     color: @text;
     background-image: -gtk-recolor(url("icons/power-symbolic.svg"));
 }
-box:hover > #custom-power { color: @crit; }
+box:hover > #custom-power { color: @crit; background-color: alpha(@crit, 0.16); box-shadow: inset 0 -1px 0 @crit; }
 
 /* the tray items carry their own spacing: each anchors its tooltip to its own allocation */
 #tray { margin: 0; padding: 0; }
 #tray > * { padding: 0 6px; }
+
+/* ---------------------------------------------------------------- the media bar
+   The floor of the viewport (ref ribbons.svg): a 1px cyan rule on its top edge, facing the
+   status bar's ruler; the XYZ axis triad; the two ribbons (waybar-ribbons draws them in GL from
+   the CLUT, the floor in grid, the sparks in text); the player; the CLUT key in the corner. */
+window#waybar.bottom > box {
+    background-color: @bar;
+    box-shadow: inset 0 1px 0 alpha(@cyan, 0.45);
+}
+
+/* the triad: X orange (action), Y green, Z cyan (chrome), the origin in text; 40px, the width of
+   the λ above it */
+#custom-triad {
+    min-width: 40px;
+    min-height: 30px;
+    margin: 0;
+    padding: 0;
+    color: @text;
+    background-image: -gtk-recolor(url("icons/triad-symbolic.svg"));
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 40px 30px;
+    -gtk-icon-palette: warning @orange, success @green, error @cyan;
+}
+
+/* the CLUT key: the ribbons' 16 colors, low at the bottom, 5x16 in a 28px corner */
+#custom-clut {
+    min-width: 28px;
+    min-height: 30px;
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(to top,
+        @clut0 1px, @clut1 1px, @clut1 2px, @clut2 2px,
+        @clut2 3px, @clut3 3px, @clut3 4px, @clut4 4px,
+        @clut4 5px, @clut5 5px, @clut5 6px, @clut6 6px,
+        @clut6 7px, @clut7 7px, @clut7 8px, @clut8 8px,
+        @clut8 9px, @clut9 9px, @clut9 10px, @clut10 10px,
+        @clut10 11px, @clut11 11px, @clut11 12px, @clut12 12px,
+        @clut12 13px, @clut13 13px, @clut13 14px, @clut14 14px,
+        @clut14 15px, @clut15 15px, @clut15 16px);
+    background-repeat: no-repeat;
+    background-position: 12px 7px;
+    background-size: 5px 16px;
+}
+
+/* the player: prev and next cyan at 70% (chrome), play orange (the action; pause while playing),
+   the title in text bold (ribbons.svg), the artist magenta after a 5x1 cyan dash, the time cyan.
+   Each part is a 20px key like the status bar's chips, so hover reads the same on both bars: a
+   button is its icon with 4px each side, centered; prev starts 12px in from the left ribbon, the
+   time ends 12px before the right one. */
+#mpris { min-height: 20px; margin: 5px 0; padding: 0 4px; font-feature-settings: "tnum"; }
+#mpris.prev, #mpris.play, #mpris.next {
+    min-width: 6px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 6px 10px;
+}
+#mpris.prev {
+    margin-left: 12px;
+    color: alpha(@cyan, 0.7);
+    background-image: -gtk-recolor(url("icons/prev-symbolic.svg"));
+}
+#mpris.play {
+    min-width: 7px;
+    color: @orange;
+    background-image: -gtk-recolor(url("icons/play-symbolic.svg"));
+    background-size: 7px 10px;
+}
+#mpris.play.playing { background-image: -gtk-recolor(url("icons/pause-symbolic.svg")); }
+#mpris.next {
+    margin-right: 8px;
+    color: alpha(@cyan, 0.7);
+    background-image: -gtk-recolor(url("icons/next-symbolic.svg"));
+}
+#mpris.title { color: @text; font-weight: 700; }
+#mpris.artist {
+    padding-left: 17px;
+    color: @magenta;
+    background-image: linear-gradient(alpha(@cyan, 0.55), alpha(@cyan, 0.55));
+    background-repeat: no-repeat;
+    background-position: 6px center;
+    background-size: 5px 1px;
+}
+#mpris.time { margin-right: 12px; color: @cyan; }

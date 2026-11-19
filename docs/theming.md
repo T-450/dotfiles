@@ -114,25 +114,25 @@ Which apps use each role (generated from the templates):
 | `ansi15` | ghostty |
 | `ansi2` | ghostty, helix, vim |
 | `ansi3` | ghostty, helix |
-| `ansi4` | ghostty, helix, vim |
-| `ansi5` | ghostty, helix, vim |
-| `ansi6` | ghostty, helix, vim |
+| `ansi4` | ghostty, helix, vim, waybar |
+| `ansi5` | ghostty, helix, vim, waybar |
+| `ansi6` | ghostty, helix, vim, waybar |
 | `ansi7` | ghostty |
 | `ansi8` | ghostty |
 | `ansi9` | ghostty, helix |
-| `badge` | lazygit, mousepad, mpv, theme, waybar |
+| `badge` | lazygit, mousepad, mpv, theme |
 | `bg_desktop` | claude, firefox, gtk, hyprlock, imv, mango, mousepad, mpv, qutebrowser, theme, waybar, wlogout |
 | `bg_hover` | claude, firefox, ghostty, helix, lazygit, mousepad, rofi, swayosd, theme, vim |
 | `bg_surface` | claude, firefox, ghostty, gtk, helix, hyprlock, mako, mango, mousepad, qutebrowser, rofi, theme, vim |
 | `bg_widget` | claude, firefox, gtk, helix, imv, mako, mpv, pi, qutebrowser, rofi, swayosd, theme, vim, wlogout |
-| `border_hairline` | firefox, helix, pi, qutebrowser, rofi, theme, waybar |
+| `border_hairline` | firefox, helix, pi, qutebrowser, rofi, theme |
 | `border_inactive` | claude, fastfetch, firefox, ghostty, helix, lazygit, mako, mango, mousepad, pi, rofi, swayosd, theme, vim |
 | `diff_add` | git, helix, mousepad, pi, vim |
 | `diff_change` | helix, mousepad, vim |
 | `diff_remove` | git, helix, mousepad, pi, vim |
 | `error` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mako, mango, mousepad, mpv, pi, qutebrowser, theme, vim, waybar |
 | `fg_bright` | claude, fastfetch, firefox, helix, hyprlock, mango, mousepad, pi, qutebrowser, theme, vim |
-| `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim, waybar |
+| `fg_disabled` | claude, helix, mousepad, qutebrowser, theme, vim |
 | `fg_editor` | gtk, helix, mousepad, pi, theme, vim, waybar |
 | `fg_muted` | claude, helix, hyprlock, mousepad, pi, qutebrowser, rofi, theme, vim |
 | `fg_secondary` | claude, firefox, ghostty, helix, lazygit, mako, mango, mousepad, pi, qutebrowser, rofi, theme, vim, wlogout |
@@ -148,13 +148,13 @@ Which apps use each role (generated from the templates):
 | `key_mod` | theme |
 | `link` | claude, ghostty, lazygit, mousepad, mpv, pi, qutebrowser, rofi, theme, vim |
 | `name` | claude, fastfetch, firefox, ghostty, gtk, helix, hyprlock, mako, mango, mousepad, mpv, qutebrowser, rofi, swayosd, theme, vim, waybar, wlogout |
-| `prefer_dark` | gtk |
+| `prefer_dark` | gtk, waybar |
 | `repo` | runner-up |
 | `selection_bg` | claude, firefox, ghostty, gtk, helix, mako, mango, mousepad, qutebrowser, rofi, theme, vim, waybar |
 | `selection_fg` | firefox, ghostty, gtk, helix, mango, mousepad, qutebrowser, rofi, theme, vim, waybar, wlogout |
 | `shadow` | hyprlock, mango, theme |
 | `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mako, mango, mousepad, mpv, pi, rofi, swayosd, theme, waybar, wlogout |
-| `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim |
+| `success` | claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim, waybar |
 | `syn_boolean` | helix, mousepad, vim |
 | `syn_comment` | helix, mako, mousepad, pi, vim |
 | `syn_constant` | fastfetch, helix, mousepad, swayosd, vim |
@@ -171,7 +171,7 @@ Which apps use each role (generated from the templates):
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme, vim |
-| `warning` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mango, mousepad, pi, qutebrowser, theme, vim |
+| `warning` | claude, fastfetch, gtk, helix, hyprlock, lazygit, mango, mousepad, pi, qutebrowser, theme, vim, waybar |
 <!-- end generated -->
 
 `[terminal]` holds `fg`, `bg`, `cursor` and the 16 ANSI colors (Ghostty; zsh

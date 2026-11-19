@@ -1,2 +1,3 @@
 waybar
 pamixer   # volume click/scroll
+cava      # audio spectrum for the media bar's ribbons (pkg/waybar-ribbons)

@@ -1,5 +1,4 @@
-inter-font               # the bar (waybar's Stripe: labels, values, tooltips)
-ttf-jetbrains-mono-nerd  # mono (bar, lock screen, notifications)
+ttf-jetbrains-mono-nerd  # mono (lock screen, notifications)
 ttf-lilex-nerd           # mono (terminal)
 noto-fonts
 noto-fonts-cjk
@@ -10,4 +9,4 @@ ttf-ibmplex-mono-nerd
 ttf-liberation
 ttf-nerd-fonts-symbols
 ttf-nerd-fonts-symbols-mono
-ttf-terminus-nerd
+ttf-terminus-nerd        # the bars (waybar Viewport: Terminess, a pixel face)
