@@ -55,7 +55,10 @@ void main() {
 	float su = x / width, near = mirror > 0.5 ? step(0.22, su) : step(su, 0.78);
 	col += grid.rgb * grid.a * dot1 * (step(27.0, y) * step(y, 28.0) * 0.55 + step(25.0, y) * step(y, 26.0) * 0.28 * near);
 
-	float a, a2, top = 1e9, bot = -1e9, front = -2.0, fy = 0.0;
+	// every strand at this x has the same energy, so the same CLUT color: sum their intensity and
+	// cap it at that color. Summed as colors, the 9 strands where they bunch (silence, the tapered
+	// ends) clip channel by channel and bleach a light palette's blue to white.
+	float a, a2, k = 0.0, top = 1e9, bot = -1e9, front = -2.0, fy = 0.0;
 	for (int j = 0; j < STRANDS; j++) {
 		vec2 s0 = strand(x, j, a), s1 = strand(x + 1.0, j, a2);
 		float slope = s1.x - s0.x;
@@ -66,15 +69,15 @@ void main() {
 		float core = 1.0 - smoothstep(0.2, 0.9, d);
 		float glow = edge ? 0.28 * exp(-d * d / (2.0 * 1.6 * 1.6)) : 0.0;
 		if (zn < -0.05) { core *= step(0.5, fract(x / 3.0)); depth *= 0.5; }   // stippled far side
-		col += lut(a) * (core + glow) * min(depth, 1.0);
+		k += (core + glow) * min(depth, 1.0);
 		top = min(top, s0.x); bot = max(bot, s0.x);
 		if (zn > front) { front = zn; fy = d; }
 	}
-	vec3 c = lut(a);
 	if (y > top && y < bot) {
-		col += c * 0.10;                                            // translucent surface
-		if (fract(x / 15.0) * 15.0 < 1.0) col += c * 0.30;          // rungs
+		k += 0.10;                                                  // translucent surface
+		if (fract(x / 15.0) * 15.0 < 1.0) k += 0.30;                // rungs
 	}
+	col += lut(a) * min(k, 1.0);
 	if (front > 0.6 && a > 0.15)                                    // specular on the face-on front edge
 		col += spark.rgb * spark.a * 0.5 * (front - 0.6) / 0.4 * (1.0 - smoothstep(0.2, 0.9, fy));
 	col = min(col, 1.0);
