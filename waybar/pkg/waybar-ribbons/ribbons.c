@@ -12,7 +12,8 @@
 // drawn is not drawn again, so silence (cava's sleep_timer) costs nothing. If cava exits, the ribbon goes flat and cava is started
 // again after 1s, backing off to 30s while it keeps failing.
 // Colors: @clut0..@clut15, @grid and @text from the GTK style context (waybar's colors.css,
-// rendered by theme), read again on every style change, so `theme set` recolors the ribbons.
+// rendered by theme), read at start and on a GTK style change; `theme set` recolors them through
+// waybar/reload.sh, whose SIGUSR2 makes waybar re-create its modules.
 // Shader: ribbons.frag, embedded at build time; the #version line is chosen at runtime because
 // GTK may hand out desktop GL even when GLES is asked for.
 #include "waybar_cffi_module.h"
