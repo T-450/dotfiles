@@ -145,4 +145,4 @@ alias grep='rg'
 # secrets (API keys) live in ~/.config/zsh/private.zsh: untracked, mode 600; this file is public
 [[ -r ~/.config/zsh/private.zsh ]] && source ~/.config/zsh/private.zsh
 alias copilot='copilot --model xiaomi/mimo-v2.6-flash --experimental'
-export MISE_VERBOSE=1
+alias mise='MISE_VERBOSE=1 mise'
