@@ -11,7 +11,8 @@
 /* Terminess draws 14px from its 8x14 bitmap strike, but its advance is 0.5em, 7px: Pango steps by
    the advance, so 14px glyphs overlap 1px and bold ones fuse. 1px of letter spacing puts them back
    on their 8px grid. 12px and 16px strikes match their advance (6px, 8px): a rule or a markup span
-   that changes the size sets its own spacing. */
+   that changes the size or the face sets its own spacing, and so does a label whose text is only
+   room for an icon. */
 * {
     font-family: "Terminess Nerd Font";
     font-size: 14px;
@@ -115,8 +116,11 @@ box:hover > #custom-start { color: @orange; text-shadow: 0 0 6px alpha(@orange, 
     background-color: alpha(@cyan, 0.7);
 }
 
-/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints */
+/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints. Its
+   label is two spaces: letter spacing would widen it to an odd width and center the glyph on a
+   half pixel, blurring it. */
 #custom-layout {
+    letter-spacing: 0;
     min-width: 14px;
     min-height: 20px;
     margin: 5px 6px 5px 0;

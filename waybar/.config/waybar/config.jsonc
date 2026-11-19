@@ -160,7 +160,7 @@
         "custom/day": { "exec": "date '+%^a'", "interval": 60, "tooltip": false },
         "clock#time": {
             "format": "{:%H:%M}",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt><span letter_spacing='0'>{calendar}</span></tt>"
         },
         // waybar's clock zero-pads the day; a custom module keeps "12 NOV"
         "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
