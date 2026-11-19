@@ -11,7 +11,7 @@ Requisite=graphical-session.target
 # starts only for an image, and shows it softly blurred (wallpaper-blurred, cached per image).
 ExecCondition=%h/.local/bin/wallpaper-is image
 EnvironmentFile=%h/.config/theme/colors.sh
-ExecStart=/bin/sh -c 'exec /usr/bin/swaybg -i "$(%h/.local/bin/wallpaper-blurred)" -m fill -c ${THEME_BG_DESKTOP}'
+ExecStart=/bin/sh -c 'exec /usr/bin/swaybg -i "$(%h/.local/bin/wallpaper-blurred)" -m fill -c "${THEME_BG_DESKTOP}"'
 Restart=on-failure
 
 [Install]
