@@ -338,10 +338,10 @@ window#waybar.bottom > box {
 }
 
 /* the player: prev and next cyan at 70% (chrome), play orange (the action; pause while playing),
-   the title in text, the artist magenta after a 5x1 cyan dash, the time cyan. Each part is a 20px
-   key like the status bar's chips, so hover reads the same on both bars: a button is its icon
-   with 4px each side, centered; prev starts 12px in from the left ribbon, the time ends 12px
-   before the right one. */
+   the title in text bold (ribbons.svg), the artist magenta after a 5x1 cyan dash, the time cyan.
+   Each part is a 20px key like the status bar's chips, so hover reads the same on both bars: a
+   button is its icon with 4px each side, centered; prev starts 12px in from the left ribbon, the
+   time ends 12px before the right one. */
 #mpris { min-height: 20px; margin: 5px 0; padding: 0 4px; font-feature-settings: "tnum"; }
 #mpris.prev, #mpris.play, #mpris.next {
     min-width: 6px;
@@ -366,7 +366,7 @@ window#waybar.bottom > box {
     color: alpha(@cyan, 0.7);
     background-image: -gtk-recolor(url("icons/next-symbolic.svg"));
 }
-#mpris.title { color: @text; }
+#mpris.title { color: @text; font-weight: 700; }
 #mpris.artist {
     padding-left: 17px;
     color: @magenta;
