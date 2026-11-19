@@ -4,7 +4,7 @@
 # the size it is drawn at. Ghostty scales it down to the logo's cell box in config.jsonc, which
 # keeps it sharp up to a display scale of 2 and at larger fonts, with no cell size written here.
 # When Ghostty scales it, the color of a nearly transparent pixel bleeds into its neighbors, so
-# none may hold a stray color: the faintest 2% of alpha (the overspray's tail) is cut (a color at
+# none may hold a stray color: the faintest 2% of alpha (the print grain's and the edges' antialiasing tail) is cut (a color at
 # alpha 1 has only all-or-nothing channels left, which showed as white specks) and the transparent
 # pixels take the terminal's background in place of black.
 # Run by `theme` after rendering templates; remade only when its inputs changed.
