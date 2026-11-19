@@ -26,7 +26,7 @@ feed)
 		while IFS= read -r line; do
 			[[ $line == "$prev" ]] && continue
 			prev=$line
-			printf '%s\n' "$line" > "$state.tmp" && mv "$state.tmp" "$state"
+			printf '%s\n' "$line" > "$state.$$" && mv "$state.$$" "$state"
 			pkill -RTMIN+12 -x waybar
 		done
 	;;
