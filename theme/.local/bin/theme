@@ -236,6 +236,42 @@ def load_palette(slug, path=None):
                          else v[default] if default in v else v[f"syn_{default}"])
 
     dark = variant == "dark"
+    # Viewport ("SGI CAD") derived roles: one shared token set across waybar and every overlay.
+    # vp_bar is near-black on dark palettes and bg_desktop on light ones; foregrounds stay AA
+    # legible on bg_desktop (so on the darker bar too).
+    bg, toward = v["bg_desktop"], pole(v["bg_desktop"])
+    v["vp_bar"] = mix(bg, v["shadow"], 0.6) if dark else bg
+    v["vp_text"] = legible(mix(v["fg_editor"], v["fg_bright"], 0.78), bg, toward, TEXT_CONTRAST)
+    v["vp_dim"] = legible(mix(v["fg_editor"], v["fg_muted"], 0.6), bg, toward, TEXT_CONTRAST)
+    v["vp_cyan"] = legible(v["ansi6"], bg, toward, TEXT_CONTRAST)
+    v["vp_magenta"] = legible(v["ansi5"], bg, toward, TEXT_CONTRAST)
+    v["vp_orange"] = legible(mix(v["warning"], v["error"], 0.4), bg, toward, TEXT_CONTRAST)
+    v["vp_green"] = legible(v["success"], bg, toward, TEXT_CONTRAST)
+    v["vp_warn"] = legible(v["warning"], bg, toward, TEXT_CONTRAST)
+    v["vp_crit"] = legible(v["error"], bg, toward, TEXT_CONTRAST)
+    v["vp_signal"] = legible(v["accent"], bg, toward, TEXT_CONTRAST)
+    v["vp_grid"] = v["ansi4"]
+    clut = [
+        v["ansi4"],
+        mix(v["ansi4"], v["ansi6"], 0.33),
+        mix(v["ansi4"], v["ansi6"], 0.67),
+        v["ansi6"],
+        mix(v["ansi6"], v["success"], 0.33),
+        mix(v["ansi6"], v["success"], 0.67),
+        v["success"],
+        mix(v["success"], v["warning"], 0.33),
+        mix(v["success"], v["warning"], 0.67),
+        v["warning"],
+        mix(v["warning"], v["error"], 0.133),
+        mix(v["warning"], v["error"], 0.267),
+        mix(v["warning"], v["error"], 0.4),
+        mix(v["warning"], v["error"], 0.6),
+        mix(v["warning"], v["error"], 0.8),
+        v["error"],
+    ]
+    for i, c in enumerate(clut):
+        v[f"vp_clut{i}"] = c
+
     words = {
         "name": clean_name(meta.get("name", slug)),
         "slug": slug,
