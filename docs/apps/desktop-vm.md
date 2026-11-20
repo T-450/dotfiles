@@ -9,7 +9,7 @@ screen and the keyboard; the only other way to see them is to reboot the laptop.
 [runner-up](runner-up.md)'s Arch cloud image under OVMF, with `virtio-vga-gl` and `egl-headless`, so
 mango gets real GLES through virgl. Screenshots come from the VNC framebuffer (QMP's `screendump`
 has no surface under `egl-headless`) and keys from QMP `send-key`. The output is named `Virtual-1`,
-so mango's `^eDP-1$` monitor rule does not match; that is expected and not changed.
+so mango's `^eDP-1$` monitor rule does not match; that is expected and not changed. Before rebooting, `up` places a guest-only `/usr/local/bin/ghostty` wrapper setting `LIBGL_ALWAYS_SOFTWARE=1`: under `virtio-vga-gl`, GTK 4 falls back to Cairo and segfaults downloading a `virgl` texture, whereas `llvmpipe` renders Ghostty cleanly while leaving `mango` and the bar on `virgl`.
 
 ## Taking turns with CI
 

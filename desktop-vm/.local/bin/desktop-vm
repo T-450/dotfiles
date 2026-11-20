@@ -970,6 +970,17 @@ def cmd_up(argv):
             print(f"up: delivered {commit}")
             (run / "commit").write_text(commit + "\n")
             install_sequence("up", run, guest, uid, "install.sh")
+            # Under virtio-vga-gl (virgl), GTK 4.24 finds no EGL config and falls back to Cairo,
+            # whose texture readback (gdk_texture_downloader_download_into) segfaults on virgl.
+            # Wrapping only ghostty in /usr/local/bin keeps mango and the bar on virgl while letting
+            # Ghostty render cleanly via llvmpipe (VM-only; never touches the host or install --check).
+            guest.check(
+                "install -m 755 /dev/stdin /usr/local/bin/ghostty <<'EOF'\n"
+                "#!/bin/sh\n"
+                "export LIBGL_ALWAYS_SOFTWARE=1\n"
+                "exec /usr/bin/ghostty \"$@\"\n"
+                "EOF"
+            )
             old_boot_id = guest.check("cat /proc/sys/kernel/random/boot_id").strip()
             print("up: rebooting")
             t0 = time.monotonic()
