@@ -1,18 +1,10 @@
-/* waybar, "Viewport": two 30px bars framing the screen like an SGI CAD viewport. The top bar
-   (position top) is its ruler and status line, the bottom bar (position bottom) its floor: the
-   axis triad, cava ribbons and the player. Same bar color, same pixel face (Terminess), same
-   hues with the same jobs (colors.css): cyan = chrome and telemetry, text = the one fact in
-   focus, orange = action, magenta = someone else's state, warn/crit blocks = level.
-   Icons are -gtk-recolor() background layers; GTK's symbolic loader fills every shape, so stroked
-   paths carry class="stroke", and a path in a palette slot (class="success") takes
-   -gtk-icon-palette instead of the label's color (the registration cross, bluetooth). */
+/* waybar, "Viewport": two 38px bars framing the screen like an SGI CAD viewport.
+   Top bar: live controls & wide window list with bottom cyan ruler (8px/32px ticks).
+   Bottom bar: mirrored top cyan ruler, triad, CPU/MEM flanks, GPU ribbons, player with 1px cyan
+   progress rail, TMP/DSK flanks, and the 16-step CLUT key. Reduced orange: reserved only for armed
+   keymode, held-warm nightlight, and the triad X axis. */
 @import "colors.css";
 
-/* Terminess draws 14px from its 8x14 bitmap strike, but its advance is 0.5em, 7px: Pango steps by
-   the advance, so 14px glyphs overlap 1px and bold ones fuse. 1px of letter spacing puts them back
-   on their 8px grid. 12px and 16px strikes match their advance (6px, 8px): a rule or a markup span
-   that changes the size or the face sets its own spacing, and so does a label whose text is only
-   room for an icon. */
 * {
     font-family: "Terminess Nerd Font";
     font-size: 14px;
@@ -24,22 +16,29 @@
 }
 
 window#waybar { background: transparent; color: @text; }
-/* the status bar's bottom edge is a ruler: a 1px rule, ticks every 8px (2px) and 32px (4px),
-   in step with the desktop's 32px dot grid. Chips sit 20px tall at y 5-25, over the ticks. */
+
+/* top bar bottom ruler: 1px cyan 45% rule, 8px minor (2px) and 32px major (5px) ticks */
 window#waybar.top > box {
     background-color: @bar;
     background-image: linear-gradient(90deg, alpha(@cyan, 0.55) 1px, transparent 1px),
                       linear-gradient(90deg, alpha(@cyan, 0.25) 1px, transparent 1px);
-    background-size: 32px 4px, 8px 2px;
+    background-size: 32px 5px, 8px 2px;
     background-repeat: repeat-x;
     background-position: left bottom;
     box-shadow: inset 0 -1px 0 alpha(@cyan, 0.45);
 }
 
-/* Tooltips open 6px under the bar, square, with a 1px cyan ring. GTK places the tooltip window 4px
-   below the module and gives its box 6px widget margins on top of CSS, so the window stays
-   transparent and the visible tooltip is that box: -4px on top makes the 6px gap, 1px at the
-   sides keeps it 7px from the screen's ends (mango's outer gap), -6px at the bottom is none. */
+/* bottom bar mirrored top ruler: ticks face the top bar's ruler */
+window#waybar.bottom > box {
+    background-color: @bar;
+    background-image: linear-gradient(90deg, alpha(@cyan, 0.55) 1px, transparent 1px),
+                      linear-gradient(90deg, alpha(@cyan, 0.25) 1px, transparent 1px);
+    background-size: 32px 5px, 8px 2px;
+    background-repeat: repeat-x;
+    background-position: left top;
+    box-shadow: inset 0 1px 0 alpha(@cyan, 0.45);
+}
+
 tooltip { background: transparent; border: none; box-shadow: none; padding: 0; }
 tooltip box {
     background-color: @bar;
@@ -52,40 +51,45 @@ menu { background-color: @bar; border: 1px solid alpha(@cyan, 0.45); }
 menuitem { color: @text; }
 menuitem:hover { background-color: @sel; color: @selfg; }
 
-/* a state change fades over 150 ms, mango's animation time, instead of snapping */
+/* 150 ms ease-out transitions matching mango */
 #custom-start, #workspaces button, #custom-special, #custom-layout, #custom-win,
-#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery,
-#custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power {
+#network, #backlight, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery,
+#custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power,
+#custom-triad, #custom-clut, #custom-player, #mpris {
     transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
-/* hover, on everything clickable: a 14% cyan fill, a 1px cyan bottom edge, the type in text.
-   Waybar sets the hover state on its event box's child: the label itself for built-in modules,
-   but a custom module's label sits inside a box (AIconLabel) and GTK3 doesn't pass the state
-   down, so custom modules match on their box. */
-#network:hover, #bluetooth:hover, #mpris:hover,
+/* uniform clickable hover: 14% cyan fill, 1px cyan bottom edge, text color */
+#network:hover, #bluetooth:hover, #mpris:hover, #cpu:hover,
 #workspaces button:hover, box:hover > #custom-special,
 box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-win,
 box:hover > #custom-nightlight, box:hover > #custom-wallpaper, box:hover > #custom-notifications,
-box:hover > #custom-record {
+box:hover > #custom-record, box:hover > #custom-temperature,
+box:hover > #custom-triad, box:hover > #custom-clut {
     color: @text;
     background-color: alpha(@cyan, 0.14);
     box-shadow: inset 0 -1px 0 @cyan;
 }
 
-/* the λ, the shell prompt's: plain type, cyan under the pointer like every other control */
-#custom-start { min-width: 40px; min-height: 20px; margin: 5px 0; padding: 0; font-size: 16px; letter-spacing: 0; font-weight: 700; color: @text; }
+/* 24px bold λ in crisp text, cyan under the pointer */
+#custom-start {
+    min-width: 48px;
+    min-height: 24px;
+    margin: 6px 0 8px 0;
+    padding: 0;
+    font-size: 24px;
+    letter-spacing: 0;
+    font-weight: 700;
+    color: @text;
+}
 box:hover > #custom-start { color: @cyan; }
 
-/* tags 1-4 and tag 0 (mango's special tag, custom/special): 24x20 keys of type. Occupied is
-   text bold, empty dim regular, the viewed tag a glowing signal block with its number in bar, an
-   urgent tag crit in a 1px crit outline. GTK's button theme is cleared (its gradient, shadow and
-   text shadow). */
+/* tags 1-4 and bracketed special tag [0] */
 #workspaces { padding: 0; background: transparent; }
 #workspaces button, #custom-special {
-    min-width: 24px;
-    min-height: 20px;
-    margin: 5px 0;
+    min-width: 26px;
+    min-height: 24px;
+    margin: 6px 0 8px 0;
     padding: 0;
     border: none;
     background-color: transparent;
@@ -96,39 +100,44 @@ box:hover > #custom-start { color: @cyan; }
     font-weight: 700;
     font-feature-settings: "tnum";
 }
-/* the button's label is a node of its own: without inherit, `*` sets it to 400 */
 #workspaces button label { margin: 0; padding: 0; font-weight: inherit; }
 #workspaces button.empty, #custom-special.empty { color: @dim; font-weight: 400; }
+/* special tag 0 sits visibly apart inside a quiet 1px bracket */
+#custom-special {
+    min-width: 24px;
+    min-height: 22px;
+    margin: 7px 0 9px 8px;
+    box-shadow: inset 0 0 0 1px alpha(@dim, 0.55);
+}
 #workspaces button.active, #custom-special.active,
 #workspaces button.active:hover, box:hover > #custom-special.active {
     color: @bar;
     background-color: @signal;
+    box-shadow: none;
 }
 #workspaces button.urgent { color: @crit; box-shadow: inset 0 0 0 1px @crit, 0 0 7px alpha(@crit, 0.6); }
 
-/* a 1x12 rule; the zero-width label must not widen it */
+/* 1x16 vertical chrome rules */
 #custom-divider {
     min-width: 1px;
-    min-height: 12px;
-    margin: 9px 14px;
+    min-height: 16px;
+    margin: 11px 12px;
     padding: 0;
     font-size: 1px;
     background-color: alpha(@cyan, 0.7);
 }
 
-/* the layout glyph (layouts/<symbol>-symbolic.svg), 14px, from the class waybar-layout prints. Its
-   label is two spaces: letter spacing would widen it to an odd width and center the glyph on a
-   half pixel, blurring it. */
+/* layout glyph */
 #custom-layout {
     letter-spacing: 0;
-    min-width: 14px;
-    min-height: 20px;
-    margin: 5px 6px 5px 0;
+    min-width: 16px;
+    min-height: 24px;
+    margin: 6px 6px 8px 0;
     padding: 0 4px;
     color: alpha(@cyan, 0.7);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 14px 14px;
+    background-size: 16px 16px;
 }
 #custom-layout.T  { background-image: -gtk-recolor(url("layouts/tile-symbolic.svg")); }
 #custom-layout.S  { background-image: -gtk-recolor(url("layouts/scroller-symbolic.svg")); }
@@ -145,30 +154,24 @@ box:hover > #custom-start { color: @cyan; }
 #custom-layout.F  { background-image: -gtk-recolor(url("layouts/fair-symbolic.svg")); }
 #custom-layout.VF { background-image: -gtk-recolor(url("layouts/vertical_fair-symbolic.svg")); }
 
-/* the key mode and the window states: chips that exist only while their state does, so their
-   presence is the message: bold type in a 1px outline. An armed key mode is an action (orange);
-   window states are the windows' own (magenta). A pinned window shows on every tag until
-   unpinned, so its chip is a warn block. */
+/* armed keymode (orange) and window states (magenta; pinned = warn block) */
 #keymode, #custom-winstate {
-    min-height: 18px;
-    margin: 6px 8px 6px 0;
+    min-height: 22px;
+    margin: 7px 8px 9px 0;
     padding: 0 6px;
     font-weight: 700;
     background-color: transparent;
 }
 #keymode { color: @orange; box-shadow: inset 0 0 0 1px alpha(@orange, 0.7); }
-#custom-winstate { color: @cyan; box-shadow: inset 0 0 0 1px alpha(@cyan, 0.7); }
+#custom-winstate { color: @magenta; box-shadow: inset 0 0 0 1px alpha(@magenta, 0.7); }
 #custom-winstate.pinned { color: @bar; background-color: @warn; box-shadow: none; }
 
-/* the windows in view (custom/win#1..6, fed by waybar-windows): the focused one in text bold on
-   a 1px signal underline, the rest dim; the feed module (custom/windows) prints nothing and
-   stays hidden */
-#custom-win { min-height: 20px; margin: 5px 0; padding: 0 8px; color: @dim; }
+/* windows in view */
+#custom-win { min-height: 24px; margin: 6px 0 8px 0; padding: 0 8px; color: @dim; }
 #custom-win.focused { color: @text; font-weight: 700; box-shadow: inset 0 -1px 0 @signal; }
 #custom-win.more { font-feature-settings: "tnum"; }
 
-/* the clock (group/datetime is #datetime): day and date are cyan labels, the time the one big
-   fact, in text with a phosphor glow */
+/* centered clock */
 #datetime { margin: 0; padding: 0; background: none; }
 #custom-day, #custom-date { font-size: 12px; letter-spacing: 1px; color: @cyan; }
 #clock.time {
@@ -180,20 +183,30 @@ box:hover > #custom-start { color: @cyan; }
     color: @text;
 }
 
-/* status chips: a 12px label and a 14px bold value, both cyan, 6px inside a 20px box. Every chip
-   after the first carries a 7px registration cross in a 19px transparent left border: the cross
-   layer paints the border box, the fill layer only the padding box, so a warn or crit block never
-   fills behind its cross. The cross is a palette-slot path, cyan at 70% whatever the type. */
-#network, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
-    min-height: 20px;
-    margin: 5px 0;
+/* top-bar live telemetry chips (NET + BRI + VOL + BAT) */
+#network, #backlight, #pulseaudio, #battery {
+    min-height: 24px;
+    margin: 6px 0 8px 0;
     padding: 0 6px;
     font-weight: 700;
     font-feature-settings: "tnum";
     color: @cyan;
     background-color: transparent;
 }
-#pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery {
+
+/* bottom-bar hardware telemetry flanks (CPU + MEM, TMP + DSK) */
+#cpu, #memory, #custom-temperature, #disk {
+    min-height: 24px;
+    margin: 8px 0 6px 0;
+    padding: 0 6px;
+    font-weight: 700;
+    font-feature-settings: "tnum";
+    color: @cyan;
+    background-color: transparent;
+}
+
+/* registration crosses before secondary chips in each telemetry group */
+#backlight, #pulseaudio, #battery, #memory, #disk {
     border-left: 19px solid transparent;
     background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), none;
     background-origin: border-box, padding-box;
@@ -204,22 +217,30 @@ box:hover > #custom-start { color: @cyan; }
     -gtk-icon-palette: success alpha(@cyan, 0.7);
 }
 #network.disconnected, #pulseaudio.muted { color: @dim; }
-/* under the pointer the fill takes the padding box only, like a block: the cross stays clear */
-#pulseaudio:hover, #battery:hover {
+
+#backlight:hover, #pulseaudio:hover, #battery:hover, #memory:hover, #disk:hover {
     color: @text;
     background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(alpha(@cyan, 0.14), alpha(@cyan, 0.14));
     box-shadow: inset 0 -1px 0 @cyan;
 }
 
-/* thresholds: waybar's states (config.jsonc) and waybar-temperature's high/critical. A warning
-   is a warn block, critical a crit block, both with the type in bar. Battery counts down (warning
-   20, critical 10) and only warns on battery: charging or plugged in, low charge is already being
-   fixed, so those are green. */
-#cpu.warning, #memory.warning, #disk.warning, #battery.warning, #custom-temperature.high {
+/* CLUT hardware load tiers (zero orange text: cyan idle -> green active -> warn block -> crit block) */
+#cpu.active, #memory.active, #disk.active, #custom-temperature.active {
+    color: @green;
+}
+#cpu.warning, #custom-temperature.high {
+    color: @bar;
+    background-color: @warn;
+}
+#memory.warning, #disk.warning, #battery.warning {
     color: @bar;
     background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(@warn, @warn);
 }
-#memory.critical, #disk.critical, #battery.critical, #custom-temperature.critical {
+#custom-temperature.critical {
+    color: @bar;
+    background-color: @crit;
+}
+#memory.critical, #disk.critical, #battery.critical {
     color: @bar;
     background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), linear-gradient(@crit, @crit);
 }
@@ -228,11 +249,11 @@ box:hover > #custom-start { color: @cyan; }
     background-image: -gtk-recolor(url("icons/cross-symbolic.svg")), none;
 }
 
-/* the tray area and the corner: 14px icons, dim at rest, text under the pointer; 14px apart */
+/* tray icons & power corner (16px glyphs in 38px bar) */
 #custom-record, #custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power {
-    min-width: 14px;
-    min-height: 20px;
-    margin: 5px 0;
+    min-width: 16px;
+    min-height: 24px;
+    margin: 6px 0 8px 0;
     padding: 0 7px;
     color: @dim;
     font-weight: 700;
@@ -240,50 +261,38 @@ box:hover > #custom-start { color: @cyan; }
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 14px 14px;
+    background-size: 16px 16px;
 }
 
-/* recording shows only while the screen is captured: crit, the one live state a glance must never miss */
 #custom-record { color: @crit; background-image: -gtk-recolor(url("icons/record-symbolic.svg")); }
-
-/* night light: automatic (the schedule) rests; "warm now" is held by hand, an action, so orange;
-   off is faded */
 #custom-nightlight { background-image: -gtk-recolor(url("icons/moon-symbolic.svg")); }
 #custom-nightlight.warm { color: @orange; }
 #custom-nightlight.off { color: alpha(@dim, 0.5); }
-
 #custom-wallpaper { background-image: -gtk-recolor(url("icons/wallpaper-symbolic.svg")); }
 
-/* bluetooth: the icon alone, or the icon and the connection count in cyan while connected (a
-   link is telemetry); off has its own glyph */
 #bluetooth {
     background-image: -gtk-recolor(url("icons/bt-symbolic.svg"));
     -gtk-icon-palette: success currentColor;
 }
-#bluetooth.connected { padding-left: 25px; background-position: 7px center; color: @cyan; }
+#bluetooth.connected { padding-left: 27px; background-position: 7px center; color: @cyan; }
 #bluetooth.off, #bluetooth.disabled, #bluetooth.no-controller {
     background-image: -gtk-recolor(url("icons/bt-off-symbolic.svg"));
 }
 
-/* the bell: alone at rest, the icon and the count in magenta while notifications are held (other
-   people's messages), bell-off under do-not-disturb, crit with a dot while a critical one is held */
 #custom-notifications { background-image: -gtk-recolor(url("icons/bell-symbolic.svg")); }
-#custom-notifications.unread { padding-left: 25px; background-position: 7px center; color: @magenta; }
+#custom-notifications.unread { padding-left: 27px; background-position: 7px center; color: @magenta; }
 #custom-notifications.dnd { background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")); }
 #custom-notifications.critical {
     color: @crit;
     background-image: -gtk-recolor(url("icons/bell-symbolic.svg")), -gtk-recolor(url("icons/dot-symbolic.svg"));
     background-position: 7px center, right 5px;
-    background-size: 14px 14px, 5px 5px;
+    background-size: 16px 16px, 5px 5px;
     -gtk-icon-palette: error @crit;
 }
 #custom-notifications.dnd.critical {
     background-image: -gtk-recolor(url("icons/bell-off-symbolic.svg")), -gtk-recolor(url("icons/dot-symbolic.svg"));
 }
 
-/* power ends the session, so it reads apart by place: the corner, 7px further in than the rest.
-   It is text at rest and turns crit only under the pointer, where the color says what the click
-   would do. */
 #custom-power {
     margin-left: 4px;
     margin-right: 7px;
@@ -292,65 +301,45 @@ box:hover > #custom-start { color: @cyan; }
 }
 box:hover > #custom-power { color: @crit; background-color: alpha(@crit, 0.16); box-shadow: inset 0 -1px 0 @crit; }
 
-/* the tray items carry their own spacing: each anchors its tooltip to its own allocation */
 #tray { margin: 0; padding: 0; }
 #tray > * { padding: 0 6px; }
 
-/* ---------------------------------------------------------------- the media bar
-   The floor of the viewport (ref ribbons.svg): a 1px cyan rule on its top edge, facing the
-   status bar's ruler; the XYZ axis triad; the two ribbons (waybar-ribbons draws them in GL from
-   the CLUT, the floor in grid, the sparks in text); the player; the CLUT key in the corner. */
-window#waybar.bottom > box {
-    background-color: @bar;
-    box-shadow: inset 0 1px 0 alpha(@cyan, 0.45);
-}
-
-/* the triad: X orange (action), Y green, Z cyan (chrome), the origin in text; 40px, the width of
-   the λ above it */
+/* ---------------------------------------------------------------- bottom media bar */
 #custom-triad {
-    min-width: 40px;
-    min-height: 30px;
+    min-width: 48px;
+    min-height: 38px;
     margin: 0;
     padding: 0;
     color: @text;
     background-image: -gtk-recolor(url("icons/triad-symbolic.svg"));
     background-repeat: no-repeat;
-    background-position: 0 0;
+    background-position: center;
     background-size: 40px 30px;
     -gtk-icon-palette: warning @orange, success @green, error @cyan;
 }
 
-/* the CLUT key: the ribbons' 16 colors, low at the bottom, 5x16 in a 28px corner */
 #custom-clut {
-    min-width: 28px;
-    min-height: 30px;
+    min-width: 32px;
+    min-height: 38px;
     margin: 0;
     padding: 0;
     background-image: linear-gradient(to top,
-        @clut0 1px, @clut1 1px, @clut1 2px, @clut2 2px,
-        @clut2 3px, @clut3 3px, @clut3 4px, @clut4 4px,
-        @clut4 5px, @clut5 5px, @clut5 6px, @clut6 6px,
-        @clut6 7px, @clut7 7px, @clut7 8px, @clut8 8px,
-        @clut8 9px, @clut9 9px, @clut9 10px, @clut10 10px,
-        @clut10 11px, @clut11 11px, @clut11 12px, @clut12 12px,
-        @clut12 13px, @clut13 13px, @clut13 14px, @clut14 14px,
-        @clut14 15px, @clut15 15px, @clut15 16px);
-    background-repeat: no-repeat;
-    background-position: 12px 7px;
-    background-size: 5px 16px;
-}
-
-/* the player: prev and next cyan at 70% (chrome), play orange (the action; pause while playing),
-   the title in text bold (ribbons.svg), the artist magenta after a 5x1 cyan dash, the time cyan.
-   Each part is a 20px key like the status bar's chips, so hover reads the same on both bars: a
-   button is its icon with 4px each side, centered; prev starts 12px in from the left ribbon, the
-   time ends 12px before the right one. */
-#mpris { min-height: 20px; margin: 5px 0; padding: 0 4px; font-feature-settings: "tnum"; }
-#mpris.prev, #mpris.play, #mpris.next {
-    min-width: 6px;
+        @clut0 0%, @clut1 6.25%, @clut2 12.5%, @clut3 18.75%,
+        @clut4 25%, @clut5 31.25%, @clut6 37.5%, @clut7 43.75%,
+        @clut8 50%, @clut9 56.25%, @clut10 62.5%, @clut11 68.75%,
+        @clut12 75%, @clut13 81.25%, @clut14 87.5%, @clut15 100%);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 6px 10px;
+    background-size: 6px 22px;
+}
+
+/* transport buttons: play uses signal (reduced orange) */
+#mpris { min-height: 24px; margin: 8px 0 6px 0; padding: 0 5px; font-feature-settings: "tnum"; }
+#mpris.prev, #mpris.play, #mpris.next {
+    min-width: 7px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 7px 11px;
 }
 #mpris.prev {
     margin-left: 12px;
@@ -358,10 +347,10 @@ window#waybar.bottom > box {
     background-image: -gtk-recolor(url("icons/prev-symbolic.svg"));
 }
 #mpris.play {
-    min-width: 7px;
-    color: @orange;
+    min-width: 8px;
+    color: @signal;
     background-image: -gtk-recolor(url("icons/play-symbolic.svg"));
-    background-size: 7px 10px;
+    background-size: 8px 11px;
 }
 #mpris.play.playing { background-image: -gtk-recolor(url("icons/pause-symbolic.svg")); }
 #mpris.next {
@@ -369,13 +358,38 @@ window#waybar.bottom > box {
     color: alpha(@cyan, 0.7);
     background-image: -gtk-recolor(url("icons/next-symbolic.svg"));
 }
-#mpris.title { color: @text; font-weight: 700; }
-#mpris.artist {
-    padding-left: 17px;
-    color: @magenta;
-    background-image: linear-gradient(alpha(@cyan, 0.55), alpha(@cyan, 0.55));
+
+/* player text + 1px cyan playback progress rail along bottom edge (.p0..p20) */
+#custom-player {
+    min-height: 24px;
+    margin: 8px 12px 6px 0;
+    padding: 0 6px 2px 6px;
+    font-feature-settings: "tnum";
     background-repeat: no-repeat;
-    background-position: 6px center;
-    background-size: 5px 1px;
+    background-position: left bottom;
+    background-size: 100% 1px;
+    background-image: linear-gradient(to right, alpha(@cyan, 0.22), alpha(@cyan, 0.22));
 }
-#mpris.time { margin-left: 8px; margin-right: 12px; color: @cyan; }
+#custom-player.paused { opacity: 0.75; }
+box:hover > #custom-player { background-color: alpha(@cyan, 0.14); }
+#custom-player.p0  { background-image: linear-gradient(to right, @cyan 0%, alpha(@cyan, 0.22) 0%); }
+#custom-player.p1  { background-image: linear-gradient(to right, @cyan 5%, alpha(@cyan, 0.22) 5%); }
+#custom-player.p2  { background-image: linear-gradient(to right, @cyan 10%, alpha(@cyan, 0.22) 10%); }
+#custom-player.p3  { background-image: linear-gradient(to right, @cyan 15%, alpha(@cyan, 0.22) 15%); }
+#custom-player.p4  { background-image: linear-gradient(to right, @cyan 20%, alpha(@cyan, 0.22) 20%); }
+#custom-player.p5  { background-image: linear-gradient(to right, @cyan 25%, alpha(@cyan, 0.22) 25%); }
+#custom-player.p6  { background-image: linear-gradient(to right, @cyan 30%, alpha(@cyan, 0.22) 30%); }
+#custom-player.p7  { background-image: linear-gradient(to right, @cyan 35%, alpha(@cyan, 0.22) 35%); }
+#custom-player.p8  { background-image: linear-gradient(to right, @cyan 40%, alpha(@cyan, 0.22) 40%); }
+#custom-player.p9  { background-image: linear-gradient(to right, @cyan 45%, alpha(@cyan, 0.22) 45%); }
+#custom-player.p10 { background-image: linear-gradient(to right, @cyan 50%, alpha(@cyan, 0.22) 50%); }
+#custom-player.p11 { background-image: linear-gradient(to right, @cyan 55%, alpha(@cyan, 0.22) 55%); }
+#custom-player.p12 { background-image: linear-gradient(to right, @cyan 60%, alpha(@cyan, 0.22) 60%); }
+#custom-player.p13 { background-image: linear-gradient(to right, @cyan 65%, alpha(@cyan, 0.22) 65%); }
+#custom-player.p14 { background-image: linear-gradient(to right, @cyan 70%, alpha(@cyan, 0.22) 70%); }
+#custom-player.p15 { background-image: linear-gradient(to right, @cyan 75%, alpha(@cyan, 0.22) 75%); }
+#custom-player.p16 { background-image: linear-gradient(to right, @cyan 80%, alpha(@cyan, 0.22) 80%); }
+#custom-player.p17 { background-image: linear-gradient(to right, @cyan 85%, alpha(@cyan, 0.22) 85%); }
+#custom-player.p18 { background-image: linear-gradient(to right, @cyan 90%, alpha(@cyan, 0.22) 90%); }
+#custom-player.p19 { background-image: linear-gradient(to right, @cyan 95%, alpha(@cyan, 0.22) 95%); }
+#custom-player.p20 { background-image: linear-gradient(to right, @cyan 100%, alpha(@cyan, 0.22) 100%); }

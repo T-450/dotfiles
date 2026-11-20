@@ -1,52 +1,34 @@
 /* waybar colors from {{name}} (palette {{slug}}); rendered by theme from colors.css.tmpl, never edit. */
-/* "Viewport": one role set for both bars (top status, bottom media). Each hue has one job:
-   cyan = chrome and telemetry, text = the one fact in focus, orange = action, magenta = someone
-   else's state, warn/crit = level. Every role is legible on bg_desktop, so on the darker bar too. */
+/* "Viewport": one shared role set (vp_*) computed once in theme for dark and light palettes. */
+@define-color bar      {{vp_bar}};
+@define-color text     {{vp_text}};
+@define-color dim      {{vp_dim}};
+@define-color cyan     {{vp_cyan}};
+@define-color magenta  {{vp_magenta}};
+@define-color orange   {{vp_orange}};
+@define-color green    {{vp_green}};
+@define-color warn     {{vp_warn}};
+@define-color crit     {{vp_crit}};
+@define-color signal   {{vp_signal}};
+@define-color grid     {{vp_grid}};
 
-/* the bars: near-black on a dark palette, the desktop itself on a light one, where a darker bar
-   would sit under type made legible on the desktop. prefer_dark is 1 or 0, so GTK's mix() picks. */
-@define-color bar      mix({{bg_desktop}}, {{bg_desktop|mix:shadow:0.6}}, {{prefer_dark}});
-
-/* type: text = values, occupied tags, the focused window, the time, the track title; dim = what
-   is empty, off or in the background (empty tags, other windows, icons at rest, muted, offline) */
-@define-color text     {{fg_editor|mix:fg_bright:0.78|legible:bg_desktop}};
-@define-color dim      {{fg_editor|mix:fg_muted:0.6|legible:bg_desktop}};
-
-/* cyan = chrome and telemetry: chip labels and values, rules, ruler, day and date, prev/next,
-   track time, window state, hover, the triad's Z axis */
-@define-color cyan     {{ansi6|legible:bg_desktop}};
-/* magenta = held notifications, the artist */
-@define-color magenta  {{ansi5|legible:bg_desktop}};
-/* orange = action: an armed key mode, night light held warm, play, the triad's X axis */
-@define-color orange   {{warning|mix:error:0.4|legible:bg_desktop}};
-/* green = charging, the triad's Y axis */
-@define-color green    {{success|legible:bg_desktop}};
-/* warn and crit = level blocks (type in bar); crit also urgent tags, recording, power hover */
-@define-color warn     {{warning|legible:bg_desktop}};
-@define-color crit     {{error|legible:bg_desktop}};
-/* signal = the viewed tag (a block, its number in bar) and the focused window's underline */
-@define-color signal   {{accent|legible:bg_desktop}};
-/* grid = the desktop's dot grid, the ribbons' floor */
-@define-color grid     {{ansi4}};
-
-/* CLUT: 16 steps by energy, blue to red through cyan, green, yellow and orange. The ribbons
-   (waybar-ribbons reads these by name) and the media bar's legend. */
-@define-color clut0    {{ansi4}};
-@define-color clut1    {{ansi4|mix:ansi6:0.33}};
-@define-color clut2    {{ansi4|mix:ansi6:0.67}};
-@define-color clut3    {{ansi6}};
-@define-color clut4    {{ansi6|mix:success:0.33}};
-@define-color clut5    {{ansi6|mix:success:0.67}};
-@define-color clut6    {{success}};
-@define-color clut7    {{success|mix:warning:0.33}};
-@define-color clut8    {{success|mix:warning:0.67}};
-@define-color clut9    {{warning}};
-@define-color clut10   {{warning|mix:error:0.133}};
-@define-color clut11   {{warning|mix:error:0.267}};
-@define-color clut12   {{warning|mix:error:0.4}};
-@define-color clut13   {{warning|mix:error:0.6}};
-@define-color clut14   {{warning|mix:error:0.8}};
-@define-color clut15   {{error}};
+/* CLUT: 16 steps by energy (read by name by waybar-ribbons and the media bar's CLUT legend) */
+@define-color clut0    {{vp_clut0}};
+@define-color clut1    {{vp_clut1}};
+@define-color clut2    {{vp_clut2}};
+@define-color clut3    {{vp_clut3}};
+@define-color clut4    {{vp_clut4}};
+@define-color clut5    {{vp_clut5}};
+@define-color clut6    {{vp_clut6}};
+@define-color clut7    {{vp_clut7}};
+@define-color clut8    {{vp_clut8}};
+@define-color clut9    {{vp_clut9}};
+@define-color clut10   {{vp_clut10}};
+@define-color clut11   {{vp_clut11}};
+@define-color clut12   {{vp_clut12}};
+@define-color clut13   {{vp_clut13}};
+@define-color clut14   {{vp_clut14}};
+@define-color clut15   {{vp_clut15}};
 
 /* the selected text in tray menus */
 @define-color sel      {{selection_bg}};

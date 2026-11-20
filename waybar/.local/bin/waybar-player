@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# waybar-player: print active MPRIS track + quantized progress class (.p0..p20) as waybar JSON.
+# Reads Viewport role colors from ~/.config/theme/colors.sh (no color literals). Hides when idle.
+# usage: waybar-player
+set -uo pipefail
+
+colors=${XDG_CONFIG_HOME:-$HOME/.config}/theme/colors.sh
+if [[ -r $colors ]]; then
+	# shellcheck source=/dev/null
+	. "$colors"
+fi
+c_text=${THEME_VP_TEXT:-${THEME_FG_BRIGHT:-}}
+c_magenta=${THEME_VP_MAGENTA:-${THEME_ACCENT:-}}
+c_cyan=${THEME_VP_CYAN:-${THEME_LINK:-}}
+
+status=$(playerctl status 2>/dev/null) || { printf '{"text":"","class":[]}\n'; exit 0; }
+if [[ $status != Playing && $status != Paused ]]; then
+	printf '{"text":"","class":[]}\n'
+	exit 0
+fi
+
+meta=$(playerctl metadata --format $'{{title}}\t{{artist}}\t{{mpris:length}}\t{{playerName}}' 2>/dev/null) || {
+	printf '{"text":"","class":[]}\n'
+	exit 0
+}
+IFS=$'\t' read -r title artist len_us player <<<"$meta"
+[[ -n $title ]] || { printf '{"text":"","class":[]}\n'; exit 0; }
+
+pos_f=$(playerctl position 2>/dev/null || echo 0)
+pos=${pos_f%%.*}
+[[ $pos =~ ^[0-9]+$ ]] || pos=0
+len=0
+if [[ $len_us =~ ^[0-9]+$ ]] && ((len_us > 0)); then
+	len=$((len_us / 1000000))
+fi
+
+fmt_time() {
+	local s=$1
+	printf '%02d:%02d' $((s / 60)) $((s % 60))
+}
+
+esc() {
+	local s=$1
+	s=${s//&/&amp;}
+	s=${s//</&lt;}
+	s=${s//>/&gt;}
+	s=${s//\"/&quot;}
+	s=${s//\'/&apos;}
+	printf '%s' "$s"
+}
+
+trunc() {
+	local s=$1 max=$2
+	if ((${#s} > max)); then
+		printf '%s…' "${s:0:$((max - 1))}"
+	else
+		printf '%s' "$s"
+	fi
+}
+
+step=0
+if ((len > 0)); then
+	step=$((pos * 20 / len))
+	((step > 20)) && step=20
+	((step < 0)) && step=0
+	time_str="$(fmt_time "$pos")/$(fmt_time "$len")"
+else
+	time_str=$(fmt_time "$pos")
+fi
+
+short_title=$(esc "$(trunc "$title" 24)")
+short_artist=$(esc "$(trunc "$artist" 16)")
+full_title=$(esc "$title")
+full_player=$(esc "${player:-player}")
+
+text="<span foreground='${c_text}' weight='bold'>${short_title}</span>"
+if [[ -n $short_artist ]]; then
+	text+=" <span foreground='${c_cyan}' fgalpha='55%'>-</span> <span foreground='${c_magenta}'>${short_artist}</span>"
+fi
+text+="  <span foreground='${c_cyan}'>${time_str}</span>"
+
+tip_name="<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>PLAYING</span>"
+tip_hint="<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click play/pause · Scroll ±5s · Middle prev · Right next</span>"
+tooltip="${tip_name}  ${full_title} · ${full_player}"$'\n'"${tip_hint}"
+
+cls="p${step}"
+if [[ $status == Paused ]]; then
+	jq -cn --arg text "$text" --arg tip "$tooltip" --arg cls "$cls" \
+		'{text: $text, tooltip: $tip, class: [$cls, "paused"]}'
+else
+	jq -cn --arg text "$text" --arg tip "$tooltip" --arg cls "$cls" \
+		'{text: $text, tooltip: $tip, class: [$cls]}'
+fi

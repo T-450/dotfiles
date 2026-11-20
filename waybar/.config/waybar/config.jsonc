@@ -1,17 +1,13 @@
-// waybar, "Viewport": two bars in one process (style.css), after SGI CAD workstations. The first
-// is the 30px status line at the top, with a ruler on its bottom edge. Left: the λ launcher, tags
-// 1-4 and tag 0 (the special tag), a rule, the layout glyph, the key mode and window state chips,
-// then the windows in view. Center: day, time, date. Right: recording, then the status chips
-// (network, volume, cpu, memory, temperature, disk, battery) as labels and values with a
-// registration cross between them, a rule, night light, wallpaper, bluetooth, the tray, the bell,
-// and power in the corner. The second is the media bar at the bottom (below).
-// Labels are Pango spans (12px Terminess capitals: a label, not a fact; the value is 14px bold).
-// A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
+// waybar, "Viewport": two 38px bars in one process (style.css), after SGI CAD workstations.
+// Top bar: live controls & wide window list (24px λ, tags 1-4 + bracketed [0], layout, keymode,
+// magenta winstate, windows | day/time/date | recording, NET, BRI, VOL, BAT/CHG, icons).
+// Bottom bar: optical floor with mirrored top ruler, triad, CPU/MEM flanks, GPU ribbons, player
+// with 1px cyan progress rail, TMP/DSK flanks, and the 16-step CLUT key.
 [
     {
         "layer": "top",
         "position": "top",
-        "height": 30,
+        "height": 38,
         "spacing": 0,
         "reload_style_on_change": true,
 
@@ -19,13 +15,12 @@
             "custom/win#1", "custom/win#2", "custom/win#3", "custom/win#4", "custom/win#5", "custom/win#6"],
         "modules-center": ["group/datetime"],
         "modules-right": [
-            "custom/record", "network", "pulseaudio", "cpu", "memory",
-            "custom/temperature", "disk", "battery", "custom/divider#tray", "custom/nightlight",
-            "custom/wallpaper", "bluetooth", "tray", "custom/notifications", "custom/power"
+            "custom/record", "network", "backlight", "pulseaudio", "battery",
+            "custom/divider#tray", "custom/nightlight", "custom/wallpaper",
+            "bluetooth", "tray", "custom/notifications", "custom/power"
         ],
 
-        // the λ is type; wallpaper and power are icons: the label is a zero-width space, style.css
-        // draws the SVG
+        // the 24px λ is crisp text (cyan on hover); icon-only buttons carry a zero-width space
         "custom/start": {
             "format": "λ",
             "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>LAUNCHER</span>  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER D</span>",
@@ -50,8 +45,7 @@
             "on-click-right": "toggle"
         },
 
-        // the drawable glyph (layouts/<symbol>-symbolic.svg); waybar-layout prints the symbol as the
-        // class and the tooltip (mango/layout has no tooltip support)
+        // the drawable glyph (layouts/<symbol>-symbolic.svg)
         "custom/layout": {
             "exec": "~/.local/bin/waybar-layout",
             "return-type": "json",
@@ -60,8 +54,7 @@
             "on-click": "mmsg dispatch switch_layout"
         },
 
-        // windows pinned, kept on top or minimized (states nothing else shows); hidden when none is.
-        // mango sends no event for them, so mango-state signals it (11); it also rechecks every 10s
+        // windows pinned, kept on top or minimized; hidden when none is
         "custom/winstate": {
             "exec": "~/.local/bin/waybar-winstate",
             "return-type": "json",
@@ -73,13 +66,10 @@
         // the open key mode (super+esc, super+n or super+m)
         "mango/keymode": {
             "format": "{mode}",
-            // waybar names mango's normal mode "default" and shows it; an empty format hides the chip
             "format-default": ""
         },
 
-        // the windows in view by title, one chip each (mango has no wlr-foreign-toplevel-management for
-        // waybar's taskbar). custom/windows is the hidden feed: it follows mango's window stream and
-        // signals the six slots (12); a click focuses that window, the wheel moves focus along
+        // the windows in view by title, one chip each
         "custom/windows": {
             "exec": "~/.local/bin/waybar-windows feed",
             "restart-interval": 1,
@@ -140,8 +130,7 @@
             "on-scroll-down": "mmsg dispatch focusstack,next"
         },
 
-        // tag 0, mango's special tag (super+0 shows it over the view, super+shift+0 sends a window);
-        // its state comes with the window list's signal
+        // tag 0, mango's special tag (super+0); visually bracketed apart from 1-4 in style.css
         "custom/special": {
             "exec": "~/.local/bin/waybar-windows special",
             "return-type": "json",
@@ -151,25 +140,19 @@
             "on-click": "mmsg dispatch toggle_special_tag"
         },
 
-        // day, time (calendar tooltip) and date; style.css styles the group's box as #datetime
+        // day, time (calendar tooltip) and date
         "group/datetime": {
             "orientation": "horizontal",
             "modules": ["custom/day", "clock#time", "custom/date"]
         },
-        // the day and date in capitals, labels around the time (waybar's clock can't upper-case)
         "custom/day": { "exec": "date '+%^a'", "interval": 60, "tooltip": false },
         "clock#time": {
             "format": "{:%H:%M}",
             "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt><span letter_spacing='0'>{calendar}</span></tt>"
         },
-        // waybar's clock zero-pads the day; a custom module keeps "12 NOV"
-        "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
+        "custom/date": { "exec": "date '+%-d %^b'", "interval": 60, "tooltip": false },
 
         "network": {
-            // a long SSID is cut at 16 characters before it reaches the centered clock (the full one is
-            // in the tooltip). The cut is fmt precision, not max-length: max-length makes GTK
-            // ellipsize, and an ellipsizing label with letter spacing drops its last glyph even when
-            // the text fits (Pango), so every SSID lost its last letter.
             "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {essid:.16}",
             "format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {ifname}",
             "format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>OFFLINE</span>",
@@ -178,6 +161,14 @@
             "tooltip-format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
             "tooltip-format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
             "tooltip-format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>NETWORK</span>  Offline\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>"
+        },
+        // laptop panel brightness; scroll uses osd-brightness bup/bdown (1% steps without OSD spam)
+        "backlight": {
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>BRI</span> {percent}",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BRIGHTNESS</span>  {percent}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Scroll ±1%</span>",
+            "align": 1,
+            "on-scroll-up": "~/.local/bin/osd-brightness bup",
+            "on-scroll-down": "~/.local/bin/osd-brightness bdown"
         },
         "pulseaudio": {
             "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>VOL</span> {volume}",
@@ -190,41 +181,7 @@
             "on-scroll-up": "pamixer -i 5",
             "on-scroll-down": "pamixer -d 5"
         },
-        "cpu": {
-            "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span> {usage}",
-            // full load is work, not a failure: a warning, no critical tier
-            "states": { "warning": 85 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>  {usage}%",
-            "align": 1
-        },
-        "memory": {
-            "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MEM</span> {percentage}",
-            "states": { "warning": 80, "critical": 90 },
-            "align": 1,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>MEMORY</span>  {percentage}%"
-        },
-        // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
-        // prints the label and its own classes: "high" from 80 C, "critical" from 95 C
-        "custom/temperature": {
-            "exec": "~/.local/bin/waybar-temperature",
-            "return-type": "json",
-            "interval": 5,
-            "align": 1,
-            "format": "{}"
-        },
-        "disk": {
-            "interval": 30,
-            "paths": ["/"],
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DSK</span> {percentage_used}",
-            "states": { "warning": 80, "critical": 90 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>DISK</span>  {percentage_used}%",
-            "align": 1
-        },
         "battery": {
-            // charge counts down: a warning at 20% and below, critical at 10% (style.css shows them on
-            // battery only)
             "states": { "warning": 20, "critical": 10 },
             "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>BAT</span> {capacity}",
             "format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CHG</span> {capacity}",
@@ -239,7 +196,6 @@
             "on-click": "wlogout -b 6 --protocol layer-shell"
         },
 
-        // wlsunset (wlsunset/.local/bin/nightlight): automatic rests, warm is held, off is faded
         "custom/nightlight": {
             "exec": "~/.local/bin/nightlight status",
             "return-type": "json",
@@ -250,7 +206,6 @@
             "on-click-right": "~/.local/bin/nightlight menu"
         },
 
-        // gpurecord prints a line only while recording; the zero-width label keeps it hidden otherwise
         "custom/record": {
             "exec": "~/.local/bin/gpurecord status",
             "signal": 8,
@@ -285,52 +240,97 @@
 
         "tray": { "icon-size": 14, "spacing": 0 },
 
-        // 1x12 rules (style.css paints them); zero-width labels keep the custom module alive
-        "custom/divider#left": { "format": "\u200b" },
-        "custom/divider#tray": { "format": "\u200b" }
+        "custom/divider#left": { "format": "\u200b", "tooltip": false },
+        "custom/divider#tray": { "format": "\u200b", "tooltip": false }
     },
-    // the media bar (style.css "the media bar"): the floor of the viewport. The XYZ axis triad,
-    // the left channel's ribbon, the player (prev, play, next, title, artist, time), the right
-    // channel's ribbon, and the CLUT key in the corner. The player hides while no player runs;
-    // the ribbons (waybar-ribbons, pkg/waybar-ribbons) lie flat in silence and fill the bar up
-    // to the player ("expand"). Every output gets one, like the status bar.
+    // the media & telemetry floor (38px, mirrored top ruler): triad, CPU+MEM, left ribbon, player
+    // with 1px cyan progress rail, right ribbon, TMP+DSK, CLUT key.
     {
         "layer": "top",
         "position": "bottom",
-        "height": 30,
+        "height": 38,
         "spacing": 0,
         "expand-left": true,
         "expand-right": true,
 
-        "modules-left": ["custom/triad", "cffi/ribbons#left"],
-        "modules-center": ["mpris#prev", "mpris#play", "mpris#next", "mpris#title", "mpris#artist", "mpris#time"],
-        "modules-right": ["cffi/ribbons#right", "custom/clut"],
+        "modules-left": [
+            "custom/triad", "custom/divider#bleft1", "cpu", "memory",
+            "custom/divider#bleft2", "cffi/ribbons#left"
+        ],
+        "modules-center": ["mpris#prev", "mpris#play", "mpris#next", "custom/player"],
+        "modules-right": [
+            "cffi/ribbons#right", "custom/divider#bright1", "custom/temperature", "disk",
+            "custom/divider#bright2", "custom/clut"
+        ],
 
-        // the axis triad and the CLUT key are drawn by style.css: zero-width labels with a tooltip
         "custom/triad": {
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>AXES</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>X orange · Y green · Z cyan · origin in the text color</span>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>AXES</span>  Keybindings  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER /</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens cheatsheet</span>",
+            "on-click": "~/.local/bin/mango-keys"
         },
         "custom/clut": {
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CLUT</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>The ribbons' 16 energy colors, low at the bottom, high at the top</span>"
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CLUT</span>  Palette picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER SHIFT T</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>16 energy steps · Click switches palette</span>",
+            "on-click": "~/.local/bin/theme pick"
+        },
+
+        // hardware telemetry flanks (CLUT tiers: cyan idle -> green active -> warn -> crit)
+        "cpu": {
+            "interval": 5,
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span> {usage}",
+            "states": { "active": 50, "warning": 85 },
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>  {usage}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens btop</span>",
+            "align": 1,
+            "on-click": "ghostty --class=com.mitchellh.ghostty-float -e btop"
+        },
+        "memory": {
+            "interval": 5,
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MEM</span> {percentage}",
+            "states": { "active": 50, "warning": 80, "critical": 90 },
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>MEMORY</span>  {percentage}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens btop</span>",
+            "align": 1,
+            "on-click": "ghostty --class=com.mitchellh.ghostty-float -e btop"
+        },
+        "custom/temperature": {
+            "exec": "~/.local/bin/waybar-temperature",
+            "return-type": "json",
+            "interval": 5,
+            "align": 1,
+            "format": "{}",
+            "on-click": "ghostty --class=com.mitchellh.ghostty-float -e btop"
+        },
+        "disk": {
+            "interval": 30,
+            "paths": ["/"],
+            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DSK</span> {percentage_used}",
+            "states": { "active": 50, "warning": 80, "critical": 90 },
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>DISK</span>  {percentage_used}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens Thunar</span>",
+            "align": 1,
+            "on-click": "thunar /"
         },
 
         "cffi/ribbons#left": { "module_path": "/usr/lib/waybar-ribbons/ribbons.so", "channel": "left", "expand": true },
         "cffi/ribbons#right": { "module_path": "/usr/lib/waybar-ribbons/ribbons.so", "channel": "right", "expand": true },
 
-        // the player: waybar's mpris module once per part, so each part has its own color.
-        // Buttons are zero-width labels with an SVG (style.css; play shows pause while playing);
-        // a click on any part but prev and next plays or pauses
+        // transport buttons stay native mpris; custom/player adds the 1px cyan progress rail & scroll seek
         "mpris#prev": { "format": "\u200b", "tooltip": false, "on-click": "playerctl previous" },
         "mpris#play": { "format": "\u200b", "tooltip": false },
         "mpris#next": { "format": "\u200b", "tooltip": false, "on-click": "playerctl next" },
-        "mpris#title": {
-            "format": "{title}",
-            "title-len": 20,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>PLAYING</span>  {title} · {player}\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
+        "custom/player": {
+            "exec": "~/.local/bin/waybar-player",
+            "return-type": "json",
+            "interval": 1,
+            "format": "{}",
+            "on-click": "playerctl play-pause",
+            "on-click-middle": "playerctl previous",
+            "on-click-right": "playerctl next",
+            "on-scroll-up": "playerctl position 5+",
+            "on-scroll-down": "playerctl position 5-"
         },
-        "mpris#artist": { "format": "{artist}", "artist-len": 14, "tooltip": false },
-        "mpris#time": { "format": "{position}/{length}", "interval": 1, "tooltip": false }
+
+        "custom/divider#bleft1": { "format": "\u200b", "tooltip": false },
+        "custom/divider#bleft2": { "format": "\u200b", "tooltip": false },
+        "custom/divider#bright1": { "format": "\u200b", "tooltip": false },
+        "custom/divider#bright2": { "format": "\u200b", "tooltip": false }
     }
 ]

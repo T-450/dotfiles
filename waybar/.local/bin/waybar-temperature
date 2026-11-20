@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # waybar-temperature: print the CPU package temperature as one waybar JSON line (custom/temperature)
-# Waybar's own temperature module ignores "states", so the classes come from here: "high" from
-# 80 C, "critical" in its place from 95 C (the package throttles at 100). The text is the chip's
-# TMP label and the degrees, like the other status chips.
+# Waybar's own temperature module ignores "states", so the classes come from here: "active" from
+# 60 C (green), "high" from 80 C (warn block), "critical" from 95 C (crit block; throttles at 100).
 
-# the bar's label and the tooltip's NAME (see docs/apps/waybar.md)
 label="<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>TMP</span>"
 name="<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>TEMPERATURE</span>  "
+hint="\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens btop</span>"
 
 for sensor in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 	[[ -r $sensor ]] || continue
@@ -16,7 +15,7 @@ for sensor in /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp*_label; do
 done
 
 if [[ -z ${milli:-} ]]; then
-	printf '{"text": "%s n/a", "class": [], "tooltip": "%sn/a"}\n' "$label" "$name"
+	printf '{"text": "%s n/a", "class": [], "tooltip": "%sn/a%s"}\n' "$label" "$name" "$hint"
 	exit 0
 fi
 
@@ -29,5 +28,8 @@ if ((c >= 95)); then
 elif ((c >= 80)); then
 	class='"high"'
 	tip+=" · high"
+elif ((c >= 60)); then
+	class='"active"'
+	tip+=" · warm"
 fi
-printf '{"text": "%s %d", "class": [%s], "tooltip": "%s%s"}\n' "$label" "$c" "$class" "$name" "$tip"
+printf '{"text": "%s %d", "class": [%s], "tooltip": "%s%s%s"}\n' "$label" "$c" "$class" "$name" "$tip" "$hint"
