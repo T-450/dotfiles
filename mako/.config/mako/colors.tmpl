@@ -6,13 +6,13 @@
 background-color={{bg_widget|hex:d9}}
 text-color={{fg_text}}
 border-color={{ansi6|mix:bg_widget:0.5}}
-progress-color=over {{selection_bg}}
+progress-color=over {{bg_hover}}
 format=<b><span foreground="{{fg_bright|legible:bg_widget}}">%s</span></b>\n%b
 
 [urgency=low]
-text-color={{fg_secondary}}
+text-color={{fg_secondary|legible:bg_widget}}
 border-color={{border_inactive}}
-format=<b><span foreground="{{syn_comment|legible:bg_widget}}">%s</span></b>\n%b
+format=<b><span foreground="{{fg_muted|legible:bg_widget}}">%s</span></b>\n%b
 
 [urgency=critical]
 border-color={{error}}

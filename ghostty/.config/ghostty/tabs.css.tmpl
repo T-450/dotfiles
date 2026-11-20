@@ -4,7 +4,7 @@
    config.ghostty (gtk-custom-css); `theme set` reloads it with the config. */
 tabbar .box {
 	padding: 5px 0 0;
-	background: {{bg_surface}};
+	background: {{bg_desktop}};
 	box-shadow: none;
 }
 tabbar tabbox {
@@ -26,10 +26,14 @@ tabbar tab {
 	min-height: 22px;
 	padding: 0 4px;
 	border-radius: 0;
-	background: {{bg_hover}};
-	color: {{fg_secondary|legible:bg_hover}};
+	background: {{bg_surface}};
+	color: {{fg_secondary|legible:bg_surface}};
 	font-family: "Lilex Nerd Font";
 	font-size: 12pt;
+}
+tabbar tab:hover {
+	background: {{bg_hover}};
+	color: {{fg_secondary|legible:bg_hover}};
 }
 tabbar tab:selected {
 	background: {{selection_bg}};

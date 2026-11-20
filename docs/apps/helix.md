@@ -86,7 +86,7 @@ To check a language, run `helix --health LANG` in a terminal. No language server
 **Rendered from the palette** (`theme`):
 
 - `helix/.config/helix/languages.toml.tmpl` → `helix/.config/helix/languages.toml`: `home`
-- `helix/.config/helix/themes/palette.toml.tmpl` → `helix/.config/helix/themes/palette.toml`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi9`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `diff_add`, `diff_change`, `diff_remove`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `info`, `name`, `selection_bg`, `selection_fg`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `term_bg`, `warning`
+- `helix/.config/helix/themes/palette.toml.tmpl` → `helix/.config/helix/themes/palette.toml`: `accent`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi9`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `diff_add`, `diff_change`, `diff_remove`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `info`, `name`, `selection_bg`, `selection_fg`, `syn_boolean`, `syn_comment`, `syn_constant`, `syn_function`, `syn_keyword`, `syn_number`, `syn_operator`, `syn_preproc`, `syn_special`, `syn_string`, `syn_type`, `term_bg`, `warning`
 
 **`reload.sh`** (run by `theme set`): running helix editors re-read config.toml and the rendered themes/palette.toml; helix reloads its config on SIGUSR1, as :config-reload does. The process is `helix` (the /usr/bin link's name), not `hx`, the binary it points to.
 <!-- end generated -->

@@ -20,9 +20,9 @@ gui:
       - "{{link}}"
       - bold
     optionsTextColor:
-      - "{{fg_secondary}}"
+      - "{{fg_secondary|legible:term_bg}}"
     selectedLineBgColor:
-      - "{{bg_hover}}"
+      - "{{bg_hover|mix:term_bg:0.35}}"
     cherryPickedCommitFgColor:
       - "{{badge|ink}}"
     cherryPickedCommitBgColor:
@@ -32,7 +32,7 @@ gui:
     markedBaseCommitBgColor:
       - "{{warning}}"
     unstagedChangesColor:
-      - "{{error}}"
+      - "{{error|legible:bg_hover}}"
 git:
   # delta (git/packages) in the palette's variant; its syntax theme (ansi) comes from git's config
   diffRenderers:

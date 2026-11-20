@@ -25,5 +25,5 @@ The AUR package checks wlogout's signed release against its maintainer's key (`v
 
 **Rendered from the palette** (`theme`):
 
-- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `accent`, `bg_desktop`, `bg_widget`, `fg_secondary`, `fg_text`, `name`, `selection_fg`, `slug`
+- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `accent`, `bg_desktop`, `bg_widget`, `fg_bright`, `fg_secondary`, `fg_text`, `name`, `slug`
 <!-- end generated -->
