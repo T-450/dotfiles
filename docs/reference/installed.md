@@ -13,7 +13,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | audio | `gst-plugin-pipewire` | 1:1.6.11-2 |
 | audio | `libpulse` | 17.0+r134+g77d25a1e6-2 |
 | audio | `rtkit` | 0.14-2 |
-| audio | `sox` | 14.8.0.1-1 |
+| audio | `sox` | 14.8.0.1-2 |
 | audio | `playerctl` | 2.4.1-5 |
 | audio | `cliamp` | 2.4.1-1 |
 | base | `base` | 3-3 |
@@ -78,7 +78,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | ghostty | `xdg-terminal-exec` | 0.14.4-1 |
 | git | `git` | 2.56.1-1 |
 | git | `github-cli` | 2.105.0-1 |
-| git | `git-delta` | 0.21.1-1 |
+| git | `git-delta` | 0.21.2-1 |
 | greeter | `greetd` | 0.10.3-2 |
 | greeter | `sysc-greet-mango` | 1.3.1-2 |
 | greeter | `jq` | 1.8.2-1 |
@@ -91,8 +91,10 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.1.u4-1 |
 | hyprlock | `hyprlock` | 0.9.7-2 |
-| imv | `imv` | 5.0.1-2 |
+| imv | `imv` | 5.0.1-3 |
 | lazygit | `lazygit` | 0.66.3-1 |
+| llama-cpp | `llama-cpp` | 0.9.0-1 |
+| llama-cpp | `ggml-vulkan` | 0.29.0-2 |
 | mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.6-1 |
 | mango | `wlr-randr` | 0.5.0-1 |
@@ -101,7 +103,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mise | `mise` | 2026.11.10-1 |
 | mousepad | `mousepad` | 0.7.0-1 |
 | mousepad | `gspell` | 1.14.5-1 |
-| mpv | `mpv` | 1:0.42.0-2 |
+| mpv | `mpv` | 1:0.42.0-3 |
 | mpv | `mpv-mpris` | 1.3-1 |
 | mpv | `yt-dlp` | 2026.10.26-1 |
 | mpv | `mpv-uosc` | 5.13.0-1 |
@@ -110,7 +112,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | pi | `pi-coding-agent-bin` | 1.5.2-1 |
 | pi | `ripgrep` | 15.2.0-1 |
 | pi | `python-pillow` | 13.0.0-1 |
-| pi | `ffmpeg` | 2:9.0.2-5 |
+| pi | `ffmpeg` | 2:9.1-1 |
 | plymouth | `plymouth` | 26.134.222-3 |
 | plymouth | `plymouth-i_use_arch_btw-git` | r5.5762e93-1 |
 | podman | `podman` | 6.2.0-1 |
@@ -134,7 +136,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | screenshot | `slurp` | 1.5.0-2 |
 | screenshot | `wl-clipboard` | 1:2.3.0-1 |
 | swaybg | `swaybg` | 1.2.2-1 |
-| swaybg | `imagemagick` | 7.1.2.35-1 |
+| swaybg | `imagemagick` | 7.1.2.36-2 |
 | swayidle | `swayidle` | 1.9.1-1 |
 | swayidle | `dimland-git` | r40.76c653f-1 |
 | swayosd | `swayosd` | 0.3.2-2 |
@@ -145,7 +147,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thinkpad | `intel-ucode` | 20261110-1 |
 | thinkpad | `sof-firmware` | 2026.09.2-1 |
 | thinkpad | `intel-media-driver` | 26.3.5-1 |
-| thinkpad | `vulkan-intel` | 1:26.3.1-1 |
+| thinkpad | `vulkan-intel` | 1:26.3.1-2 |
 | thinkpad | `fprintd` | 1.94.5-2 |
 | thinkpad | `fwupd` | 2.1.10-1 |
 | thinkpad | `bolt` | 0.9.11-3 |
@@ -177,9 +179,9 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | vim | `vim` | 9.2.1178-1 |
 | vim | `yamllint` | 1.38.0-1 |
 | way-displays | `way-displays` | 2.0.1-1 |
-| waybar | `waybar` | 0.16.0-1 |
+| waybar | `waybar` | 0.16.0-2 |
 | waybar | `pamixer` | 1.6-4 |
-| waybar | `cava` | 1.0.0-1 |
+| waybar | `cava` | 1.0.0-2 |
 | waypaper | `waypaper` | 2.9-1 |
 | wlogout | `wlogout` | 1.2.2-0 |
 | wlsunset | `wlsunset` | 0.4.0-1 |
