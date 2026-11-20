@@ -8,3 +8,4 @@ libpulse
 rtkit      # realtime scheduling for PipeWire/WirePlumber (fixes "RTKit error")
 sox
 playerctl  # media keys
+cliamp     # AUR: retro terminal music player (Winamp 2.x style)

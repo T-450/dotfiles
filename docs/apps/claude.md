@@ -19,7 +19,7 @@ Context and cost: the Bash tool runs bash (`CLAUDE_CODE_SHELL`), because zsh's `
 
 **Rendered from the palette** (`theme`):
 
-- `claude/.claude/themes/mango.json.tmpl` → `claude/.claude/themes/mango.json`: `accent`, `ansi13`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `success`, `term_bg`, `variant`, `warning`
+- `claude/.claude/themes/mango.json.tmpl` → `claude/.claude/themes/mango.json`: `accent`, `ansi13`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `success`, `term_bg`, `variant`, `warning`
 
 **`setup.sh`** (run by `install.sh --setup`): register mise's MCP server for every Claude Code session (user scope, kept in ~/.claude.json, which Claude Code owns, so it can't be a linked file). No --cd: Claude Code starts the server in the session's directory, so it describes whichever project the session is in.
 

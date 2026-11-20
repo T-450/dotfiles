@@ -78,28 +78,28 @@
 "ui.text.inactive" = "muted"
 "ui.text.info" = "text"
 "ui.text.directory" = "blue"
-"ui.cursor" = { fg = "ground", bg = "secondary" }
-"ui.cursor.primary" = { fg = "ground", bg = "accent" }
-"ui.cursor.primary.insert" = { fg = "ground", bg = "mint" }
-"ui.cursor.primary.select" = { fg = "ground", bg = "purple" }
+"ui.cursor" = { fg = "secondary-ink", bg = "secondary" }
+"ui.cursor.primary" = { fg = "accent-ink", bg = "accent" }
+"ui.cursor.primary.insert" = { fg = "mint-ink", bg = "mint" }
+"ui.cursor.primary.select" = { fg = "purple-ink", bg = "purple" }
 "ui.cursor.match" = { fg = "bright", bg = "border", modifiers = ["bold"] }
-"ui.cursorline.primary" = { bg = "surface" }
+"ui.cursorline.primary" = { bg = "cursorline" }
 "ui.selection" = { bg = "selection-dim" }
-"ui.selection.primary" = { bg = "selection" }
+"ui.selection.primary" = { fg = "selection-text", bg = "selection" }
 "ui.highlight" = { bg = "hover" }
 "ui.highlight.frameline" = { bg = "hover" }
 "ui.linenr" = "disabled"
 "ui.linenr.selected" = "secondary"
 "ui.gutter" = { bg = "ground" }
-"ui.statusline" = { fg = "text", bg = "surface" }
+"ui.statusline" = { fg = "text", bg = "desktop" }
 "ui.statusline.inactive" = { fg = "muted", bg = "ground" }
-"ui.statusline.normal" = { fg = "ground", bg = "accent", modifiers = ["bold"] }
-"ui.statusline.insert" = { fg = "ground", bg = "mint", modifiers = ["bold"] }
-"ui.statusline.select" = { fg = "ground", bg = "purple", modifiers = ["bold"] }
+"ui.statusline.normal" = { fg = "accent-ink", bg = "accent", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "mint-ink", bg = "mint", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "purple-ink", bg = "purple", modifiers = ["bold"] }
 "ui.statusline.separator" = "border"
-"ui.bufferline" = { fg = "muted", bg = "surface" }
+"ui.bufferline" = { fg = "muted", bg = "desktop" }
 "ui.bufferline.active" = { fg = "bright", bg = "ground", underline = { color = "accent", style = "line" } }
-"ui.bufferline.background" = { bg = "surface" }
+"ui.bufferline.background" = { bg = "desktop" }
 "ui.breadcrumb" = "secondary"
 "ui.breadcrumb.separator" = "disabled"
 "ui.popup" = { fg = "text", bg = "widget" }
@@ -116,7 +116,7 @@
 "ui.virtual" = "disabled"
 "ui.virtual.whitespace" = "hairline"
 "ui.virtual.indent-guide" = "hairline"
-"ui.virtual.ruler" = { bg = "surface" }
+"ui.virtual.ruler" = { bg = "cursorline" }
 "ui.virtual.wrap" = "disabled"
 "ui.virtual.fold-decoration" = "muted"
 "ui.virtual.inlay-hint" = { fg = "disabled", modifiers = ["italic"] }
@@ -130,28 +130,34 @@ rainbow = ["secondary", "lilac", "sky", "mint-light", "yellow-light", "pink"]
 
 [palette]
 ground = "{{term_bg}}"
+desktop = "{{bg_desktop}}"
 surface = "{{bg_surface}}"
+cursorline = "{{bg_hover|mix:term_bg:0.5}}"
 widget = "{{bg_widget}}"
 hover = "{{bg_hover}}"
-hairline = "{{border_hairline}}"
+hairline = "{{term_bg|mix:fg_muted:0.25}}"
 border = "{{border_inactive}}"
 disabled = "{{fg_disabled}}"
 muted = "{{fg_muted|legible:term_bg}}"
-secondary = "{{fg_secondary}}"
+secondary = "{{fg_secondary|legible:term_bg}}"
+secondary-ink = "{{fg_secondary|legible:term_bg|ink}}"
 text = "{{fg_editor}}"
 bright = "{{fg_bright}}"
 accent = "{{accent}}"
+accent-ink = "{{accent|ink}}"
 selection = "{{selection_bg}}"
-selection-dim = "{{selection_bg|mix:term_bg:0.4}}"
+selection-dim = "{{selection_bg|mix:term_bg:0.75}}"
 selection-text = "{{selection_fg}}"
 error = "{{error|legible:term_bg}}"
 warning = "{{warning|legible:term_bg}}"
 purple = "{{ansi5|legible:term_bg}}"
+purple-ink = "{{ansi5|legible:term_bg|ink}}"
 lilac = "{{ansi13|legible:term_bg}}"
 blue = "{{ansi4|legible:term_bg}}"
 sky = "{{ansi12|legible:term_bg}}"
 cyan = "{{ansi6|legible:term_bg}}"
 mint = "{{ansi2|legible:term_bg}}"
+mint-ink = "{{ansi2|legible:term_bg|ink}}"
 mint-light = "{{ansi10|legible:term_bg}}"
 yellow = "{{ansi3|legible:term_bg}}"
 yellow-light = "{{ansi11|legible:term_bg}}"

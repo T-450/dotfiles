@@ -17,7 +17,7 @@ super+n r restores the last one, super+n d dismisses all, super+n z toggles do-n
 
 **Rendered from the palette** (`theme`):
 
-- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `ansi6`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`, `syn_comment`
+- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `ansi6`, `bg_hover`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_bright`, `fg_muted`, `fg_secondary`, `fg_text`, `name`, `slug`
 
 **User units** (enabled by `install.sh --units`): `mako.service`
 

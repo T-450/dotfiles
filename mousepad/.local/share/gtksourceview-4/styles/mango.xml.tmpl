@@ -9,16 +9,16 @@
   <style name="text"                  foreground="{{fg_editor}}" background="{{bg_desktop}}"/>
   <style name="selection"             foreground="{{selection_fg}}" background="{{selection_bg}}"/>
   <style name="selection-unfocused"   foreground="{{fg_text}}" background="{{bg_hover}}"/>
-  <style name="cursor"                foreground="{{term_cursor}}"/>
-  <style name="secondary-cursor"      foreground="{{fg_muted}}"/>
+  <style name="cursor"                foreground="{{term_cursor|legible:bg_desktop}}"/>
+  <style name="secondary-cursor"      foreground="{{fg_muted|legible:bg_desktop}}"/>
   <style name="current-line"          background="{{bg_surface}}"/>
-  <style name="line-numbers"          foreground="{{fg_muted}}" background="{{bg_desktop}}"/>
+  <style name="line-numbers"          foreground="{{fg_muted|legible:bg_desktop}}" background="{{bg_desktop}}"/>
   <style name="current-line-number"   foreground="{{fg_bright}}" background="{{bg_surface}}"/>
   <style name="right-margin"          foreground="{{border_inactive}}" background="{{bg_surface}}"/>
   <style name="background-pattern"    background="{{bg_surface}}"/>
   <style name="draw-spaces"           foreground="{{fg_disabled}}"/>
   <style name="bracket-match"         foreground="{{fg_bright}}" background="{{bg_hover}}" bold="true"/>
-  <style name="bracket-mismatch"      foreground="{{error}}" underline="true"/>
+  <style name="bracket-mismatch"      foreground="{{error|legible:bg_desktop}}" underline="true"/>
   <style name="search-match"          foreground="{{badge|ink}}" background="{{badge}}"/>
   <style name="map-overlay"           background="{{bg_hover}}"/>
 
@@ -39,7 +39,7 @@
   <style name="def:number"            foreground="{{syn_number|legible:bg_desktop}}"/>
   <style name="def:floating-point"    foreground="{{syn_number|legible:bg_desktop}}"/>
   <style name="def:preprocessor"      foreground="{{syn_preproc|legible:bg_desktop}}"/>
-  <style name="def:identifier"        foreground="{{syn_identifier}}"/>
+  <style name="def:identifier"        foreground="{{syn_identifier|legible:bg_desktop}}"/>
   <style name="def:net-address"       foreground="{{link|legible:bg_desktop}}" underline="true"/>
   <style name="def:error"             foreground="{{error|legible:bg_desktop}}" underline="error"/>
   <style name="def:warning"           foreground="{{warning|legible:bg_desktop}}"/>
