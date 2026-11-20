@@ -1,39 +1,64 @@
-/* wlogout. Colors: colors.css, rendered from the active palette by theme/theme. */
+/* wlogout, "Viewport" (SGI CAD): transparent outer layer framing a compact centered 6-cell opaque
+   @vp_bar CAD instrument strip with 1px cyan 45% grid rules, -gtk-recolor symbolic SVGs, Terminess
+   uppercase labels with key hints, cyan hover on safe actions and crit hover on shutdown/reboot. */
 @import "colors.css";
+
 * {
+    font-family: "Terminess Nerd Font";
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
     background-image: none;
     box-shadow: none;
+    text-shadow: none;
+    border-radius: 0;
 }
 
 window {
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 12pt;
-    color: @fg;
-    background-color: @desktop;
+    background-color: transparent;
+    color: @vp_text;
+}
+
+grid {
+    margin: 440px 300px;
+    background-color: @vp_bar;
+    border: 1px solid @vp_border;
 }
 
 button {
+    min-width: 140px;
+    min-height: 120px;
+    margin: 0;
+    padding: 78px 8px 14px 8px;
+    background-color: @vp_bar;
     background-repeat: no-repeat;
-    background-position: center;
-    background-size: 35%;
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    color: @muted;
-    text-shadow: none;
-    margin: 160px 8px;
+    background-position: center 28px;
+    background-size: 32px 32px;
+    border: none;
+    border-right: 1px solid @vp_border;
+    color: @vp_dim;
+    transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
 button:focus,
 button:hover {
-    background-color: @widget;
-    border-color: @accent;
-    color: @selfg;
+    background-color: @vp_hover;
+    box-shadow: inset 0 -2px 0 @vp_cyan;
+    color: @vp_text;
 }
 
-#lock      { background-image: image(url("./icons/lock.png")); }
-#logout    { background-image: image(url("./icons/logout.png")); }
-#suspend   { background-image: image(url("./icons/sleep.png")); }
-#shutdown  { background-image: image(url("./icons/power.png")); }
-#reboot    { background-image: image(url("./icons/restart.png")); }
-#hibernate { background-image: image(url("./icons/hibernate.png")); }
+#shutdown:focus,
+#shutdown:hover,
+#reboot:focus,
+#reboot:hover {
+    background-color: @vp_crit_bg;
+    box-shadow: inset 0 -2px 0 @vp_crit;
+    color: @vp_crit;
+}
+
+#lock      { background-image: -gtk-recolor(url("icons/lock-symbolic.svg")); }
+#logout    { background-image: -gtk-recolor(url("icons/logout-symbolic.svg")); }
+#suspend   { background-image: -gtk-recolor(url("icons/suspend-symbolic.svg")); }
+#hibernate { background-image: -gtk-recolor(url("icons/hibernate-symbolic.svg")); }
+#reboot    { background-image: -gtk-recolor(url("icons/reboot-symbolic.svg")); }
+#shutdown  { background-image: -gtk-recolor(url("icons/shutdown-symbolic.svg")); border-right: none; }

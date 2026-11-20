@@ -1,41 +1,36 @@
 {
     "label" : "lock",
     "action" : "pidof -q hyprlock || hyprlock &",
-    "text" : "  Lock   ",
+    "text" : "LOCK [L]",
     "keybind" : "l"
 }
-
 {
     "label" : "logout",
     "action" : "~/.local/bin/mango-quit",
-    "text" : " Logout  ",
+    "text" : "LOGOUT [M]",
     "keybind" : "m"
 }
-
-{
-    "label" : "shutdown",
-    "action" : "systemctl poweroff",
-    "text" : "Shutdown ",
-    "keybind" : "d"
-}
-
-{
-    "label" : "reboot",
-    "action" : "systemctl reboot",
-    "text" : " Reboot  ",
-    "keybind" : "r"
-}
-
 {
     "label" : "suspend",
     "action" : "systemctl suspend",
-    "text" : " Suspend ",
+    "text" : "SUSPEND [S]",
     "keybind" : "s"
 }
-
 {
     "label" : "hibernate",
     "action" : "systemctl hibernate",
-    "text" : "Hibernate",
+    "text" : "HIBERNATE [H]",
     "keybind" : "h"
+}
+{
+    "label" : "reboot",
+    "action" : "systemctl reboot",
+    "text" : "REBOOT [R]",
+    "keybind" : "r"
+}
+{
+    "label" : "shutdown",
+    "action" : "systemctl poweroff",
+    "text" : "SHUTDOWN [D]",
+    "keybind" : "d"
 }

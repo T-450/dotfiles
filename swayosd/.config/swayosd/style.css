@@ -1,41 +1,51 @@
-/* swayosd (volume/brightness OSD), styled like the mako toasts: flat widget
-   background, the inactive border, the fill in the editors' constant color. Colors: colors.css, rendered from
-   the active palette by theme/theme. Loaded with -s by swayosd.service. */
+/* swayosd, "Viewport" (SGI CAD): 0px opaque @vp_bar HUD, 1px cyan 45% ring, Terminess pixel type,
+   clean cyan telemetry meter over an 8px ruler-ticked trough. Loaded with -s by swayosd.service. */
 @import "colors.css";
 
 window#osd {
-	border-radius: 8px;
-	border: 1px solid @osd_border;
-	background: @osd_bg;
+	border-radius: 0;
+	border: 1px solid @vp_border;
+	background: @vp_bar;
+	box-shadow: none;
 }
-window#osd #container { margin: 14px 16px; }
-window#osd image,
-window#osd label { color: @osd_fg; }
+window#osd #container { margin: 12px 16px; }
+window#osd image { color: @vp_cyan; }
+window#osd label {
+	font-family: "Terminess Nerd Font";
+	font-size: 14px;
+	letter-spacing: 1px;
+	font-weight: 700;
+	font-feature-settings: "tnum";
+	color: @vp_text;
+}
 window#osd progressbar:disabled,
-window#osd image:disabled { opacity: 0.5; }
+window#osd image:disabled { color: @vp_dim; opacity: 0.6; }
 window#osd progressbar,
 window#osd segmentedprogress {
 	min-height: 6px;
-	border-radius: 4px;
+	border-radius: 0;
 	background: transparent;
 	border: none;
 }
 window#osd trough,
 window#osd segment {
 	min-height: inherit;
-	border-radius: inherit;
+	border-radius: 0;
 	border: none;
-	background: @osd_trough;
+	background-color: @vp_trough;
+	background-image: linear-gradient(90deg, @vp_tick_min 1px, transparent 1px);
+	background-size: 8px 6px;
+	background-repeat: repeat-x;
 }
 window#osd progress,
 window#osd segment.active {
 	min-height: inherit;
-	border-radius: inherit;
+	border-radius: 0;
 	border: none;
-	background: @osd_fill;
+	background-color: @vp_cyan;
+	background-image: none;
 }
-/* GTK's theme pulls the fill 1px past each end of a bordered trough (margin: 0 -1px); this trough
-   has no border, and the negative margin gives the fill a min width of -2 (a GtkGizmo warning). */
+/* keep margin: 0 so GTK doesn't pull the fill -1px past an unbordered trough (GtkGizmo warning) */
 window#osd progress { margin: 0; }
-window#osd segment { margin-left: 8px; }
+window#osd segment { margin-left: 4px; }
 window#osd segment:first-child { margin-left: 0; }
