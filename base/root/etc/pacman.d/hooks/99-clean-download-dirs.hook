@@ -1,0 +1,12 @@
+# pacman 7.1 leaves empty alpm-owned download-* staging dirs in
+# /var/cache/pacman/pkg after most syncs; prune them after each transaction.
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning leftover pacman download directories...
+When = PostTransaction
+Exec = /usr/bin/find /var/cache/pacman/pkg -mindepth 1 -maxdepth 1 -name download-* -type d -user alpm -exec /usr/bin/rm -rf {} +

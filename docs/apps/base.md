@@ -10,6 +10,8 @@ Wi-Fi follows Brazil's channel rules: `wireless-regdb` holds the rules and `base
 
 `kernel-modules-hook` keeps the running kernel's modules when `pacman -Syu` upgrades the kernel, so a driver that loads later (a new USB device, the Thunderbolt driver after resume) still loads until the reboot; `linux-modules-cleanup.service` (enabled by `setup.sh`) deletes the saved copy after it. A reboot is still the way onto the new kernel.
 
+`base/root/etc/pacman.d/hooks/99-clean-download-dirs.hook` prunes leftover `alpm`-owned `download-*` staging directories from `/var/cache/pacman/pkg` after installs and upgrades (pacman 7.1 leaves one behind after most syncs).
+
 The firewall is on: `base/root/etc/ufw/ufw.conf` sets `ENABLED=yes` (Arch ships `no`, which leaves `ufw.service` running with no rules) and Arch's own `/etc/default/ufw` drops incoming and allows outgoing traffic. Nothing listens for the network by default, so nothing is opened; a port a container publishes is filtered like any other (publish to `127.0.0.1` unless another machine needs it). Open one with `sudo ufw allow <port>/tcp`; check with `sudo ufw status verbose`. On a fresh install whose first `pacman -Syu` upgrades the kernel, ufw (which needs the running kernel's netfilter modules, deleted by the upgrade) can't start until the reboot into the new kernel; `setup.sh` leaves it enabled and that boot starts it (`enable_system` in `tools/setup-lib.sh` does this for any unit). In CI the guest's firewall would come on mid-job, which is safe: runner-up drives the job over one SSH session opened before it, and ufw keeps established connections.
 
 ## Reference
@@ -21,6 +23,7 @@ The firewall is on: `base/root/etc/ufw/ufw.conf` sets `ENABLED=yes` (Arch ships 
 
 - `/etc/NetworkManager/conf.d/wifi_backend.conf`
 - `/etc/modprobe.d/cfg80211.conf`
+- `/etc/pacman.d/hooks/99-clean-download-dirs.hook`
 - `/etc/sysctl.d/99-zram.conf`
 - `/etc/systemd/system/-.slice.d/oomd.conf`
 - `/etc/systemd/system/user@.service.d/oomd.conf`
