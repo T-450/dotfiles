@@ -42,6 +42,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
 | [imv](apps/imv.md) | imv, the image viewer: just the image on the desktop color, in the palette's colors | imv |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
+| [llama-cpp](apps/llama-cpp.md) | Local LLM inference via `llama-cli` (and `llama-server`, `llama-bench`) with Vulkan offload on the ThinkPad T14's Intel UHD 620 (`ggml-vulkan` + `vulkan-intel`) | llama-cpp, ggml-vulkan |
 | [mako](apps/mako.md) | Notifications | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
