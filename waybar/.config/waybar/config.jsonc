@@ -24,7 +24,7 @@
         "custom/start": {
             "format": "λ",
             "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>LAUNCHER</span>  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER D</span>",
-            "on-click": "rofi -show drun"
+            "on-click": "walker"
         },
         "custom/wallpaper": {
             "format": "\u200b",
@@ -270,7 +270,7 @@
         },
         "custom/clut": {
             "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CLUT</span>  Palette picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER SHIFT T</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>16 energy steps · Click switches palette</span>",
+            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CLUT</span>  Palette picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER P</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>16 energy steps · Click switches palette</span>",
             "on-click": "~/.local/bin/theme pick"
         },
 

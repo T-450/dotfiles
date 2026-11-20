@@ -1,0 +1,38 @@
+# Walker configuration: "Viewport" CAD command dialog, minimal Elephant providers.
+theme = "viewport"
+close_when_open = true
+click_to_close = true
+single_click_activation = true
+hide_quick_activation = true
+hide_action_hints_dmenu = true
+ext_background_effect_blur = false
+
+[shell]
+exclusive_zone = -1
+layer = "overlay"
+anchor_top = true
+anchor_bottom = true
+anchor_left = true
+anchor_right = true
+
+[placeholders]
+"default" = { input = "SEARCH", list = "NO RESULTS" }
+"desktopapplications" = { input = "RUN", list = "NO APPS" }
+"runner" = { input = "CMD", list = "NO COMMANDS" }
+"clipboard" = { input = "CLIPBOARD", list = "EMPTY" }
+
+[providers]
+default = ["desktopapplications", "runner"]
+empty = ["desktopapplications"]
+max_results = 40
+
+[[providers.prefixes]]
+prefix = ">"
+provider = "runner"
+
+[[providers.prefixes]]
+prefix = ":"
+provider = "clipboard"
+
+[providers.clipboard]
+time_format = "relative"

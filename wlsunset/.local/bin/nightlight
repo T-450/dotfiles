@@ -50,19 +50,30 @@ status() {
 }
 
 menu() {
-	local cur=auto rows=() t pick
+	local cur=auto rows=() t pick mark
 	[[ -e $off ]] && cur=off || cur=$MODE
-	rows+=("󰖔  Automatic: warm after sunset" "󰌵  Warm now" "󰖙  Off")
-	for t in "${temps[@]}"; do rows+=("  Night temperature ${t} K"); done
-	local active
-	case $cur in auto) active=0 ;; warm) active=1 ;; off) active=2 ;; esac
-	for i in "${!temps[@]}"; do [[ ${temps[$i]} == "$NIGHT_TEMP" ]] && active+=",$((i + 3))"; done
-	pick=$(printf '%s\n' "${rows[@]}" | rofi -dmenu -i -no-custom -p "night light" -a "$active" -format i) || exit 0
+	mark() { [[ $1 == "$2" ]] && printf '● ' || printf '  '; }
+	rows+=(
+		"$(mark "$cur" auto)Automatic: warm after sunset"
+		"$(mark "$cur" warm)Warm now"
+		"$(mark "$cur" off)Off"
+	)
+	for t in "${temps[@]}"; do
+		rows+=("$(mark "$NIGHT_TEMP" "$t")Night temperature ${t} K")
+	done
+	pick=$(printf '%s\n' "${rows[@]}" | walker --dmenu -p "NIGHT LIGHT") || exit 0
+	pick=${pick#● }
+	pick=${pick#  }
 	case $pick in
-	0) MODE=auto && save && turn_on ;;
-	1) MODE=warm && save && turn_on ;;
-	2) turn_off ;;
-	*) NIGHT_TEMP=${temps[$((pick - 3))]} && save && { [[ -e $off ]] || turn_on; } ;;
+	"Automatic: warm after sunset") MODE=auto && save && turn_on ;;
+	"Warm now") MODE=warm && save && turn_on ;;
+	"Off") turn_off ;;
+	"Night temperature "*" K")
+		t=${pick#Night temperature }
+		NIGHT_TEMP=${t% K}
+		save
+		[[ -e $off ]] || turn_on
+		;;
 	esac
 }
 

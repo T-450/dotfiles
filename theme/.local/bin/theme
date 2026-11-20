@@ -4,7 +4,7 @@
 usage: theme list | current | lint
        theme init [NAME]                 render only (no reloads); used by install.sh
        theme set NAME [--to DIR]         render + run every <app>/reload.sh (reload running apps)
-       theme pick                        rofi menu of palettes -> set
+       theme pick                        walker menu of palettes -> set
        theme import-vscode SRC SLUG      VS Code theme JSON (file or URL) -> palettes/SLUG.toml
                                          (imports refuse to replace a palette without --force)
        theme import-omarchy SRC SLUG     Omarchy colors.toml -> palette
@@ -877,17 +877,19 @@ def main(argv):
             return 0 if ok else 1
     elif cmd == "pick":
         names = palette_names()
+        cur = current()
+        rows = [(f"● {n}" if n == cur else f"  {n}") for n in names]
         try:
-            p = subprocess.run(["rofi", "-dmenu", "-i", "-p", "theme", "-selected-row",
-                                str(names.index(current()) if current() in names else 0)],
-                               input="\n".join(names), capture_output=True, text=True)
+            p = subprocess.run(["walker", "--dmenu", "-p", "THEME"],
+                               input="\n".join(rows), capture_output=True, text=True)
         except OSError as e:
             notify("Theme picker failed", str(e), urgent=True)
             raise
-        if p.returncode != 0 or not p.stdout.strip():
+        choice = p.stdout.strip().removeprefix("● ").strip()
+        if p.returncode != 0 or not choice:
             return 0
-        try:  # run from a keybinding: stderr is invisible, so report through mako
-            return main(["set", p.stdout.strip()])
+        try:  # run from a keybinding: stderr is invisible, so report through notifications
+            return main(["set", choice])
         except (ThemeError, OSError, subprocess.CalledProcessError) as e:
             notify("Theme not changed", str(e), urgent=True)
             raise

@@ -1,0 +1,7 @@
+# Walker (GTK4 launcher & dmenu) + Elephant minimal providers (prebuilt AUR binaries)
+walker-bin
+elephant-bin
+elephant-desktopapplications-bin
+elephant-runner-bin
+elephant-clipboard-bin
+elephant-menus-bin
