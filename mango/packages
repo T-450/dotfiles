@@ -1,4 +1,7 @@
 mangowm
-wlr-randr    # mango-monitor
-wev          # key names for bind.conf
-xorg-xrdb    # monitor.conf: Xft.dpi for XWayland apps (exec_once)
+wlr-randr       # mango-monitor
+wev             # key names for bind.conf
+xorg-xrdb       # monitor.conf: Xft.dpi for XWayland apps (exec_once)
+luajit          # mango-whichkey Lua runtime
+lua51-lgi       # mango-whichkey GTK3/GtkLayerShell GObject bindings
+gtk-layer-shell # mango-whichkey Wayland layer-shell overlay

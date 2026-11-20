@@ -1,7 +1,7 @@
 [Unit]
 Description=Which-key popup for mango's key modes (mango-whichkey)
 PartOf=graphical-session.target
-After=graphical-session.target mako.service
+After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]

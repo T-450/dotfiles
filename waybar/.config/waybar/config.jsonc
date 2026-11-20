@@ -220,9 +220,9 @@
             "interval": 2,
             "signal": 10,
             "format": "{}",
-            "on-click": "makoctl restore; pkill -RTMIN+10 waybar",
-            "on-click-middle": "makoctl dismiss --all; pkill -RTMIN+10 waybar",
-            "on-click-right": "makoctl mode -t do-not-disturb; pkill -RTMIN+10 waybar"
+            "on-click": "swaync-client -t -sw",
+            "on-click-middle": "swaync-client -C && pkill -RTMIN+10 waybar",
+            "on-click-right": "swaync-client -d -sw && pkill -RTMIN+10 waybar"
         },
 
         "bluetooth": {

@@ -1,19 +1,130 @@
-#!/usr/bin/env bash
-# mango-whichkey: while a mango key mode is open (super+esc, super+n or super+m), show that mode's keys as a
-# passive mako popup; close it when the mode returns to default. Run by mango-whichkey.service.
-# usage: mango-whichkey
-set -uo pipefail
-id=0
-close() { ((id)) && makoctl dismiss -n "$id" --no-history 2>/dev/null; id=0; }
-trap close EXIT
-while read -r line; do
-	mode=$(jq -r '.keymode // empty' <<<"$line") || continue
-	if [[ -z $mode || $mode == default ]]; then
-		close
-		continue
-	fi
-	body=$(~/.local/bin/mango-keys --pango "$mode") || continue
-	[[ -n $body ]] || { close; continue; }
-	# one popup, replaced in place as the mode changes; mako's [app-name=mango-whichkey] styles it
-	id=$(notify-send -a mango-whichkey -t 0 -p -r "$id" "keys" "$body") || id=0
-done < <(mmsg watch keymode)
+#!/usr/bin/env luajit
+-- mango-whichkey: while a mango key mode is open (super+esc, super+n or super+m), show that mode's
+-- keys in a bottom-center GTK3 layer-shell overlay (keyboard_mode=NONE); hide on return to default.
+-- Hot-reloads ~/.config/mango/whichkey.css on SIGUSR1 (`mango/reload.sh` during `theme set`).
+-- usage: mango-whichkey
+
+local lgi = require("lgi")
+local GLib = lgi.require("GLib", "2.0")
+local Gdk = lgi.require("Gdk", "3.0")
+local Gtk = lgi.require("Gtk", "3.0")
+local GtkLayerShell = lgi.require("GtkLayerShell", "0.1")
+
+local home = os.getenv("HOME") or ""
+local xdg_cfg = os.getenv("XDG_CONFIG_HOME") or (home .. "/.config")
+local css_path = xdg_cfg .. "/mango/whichkey.css"
+local keys_cmd = home .. "/.local/bin/mango-keys"
+
+local css_provider = Gtk.CssProvider()
+local function load_css()
+	local ok, err = pcall(function()
+		css_provider:load_from_path(css_path)
+	end)
+	if not ok then
+		io.stderr:write("mango-whichkey: css load failed: " .. tostring(err) .. "\n")
+	end
+end
+
+load_css()
+Gtk.StyleContext.add_provider_for_screen(
+	Gdk.Screen.get_default(),
+	css_provider,
+	Gtk.STYLE_PROVIDER_PRIORITY_USER
+)
+
+local win = Gtk.Window({
+	type = Gtk.WindowType.TOPLEVEL,
+	title = "mango-whichkey",
+	decorated = false,
+	resizable = false,
+	accept_focus = false,
+})
+win:set_name("whichkey")
+
+GtkLayerShell.init_for_window(win)
+GtkLayerShell.set_namespace(win, "mango-whichkey")
+GtkLayerShell.set_layer(win, GtkLayerShell.Layer.OVERLAY)
+GtkLayerShell.set_keyboard_mode(win, GtkLayerShell.KeyboardMode.NONE)
+GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.BOTTOM, true)
+GtkLayerShell.set_margin(win, GtkLayerShell.Edge.BOTTOM, 6)
+
+local box = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL })
+box:set_name("whichkey-box")
+local label = Gtk.Label({ xalign = 0, yalign = 0 })
+label:set_name("whichkey-label")
+label:set_use_markup(true)
+box:add(label)
+win:add(box)
+
+local function read_card(mode)
+	if not mode:match("^[A-Za-z0-9_-]+$") then
+		return nil
+	end
+	local p = io.popen(string.format("%q --pango %q 2>/dev/null", keys_cmd, mode), "r")
+	if not p then
+		return nil
+	end
+	local out = p:read("*a")
+	p:close()
+	if not out or out == "" then
+		return nil
+	end
+	return out
+end
+
+local function handle_line(line)
+	local mode = line:match('"keymode"%s*:%s*"([^"]*)"')
+	if not mode then
+		return
+	end
+	if mode == "" or mode == "default" then
+		win:hide()
+		return
+	end
+	local body = read_card(mode)
+	if not body then
+		win:hide()
+		return
+	end
+	label:set_markup(body)
+	win:resize(1, 1)
+	win:show_all()
+end
+
+-- SIGUSR1 (10 on Linux): reload CSS after `theme set`
+if GLib.unix_signal_add then
+	GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, 10, function()
+		load_css()
+		return true
+	end)
+end
+
+local ok, pid, _, stdout_fd = GLib.spawn_async_with_pipes(
+	nil,
+	{ "mmsg", "watch", "keymode" },
+	nil,
+	{ "SEARCH_PATH" },
+	nil
+)
+if not ok then
+	io.stderr:write("mango-whichkey: failed to spawn mmsg watch keymode\n")
+	os.exit(1)
+end
+
+local ch = GLib.IOChannel.unix_new(stdout_fd)
+GLib.io_add_watch(ch, GLib.PRIORITY_DEFAULT, { "IN", "HUP", "ERR" }, function(channel, cond)
+	if cond.IN then
+		local status, line = channel:read_line()
+		if status == "NORMAL" and line then
+			handle_line(line)
+			return true
+		end
+	end
+	Gtk.main_quit()
+	return false
+end)
+
+Gtk.main()
+if pid then
+	GLib.spawn_close_pid(pid)
+end

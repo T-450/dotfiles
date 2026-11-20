@@ -1,0 +1,202 @@
+/* swaync, "Viewport" (SGI CAD): 0px opaque @vp_bar toasts and minimal top-right log drawer,
+   1px @vp_border frame, 8px/32px cyan ruler header, Terminess pixel type, magenta unread accent,
+   crit critical outline. Colors from colors.css (rendered by theme). */
+@import "colors.css";
+
+* {
+    font-family: "Terminess Nerd Font";
+    font-size: 14px;
+    letter-spacing: 1px;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.notification-row {
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+.notification-row:focus,
+.notification-row:hover {
+    background: transparent;
+}
+
+.floating-notifications .notification-row {
+    margin: 6px 7px 0 0;
+}
+
+.notification {
+    background-color: @vp_bar;
+    border: 1px solid @vp_border;
+    margin: 0 0 6px 0;
+    padding: 0;
+}
+
+.notification.low {
+    border-color: alpha(@vp_dim, 0.55);
+}
+
+.notification.critical {
+    border-color: @vp_crit;
+}
+
+.notification-content {
+    background: transparent;
+    padding: 10px 12px;
+}
+
+.notification-default-action {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: @vp_text;
+    transition: background-color 150ms ease-out;
+}
+
+.notification-default-action:hover {
+    background-color: @vp_hover;
+}
+
+.summary {
+    color: @vp_magenta;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.notification.low .summary {
+    color: @vp_dim;
+}
+
+.notification.critical .summary {
+    color: @vp_crit;
+}
+
+.time {
+    color: @vp_cyan;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-right: 18px;
+}
+
+.body {
+    color: @vp_text;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.notification.low .body {
+    color: @vp_dim;
+}
+
+.close-button {
+    background-color: transparent;
+    color: @vp_dim;
+    border: none;
+    margin: 6px;
+    padding: 0 4px;
+    min-width: 18px;
+    min-height: 18px;
+    transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.close-button:hover {
+    color: @vp_crit;
+    background-color: @vp_crit_bg;
+    box-shadow: inset 0 -1px 0 @vp_crit;
+}
+
+.notification-action {
+    color: @vp_cyan;
+    background-color: transparent;
+    border-top: 1px solid @vp_border;
+    padding: 6px 10px;
+    transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.notification-action:hover {
+    color: @vp_text;
+    background-color: @vp_hover;
+    box-shadow: inset 0 -1px 0 @vp_cyan;
+}
+
+/* ---------------------------------------------------------------- control center drawer */
+.control-center {
+    background-color: @vp_bar;
+    border: 1px solid @vp_border;
+    color: @vp_text;
+    padding: 0;
+}
+
+.control-center-list {
+    background: transparent;
+    padding: 8px;
+}
+
+.control-center-list-placeholder {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* title header carries the top bar's 8px/32px cyan ruler along its bottom edge */
+.widget-title {
+    color: @vp_cyan;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 10px 12px 12px 12px;
+    margin: 0;
+    background-color: @vp_bar;
+    background-image: linear-gradient(90deg, @vp_tick_maj 1px, transparent 1px),
+                      linear-gradient(90deg, @vp_tick_min 1px, transparent 1px);
+    background-size: 32px 5px, 8px 2px;
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    box-shadow: inset 0 -1px 0 @vp_border;
+}
+
+.widget-title > button {
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: @vp_cyan;
+    background-color: transparent;
+    border: 1px solid @vp_border;
+    padding: 2px 8px;
+    transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.widget-title > button:hover {
+    color: @vp_crit;
+    border-color: @vp_crit;
+    background-color: @vp_crit_bg;
+}
+
+.widget-dnd {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    margin: 0;
+    border-bottom: 1px solid @vp_border;
+}
+
+.widget-dnd > switch {
+    background-color: transparent;
+    border: 1px solid @vp_border;
+    min-width: 34px;
+    min-height: 16px;
+}
+
+.widget-dnd > switch:checked {
+    background-color: @vp_magenta;
+    border-color: @vp_magenta;
+}
+
+.widget-dnd > switch slider {
+    background-color: @vp_text;
+    min-width: 12px;
+    min-height: 12px;
+}

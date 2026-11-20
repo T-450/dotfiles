@@ -1,0 +1,26 @@
+/* mango-whichkey (Lua + GTK3 layer-shell): 0px opaque @vp_bar, 1px cyan 45% ring, Terminess. */
+@import "whichkey-colors.css";
+
+window#whichkey {
+    background-color: @vp_bar;
+    border: 1px solid @vp_border;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#whichkey-box {
+    background-color: @vp_bar;
+    background-image: linear-gradient(90deg, @vp_tick_maj 1px, transparent 1px),
+                      linear-gradient(90deg, @vp_tick_min 1px, transparent 1px);
+    background-size: 32px 4px, 8px 2px;
+    background-repeat: repeat-x;
+    background-position: left top;
+    padding: 14px 18px;
+}
+
+#whichkey-label {
+    font-family: "Terminess Nerd Font";
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: @vp_text;
+}
