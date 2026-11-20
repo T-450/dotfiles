@@ -1,9 +1,8 @@
 # Deep Blue: kinqert/deep-blue-theme (themes/deep-blue.json), MIT license. Imported with `theme
-# import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults: the
-# three variants share one accent family (Flat's terminal and git colors, the same 15 token colors),
-# so warning, success, error, the ANSI colors, [diff] and [syntax] come from it. accent is the
-# family's text blue (textLink, git modified) rather than focusBorder #2b5278/#254a6b, the selection
-# fill, which is 2:1 as text.
+# import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults:
+# warning, success, error, the ANSI colors, [diff] and [syntax] come from the theme's own
+# Flat terminal/git colors and token definitions. accent is the family's text blue (textLink, git
+# modified) rather than focusBorder #2b5278, the selection fill, which is 2:1 as text.
 
 [meta]
 name = "Deep Blue"

@@ -1,0 +1,61 @@
+# Vague: vague2k/vague.nvim (lua/vague/config/internal.lua), MIT license. A low-contrast,
+# desaturated cool charcoal scheme (#141415) with steel-blue, dusty-lilac and warm-sand accents —
+# modern Neovim successor to Apprentice and Saturnite.
+
+[meta]
+name = "Vague"
+variant = "dark"
+source = "https://github.com/vague2k/vague.nvim"
+
+[colors]
+bg_desktop      = "#141415"  # bg (Normal: deepest cool charcoal)
+bg_surface      = "#1c1c24"  # inactiveBg (StatusLine, Panel)
+bg_widget       = "#252530"  # line (Pmenu, CursorLine)
+bg_hover        = "#333738"  # visual (Hover)
+border_hairline = "#252530"  # line
+border_inactive = "#606079"  # comment (FloatBorder)
+fg_text         = "#cdcdcd"  # fg (Normal)
+fg_editor       = "#cdcdcd"  # fg (Normal)
+fg_secondary    = "#90a0b5"  # operator (StatusLine)
+fg_muted        = "#606079"  # comment
+fg_bright       = "#e5e5ef"  # derived: fg lifted toward white
+fg_disabled     = "#525266"  # derived: comment darkened
+accent          = "#6e94b2"  # keyword (signature steel blue)
+badge           = "#bb9dbd"  # parameter (dusty lilac)
+selection_bg    = "#333738"  # visual
+selection_fg    = "#cdcdcd"  # fg
+link            = "#7e98e8"  # hint
+error           = "#d8647e"  # error
+warning         = "#f3be7c"  # warning / delta
+success         = "#7fa563"  # plus
+info            = "#7e98e8"  # hint
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#cdcdcd"
+bg     = "#141415"
+cursor = "#cdcdcd"
+ansi = [
+	# line, error, plus, warning, keyword, parameter, builtin-cyan, fg
+	"#252530", "#d8647e", "#7fa563", "#f3be7c", "#6e94b2", "#bb9dbd", "#9bb4bc", "#cdcdcd",
+	"#606079", "#e08398", "#99b782", "#e8b589", "#7e98e8", "#aeaed1", "#b4d4cf", "#e5e5ef",
+]
+
+[diff]
+add    = "#7fa563"  # plus
+remove = "#d8647e"  # error
+change = "#f3be7c"  # delta
+
+[syntax]
+keyword    = "#6e94b2"  # keyword: Keyword
+preproc    = "#6e94b2"  # keyword: PreProc
+type       = "#9bb4bc"  # type: Type
+function   = "#c48282"  # func: Function
+identifier = "#c3c3d5"  # property: Identifier
+string     = "#e8b589"  # string: String
+constant   = "#aeaed1"  # constant: Constant
+number     = "#e0a363"  # number: Number
+boolean    = "#aeaed1"  # constant: Boolean
+special    = "#b4d4cf"  # builtin: Special
+operator   = "#90a0b5"  # operator: Operator
+comment    = "#606079"  # comment: Comment

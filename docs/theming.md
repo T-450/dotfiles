@@ -19,29 +19,34 @@ in `colibri.toml` name it and its highlight group), except two tiers it lacks (`
 sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
 editor background. The others:
 
-- Tokyo Night (`theme import-omarchy`).
+- Tokyo Night (`folke/tokyonight.nvim`, originally imported via omarchy, upgraded with full
+  `[syntax]` and `[diff]` and the NuPhy Air60 HE `[keycaps]`).
 - Cassette, by hand from a cassette J-card's tokens: black card, silver paper, a teal and a
   cobalt stripe.
 - Written by hand the way Colibri is, each role named after its scheme's color and highlight
   group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
-  name) and `[syntax]` and `[diff]` from its highlight groups: Doom One
-  (`NTBBloodbath/doom-one.nvim`), Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
-  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), a light palette.
-  Alabaster's `warning` is derived: the scheme's orange is a highlight fill, unreadable as text.
-- Written by hand the same way from Vim schemes: Apprentice (`romainl/Apprentice`), Alchemist
-  (`habamax/vim-alchemist`) and Saturnite (`habamax/vim-saturnite`) from their colortemplates,
-  `[terminal]` from their Term colors; Elysian (`Aszarsha/elysian.vim`) from its xterm-256
-  indexes, `[terminal]` from its `elysian.itermcolors`, with bright black and bright yellow
-  (greys upstream) made readable.
+  name) and `[syntax]` and `[diff]` from its highlight groups:
+  - Minimalist dark obsidian/charcoal: Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
+    (`oxidescheme/nvim`), Carbonfox (`EdenEast/nightfox.nvim`, IBM Carbon Gray 100), Vesper
+    (`datsfilipe/vesper.nvim`), Vague (`vague2k/vague.nvim`), Kanso Zen (`webhooked/kanso.nvim`),
+    Flexoki Dark (`kepano/flexoki`) and Dark 2026 (`lewisblackburn/vscode-dark-2026`).
+  - Atmospheric deep dark: Doom One (`NTBBloodbath/doom-one.nvim`), Kanagawa Dragon
+    (`rebelot/kanagawa.nvim`), Rosé Pine (`rose-pine/neovim`), Gruvbox Material
+    (`sainnhe/gruvbox-material`, dark hard) and Everforest (`sainnhe/everforest`, dark hard).
+  - Vim xterm-256 classics: Apprentice (`romainl/Apprentice`), Alchemist (`habamax/vim-alchemist`),
+    Saturnite (`habamax/vim-saturnite`) and Elysian (`Aszarsha/elysian.vim`).
+  - Calibrated light palettes: Alabaster (`tonsky/sublime-scheme-alabaster`), Flexoki Light
+    (`kepano/flexoki`), Rosé Pine Dawn (`rose-pine/neovim`) and Light 2026 (`microsoft/vscode`
+    `2026-light.json`, light companion to Dark 2026). Alabaster's and Rosé Pine Dawn's `warning`
+    are darkened where upstream orange/gold reads too low as text.
 - Space, Rain and Metro, by hand from COLOURlovers palettes (CC BY-NC-SA 3.0: each file credits
   its author) the way Cassette is: four or five colors, every other tier derived and marked so.
   Rain and Metro are light; their yellows and Metro's blue read below 3:1 on white, so they stay
   fills (badge, selection) and the text roles are them darkened.
-- Deep Blue, Deep Blue Night and Deep Blue Flat (`kinqert/deep-blue-theme`): `theme
-  import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults. The
-  three share Flat's terminal and git colors and one set of token colors.
+- Deep Blue (`kinqert/deep-blue-theme`): `theme import-vscode`, then corrected by hand with its
+  Flat terminal/git colors and token definitions.
 
-None sets `[keycaps]`, so the cheatsheet derives its caps.
+Only Tokyo Night sets `[keycaps]`; every other palette derives its caps from its own roles.
 
 ## Keycaps
 

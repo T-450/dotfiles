@@ -1,0 +1,62 @@
+# Gruvbox Material: sainnhe/gruvbox-material (autoload/gruvbox_material.vim, dark hard, material
+# foreground), MIT license. Warm deep charcoal (#141617 / #1d2021) with softened earthy ochre,
+# sage aqua and coral accents — classic low-strain comfort.
+
+[meta]
+name = "Gruvbox Material"
+variant = "dark"
+source = "https://github.com/sainnhe/gruvbox-material"
+
+[colors]
+bg_desktop      = "#141617"  # bg_dim (hard: chrome a step below editor)
+bg_surface      = "#1d2021"  # bg0 (Normal)
+bg_widget       = "#282828"  # bg1 (Pmenu, StatusLine)
+bg_hover        = "#32302f"  # bg_statusline2 (CursorLine)
+border_hairline = "#32302f"  # bg_statusline2
+border_inactive = "#504945"  # bg5 (FloatBorder)
+fg_text         = "#d4be98"  # fg0 (Normal)
+fg_editor       = "#d4be98"  # fg0 (Normal)
+fg_secondary    = "#a89984"  # grey2
+fg_muted        = "#928374"  # grey1 (Comment)
+fg_bright       = "#ddc7a1"  # fg1 (bright)
+fg_disabled     = "#7c6f64"  # grey0 (LineNr)
+accent          = "#d8a657"  # yellow (Focus, Search)
+badge           = "#d3869b"  # purple
+selection_bg    = "#3c3836"  # bg3 (Visual)
+selection_fg    = "#ddc7a1"  # fg1
+link            = "#7daea3"  # blue
+error           = "#ea6962"  # red
+warning         = "#d8a657"  # yellow
+success         = "#a9b665"  # green
+info            = "#7daea3"  # blue
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#d4be98"  # fg0
+bg     = "#1d2021"  # bg0
+cursor = "#d4be98"  # fg0
+ansi = [
+	# bg3, red, green, yellow, blue, purple, aqua, fg0
+	"#3c3836", "#ea6962", "#a9b665", "#d8a657", "#7daea3", "#d3869b", "#89b482", "#d4be98",
+	# grey1, red, green, orange, blue, purple, aqua, fg1
+	"#928374", "#ea6962", "#a9b665", "#e78a4e", "#7daea3", "#d3869b", "#89b482", "#ddc7a1",
+]
+
+[diff]
+add    = "#a9b665"  # green
+remove = "#ea6962"  # red
+change = "#7daea3"  # blue
+
+[syntax]
+keyword    = "#ea6962"  # red: Keyword, Statement
+preproc    = "#d3869b"  # purple: PreProc
+type       = "#d8a657"  # yellow: Type
+function   = "#a9b665"  # green: Function
+identifier = "#d4be98"  # fg0: Identifier
+string     = "#a9b665"  # green: String
+constant   = "#d3869b"  # purple: Constant
+number     = "#d3869b"  # purple: Number
+boolean    = "#d3869b"  # purple: Boolean
+special    = "#89b482"  # aqua: Special
+operator   = "#e78a4e"  # orange: Operator
+comment    = "#928374"  # grey1: Comment

@@ -1,0 +1,62 @@
+# Kanagawa Dragon: rebelot/kanagawa.nvim (lua/kanagawa/colors.lua & themes.lua, dragon variant),
+# MIT license. Warm soot grounds (dragonBlack1/3) with muted painterly mineral hues — dragon aqua,
+# steel blue, ash violet and autumn sage.
+
+[meta]
+name = "Kanagawa Dragon"
+variant = "dark"
+source = "https://github.com/rebelot/kanagawa.nvim"
+
+[colors]
+bg_desktop      = "#12120f"  # dragonBlack1 (bg_dim: chrome a step below the editor)
+bg_surface      = "#181616"  # dragonBlack3 (Normal)
+bg_widget       = "#282727"  # dragonBlack4 (bg_p1, Gutter)
+bg_hover        = "#393836"  # dragonBlack5 (bg_p2, Hover)
+border_hairline = "#282727"  # dragonBlack4
+border_inactive = "#54546d"  # sumiInk6 (float.fg_border)
+fg_text         = "#c5c9c5"  # dragonWhite (Normal)
+fg_editor       = "#c5c9c5"  # dragonWhite (Normal)
+fg_secondary    = "#a6a69c"  # dragonGray (Parameter)
+fg_muted        = "#737c73"  # dragonAsh (Comment)
+fg_bright       = "#dcd7ba"  # fujiWhite (pmenu.fg)
+fg_disabled     = "#625e5a"  # dragonBlack6 (NonText)
+accent          = "#8ba4b0"  # dragonBlue2 (Function)
+badge           = "#a292a3"  # dragonPink (Number)
+selection_bg    = "#2d4f67"  # waveBlue2 (pmenu.bg_sel, Search)
+selection_fg    = "#dcd7ba"  # fujiWhite
+link            = "#8ea4a2"  # dragonAqua (Type)
+error           = "#c4746e"  # dragonRed
+warning         = "#ff9e3b"  # roninYellow (diag.warning)
+success         = "#8a9a7b"  # dragonGreen2 (String)
+info            = "#658594"  # dragonBlue (diag.info)
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#c5c9c5"  # dragonWhite
+bg     = "#181616"  # dragonBlack3
+cursor = "#c5c9c5"  # dragonWhite
+ansi = [
+	# dragonBlack0, dragonRed, dragonGreen2, dragonYellow, dragonBlue2, dragonPink, dragonAqua, oldWhite
+	"#0d0c0c", "#c4746e", "#8a9a7b", "#c4b28a", "#8ba4b0", "#a292a3", "#8ea4a2", "#c8c093",
+	# dragonGray, waveRed, dragonGreen, carpYellow, springBlue, springViolet1, waveAqua2, dragonWhite
+	"#7a8382", "#e46876", "#87a987", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#c5c9c5",
+]
+
+[diff]
+add    = "#76946a"  # autumnGreen (vcs.added)
+remove = "#c34043"  # autumnRed (vcs.removed)
+change = "#dca561"  # autumnYellow (vcs.changed)
+
+[syntax]
+keyword    = "#8992a7"  # dragonViolet: Keyword, Statement
+preproc    = "#c4746e"  # dragonRed: PreProc
+type       = "#8ea4a2"  # dragonAqua: Type
+function   = "#8ba4b0"  # dragonBlue2: Function
+identifier = "#c4b28a"  # dragonYellow: Identifier
+string     = "#8a9a7b"  # dragonGreen2: String
+constant   = "#b6927b"  # dragonOrange: Constant
+number     = "#a292a3"  # dragonPink: Number
+boolean    = "#b6927b"  # dragonOrange: Boolean
+special    = "#949fb5"  # dragonTeal: Special
+operator   = "#c4746e"  # dragonRed: Operator
+comment    = "#737c73"  # dragonAsh: Comment
