@@ -99,14 +99,14 @@ if GLib.unix_signal_add then
 	end)
 end
 
-local ok, pid, _, stdout_fd = GLib.spawn_async_with_pipes(
+local pid, _, stdout_fd = GLib.spawn_async_with_pipes(
 	nil,
 	{ "mmsg", "watch", "keymode" },
 	nil,
 	{ "SEARCH_PATH" },
 	nil
 )
-if not ok then
+if not pid or not stdout_fd then
 	io.stderr:write("mango-whichkey: failed to spawn mmsg watch keymode\n")
 	os.exit(1)
 end

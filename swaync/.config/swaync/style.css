@@ -19,8 +19,13 @@
 }
 
 .notification-row:focus,
-.notification-row:hover {
+.notification-row:hover,
+.control-center list row,
+.control-center list row:focus,
+.control-center list row:selected,
+.control-center list row:hover {
     background: transparent;
+    outline: none;
 }
 
 .floating-notifications .notification-row {
