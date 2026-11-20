@@ -69,20 +69,31 @@ Every later change uses these two checks, so run them once now.
 	  alabaster
 	  alchemist
 	  apprentice
+	  carbonfox
 	  cassette
 	* colibri
+	  dark-2026
 	  deep-blue
-	  deep-blue-flat
-	  deep-blue-night
 	  doom-one
 	  elysian
+	  everforest
+	  flexoki-dark
+	  flexoki-light
 	  gruber-darker
+	  gruvbox-material
+	  kanagawa-dragon
+	  kanso-zen
+	  light-2026
 	  metro
 	  oxide
 	  rain
+	  rose-pine
+	  rose-pine-dawn
 	  saturnite
 	  space
 	  tokyo-night
+	  vague
+	  vesper
 	```
 
 2. Switch to Tokyo Night:

@@ -1,0 +1,62 @@
+# Rosé Pine: rose-pine/neovim (lua/rose-pine/palette.lua, main variant), MIT license. Deep muted
+# plum-slate ground (#191724) with iris, foam cyan, gold and rose — an atmospheric, lower-chroma
+# cousin to Colibri.
+
+[meta]
+name = "Rosé Pine"
+variant = "dark"
+source = "https://github.com/rose-pine/neovim"
+
+[colors]
+bg_desktop      = "#16141f"  # _nc (chrome a step below base)
+bg_surface      = "#191724"  # base (Normal)
+bg_widget       = "#1f1d2e"  # surface (Pmenu, Float)
+bg_hover        = "#26233a"  # overlay (Hover)
+border_hairline = "#21202e"  # highlight_low
+border_inactive = "#403d52"  # highlight_med (FloatBorder)
+fg_text         = "#e0def4"  # text (Normal)
+fg_editor       = "#e0def4"  # text (Normal)
+fg_secondary    = "#908caa"  # subtle (StatusLine, Punctuation)
+fg_muted        = "#6e6a86"  # muted (Comment)
+fg_bright       = "#f2f0ff"  # derived: text lifted toward white
+fg_disabled     = "#524f67"  # highlight_high (LineNr)
+accent          = "#c4a7e7"  # iris (Focus, Links)
+badge           = "#ebbcba"  # rose (Function)
+selection_bg    = "#403d52"  # highlight_med (Visual)
+selection_fg    = "#e0def4"  # text
+link            = "#9ccfd8"  # foam (Type, Links)
+error           = "#eb6f92"  # love
+warning         = "#f6c177"  # gold
+success         = "#95b1ac"  # leaf (green/ok)
+info            = "#9ccfd8"  # foam
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#e0def4"  # text
+bg     = "#191724"  # base
+cursor = "#524f67"  # highlight_high
+ansi = [
+	# overlay, love, pine, gold, foam, iris, rose, text
+	"#26233a", "#eb6f92", "#95b1ac", "#f6c177", "#31748f", "#c4a7e7", "#9ccfd8", "#e0def4",
+	# muted, love, leaf, gold, foam, iris, rose, text
+	"#6e6a86", "#eb6f92", "#95b1ac", "#f6c177", "#9ccfd8", "#c4a7e7", "#ebbcba", "#f2f0ff",
+]
+
+[diff]
+add    = "#9ccfd8"  # foam
+remove = "#eb6f92"  # love
+change = "#ebbcba"  # rose
+
+[syntax]
+keyword    = "#31748f"  # pine: Keyword (legible filter lifts on dark terminal where needed)
+preproc    = "#c4a7e7"  # iris: PreProc
+type       = "#9ccfd8"  # foam: Type
+function   = "#ebbcba"  # rose: Function
+identifier = "#e0def4"  # text: Identifier
+string     = "#f6c177"  # gold: String
+constant   = "#f6c177"  # gold: Constant
+number     = "#f6c177"  # gold: Number
+boolean    = "#ebbcba"  # rose: Boolean
+special    = "#c4a7e7"  # iris: Special
+operator   = "#908caa"  # subtle: Operator
+comment    = "#6e6a86"  # muted: Comment

@@ -1,0 +1,60 @@
+# Light 2026: microsoft/vscode (extensions/theme-defaults/themes/2026-light.json), MIT license.
+# Imported with `theme import-vscode` as the light companion to Dark 2026, with [diff] and [syntax]
+# filled from the theme JSON's own tokenColors (GitHub Light's crisp ink tokens).
+
+[meta]
+name = "Light 2026"
+variant = "light"
+source = "https://raw.githubusercontent.com/microsoft/vscode/main/extensions/theme-defaults/themes/2026-light.json"
+
+[colors]
+bg_desktop      = "#f6f6f9"  # derived: subtle cool step off editor white (#ffffff) for chrome
+bg_surface      = "#fafafd"  # statusBar.background
+bg_widget       = "#ffffff"  # editor.background
+bg_hover        = "#e3e3e5"  # statusBarItem.hoverBackground
+border_hairline = "#e2e2e5"  # widget.border
+border_inactive = "#d0d0d6"  # derived: crisp input border
+fg_text         = "#202020"  # foreground
+fg_editor       = "#1f2328"  # variable.other
+fg_secondary    = "#606060"  # descriptionForeground
+fg_muted        = "#6e7781"  # comment
+fg_bright       = "#101010"  # derived: peak ink
+fg_disabled     = "#a5a5a5"  # disabledForeground
+accent          = "#0069cc"  # focusBorder
+badge           = "#8250df"  # entity.name.function
+selection_bg    = "#0069cc"  # quickInputList.focusBackground
+selection_fg    = "#ffffff"  # quickInputList.focusForeground
+link            = "#0550ae"  # support / constant
+error           = "#cf222e"  # keyword / error
+warning         = "#9a6700"  # derived: amber 4.5:1 on bg_desktop (upstream #667309 reads olive)
+success         = "#116329"  # entity.name.tag / green
+info            = "#0550ae"  # blue
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#1f2328"
+bg     = "#ffffff"
+cursor = "#0069cc"
+ansi = [
+	"#1f2328", "#cf222e", "#116329", "#9a6700", "#0550ae", "#8250df", "#057a99", "#6e7781",
+	"#57606a", "#a40e26", "#1a7f37", "#7d4e00", "#0969da", "#6639ba", "#0598bc", "#ffffff",
+]
+
+[diff]
+add    = "#116329"  # markup.inserted
+remove = "#cf222e"  # markup.deleted
+change = "#953800"  # markup.changed
+
+[syntax]
+keyword    = "#cf222e"  # keyword
+preproc    = "#cf222e"  # storage / preproc
+type       = "#953800"  # variable / entity.name
+function   = "#8250df"  # entity.name.function
+identifier = "#1f2328"  # variable.other
+string     = "#0a3069"  # string
+constant   = "#0550ae"  # constant / support
+number     = "#0550ae"  # constant.numeric
+boolean    = "#0550ae"  # constant.language
+special    = "#116329"  # entity.name.tag
+operator   = "#cf222e"  # keyword.operator
+comment    = "#6e7781"  # comment

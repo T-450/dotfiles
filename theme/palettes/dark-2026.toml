@@ -1,0 +1,63 @@
+# Dark 2026: lewisblackburn/vscode-dark-2026 (nvim/colors/vscode-dark-2026.lua, dark), a port of
+# VS Code's "2026 Dark" default theme (microsoft/vscode 2026-dark.json). MIT license. The comment
+# on each role is the port's palette name and the highlight group it comes from; "derived" marks a
+# tier it doesn't have. [terminal] maps the syntax colors onto the ANSI slots on the editor
+# background (VS Code sets no ANSI colors of its own); [syntax] and [diff] follow the port's
+# highlight mapping.
+
+[meta]
+name = "Dark 2026"
+variant = "dark"
+source = "https://github.com/lewisblackburn/vscode-dark-2026"
+
+[colors]
+bg_desktop      = "#121314"  # bg (Normal: the editor, the darkest shade)
+bg_surface      = "#191a1b"  # panel (StatusLine, TabLine)
+bg_widget       = "#202122"  # menu (Pmenu, NormalFloat)
+bg_hover        = "#242526"  # line (CursorLine, TelescopeSelection)
+border_hairline = "#2a2b2c"  # border (WinSeparator)
+border_inactive = "#333536"  # border_alt (FloatBorder)
+fg_text         = "#bbbebf"  # fg (Normal, FloatTitle)
+fg_editor       = "#bbbebf"  # fg (Normal)
+fg_secondary    = "#8c8c8c"  # dim (StatusLine, LineNr)
+fg_muted        = "#707070"  # derived: dim halfway to muted
+fg_bright       = "#ededed"  # white (Search, PmenuSel)
+fg_disabled     = "#555555"  # muted (NonText, StatusLineNC)
+accent          = "#3994bc"  # accent (IncSearch, PmenuSel, MatchParen)
+badge           = "#d2a8ff"  # purple (Function)
+selection_bg    = "#276782"  # selection (Visual, Search)
+selection_fg    = "#ededed"  # white (Search)
+link            = "#48a0c7"  # link
+error           = "#f48771"  # error (DiagnosticError)
+warning         = "#e5ba7d"  # warning (DiagnosticWarn)
+success         = "#7ee787"  # green (GitSignsAdd)
+info            = "#6796e6"  # info (DiagnosticInfo)
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#bbbebf"
+bg     = "#121314"
+cursor = "#bbbebf"
+ansi = [
+	"#191a1b", "#ff7b72", "#7ee787", "#ffa657", "#79c0ff", "#d2a8ff", "#4ec9b0", "#bbbebf",
+	"#555555", "#ffa198", "#7ee787", "#e5ba7d", "#a5d6ff", "#b267e6", "#48a0c7", "#ededed",
+]
+
+[diff]
+add    = "#7ee787"  # green (GitSignsAdd)
+remove = "#ffa198"  # red_bright (GitSignsDelete)
+change = "#ffa657"  # yellow (GitSignsChange)
+
+[syntax]
+keyword    = "#ff7b72"  # red: Keyword, Statement
+preproc    = "#ff7b72"  # red: PreProc
+type       = "#4ec9b0"  # teal: Type
+function   = "#d2a8ff"  # purple: Function
+identifier = "#c9d1d9"  # variable: Identifier
+string     = "#a5d6ff"  # string: String
+constant   = "#79c0ff"  # blue: Constant
+number     = "#79c0ff"  # blue: Number
+boolean    = "#79c0ff"  # blue: Boolean
+special    = "#ffa657"  # yellow: Special
+operator   = "#ff7b72"  # red: Operator
+comment    = "#8b949e"  # comment: Comment

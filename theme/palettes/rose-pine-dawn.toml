@@ -1,0 +1,61 @@
+# Rosé Pine Dawn: rose-pine/neovim (lua/rose-pine/palette.lua, dawn variant), MIT license. Soft
+# parchment light theme (#faf4ed / #f2e9e1) with deep pine, foam cyan and iris — light companion
+# to Rosé Pine and Colibri.
+
+[meta]
+name = "Rosé Pine Dawn"
+variant = "light"
+source = "https://github.com/rose-pine/neovim"
+
+[colors]
+bg_desktop      = "#f2e9e1"  # overlay (chrome a step below base)
+bg_surface      = "#faf4ed"  # base (Normal)
+bg_widget       = "#fffaf3"  # surface (Pmenu, Float)
+bg_hover        = "#dfdad9"  # highlight_med
+border_hairline = "#dfdad9"  # highlight_med
+border_inactive = "#cecacd"  # highlight_high
+fg_text         = "#464261"  # text (Normal)
+fg_editor       = "#464261"  # text (Normal)
+fg_secondary    = "#797593"  # subtle (StatusLine)
+fg_muted        = "#9893a5"  # muted (Comment)
+fg_bright       = "#2e2b42"  # derived: text deepened for peak contrast
+fg_disabled     = "#9893a5"  # muted
+accent          = "#907aa9"  # iris
+badge           = "#286983"  # pine
+selection_bg    = "#dfdad9"  # highlight_med
+selection_fg    = "#464261"  # text
+link            = "#286983"  # pine
+error           = "#b4637a"  # love
+warning         = "#b87a1a"  # derived: gold #ea9d34 darkened to 3.4:1 on bg_desktop for legibility
+success         = "#56949f"  # foam
+info            = "#286983"  # pine
+shadow          = "#000000"  # (constant)
+
+[terminal]
+fg     = "#464261"  # text
+bg     = "#faf4ed"  # base
+cursor = "#cecacd"  # highlight_high
+ansi = [
+	# overlay, love, leaf, gold, pine, iris, foam, text
+	"#464261", "#b4637a", "#6d8f89", "#b87a1a", "#286983", "#907aa9", "#56949f", "#9893a5",
+	"#797593", "#b4637a", "#56949f", "#ea9d34", "#286983", "#907aa9", "#d7827e", "#fffaf3",
+]
+
+[diff]
+add    = "#56949f"  # foam
+remove = "#b4637a"  # love
+change = "#d7827e"  # rose
+
+[syntax]
+keyword    = "#286983"  # pine: Keyword
+preproc    = "#907aa9"  # iris: PreProc
+type       = "#56949f"  # foam: Type
+function   = "#d7827e"  # rose: Function
+identifier = "#464261"  # text: Identifier
+string     = "#b87a1a"  # gold darkened: String
+constant   = "#b87a1a"  # gold darkened: Constant
+number     = "#b87a1a"  # gold darkened: Number
+boolean    = "#d7827e"  # rose: Boolean
+special    = "#907aa9"  # iris: Special
+operator   = "#797593"  # subtle: Operator
+comment    = "#797593"  # subtle: Comment
