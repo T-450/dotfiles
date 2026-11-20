@@ -14,7 +14,7 @@ uniform vec4 spark;         // the specular edge (@text)
 uniform vec3 beat;          // lows, mids, highs: 0..1, set by a hit in that band, then fading
 out vec4 frag;
 
-const float H = 30.0, D = 40.0, TWIST = 360.0, SPINE = 540.0;
+const float H = 38.0, D = 48.0, TWIST = 360.0, SPINE = 540.0;
 const int STRANDS = 9;
 
 // cosine interpolation between bars
@@ -32,10 +32,10 @@ vec2 strand(float x, int j, out float a) {
 	if (mirror > 0.5) u = 1.0 - u;
 	a = amp(u);
 	float env = clamp(min(u / 0.05, (1.0 - u) / 0.03), 0.0, 1.0);
-	// a kick swells the ribbon; 30% keeps its widest, nearest edge inside the 30px bar
-	float hw = (0.6 + 6.0 * a) * env * (1.0 + 0.3 * beat.x) + 0.4;
+	// a kick swells the ribbon; 30% keeps its widest, nearest edge inside the 38px bar (clear of the 5px top ruler)
+	float hw = (0.7 + 7.2 * a) * env * (1.0 + 0.3 * beat.x) + 0.4;
 	float th = 6.2831853 * u * width / TWIST + phase;
-	float yc = H * 0.5 - 0.5 + 2.2 * sin(6.2831853 * u * width / SPINE + phase * 0.6);
+	float yc = H * 0.5 + 1.0 + 2.5 * sin(6.2831853 * u * width / SPINE + phase * 0.6);
 	float s = -1.0 + 2.0 * float(j) / float(STRANDS - 1);
 	float z = s * hw * sin(th);
 	// highs: each strand ripples out of step with its neighbours
@@ -57,7 +57,7 @@ void main() {
 	// over the 78% nearest the player
 	float dot1 = step(fract(x / 4.0) * 4.0, 1.0);
 	float su = x / width, near = mirror > 0.5 ? step(0.22, su) : step(su, 0.78);
-	col += grid.rgb * grid.a * dot1 * (step(27.0, y) * step(y, 28.0) * 0.55 + step(25.0, y) * step(y, 26.0) * 0.28 * near);
+	col += grid.rgb * grid.a * dot1 * (step(H - 3.0, y) * step(y, H - 2.0) * 0.55 + step(H - 5.0, y) * step(y, H - 4.0) * 0.28 * near);
 
 	// every strand at this x has the same energy, so the same CLUT color: sum their intensity, and
 	// where that color times the sum passes 1, scale it down by its brightest channel. Clipped
