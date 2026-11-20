@@ -1,6 +1,6 @@
 # waybar
 
-Two 30px bars frame the screen like an SGI CAD viewport: a status line at the top with a ruler on its edge, and a media bar at the bottom, the viewport's floor, with the axis triad, cava ribbons around the player, and the CLUT key. Both use the same bar color, the same pixel face, and the same hues with the same jobs.
+Two 38px bars frame the screen like an SGI CAD viewport: a status line at the top with a bottom ruler and live controls, and a media + hardware telemetry floor at the bottom with a mirrored top ruler, the axis triad, CPU/MEM and TMP/DSK CLUT flanks, cava ribbons around the player with a 1px cyan progress rail, and the CLUT key. Both use shared `vp_*` roles from `theme`, Terminess pixel type (with a 24px crisp-text `λ`), and reduced orange (reserved for armed `keymode`, held-warm `nightlight`, and the triad X axis).
 
 ## Look
 
@@ -47,11 +47,13 @@ The bar color depends on the palette (`colors.css.tmpl`, `prefer_dark`): on a da
 
 ## Modules
 
-Left: `custom/start` (the λ, the shell prompt's, set in type; click: `rofi -show drun`), mango's four tags (`mango/workspaces`, `tag_num=4`; click views, right-click toggles), tag 0, mango's special tag (`custom/special`: `.active` while it is shown over the view, occupied while it holds windows; click toggles it), a rule, the layout glyph (`custom/layout`, fed by `waybar-layout`; click: `mmsg dispatch switch_layout`), the key-mode and window-state chips while they exist, and the windows in view (`custom/win#1..6`): every visible window's title, oldest first, cut at 32 characters, the focused one in `text` bold on a 1px `signal` underline, the rest `dim`. Mango has no wlr-foreign-toplevel-management, so waybar's taskbar can't run: `waybar-windows` follows `mmsg watch all-clients` and signals the slots; a click focuses that window and the wheel moves focus.
+Left: `custom/start` (24px bold `λ` in `text`, cyan on hover; click: `walker`), mango's four tags (`mango/workspaces`, `tag_num=4`; click views, right-click toggles), bracketed tag `[0]` (`custom/special`), a rule, the layout glyph (`custom/layout`), the `keymode` (`orange`) and `winstate` (`magenta`, `warn` when pinned) chips, and the windows in view (`custom/win#1..6`).
 
-Center: the clock (`group/datetime`): day (`custom/day`, `date '+%^a'`: waybar's clock can't upper-case), time (its tooltip is the CALENDAR line with the month calendar below it), date (`custom/date`, `date '+%-d %^b'`, because waybar's clock zero-pads the day).
+Center: the clock (`group/datetime`): day, time (calendar tooltip), date (`tooltip: false`).
 
-Right: recording (`custom/record`, only while `gpurecord` prints), then the status chips: network (`NET` and the SSID, cut at 16 characters; `OFFLINE`; click: download and upload speeds), volume (`VOL`, `MUTE`; click, right, middle: mute; scroll 5%), cpu (`CPU`), memory (`MEM`), temperature (`TMP`), disk (`DSK`, `/`), battery (`BAT`/`CHG`/`AC`; click: wlogout). Values are percent, temperature degrees C. Then a rule and the icons, 14px, `dim` at rest and `text` under the pointer: night light (`custom/nightlight`; automatic rests, warm is `orange`, off is faded; click toggles, right-click menu; see [wlsunset](wlsunset.md)), wallpaper (`custom/wallpaper`; click: waypaper), bluetooth (`bt-off` glyph when off; the icon and count in `cyan` while connected; click: blueman-manager), the tray, the notification bell (`custom/notifications`; the bell and count in `magenta` while notifications are held), and power (`custom/power`; click: wlogout) in the corner.
+Right: recording (`custom/record`), live controls (`NET`, `BRI` scrolling `osd-brightness bup`/`bdown`, `VOL`, `BAT`/`CHG`/`AC`), a rule and the 16px icons (`nightlight`, `wallpaper`, `bluetooth`, `tray`, `notifications` via `swaync-client`, `power`).
+
+Bottom floor (`position: bottom`, 38px, mirrored 8px/32px top ruler): `triad` (click: `mango-keys`), `CPU` + `MEM` (CLUT tiers: `cyan` idle → `green` active → `warn` → `crit`, click: floating `btop`), `cffi/ribbons#left`, transport buttons (`mpris#prev`/`#play` in `signal`/`#next`) + `custom/player` (`waybar-player` with `1px` cyan progress rail and scroll `±5s` seek; hides cleanly when idle), `cffi/ribbons#right`, `TMP` + `DSK` (`btop` / `thunar /`), and the `CLUT` key (click: `theme pick`).
 
 Power is the one control that ends the session, so it reads apart by place: the corner, 7px further in than the rest, in `text`; under the pointer it turns `crit`. Do-not-disturb is the bell's right-click only.
 
@@ -122,7 +124,8 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
 
 - `waybar-toggle` (super+esc b): stops or starts `waybar.service`.
 - `waybar-temperature`: reads the coretemp `Package id 0` sensor (`/sys/devices/platform/coretemp.0/hwmon/hwmon*`) and prints one JSON line: the `TMP` label and the degrees, `high` or `critical`, and a tooltip. Polled every 5s.
-- `waybar-notifications`: counts notifications held by mako (`makoctl list -j`) and reads `makoctl mode`; prints the count ("99+" above 99, a zero-width space at 0 so the bell stays) with classes `unread`, `dnd` (do-not-disturb on) and `critical` (a held critical notification). Polled every 2s and refreshed by `pkill -RTMIN+10 waybar` after a click. Bell clicks: restore, middle dismisses all, right toggles do-not-disturb.
+- `waybar-notifications`: reads count and DND state from `swaync-client` (`-c`, `-D`); prints the count ("99+" above 99, a zero-width space at 0 so the bell stays) with classes `unread` and `dnd`. Polled every 2s and refreshed by `pkill -RTMIN+10 waybar` after clicks. Bell clicks: left toggles the SwayNC drawer, middle clears all, right toggles do-not-disturb.
+- `waybar-player`: reads active MPRIS metadata from `playerctl` and Viewport colors from `~/.config/theme/colors.sh`, emitting Pango markup and quantized `.p0`..`.p20` progress classes for the `1px` cyan progress rail (scroll seeks `±5s`; hides cleanly when idle).
 - `waybar-winstate`: the window-state chip (custom/winstate): how many windows are pinned to every tag, kept on top or minimized (the alt+esc dropdown isn't counted), their titles in the tooltip, hidden when none is. mango sends no IPC event for these states, so `mango-state` signals it (`RTMIN+11`) and it rechecks every 10s; a click runs `mango-state --clear`.
 - `waybar-layout`: streams `mmsg watch monitor $WAYBAR_OUTPUT_NAME` (the first active monitor when unset) through `jq` and prints one JSON line per event: the layout symbol as the class (`style.css` draws the glyph from `#custom-layout.T` etc.) and the LAYOUT tooltip (design name, and the super+ctrl+space hint). It replaces `mango/layout`, which has no tooltip support; waybar restarts it after 1s if mmsg exits.
 
@@ -170,6 +173,7 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
 - `~/.config/waybar/style.css`
 - `~/.local/bin/waybar-layout`
 - `~/.local/bin/waybar-notifications`
+- `~/.local/bin/waybar-player`
 - `~/.local/bin/waybar-temperature`
 - `~/.local/bin/waybar-toggle`
 - `~/.local/bin/waybar-windows`
@@ -177,7 +181,7 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
 
 **Rendered from the palette** (`theme`):
 
-- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `accent`, `ansi4`, `ansi5`, `ansi6`, `bg_desktop`, `error`, `fg_editor`, `name`, `prefer_dark`, `selection_bg`, `selection_fg`, `slug`, `success`, `warning`
+- `waybar/.config/waybar/colors.css.tmpl` → `waybar/.config/waybar/colors.css`: `name`, `selection_bg`, `selection_fg`, `slug`, `vp_bar`, `vp_clut0`, `vp_clut1`, `vp_clut10`, `vp_clut11`, `vp_clut12`, `vp_clut13`, `vp_clut14`, `vp_clut15`, `vp_clut2`, `vp_clut3`, `vp_clut4`, `vp_clut5`, `vp_clut6`, `vp_clut7`, `vp_clut8`, `vp_clut9`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_green`, `vp_grid`, `vp_magenta`, `vp_orange`, `vp_signal`, `vp_text`, `vp_warn`
 
 **User units** (enabled by `install.sh --units`): `waybar.service`
 

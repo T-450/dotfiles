@@ -41,7 +41,7 @@ Not carried over from kitty: the cursor trail (Ghostty draws one only with a cus
 **Rendered from the palette** (`theme`):
 
 - `ghostty/.config/ghostty/colors.ghostty.tmpl` → `ghostty/.config/ghostty/colors.ghostty`: `accent`, `ansi0`, `ansi1`, `ansi10`, `ansi11`, `ansi12`, `ansi13`, `ansi14`, `ansi15`, `ansi2`, `ansi3`, `ansi4`, `ansi5`, `ansi6`, `ansi7`, `ansi8`, `ansi9`, `border_inactive`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`, `term_bg`, `term_cursor`, `term_fg`
-- `ghostty/.config/ghostty/tabs.css.tmpl` → `ghostty/.config/ghostty/tabs.css`: `bg_desktop`, `bg_hover`, `bg_surface`, `fg_secondary`, `name`, `selection_bg`, `selection_fg`, `slug`
+- `ghostty/.config/ghostty/tabs.css.tmpl` → `ghostty/.config/ghostty/tabs.css`: `name`, `slug`, `vp_bar`, `vp_cyan`, `vp_dim`, `vp_signal`, `vp_text`
 
 **`reload.sh`** (run by `theme set`): open ghostty windows re-read config.ghostty, its colors.ghostty and tabs.css
 <!-- end generated -->

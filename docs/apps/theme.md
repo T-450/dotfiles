@@ -12,9 +12,11 @@ See [Theming](../theming.md). Palettes: `palettes/*.toml` (colibri default: arch
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/theme/colors.sh`
+- `~/.config/theme/viewport.css`
 - `~/.local/bin/theme`
 
 **Rendered from the palette** (`theme`):
 
-- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `key_accent`, `key_cap`, `key_frame`, `key_legend`, `key_mod`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `warning`
+- `theme/.config/theme/colors.sh.tmpl` → `theme/.config/theme/colors.sh`: `accent`, `badge`, `bg_desktop`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `error`, `fg_bright`, `fg_disabled`, `fg_editor`, `fg_muted`, `fg_secondary`, `fg_text`, `key_accent`, `key_cap`, `key_frame`, `key_legend`, `key_mod`, `link`, `name`, `selection_bg`, `selection_fg`, `shadow`, `slug`, `success`, `term_bg`, `term_cursor`, `term_fg`, `variant`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_green`, `vp_grid`, `vp_magenta`, `vp_orange`, `vp_signal`, `vp_text`, `vp_warn`, `warning`
+- `theme/.config/theme/viewport.css.tmpl` → `theme/.config/theme/viewport.css`: `name`, `selection_bg`, `selection_fg`, `slug`, `vp_bar`, `vp_clut0`, `vp_clut1`, `vp_clut10`, `vp_clut11`, `vp_clut12`, `vp_clut13`, `vp_clut14`, `vp_clut15`, `vp_clut2`, `vp_clut3`, `vp_clut4`, `vp_clut5`, `vp_clut6`, `vp_clut7`, `vp_clut8`, `vp_clut9`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_green`, `vp_grid`, `vp_magenta`, `vp_orange`, `vp_signal`, `vp_text`, `vp_warn`
 <!-- end generated -->

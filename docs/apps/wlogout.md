@@ -1,10 +1,8 @@
 # wlogout
 
-The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color, and `rule.conf` turns blur off under it: the menu acts on single keys, so it stays solid and unmistakable.
+The power menu (`super+esc p`, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown.
 
-Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits in the session group (super+esc, then p), two deliberate steps away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
-
-The AUR package checks wlogout's signed release against its maintainer's key (`validpgpkeys`). That key is kept in `keys/F4FDB18A9937358364B276E9E25D679AF73C6D2F.asc` and imported by `install.sh` before the AUR builds, so a fresh install doesn't fetch it from a public keyserver; when the keyservers were down (2026-11-11), every clean install failed there. It came from the maintainer's GitHub keys and verified the 1.2.2 release's signature. If a new wlogout release is signed with another key, the build fails until that key is added the same way.
+Styled in the Viewport CAD look (`style.css`): a transparent outer layer framing a compact centered 6-cell opaque `vp_bar` strip with 1px `vp_cyan` 45% dividers, crisp `-gtk-recolor` symbolic SVGs (`icons/*-symbolic.svg`), uppercase Terminess labels with keybind hints (`LOCK [L]`…), `vp_cyan` 14% + bottom rule hover on safe actions, and `vp_crit` 16% + `vp_crit` rule + `vp_crit` text/icon on `shutdown` and `reboot`.
 
 ## Reference
 
@@ -14,16 +12,16 @@ The AUR package checks wlogout's signed release against its maintainer's key (`v
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/wlogout/colors.css`
-- `~/.config/wlogout/icons/hibernate.png`
-- `~/.config/wlogout/icons/lock.png`
-- `~/.config/wlogout/icons/logout.png`
-- `~/.config/wlogout/icons/power.png`
-- `~/.config/wlogout/icons/restart.png`
-- `~/.config/wlogout/icons/sleep.png`
+- `~/.config/wlogout/icons/hibernate-symbolic.svg`
+- `~/.config/wlogout/icons/lock-symbolic.svg`
+- `~/.config/wlogout/icons/logout-symbolic.svg`
+- `~/.config/wlogout/icons/reboot-symbolic.svg`
+- `~/.config/wlogout/icons/shutdown-symbolic.svg`
+- `~/.config/wlogout/icons/suspend-symbolic.svg`
 - `~/.config/wlogout/layout`
 - `~/.config/wlogout/style.css`
 
 **Rendered from the palette** (`theme`):
 
-- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `accent`, `bg_desktop`, `bg_widget`, `fg_bright`, `fg_secondary`, `fg_text`, `name`, `slug`
+- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_text`
 <!-- end generated -->

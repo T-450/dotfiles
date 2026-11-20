@@ -1,10 +1,8 @@
 # swayosd
 
-On-screen display for volume and brightness, and the commands the keys run. The level fill is the cool `ansi6`, kept legible: common UI, so it never competes with the accent. The border is `border_inactive`, so the box reads on any background.
+On-screen display for volume and brightness, and the commands the keys run.
 
-`osd-volume up|down|mute|micmute` and `osd-brightness up|down` (keys, with the OSD) or `bup|bdown` (bar scroll, plain brightnessctl at 1% steps).
-
-Brightness needs write access to `/sys/class/backlight/*/brightness` (root:video, group-writable): swayosd and waybar run as systemd user units, outside the logind session, so brightnessctl's fallback (logind's `SetBrightness`, which only answers processes inside the session) refuses them and the keys and the bar scroll do nothing. `setup.sh` adds you to the `video` group; it applies from the next login.
+Styled in the Viewport CAD look (`style.css`): 0px opaque `vp_bar`, 1px `vp_cyan` 45% border, Terminess 14px bold tabular label, `vp_cyan` icon (`vp_dim` when muted) and a solid `vp_cyan` level bar over an 8px ruler-ticked trough. `osd-brightness` keeps two verb pairs: `up`/`down` (keys) show the OSD, while `bup`/`bdown` (waybar `BRI` scroll) call `brightnessctl` directly in 1% steps.
 
 ## Reference
 
@@ -21,7 +19,7 @@ Brightness needs write access to `/sys/class/backlight/*/brightness` (root:video
 
 **Rendered from the palette** (`theme`):
 
-- `swayosd/.config/swayosd/colors.css.tmpl` → `swayosd/.config/swayosd/colors.css`: `ansi6`, `bg_hover`, `bg_widget`, `border_inactive`, `fg_text`, `name`, `slug`
+- `swayosd/.config/swayosd/colors.css.tmpl` → `swayosd/.config/swayosd/colors.css`: `name`, `slug`, `vp_bar`, `vp_cyan`, `vp_dim`, `vp_text`
 
 **User units** (enabled by `install.sh --units`): `swayosd.service`
 

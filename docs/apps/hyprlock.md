@@ -1,10 +1,8 @@
 # hyprlock
 
-The lock screen (super+esc l, the power menu, and after 5 min idle).
+The lock screen (`super+esc l`, the power menu, and after 5 min idle).
 
-hyprlock replaced swaylock so the lock screen can follow the Quiet Instrument philosophy: its own image (`~/.local/state/wallpaper/lock`, what `wallpaper-set --lock` points at; [swaybg](swaybg.md)'s `setup.sh` starts it at the Blue Dawn eclipse, centred so the clock sits inside the black sun) lightly blurred (one pass of 4) and at two thirds brightness. There is no panel: the black sun is the card, and its disc (about 360 px across at 1080p) holds the time in light `fg_bright`, the date as a lowercase `fg_muted` label and a slim password pill (`bg_surface` at half opacity), the text with a soft `shadow` so it stays legible on any other lock image. An image, not a screenshot: nothing that was on screen shows through the lock. It is not the desktop's wallpaper, which can be a video hyprlock can't draw. The field's edge is the `accent` (the one thing that matters on this screen), `error` with "wrong password" on a failed attempt and `warning` while Caps Lock is on. Fades last 150 ms on the desktop's one curve. With no image the backdrop is `bg_desktop`.
-
-Every lock starts in the background (`pidof -q hyprlock || hyprlock &`): hyprlock runs until unlock and has no fork-once-locked flag, and `swayidle -w` waits for each command. Before suspend it skips the fade and swayidle waits a second so the lock is up first (see [Session](../session.md)).
+hyprlock keeps the lock image (`~/.local/state/wallpaper/lock`, dimmed and crisp with no blur) and centers an opaque 0px `vp_bar` CAD authentication console built from `shape {}` blocks: a 1px `vp_cyan` 45% frame, a hairline rule under `SYSTEM LOCKED`, an integer-scaled 48px bold Terminess clock, an uppercase `vp_cyan` date readout, and a square 0px password field (`vp_signal` focus edge, `vp_warn` Caps Lock, `vp_crit` auth failure). Fades last 150 ms on mango's quadratic ease-out curve.
 
 ## Reference
 
@@ -17,5 +15,5 @@ Every lock starts in the background (`pidof -q hyprlock || hyprlock &`): hyprloc
 
 **Rendered from the palette** (`theme`):
 
-- `hyprlock/.config/hypr/hyprlock.conf.tmpl` → `hyprlock/.config/hypr/hyprlock.conf`: `accent`, `bg_desktop`, `bg_surface`, `error`, `fg_bright`, `fg_muted`, `home`, `name`, `shadow`, `slug`, `warning`
+- `hyprlock/.config/hypr/hyprlock.conf.tmpl` → `hyprlock/.config/hypr/hyprlock.conf`: `bg_desktop`, `home`, `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_signal`, `vp_text`, `vp_warn`
 <!-- end generated -->

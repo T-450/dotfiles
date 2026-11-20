@@ -5,8 +5,8 @@
 Mango imports `WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_* MANGO_INSTANCE_SIGNATURE`
 into systemd and dbus, then starts `mango-session.target` → `graphical-session.target`. Every daemon is
 a user unit with `PartOf=`/`After=`/`Requisite=graphical-session.target` and
-`WantedBy=graphical-session.target`, so none starts outside a session: waybar, swaybg, mako,
-swayidle, swayosd, polkit-agent, wlsunset, wl-clip-persist, cliphist, blueman-applet.
+`WantedBy=graphical-session.target`, so none starts outside a session: waybar, swaybg, swaync,
+swayidle, swayosd, polkit-agent, wlsunset, wl-clip-persist, elephant, walker, mango-whichkey, blueman-applet.
 There is **no `exec_once` autostart**, on purpose; add new daemons as units the same way.
 
 - Environment for mango's children: `mango/.config/mango/env.conf` (reset on reload; relogin to change).

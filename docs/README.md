@@ -26,7 +26,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [chrome](apps/chrome.md) | Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite | google-chrome |
 | [clang](apps/clang.md) | C and C++ from Arch: the clang compiler with clangd, clang-format and clang-tidy, the lldb debugger, the mold linker, and meson | clang, lldb, mold, meson |
 | [claude](apps/claude.md) | Claude Code: its settings and a custom theme rendered from the palette | claude-code, claude-desktop |
-| [clipboard](apps/clipboard.md) | Clipboard history (cliphist) and persistence after the source app quits (wl-clip-persist) | wl-clipboard, cliphist, wl-clip-persist |
+| [clipboard](apps/clipboard.md) | Wayland clipboard utilities (`wl-clipboard`) and persistence after the source app quits (`wl-clip-persist`) | wl-clipboard, wl-clip-persist |
 | [desktop-vm](apps/desktop-vm.md) | A hand-run QEMU/KVM VM that boots this repo's desktop from the working tree and shows what CI cannot: the boot, the greeter and the session on a screen, without touching your live session | edk2-ovmf, qemu-hw-display-virtio-gpu-gl, qemu-hw-display-virtio-vga-gl, qemu-ui-egl-headless, tigervnc |
 | [fastfetch](apps/fastfetch.md) | System summary in three labelled groups beside a λ drawn in the palette's colors, shown by Ghostty through the kitty graphics protocol | fastfetch |
 | [firefox](apps/firefox.md) | Firefox with palette-colored browser chrome; Chrome is the default browser | firefox |
@@ -38,13 +38,12 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [gslapper](apps/gslapper.md) | Video wallpapers: the desktop's, when the current wallpaper is a video, and the login screen's (sysc-greet starts its own gslapper) | gslapper, gst-plugin-va |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
 | [helix](apps/helix.md) | Helix, a modal editor set up for every language in the toolchain, with Vim and AstroNvim keys added where helix binds nothing (four named exceptions), inline diagnostics, and a theme rendered from the active palette, which `theme set` reloads in running editors | jdtls, jre-openjdk |
-| [hyprlock](apps/hyprlock.md) | The lock screen (super+esc l, the power menu, and after 5 min idle) | hyprlock |
-| [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
+| [hyprlock](apps/hyprlock.md) | The lock screen (`super+esc l`, the power menu, and after 5 min idle) | hyprlock |
+| [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and Walker | - |
 | [imv](apps/imv.md) | imv, the image viewer: just the image on the desktop color, in the palette's colors | imv |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
 | [llama-cpp](apps/llama-cpp.md) | Local LLM inference via `llama-cli` (and `llama-server`, `llama-bench`) with Vulkan offload on the ThinkPad T14's Intel UHD 620 (`ggml-vulkan` + `vulkan-intel`) | llama-cpp, ggml-vulkan |
-| [mako](apps/mako.md) | Notifications | mako |
-| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
+| [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb, luajit, lua51-lgi, gtk-layer-shell |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
 | [mpv](apps/mpv.md) | mpv, the video and audio player, with the uosc on-screen interface in the palette's colors | mpv, mpv-mpris, yt-dlp, mpv-uosc, mpv-thumbfast-git, libva-utils |
@@ -56,22 +55,23 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [qt](apps/qt.md) | Qt 6 apps (qutebrowser today): native Wayland, dark or light from the palette's variant | qt6-base, qt6-wayland, qt6-svg |
 | [qutebrowser](apps/qutebrowser.md) | qutebrowser, a keyboard-driven browser, in palette colors | qutebrowser |
 | [recorder](apps/recorder.md) | Screen recording with gpu-screen-recorder (ctrl+Print toggles; files go to `~/video`) | gpu-screen-recorder |
-| [rofi](apps/rofi.md) | The launcher (super+d) and every menu: clipboard history, theme picker, night light | rofi |
 | [runner-up](apps/runner-up.md) | CI on this machine: [runner-up](https://github.com/kunchenguid/runner-up) runs this repo's GitHub Actions jobs, each in a fresh Arch Linux KVM VM | github-cli, qemu-base |
 | [sbx](apps/sbx.md) | Docker Sandboxes (`sbx`): runs a coding agent (Claude Code, Codex, OpenCode, ...) in its own microVM with your project mounted, so an agent running without approval prompts can't reach the rest of the machine | - |
 | [screenshot](apps/screenshot.md) | Screenshots: `screenshot region` (shift+Print) and `screenshot full` (Print) | grim, slurp, wl-clipboard |
 | [swaybg](apps/swaybg.md) | The wallpaper: the last pick from waypaper (super+w), else the palette's own, Neptune in ASCII characters on dark palettes and the plain `bg_desktop` color on light ones | swaybg, imagemagick |
 | [swayidle](apps/swayidle.md) | Idle handling: dim, lock, displays off | swayidle, dimland-git |
+| [swaync](apps/swaync.md) | Notifications and a minimal top-right CAD log drawer (`swaync`), styled in the Viewport look: 0px opaque `vp_bar`, 1px `vp_cyan` 45% frame, 8px/32px cyan header ruler, Terminess pixel type, `vp_magenta` unread accent and `vp_crit` critical outline | swaync |
 | [swayosd](apps/swayosd.md) | On-screen display for volume and brightness, and the commands the keys run | swayosd, brightnessctl |
 | [tealdeer](apps/tealdeer.md) | tealdeer: `tldr` pages, short examples for command-line tools | tealdeer |
 | [theme](apps/theme.md) | The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps | python, jq |
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, bolt, tlp, powertop, smartmontools, nvme-cli |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor for quick edits and jumping between a project's files, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor; no LSP or tree-sitter here) | vim, yamllint |
+| [walker](apps/walker.md) | The launcher (`super+d`), clipboard history (`super+v`) and dmenu picker (`theme pick`, `nightlight menu`), powered by Walker (GTK4) and Elephant's minimal provider set (`desktopapplications`, `runner`, `clipboard`, `menus`) | walker-bin, elephant-bin, elephant-desktopapplications-bin, elephant-runner-bin, elephant-clipboard-bin, elephant-menus-bin |
 | [way-displays](apps/way-displays.md) | Display manager: each display gets its native resolution at its highest refresh and a scale from its pixel density, the laptop panel sits rightmost with bottom edges aligned, the LG UltraFine is pinned to scale 1.25, and the panel turns off while the lid is closed with an external display connected | way-displays |
-| [waybar](apps/waybar.md) | Two 30px bars frame the screen like an SGI CAD viewport: a status line at the top with a ruler on its edge, and a media bar at the bottom, the viewport's floor, with the axis triad, cava ribbons around the player, and the CLUT key | waybar, pamixer, cava |
+| [waybar](apps/waybar.md) | Two 38px bars frame the screen like an SGI CAD viewport: a status line at the top with a bottom ruler and live controls, and a media + hardware telemetry floor at the bottom with a mirrored top ruler, the axis triad, CPU/MEM and TMP/DSK CLUT flanks, cava ribbons around the player with a 1px cyan progress rail, and the CLUT key | waybar, pamixer, cava |
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
-| [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
+| [wlogout](apps/wlogout.md) | The power menu (`super+esc p`, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd, ripgrep |
 <!-- end generated -->

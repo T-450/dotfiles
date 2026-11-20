@@ -23,9 +23,9 @@ Rare actions take two steps: super+esc (session), super+n (notifications) or sup
 | tab · o · u | overview cycling windows · overview of every window · previous window |
 | 0 | show/hide tag 0, the special tag (a scratchpad workspace): its windows tiled over the tag you are on, the rest dimmed |
 | return · shift+return | Ghostty · a floating Ghostty (800x600, a throwaway) |
-| d | rofi launcher |
+| d | Walker launcher |
 | b · e | Chrome · Thunar |
-| v | clipboard history (Enter copies, Shift+Delete removes) |
+| v | clipboard history (Walker/Elephant: Enter copies, Ctrl+D removes, Ctrl+Shift+D wipes) |
 | w · p | wallpaper picker · theme picker |
 | / | the cheatsheet (again closes it) |
 

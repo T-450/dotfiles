@@ -1,10 +1,10 @@
 # icons
 
-Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi.
+Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and Walker.
 
 `pkg/tela-icon-theme-standard` installs Tela in its standard color only: Tela, Tela-dark and Tela-light (19k files, built in about 20 s). The AUR `tela-icon-theme` installs all 45 colors (287k files), and makepkg's debug pass alone walks them for about 40 silent minutes.
 
-`render.sh` (run by `theme`) makes `.local/share/icons/Tela-mango`, linked into your home: Tela's 173 blue icons (folders, places, some apps; devices turn grey) recolored with the palette's `accent` the way Tela's installer makes its color variants, plus the 425 icon names that link to them. Everything else is inherited from Tela-dark or Tela-light, by the palette's variant. It is remade only when the accent, the variant or the base package changes, in under a second; dark and light renders hold the same file names, so the links stay valid across `theme set`. `gtk/setup.sh` and both `settings.ini` select it, and rofi names it in `config.rasi` (it doesn't follow GTK's setting on Wayland).
+`render.sh` (run by `theme`) makes `.local/share/icons/Tela-mango`, linked into your home: Tela's 173 blue icons (folders, places, some apps; devices turn grey) recolored with the palette's `accent` the way Tela's installer makes its color variants, plus the 425 icon names that link to them. Everything else is inherited from Tela-dark or Tela-light, by the palette's variant. It is remade only when the accent, the variant or the base package changes, in under a second; dark and light renders hold the same file names, so the links stay valid across `theme set`. `gtk/setup.sh` and both `settings.ini` select it (Walker follows GTK4's icon theme).
 
 ## Reference
 
