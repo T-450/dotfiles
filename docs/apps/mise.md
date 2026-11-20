@@ -44,7 +44,7 @@ In a project, `mise use node@24` writes a `mise.toml` there. mise asks before it
 
 ## Programs started outside a terminal don't see the tools
 
-oh-my-zsh's `mise` plugin puts the tools on `PATH` in zsh, so only programs started from a terminal see them. mango starts from greetd, not from a login shell, so rofi, mango binds and user units don't see the tools. If a GUI program needs them, add `~/.local/share/mise/shims` to `PATH` in both `mango/.config/mango/env.conf` and `mango/.config/environment.d/`.
+oh-my-zsh's `mise` plugin puts the tools on `PATH` in zsh, so only programs started from a terminal see them. mango starts from greetd, not from a login shell, so Walker, mango binds and user units don't see the tools. If a GUI program needs them, add `~/.local/share/mise/shims` to `PATH` in both `mango/.config/mango/env.conf` and `mango/.config/environment.d/`.
 
 ## What the toolchain costs
 
