@@ -1,0 +1,1080 @@
+#!/usr/bin/env luajit
+-- mango-keys-ui: Viewport (SGI CAD) GTK3 layer-shell keybindings cheatsheet (super+/).
+-- Reads ~/.config/mango/bind.conf directly, ranks in-process (exact, prefix, substring,
+-- subsequence, typo tolerance, synonyms, key names), and renders two-pane square CAD keycaps
+-- matching Walker, Waybar, SwayNC, and mango-whichkey.
+-- usage: mango-keys-ui [--rank-test QUERY]
+
+local home = os.getenv("HOME") or ""
+local xdg_cfg = os.getenv("XDG_CONFIG_HOME") or (home .. "/.config")
+local conf_path = os.getenv("MANGO_KEYS_CONF") or (xdg_cfg .. "/mango/bind.conf")
+local colors_path = os.getenv("MANGO_KEYS_COLORS") or (xdg_cfg .. "/theme/colors.sh")
+local css_path = xdg_cfg .. "/mango/keys.css"
+
+-- ---------------------------------------------------------------- config tables
+
+local ACTIONS = {
+	view = "Show tag %s",
+	tag = "Carry window to tag %s",
+	toggleview = "Also show tag %s",
+	toggletag = "Also put window on tag %s",
+	killclient = "Close window",
+	setkeymode = "Mode: %s",
+}
+
+local SYNONYMS = {
+	view = "workspace switch go",
+	tag = "move send workspace",
+	toggleview = "add workspace",
+	toggletag = "add workspace",
+}
+
+local KEYS = {
+	["return"] = "Enter",
+	escape = "Esc",
+	backslash = "\\",
+	slash = "/",
+	backspace = "Bksp",
+	left = "←",
+	right = "→",
+	up = "↑",
+	down = "↓",
+	tab = "Tab",
+	space = "Space",
+	print = "PrtSc",
+	equal = "=",
+	minus = "-",
+	bracketleft = "[",
+	bracketright = "]",
+	btn_left = "L-click",
+	btn_right = "R-click",
+	btn_middle = "M-click",
+	xf86audioraisevolume = "Vol+",
+	xf86audiolowervolume = "Vol-",
+	xf86audiomute = "Mute",
+	xf86audiomicmute = "Mic",
+	xf86monbrightnessup = "Bri+",
+	xf86monbrightnessdown = "Bri-",
+	xf86audioplay = "Play",
+	xf86audionext = "Next",
+	xf86audioprev = "Prev",
+}
+
+local KEY_WORDS = {
+	Enter = "enter return",
+	Esc = "esc escape",
+	["←"] = "left arrow",
+	["→"] = "right arrow",
+	["↑"] = "up arrow",
+	["↓"] = "down arrow",
+	["/"] = "slash",
+	PrtSc = "print prtsc",
+	Tab = "tab",
+	["="] = "equal plus",
+	["-"] = "minus",
+	["["] = "bracket",
+	["]"] = "bracket",
+}
+
+local MODS = { super = "Super", ctrl = "Ctrl", alt = "Alt", shift = "Shift" }
+local DIRS = { left = "←", right = "→", up = "↑", down = "↓" }
+
+local LAYERS = {
+	{ "SUPER", "GO · OPEN" },
+	{ "+SHIFT", "CARRY" },
+	{ "+ALT", "WINDOW" },
+	{ "+CTRL", "LAYOUT" },
+}
+
+-- ---------------------------------------------------------------- helpers
+
+local function trim(s)
+	return (s:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function split_csv(s)
+	local out = {}
+	local start = 1
+	while true do
+		local i = s:find(",", start, true)
+		if not i then
+			out[#out + 1] = trim(s:sub(start))
+			break
+		end
+		out[#out + 1] = trim(s:sub(start, i - 1))
+		start = i + 1
+	end
+	return out
+end
+
+local function read_file(path)
+	local f = io.open(path, "r")
+	if not f then
+		return nil
+	end
+	local s = f:read("*a")
+	f:close()
+	return s
+end
+
+local function escape_pango(s)
+	return (s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"):gsub("'", "&#39;"))
+end
+
+local function load_highlight_color()
+	local text = read_file(colors_path) or ""
+	local vp_cyan = text:match('THEME_VP_CYAN="([^"]+)"')
+	if vp_cyan then
+		return vp_cyan
+	end
+	return text:match('THEME_LINK="([^"]+)"') or text:match('THEME_FG_BRIGHT="([^"]+)"')
+end
+
+-- ---------------------------------------------------------------- parsing
+
+local function build_chord(mods, key)
+	local caps = {}
+	for m in mods:gmatch("[^+]+") do
+		local canon = MODS[m:lower()]
+		if canon then
+			caps[#caps + 1] = canon
+		end
+	end
+	local k = key:lower()
+	local label = KEYS[k] or (#key == 1 and key:upper() or key)
+	caps[#caps + 1] = label
+	return caps
+end
+
+local function chords_equal(a, b)
+	if #a ~= #b then
+		return false
+	end
+	for i = 1, #a do
+		if a[i] ~= b[i] then
+			return false
+		end
+	end
+	return true
+end
+
+local function steps_equal(a, b)
+	if #a ~= #b then
+		return false
+	end
+	for i = 1, #a do
+		if not chords_equal(a[i], b[i]) then
+			return false
+		end
+	end
+	return true
+end
+
+local function collapse_rows(rows)
+	local out = {}
+	for _, r in ipairs(rows) do
+		local last = r.steps[#r.steps]
+		local last_key = last[#last]
+		local is_digit = last_key:match("^%d+$") ~= nil and #r.args > 0 and r.args[1] == last_key
+		local p = out[#out]
+		local same_prefix = false
+		if is_digit and p and p._digit and p.group == r.group and p.action == r.action then
+			local plast = p.steps[#p.steps]
+			if #plast == #last then
+				same_prefix = true
+				for j = 1, #last - 1 do
+					if plast[j] ~= last[j] then
+						same_prefix = false
+						break
+					end
+				end
+			end
+		end
+		if same_prefix then
+			local plast = p.steps[#p.steps]
+			plast[#plast] = p._first .. "-" .. last_key
+			p.desc = p.desc:gsub("%s*%d+$", "")
+		else
+			r._digit = is_digit
+			r._first = last_key
+			out[#out + 1] = r
+		end
+	end
+	for _, r in ipairs(out) do
+		r._digit = nil
+		r._first = nil
+	end
+	return out
+end
+
+local function parse_binds(text)
+	local raw = {}
+	local group, note, mode = "", nil, "default"
+	for line in (text .. "\n"):gmatch("([^\r\n]*)\r?\n") do
+		line = trim(line)
+		if line:sub(1, 3) == "## " then
+			group = line:sub(4)
+			note = nil
+		elseif line:sub(1, 3) == "#: " then
+			note = line:sub(4)
+		elseif line:sub(1, 9) == "key_mode=" then
+			mode = trim(line:sub(10))
+		else
+			local kind, rest = line:match("^(bind[slrpc]*)=(.*)$")
+			if not kind then
+				kind, rest = line:match("^(mousebind)=(.*)$")
+			end
+			if not kind then
+				kind, rest = line:match("^(gesturebind)=(.*)$")
+			end
+			if kind then
+				local f = split_csv(rest)
+				local chord, action, args
+				if kind == "gesturebind" then
+					chord = { (f[3] or "") .. " fingers", DIRS[(f[2] or ""):lower()] or (f[2] or "") }
+					action = f[4] or ""
+					args = {}
+					for j = 5, #f do
+						if f[j] ~= "" then
+							args[#args + 1] = f[j]
+						end
+					end
+				else
+					chord = build_chord(f[1] or "", f[2] or "")
+					action = f[3] or ""
+					args = {}
+					for j = 4, #f do
+						if f[j] ~= "" then
+							args[#args + 1] = f[j]
+						end
+					end
+				end
+				raw[#raw + 1] = {
+					group = group,
+					mode = mode,
+					chord = chord,
+					action = action,
+					args = args,
+					note = note,
+				}
+				note = nil
+			elseif line:sub(1, 1) ~= "#" then
+				note = nil
+			end
+		end
+	end
+
+	local opens = {}
+	for _, r in ipairs(raw) do
+		if r.action == "setkeymode" and r.args[1] and r.args[1] ~= "default" and r.args[1] ~= r.mode then
+			if not opens[r.args[1]] then
+				opens[r.args[1]] = { r.mode, r.chord }
+			end
+		end
+	end
+
+	local function mode_path(m, seen)
+		if m == "default" or m == "common" or not opens[m] or seen[m] then
+			return {}
+		end
+		seen[m] = true
+		local parent, chord = opens[m][1], opens[m][2]
+		local p = mode_path(parent, seen)
+		p[#p + 1] = chord
+		return p
+	end
+
+	local rows, done = {}, {}
+	for _, r in ipairs(raw) do
+		if not (r.action == "setkeymode" and r.args[1] == "default" and not r.note) then
+			local key = r.mode .. "\0" .. r.action .. "\0" .. table.concat(r.args, "\1")
+			if not done[key] then
+				done[key] = true
+				local desc, syn = "", ""
+				if r.note then
+					local sep = r.note:find(" ~ ", 1, true)
+					if sep then
+						desc = r.note:sub(1, sep - 1)
+						syn = r.note:sub(sep + 3)
+					else
+						desc = r.note
+					end
+				end
+				if desc == "" then
+					local tpl = ACTIONS[r.action]
+					if tpl then
+						desc = tpl:find("%%s") and string.format(tpl, r.args[1] or "") or tpl
+					else
+						local s = r.action:gsub("_", " ")
+						desc = s:sub(1, 1):upper() .. s:sub(2)
+					end
+					syn = SYNONYMS[r.action] or ""
+				end
+				local steps = mode_path(r.mode, {})
+				steps[#steps + 1] = r.chord
+				rows[#rows + 1] = {
+					group = r.group,
+					mode = r.mode,
+					steps = steps,
+					desc = trim(desc),
+					syn = trim(syn),
+					action = r.action,
+					args = r.args,
+				}
+			end
+		end
+	end
+	return collapse_rows(rows)
+end
+
+-- ---------------------------------------------------------------- search ranking
+
+local function extract_words(text)
+	local out = {}
+	for w in text:lower():gmatch("[a-z0-9]+") do
+		out[#out + 1] = w
+	end
+	return out
+end
+
+local function extract_key_words(r)
+	local out = {}
+	for _, chord in ipairs(r.steps) do
+		for _, k in ipairs(chord) do
+			local kw = KEY_WORDS[k] or k:lower()
+			for w in kw:gmatch("%S+") do
+				out[#out + 1] = w
+			end
+		end
+	end
+	return out
+end
+
+local function damerau(a, b, limit)
+	local la, lb = #a, #b
+	if math.abs(la - lb) > limit then
+		return limit + 1
+	end
+	local prev2, prev = nil, {}
+	for j = 0, lb do
+		prev[j] = j
+	end
+	for i = 1, la do
+		local cur = { [0] = i }
+		local row_min = i
+		local ai = a:byte(i)
+		for j = 1, lb do
+			local bj = b:byte(j)
+			local cost = (ai == bj) and 0 or 1
+			local v = math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+			if i > 1 and j > 1 and ai == b:byte(j - 1) and a:byte(i - 1) == bj then
+				local swap = prev2[j - 2] + 1
+				if swap < v then
+					v = swap
+				end
+			end
+			cur[j] = v
+			if v < row_min then
+				row_min = v
+			end
+		end
+		if row_min > limit then
+			return limit + 1
+		end
+		prev2, prev = prev, cur
+	end
+	return prev[lb]
+end
+
+local function subsequence(t, w)
+	local pos, i = {}, 1
+	for k = 1, #t do
+		local idx = w:find(t:sub(k, k), i, true)
+		if not idx then
+			return nil
+		end
+		pos[#pos + 1] = idx
+		i = idx + 1
+	end
+	return pos
+end
+
+local function range_list(a, b)
+	local out = {}
+	for i = a, b do
+		out[#out + 1] = i
+	end
+	return out
+end
+
+local function word_score(t, w)
+	if w == t then
+		return 100, range_list(1, #w)
+	end
+	if w:sub(1, #t) == t then
+		return 80 + 10 * #t / #w, range_list(1, #t)
+	end
+	if #t >= 3 then
+		local idx = w:find(t, 1, true)
+		if idx then
+			return 60, range_list(idx, idx + #t - 1)
+		end
+		if t:byte(1) == w:byte(1) then
+			local pos = subsequence(t, w)
+			if pos then
+				local gaps = pos[#pos] - pos[1] + 1 - #t
+				return math.max(45 - 4 * gaps, 25), pos
+			end
+		end
+	end
+	if #t >= 4 then
+		local limit = (#t >= 7) and 2 or 1
+		local d = damerau(t, w, limit)
+		if d <= limit then
+			return 40 - 5 * d, range_list(1, #w)
+		end
+		if #w > #t and damerau(t, w:sub(1, #t), 1) <= 1 then
+			return 32, range_list(1, #t)
+		end
+	end
+	return 0, nil
+end
+
+local function prepare_rows(rs)
+	for i, r in ipairs(rs) do
+		r.index = i
+		r._dw = extract_words(r.desc)
+		r._gw = extract_words(r.group)
+		r._sw = extract_words(r.syn)
+		r._kw = extract_key_words(r)
+		local keys_n = 0
+		for _, c in ipairs(r.steps) do
+			keys_n = keys_n + #c
+		end
+		r._keys_n = keys_n
+	end
+end
+
+local function rank_rows(query, rs)
+	local terms = {}
+	local q = query:lower():gsub("›", " ")
+	for t in q:gmatch("[^%s+>]+") do
+		if t ~= "" then
+			terms[#terms + 1] = t
+		end
+	end
+	if #terms == 0 then
+		local out = {}
+		for i = 1, #rs do
+			out[i] = { idx = i, score = 0, marks = nil }
+		end
+		return out
+	end
+
+	local out = {}
+	for i, r in ipairs(rs) do
+		local total, marks, ok = 0, {}, true
+		for _, t in ipairs(terms) do
+			local best, hit_n, hit_p = 0, nil, nil
+			local t_num = t:match("^%d+$") and tonumber(t) or nil
+			for _, k in ipairs(r._kw) do
+				if k == t then
+					if 90 > best then
+						best = 90
+					end
+				elseif #t > 1 and k:sub(1, #t) == t then
+					if 70 > best then
+						best = 70
+					end
+				elseif t_num then
+					local lo, hi = k:match("^(%d+)-(%d+)$")
+					if lo and t_num >= tonumber(lo) and t_num <= tonumber(hi) and 90 > best then
+						best = 90
+					end
+				end
+			end
+			for n, w in ipairs(r._dw) do
+				local s, p = 0, nil
+				if #t == 1 then
+					if w:sub(1, 1) == t then
+						s, p = 30, { 1 }
+					end
+				else
+					s, p = word_score(t, w)
+				end
+				if s > best then
+					best, hit_n, hit_p = s, n, p
+				end
+			end
+			if #t > 1 then
+				for _, w in ipairs(r._gw) do
+					local s = word_score(t, w) * 0.8
+					if s > best then
+						best, hit_n, hit_p = s, nil, nil
+					end
+				end
+				for _, w in ipairs(r._sw) do
+					local s = word_score(t, w) * 0.8
+					if s > best then
+						best, hit_n, hit_p = s, nil, nil
+					end
+				end
+			end
+			if best == 0 then
+				ok = false
+				break
+			end
+			total = total + best
+			if hit_n and hit_p then
+				local set = marks[hit_n]
+				if not set then
+					set = {}
+					marks[hit_n] = set
+				end
+				for _, pos in ipairs(hit_p) do
+					set[pos] = true
+				end
+			end
+		end
+		if ok then
+			out[#out + 1] = {
+				idx = i,
+				score = total - r._keys_n - 0.5 * #r._dw,
+				marks = marks,
+			}
+		end
+	end
+	table.sort(out, function(a, b)
+		if a.score ~= b.score then
+			return a.score > b.score
+		end
+		return a.idx < b.idx
+	end)
+	return out
+end
+
+-- ---------------------------------------------------------------- load data
+
+local conf_text = read_file(conf_path)
+if not conf_text then
+	io.stderr:write("mango-keys-ui: cannot read " .. conf_path .. "\n")
+	os.exit(1)
+end
+local all_rows = parse_binds(conf_text)
+prepare_rows(all_rows)
+
+-- lightweight CLI self-test mode (used during offline verification, no display needed)
+if arg[1] == "--rank-test" then
+	local q = arg[2] or ""
+	local res = rank_rows(q, all_rows)
+	for _, m in ipairs(res) do
+		local r = all_rows[m.idx]
+		print(string.format("%s\t%s", r.group, r.desc))
+	end
+	os.exit(0)
+end
+
+-- group index & mode trigger lookup
+local groups_by_name = {}
+local mode_triggers = {}
+for _, r in ipairs(all_rows) do
+	local g = groups_by_name[r.group]
+	if not g then
+		g = {}
+		groups_by_name[r.group] = g
+	end
+	g[#g + 1] = r
+	if r.action == "setkeymode" and r.args[1] and r.args[1] ~= "default" then
+		local parts = {}
+		for _, chord in ipairs(r.steps) do
+			parts[#parts + 1] = table.concat(chord, "+")
+		end
+		mode_triggers[r.args[1]] = table.concat(parts, " › "):upper()
+	end
+end
+
+local hl_color = load_highlight_color()
+
+local function format_desc_markup(desc, marks)
+	if not marks or not next(marks) or not hl_color then
+		return escape_pango(desc)
+	end
+	local out = {}
+	local word_i = 0
+	local pos = 1
+	local len = #desc
+	while pos <= len do
+		local s, e = desc:find("[A-Za-z0-9]+", pos)
+		if not s then
+			out[#out + 1] = escape_pango(desc:sub(pos))
+			break
+		end
+		if s > pos then
+			out[#out + 1] = escape_pango(desc:sub(pos, s - 1))
+		end
+		word_i = word_i + 1
+		local tok = desc:sub(s, e)
+		local m = marks[word_i]
+		if not m then
+			out[#out + 1] = escape_pango(tok)
+		else
+			for c = 1, #tok do
+				local ch = escape_pango(tok:sub(c, c))
+				if m[c] then
+					out[#out + 1] = string.format(
+						"<span foreground='%s' weight='bold' underline='single'>%s</span>",
+						hl_color,
+						ch
+					)
+				else
+					out[#out + 1] = ch
+				end
+			end
+		end
+		pos = e + 1
+	end
+	return table.concat(out)
+end
+
+-- ---------------------------------------------------------------- GTK3 UI
+
+local lgi = require("lgi")
+local GLib = lgi.require("GLib", "2.0")
+local Gdk = lgi.require("Gdk", "3.0")
+local Gtk = lgi.require("Gtk", "3.0")
+local Pango = lgi.require("Pango", "1.0")
+local GtkLayerShell = lgi.require("GtkLayerShell", "0.1")
+
+local css_provider = Gtk.CssProvider()
+local ok, err = pcall(function()
+	css_provider:load_from_path(css_path)
+end)
+if not ok then
+	io.stderr:write("mango-keys-ui: css load failed: " .. tostring(err) .. "\n")
+end
+Gtk.StyleContext.add_provider_for_screen(
+	Gdk.Screen.get_default(),
+	css_provider,
+	Gtk.STYLE_PROVIDER_PRIORITY_USER
+)
+
+local function add_class(w, cls)
+	w:get_style_context():add_class(cls)
+	return w
+end
+
+local function make_caps_widget(steps, opts)
+	local box = Gtk.Box({
+		orientation = Gtk.Orientation.HORIZONTAL,
+		halign = Gtk.Align.END,
+		valign = Gtk.Align.CENTER,
+	})
+	if opts and opts.prefix_arrow then
+		local arrow = add_class(Gtk.Label({ label = "›" }), "cap-step")
+		box:pack_start(arrow, false, false, 0)
+	end
+	for n, chord in ipairs(steps) do
+		if n > 1 then
+			box:pack_start(add_class(Gtk.Label({ label = "›" }), "cap-step"), false, false, 0)
+		end
+		for j, key in ipairs(chord) do
+			if j > 1 then
+				box:pack_start(add_class(Gtk.Label({ label = "+" }), "cap-sep"), false, false, 0)
+			end
+			local lbl = Gtk.Label({ label = key })
+			add_class(lbl, "cap")
+			if j < #chord then
+				add_class(lbl, "cap-mod")
+			else
+				add_class(lbl, "cap-key")
+				if n == #steps then
+					add_class(lbl, opts and opts.lit and "cap-action-lit" or "cap-action")
+				end
+			end
+			box:pack_start(lbl, false, false, 0)
+		end
+	end
+	return box
+end
+
+-- window: centered Wayland layer-shell overlay
+local win = Gtk.Window({
+	type = Gtk.WindowType.TOPLEVEL,
+	title = "Keybindings",
+	decorated = false,
+	resizable = false,
+})
+win:set_name("keys")
+win:set_size_request(1240, 660)
+
+GtkLayerShell.init_for_window(win)
+GtkLayerShell.set_namespace(win, "mango-keys")
+GtkLayerShell.set_layer(win, GtkLayerShell.Layer.OVERLAY)
+GtkLayerShell.set_keyboard_mode(win, GtkLayerShell.KeyboardMode.EXCLUSIVE)
+
+local root = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL })
+root:set_name("keys-root")
+win:add(root)
+
+-- top search header
+local header = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, valign = Gtk.Align.CENTER })
+header:set_name("keys-header")
+local prompt = Gtk.Label({ label = "❯" })
+prompt:set_name("keys-prompt")
+local entry = Gtk.Entry({
+	placeholder_text = "SEARCH KEYBINDINGS...",
+	has_frame = false,
+	hexpand = true,
+})
+entry:set_name("keys-entry")
+local count_lbl = Gtk.Label({ label = string.format("%d/%d", #all_rows, #all_rows) })
+count_lbl:set_name("keys-count")
+local title_lbl = Gtk.Label({ label = "KEYBINDINGS · SUPER+/" })
+title_lbl:set_name("keys-title")
+
+header:pack_start(prompt, false, false, 0)
+header:pack_start(entry, true, true, 0)
+header:pack_end(title_lbl, false, false, 0)
+header:pack_end(count_lbl, false, false, 0)
+root:pack_start(header, false, false, 0)
+
+-- two-pane body
+local body = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, vexpand = true, hexpand = true })
+body:set_name("keys-body")
+root:pack_start(body, true, true, 0)
+
+-- left pane: searchable list
+local left_scroll = Gtk.ScrolledWindow({
+	hscrollbar_policy = Gtk.PolicyType.NEVER,
+	vscrollbar_policy = Gtk.PolicyType.AUTOMATIC,
+	hexpand = true,
+	vexpand = true,
+})
+left_scroll:set_name("keys-left-scroll")
+local listbox = Gtk.ListBox({
+	selection_mode = Gtk.SelectionMode.SINGLE,
+	activate_on_single_click = false,
+	can_focus = false,
+	hexpand = true,
+})
+listbox:set_name("keys-list")
+left_scroll:add(listbox)
+body:pack_start(left_scroll, true, true, 0)
+
+-- right pane: selected group card (hexpand_set stops inner labels from bubbling expand to body)
+local right_pane = Gtk.Box({
+	orientation = Gtk.Orientation.VERTICAL,
+	vexpand = true,
+	hexpand = false,
+	hexpand_set = true,
+})
+right_pane:set_name("keys-right-pane")
+right_pane:set_size_request(460, -1)
+
+local card_head = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, hexpand = true })
+card_head:set_name("keys-card-head")
+local card_group_lbl = Gtk.Label({ xalign = 0 })
+card_group_lbl:set_name("keys-card-group")
+local card_trigger_lbl = Gtk.Label({ xalign = 1, no_show_all = true })
+card_trigger_lbl:set_name("keys-card-trigger")
+card_head:pack_start(card_group_lbl, true, true, 0)
+card_head:pack_end(card_trigger_lbl, false, false, 0)
+right_pane:pack_start(card_head, false, false, 0)
+
+local card_scroll = Gtk.ScrolledWindow({
+	hscrollbar_policy = Gtk.PolicyType.NEVER,
+	vscrollbar_policy = Gtk.PolicyType.AUTOMATIC,
+	hexpand = true,
+	vexpand = true,
+})
+local card_box = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL, spacing = 2, hexpand = true })
+card_scroll:add(card_box)
+right_pane:pack_start(card_scroll, true, true, 0)
+body:pack_start(right_pane, false, true, 0)
+
+-- footer legend
+local footer = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL })
+footer:set_name("keys-footer")
+for _, item in ipairs(LAYERS) do
+	footer:pack_start(add_class(Gtk.Label({ label = item[1] }), "legend-cap"), false, false, 0)
+	footer:pack_start(add_class(Gtk.Label({ label = item[2] }), "legend-text"), false, false, 0)
+end
+local esc_lbl = add_class(Gtk.Label({ label = "CLOSE" }), "legend-text")
+esc_lbl.margin_end = 0
+footer:pack_end(esc_lbl, false, false, 0)
+footer:pack_end(add_class(Gtk.Label({ label = "ESC" }), "legend-cap"), false, false, 0)
+local nav_lbl = add_class(Gtk.Label({ label = "NAVIGATE" }), "legend-text")
+footer:pack_end(nav_lbl, false, false, 0)
+footer:pack_end(add_class(Gtk.Label({ label = "↑↓" }), "legend-cap"), false, false, 0)
+root:pack_end(footer, false, false, 0)
+
+-- pre-build all left-pane rows once for <2ms keystroke filtering
+local group_sg = Gtk.SizeGroup({ mode = Gtk.SizeGroupMode.HORIZONTAL })
+local caps_sg = Gtk.SizeGroup({ mode = Gtk.SizeGroupMode.HORIZONTAL })
+local row_widgets = {}
+local empty_label = Gtk.Label({ label = "NO MATCHING KEYBINDINGS", xalign = 0.5 })
+empty_label:set_name("keys-empty")
+empty_label:show()
+listbox:set_placeholder(empty_label)
+
+for i, r in ipairs(all_rows) do
+	local lr = Gtk.ListBoxRow({ can_focus = false })
+	lr:set_name(tostring(i))
+	local hbox = add_class(Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, spacing = 12 }), "keys-row")
+
+	local glbl = add_class(Gtk.Label({ label = r.group:upper(), xalign = 0 }), "keys-group")
+	group_sg:add_widget(glbl)
+
+	local caps_wrap = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, halign = Gtk.Align.END })
+	caps_wrap:pack_end(make_caps_widget(r.steps), false, false, 0)
+	caps_sg:add_widget(caps_wrap)
+
+	local dlbl = add_class(Gtk.Label({
+		xalign = 0,
+		hexpand = true,
+		ellipsize = Pango.EllipsizeMode.END,
+	}), "keys-desc")
+	local plain = escape_pango(r.desc)
+	dlbl:set_markup(plain)
+
+	hbox:pack_start(glbl, false, false, 0)
+	hbox:pack_start(caps_wrap, false, false, 0)
+	hbox:pack_start(dlbl, true, true, 0)
+	lr:add(hbox)
+	listbox:add(lr)
+
+	row_widgets[i] = { list_row = lr, desc_label = dlbl, last_markup = plain }
+end
+
+-- dynamic state
+local visible_order = {}
+local rank_pos = {}
+local selected_row_idx = nil
+
+local function scroll_widget_into_view(scroll, widget)
+	GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, function()
+		if not widget then
+			return false
+		end
+		local alloc = widget:get_allocation()
+		local adj = scroll:get_vadjustment()
+		if adj and alloc and alloc.height > 0 then
+			adj:clamp_page(alloc.y, alloc.y + alloc.height)
+		end
+		return false
+	end)
+end
+
+local function render_card(sel_idx)
+	for _, child in ipairs(card_box:get_children()) do
+		card_box:remove(child)
+	end
+	if not sel_idx or not all_rows[sel_idx] then
+		card_group_lbl.label = ""
+		card_trigger_lbl:hide()
+		return
+	end
+	local sel = all_rows[sel_idx]
+	local grp = groups_by_name[sel.group] or {}
+	card_group_lbl.label = sel.group:upper()
+
+	-- show trigger badge if this group belongs to a key mode
+	local mode_name = sel.mode
+	if mode_name == "default" then
+		for _, r in ipairs(grp) do
+			if r.mode ~= "default" and r.mode ~= "common" then
+				mode_name = r.mode
+				break
+			end
+		end
+	end
+	local trig = mode_triggers[mode_name]
+	if trig then
+		card_trigger_lbl.label = trig
+		card_trigger_lbl:show()
+	else
+		card_trigger_lbl:hide()
+	end
+
+	-- determine whether a parent trigger row is also shown in this card (so sub-binds collapse to `› K`)
+	local shown_steps = {}
+	for _, r in ipairs(grp) do
+		shown_steps[#shown_steps + 1] = r.steps
+	end
+	local function has_prefix(steps)
+		if #steps <= 1 then
+			return false
+		end
+		local pref = {}
+		for k = 1, #steps - 1 do
+			pref[k] = steps[k]
+		end
+		for _, s in ipairs(shown_steps) do
+			if steps_equal(s, pref) then
+				return true
+			end
+		end
+		return false
+	end
+
+	local card_caps_sg = Gtk.SizeGroup({ mode = Gtk.SizeGroupMode.HORIZONTAL })
+	local sel_widget = nil
+	for _, r in ipairs(grp) do
+		local is_sel = (r.index == sel_idx)
+		local row_box = add_class(Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, spacing = 10 }), "card-row")
+		if is_sel then
+			add_class(row_box, "card-row-selected")
+			sel_widget = row_box
+		end
+
+		local collapsed = has_prefix(r.steps)
+		local display_steps = collapsed and { r.steps[#r.steps] } or r.steps
+		local caps_wrap = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, halign = Gtk.Align.END, valign = Gtk.Align.CENTER })
+		caps_wrap:pack_end(make_caps_widget(display_steps, { prefix_arrow = collapsed, lit = is_sel }), false, false, 0)
+		card_caps_sg:add_widget(caps_wrap)
+
+		local dlbl = add_class(Gtk.Label({
+			label = r.desc,
+			xalign = 0,
+			hexpand = true,
+			wrap = true,
+			wrap_mode = Pango.WrapMode.WORD_CHAR,
+		}), "card-desc")
+
+		row_box:pack_start(caps_wrap, false, false, 0)
+		row_box:pack_start(dlbl, true, true, 0)
+		card_box:pack_start(row_box, false, false, 0)
+	end
+	card_box:show_all()
+	if sel_widget then
+		scroll_widget_into_view(card_scroll, sel_widget)
+	end
+end
+
+listbox:set_filter_func(function(row)
+	local idx = tonumber(row:get_name())
+	return idx ~= nil and rank_pos[idx] ~= nil
+end)
+
+listbox:set_sort_func(function(r1, r2)
+	local p1 = rank_pos[tonumber(r1:get_name())] or 999999
+	local p2 = rank_pos[tonumber(r2:get_name())] or 999999
+	return p1 - p2
+end)
+
+local function select_visible_pos(pos)
+	if #visible_order == 0 then
+		listbox:unselect_all()
+		selected_row_idx = nil
+		render_card(nil)
+		return
+	end
+	if pos < 1 then
+		pos = 1
+	elseif pos > #visible_order then
+		pos = #visible_order
+	end
+	local idx = visible_order[pos]
+	local lr = row_widgets[idx].list_row
+	listbox:select_row(lr)
+	scroll_widget_into_view(left_scroll, lr)
+end
+
+local function apply_query(q)
+	local res = rank_rows(q, all_rows)
+	visible_order = {}
+	rank_pos = {}
+	local marks_by_idx = {}
+	for pos, m in ipairs(res) do
+		visible_order[pos] = m.idx
+		rank_pos[m.idx] = pos
+		marks_by_idx[m.idx] = m.marks
+	end
+	for i, w in ipairs(row_widgets) do
+		local markup = format_desc_markup(all_rows[i].desc, marks_by_idx[i])
+		if markup ~= w.last_markup then
+			w.desc_label:set_markup(markup)
+			w.last_markup = markup
+		end
+	end
+	count_lbl.label = string.format("%d/%d", #visible_order, #all_rows)
+	listbox:invalidate_filter()
+	listbox:invalidate_sort()
+	select_visible_pos(1)
+end
+
+function listbox:on_row_selected(row)
+	if not row then
+		selected_row_idx = nil
+		render_card(nil)
+		return
+	end
+	local idx = tonumber(row:get_name())
+	if idx ~= selected_row_idx then
+		selected_row_idx = idx
+		render_card(idx)
+	end
+end
+
+function entry:on_changed()
+	apply_query(self.text or "")
+end
+
+local function current_visible_pos()
+	if not selected_row_idx then
+		return 1
+	end
+	return rank_pos[selected_row_idx] or 1
+end
+
+function win:on_key_press_event(event)
+	local kv = event.keyval
+	local ctrl = event.state and event.state.CONTROL_MASK
+
+	if kv == Gdk.KEY_Escape or kv == Gdk.KEY_Return or kv == Gdk.KEY_KP_Enter then
+		Gtk.main_quit()
+		return true
+	end
+	if ctrl and (kv == Gdk.KEY_c or kv == Gdk.KEY_q) then
+		Gtk.main_quit()
+		return true
+	end
+	if kv == Gdk.KEY_Down or kv == Gdk.KEY_Tab or (ctrl and (kv == Gdk.KEY_n or kv == Gdk.KEY_j)) then
+		select_visible_pos(current_visible_pos() + 1)
+		return true
+	end
+	if kv == Gdk.KEY_Up or kv == Gdk.KEY_ISO_Left_Tab or (ctrl and (kv == Gdk.KEY_p or kv == Gdk.KEY_k)) then
+		select_visible_pos(current_visible_pos() - 1)
+		return true
+	end
+	if kv == Gdk.KEY_Page_Down then
+		select_visible_pos(current_visible_pos() + 10)
+		return true
+	end
+	if kv == Gdk.KEY_Page_Up then
+		select_visible_pos(current_visible_pos() - 10)
+		return true
+	end
+	return false
+end
+
+function win:on_destroy()
+	Gtk.main_quit()
+end
+
+-- clean shutdown on SIGTERM / SIGINT (e.g. toggling off with Super+/)
+if GLib.unix_signal_add then
+	GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, 15, function()
+		Gtk.main_quit()
+		return false
+	end)
+	GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, 2, function()
+		Gtk.main_quit()
+		return false
+	end)
+end
+
+apply_query("")
+win:show_all()
+entry:grab_focus()
+Gtk.main()

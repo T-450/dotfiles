@@ -3,13 +3,14 @@
 
 window#whichkey {
     background-color: @vp_bar;
-    border: 1px solid @vp_border;
     border-radius: 0;
     box-shadow: none;
 }
 
 #whichkey-box {
     background-color: @vp_bar;
+    border: 1px solid @vp_border;
+    border-radius: 0;
     background-image: linear-gradient(90deg, @vp_tick_maj 1px, transparent 1px),
                       linear-gradient(90deg, @vp_tick_min 1px, transparent 1px);
     background-size: 32px 4px, 8px 2px;

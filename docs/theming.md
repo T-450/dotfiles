@@ -207,7 +207,7 @@ Which apps use each role (generated from the templates):
 | `vp_dim` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
 | `vp_green` | swaync, theme, waybar |
 | `vp_grid` | theme, waybar |
-| `vp_magenta` | swaync, theme, walker, waybar |
+| `vp_magenta` | mango, swaync, theme, walker, waybar |
 | `vp_orange` | mango, swaync, theme, walker, waybar |
 | `vp_signal` | ghostty, hyprlock, mango, swaync, theme, walker, waybar |
 | `vp_text` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |

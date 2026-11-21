@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """mango-keys: the keybinding cheatsheet (super+/) and the which-key cards, from ~/.config/mango/bind.conf.
 
-usage: mango-keys              open the cheatsheet (a floating Ghostty running fzf); again closes it
-       mango-keys --tui        the fzf interface itself (what the Ghostty window runs)
+usage: mango-keys              toggle the Viewport GTK3 keybindings cheatsheet (mango-keys-ui)
+       mango-keys --tui        the terminal fzf interface
        mango-keys --rank Q     fzf's rows for query Q, best first, matches highlighted
        mango-keys --card ROW   the group card of row ROW (fzf's preview pane)
        mango-keys --pango MODE the group card of key mode MODE as Pango markup (mango-whichkey)
@@ -287,21 +287,25 @@ class Ink:
         return f"\x1b[48;2;{int(h[1:3], 16)};{int(h[3:5], 16)};{int(h[5:7], 16)}m"
 
     def cap_colors(self, role):
-        """A cap's face, its round ends and its legend. A modifier cap's ends are a step toward the frame's
-        aluminium: an edge, as the dark cap would lose its shape on a dark background (and on the
-        selected row's bar) without one."""
-        face = self.c(role)
-        return face, mix(face, self.c("key_frame"), 0.3) if role == "key_mod" else face, self.c("key_legend")
+        """Viewport CAD square keycap face and legend."""
+        bar = self.c("vp_bar") if "vp_bar" in self.p else self.c("bg_desktop")
+        cyan = self.c("vp_cyan") if "vp_cyan" in self.p else self.c("ansi6")
+        if role == "key_accent":
+            return self.c("vp_signal") if "vp_signal" in self.p else self.c("accent"), bar
+        if role == "key_mod":
+            return mix(bar, cyan, 0.08), self.c("vp_dim") if "vp_dim" in self.p else self.c("fg_muted")
+        return mix(bar, cyan, 0.16), self.c("vp_text") if "vp_text" in self.p else self.c("fg_text")
 
     def cap(self, label, role):
-        face, edge, legend = self.cap_colors(role)
+        face, legend = self.cap_colors(role)
         bold = "" if role == "key_mod" else "\x1b[1m"
-        return f"{self.fg(edge)}{self.bg(face)}{self.fg(legend)}{bold}{label}\x1b[0m{self.fg(edge)}\x1b[0m"
+        return f"{self.bg(face)}{self.fg(legend)}{bold} {label} \x1b[0m"
 
     def keys(self, steps, lit=False):
         """The caps of a bind's chords: held keys join with +, chords pressed in turn with ›."""
-        frame = self.fg(self.c("key_frame"))
-        return f" {frame}›\x1b[0m ".join(f"{frame}+\x1b[0m".join(self.cap(k, role) for k, role in chord)
+        sep = self.fg(self.c("vp_dim") if "vp_dim" in self.p else self.c("fg_muted"))
+        arrow = self.fg(self.c("vp_cyan") if "vp_cyan" in self.p else self.c("ansi6"))
+        return f" {arrow}›\x1b[0m ".join(f"{sep}+\x1b[0m".join(self.cap(k, role) for k, role in chord)
                                          for chord in cap_roles(steps, lit))
 
 
@@ -415,32 +419,34 @@ def card(i):
 
 
 def pango(mode):
-    """A key mode's card as Pango markup for the which-key popup: the same caps as the list's."""
+    """A key mode's card as Viewport Pango markup for mango-whichkey: square 0px CAD keycaps."""
     rs, ink = rows(), Ink(palette())
     group = [r for r in rs if r["mode"] == mode]
     if not group:
         return ""
-    frame = ink.c("key_frame")
+    cyan = ink.c("vp_cyan") if "vp_cyan" in ink.p else ink.c("ansi6")
+    dim = ink.c("vp_dim") if "vp_dim" in ink.p else ink.c("fg_muted")
+    orange = ink.c("vp_orange") if "vp_orange" in ink.p else ink.c("warning")
+    text = ink.c("vp_text") if "vp_text" in ink.p else ink.c("fg_text")
 
-    def e(text):  # Pango markup escapes; html.escape would cost its import
-        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
+    def e(s):  # Pango markup escapes; html.escape would cost its import
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;")
 
     def cap(label, role):
-        face, edge, legend = ink.cap_colors(role)
+        face, legend = ink.cap_colors(role)
         weight = "normal" if role == "key_mod" else "bold"
-        return (f"<span foreground='{edge}'></span><span background='{face}' foreground='{legend}' "
-                f"weight='{weight}'>{e(label)}</span><span foreground='{edge}'></span>")
+        return f"<span background='{face}' foreground='{legend}' weight='{weight}'> {e(label)} </span>"
 
-    plus = f"<span foreground='{frame}'>+</span>"
+    plus = f"<span foreground='{dim}'>+</span>"
     chords = [cap_roles(r["steps"][-1:])[0] for r in group]
     sizes = [sum(len(k) + 3 for k, _ in chord) - 1 for chord in chords]
-    out = [f"<span foreground='{ink.c('fg_bright')}' weight='bold'>"
-           f"{e(group[0]['group'].lower())}</span>   <span foreground='{frame}'>{e(entry(rs, mode))}</span>", ""]
+    out = [f"<span foreground='{cyan}' weight='bold'>{e(group[0]['group'].upper())}</span>"
+           f"   <span foreground='{orange}' weight='bold'>{e(entry(rs, mode).upper())}</span>", ""]
     for r, chord, size in zip(group, chords, sizes):
         out.append(f"{' ' * (max(sizes) - size)}{plus.join(cap(k, role) for k, role in chord)}{' ' * GUTTER}"
-                   f"<span foreground='{ink.c('fg_text')}'>{e(r['desc'])}</span>")
-    out += ["", f"<span foreground='{frame}'>Esc leaves</span>"]
-    # a thin line between rows so the caps don't touch (a background fills the whole line height)
+                   f"<span foreground='{text}'>{e(r['desc'])}</span>")
+    out += ["", f"<span foreground='{dim}' size='small'>ESC LEAVES</span>"]
+    # a thin line between rows so the square caps don't touch (a background fills the whole line height)
     gap = "\n<span size='3pt'> </span>\n"
     return "\n".join(out[:2]) + "\n" + gap.join(out[2:-2]) + "\n" + "\n".join(out[-2:])
 
@@ -462,12 +468,19 @@ def tui():
     py_compile.compile(SELF, cfile=code, doraise=True)
     me = f"{shlex.quote(sys.executable)} -S {shlex.quote(code)}"
     c = ink.c
+    bar = c("vp_bar") if "vp_bar" in ink.p else c("bg_desktop")
+    cyan = c("vp_cyan") if "vp_cyan" in ink.p else c("ansi6")
+    dim = c("vp_dim") if "vp_dim" in ink.p else c("fg_muted")
+    text_c = c("vp_text") if "vp_text" in ink.p else c("fg_text")
+    signal = c("vp_signal") if "vp_signal" in ink.p else c("accent")
+    border = mix(bar, cyan, 0.45)
+    hover = mix(bar, cyan, 0.14)
     colors = ",".join([
-        f"fg:{c('fg_text')}", f"bg:{c('bg_desktop')}", f"hl:{c('link')}", f"fg+:{c('fg_bright')}",
-        f"bg+:{c('bg_hover')}", f"hl+:{c('link')}", f"info:{c('key_frame')}", f"prompt:{c('key_frame')}",
-        f"pointer:{c('accent')}", f"spinner:{c('key_frame')}", f"footer:{c('key_frame')}",
-        f"ghost:{c('key_frame')}:regular", f"border:{c('border_hairline')}",
-        f"preview-border:{c('border_hairline')}", f"query:{c('fg_bright')}", f"gutter:{c('bg_desktop')}"
+        f"fg:{text_c}", f"bg:{bar}", f"hl:{cyan}", f"fg+:{text_c}",
+        f"bg+:{hover}", f"hl+:{cyan}", f"info:{cyan}", f"prompt:{cyan}",
+        f"pointer:{signal}", f"spinner:{cyan}", f"footer:{dim}",
+        f"ghost:{dim}:regular", f"border:{border}",
+        f"preview-border:{border}", f"query:{text_c}", f"gutter:{bar}"
     ])
     # the legend: each layer's modifiers and its groups, drawn as the list's chips; the rest in the footer's color
     text = ink.fg(c("fg_text"))
@@ -504,17 +517,13 @@ def tui():
 
 
 def toggle():
-    """Close the cheatsheet if it is open, else open it."""
+    """Close the cheatsheet if it is open, else open the Viewport GTK3 layer-shell UI."""
     import shutil
     import subprocess
-    if subprocess.run(["pkill", "-f", f"{SELF} --tui"], check=False).returncode == 0:
+    if subprocess.run(["pkill", "-f", "mango-keys-ui"], check=False).returncode == 0:
         return
-    term = shutil.which("ghostty") or "ghostty"
-    # the window is sized to the grid (mango's window_rule); should its size stop being a whole number
-    # of cells, the leftover goes to every side instead of the right and the bottom
-    subprocess.Popen([term, f"--class={APP_ID}", "--title=Keybindings", "--window-padding-balance=true", "--background-opacity=0.85",
-                      "-e", SELF, "--tui"],
-                     start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    ui = shutil.which("mango-keys-ui") or os.path.join(os.path.dirname(SELF), "mango-keys-ui")
+    subprocess.Popen([ui], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def main():

@@ -1,0 +1,290 @@
+/* mango-keys-ui (Lua + GTK3 layer-shell): Viewport (SGI CAD) keybindings cheatsheet.
+   Matches Walker/Waybar/SwayNC: 0px opaque @vp_bar, 1px cyan 45% ring, 8px/32px search ruler,
+   2px signal rail + cyan 14% fill + 1px cyan bottom rule on selected rows, Terminess pixel type. */
+@import "whichkey-colors.css";
+
+window#keys,
+window#keys * {
+    font-family: "Terminess Nerd Font";
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+}
+
+window#keys {
+    background-color: @vp_bar;
+    color: @vp_text;
+}
+
+#keys-root {
+    background-color: @vp_bar;
+    border: 1px solid @vp_border;
+}
+
+/* search header: mirrors Walker's .search-container 8px/32px cyan ruler */
+#keys-header {
+    background-color: @vp_bar;
+    background-image: linear-gradient(90deg, @vp_tick_maj 1px, transparent 1px),
+                      linear-gradient(90deg, @vp_tick_min 1px, transparent 1px);
+    background-size: 32px 5px, 8px 2px;
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    box-shadow: inset 0 -1px 0 @vp_border;
+    padding: 10px 14px 12px 14px;
+}
+
+#keys-prompt {
+    color: @vp_cyan;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+entry#keys-entry {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    color: @vp_text;
+    caret-color: @vp_signal;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    min-height: 0;
+    padding: 0;
+}
+
+entry#keys-entry selection {
+    background-color: @vp_hover;
+    color: @vp_text;
+}
+
+#keys-count {
+    color: @vp_cyan;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-left: 12px;
+}
+
+#keys-title {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid @vp_border;
+}
+
+/* two-pane body */
+#keys-body {
+    background-color: @vp_bar;
+}
+
+#keys-left-scroll {
+    background-color: @vp_bar;
+    padding: 6px;
+}
+
+#keys-right-pane {
+    background-color: @vp_bar;
+    border-left: 1px solid @vp_border;
+    padding: 10px 14px 8px 14px;
+}
+
+scrolledwindow,
+scrolledwindow viewport,
+scrolledwindow overshoot,
+scrolledwindow undershoot {
+    background: transparent;
+    background-color: transparent;
+    border: none;
+}
+
+scrollbar {
+    background-color: transparent;
+    border: none;
+}
+
+scrollbar slider {
+    min-width: 3px;
+    min-height: 24px;
+    background-color: @vp_border;
+    border: none;
+}
+
+scrollbar slider:hover {
+    background-color: @vp_cyan;
+}
+
+/* left searchable list */
+list#keys-list {
+    background-color: transparent;
+}
+
+list#keys-list row,
+list#keys-list row:focus,
+list#keys-list row:active {
+    background-color: transparent;
+    background-image: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+list#keys-list row:hover .keys-row {
+    background-color: @vp_mod_bg;
+}
+
+.keys-row {
+    padding: 5px 10px 6px 10px;
+    border-left: 2px solid transparent;
+    box-shadow: inset 0 -1px 0 transparent;
+    color: @vp_text;
+}
+
+list#keys-list row:selected .keys-row,
+list#keys-list row:selected:hover .keys-row {
+    background-color: @vp_hover;
+    border-left: 2px solid @vp_signal;
+    box-shadow: inset 0 -1px 0 @vp_cyan;
+}
+
+.keys-group {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+list#keys-list row:selected .keys-group {
+    color: @vp_cyan;
+    font-weight: 700;
+}
+
+.keys-desc {
+    color: @vp_text;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+list#keys-list row:selected .keys-desc {
+    color: @vp_text;
+    font-weight: 700;
+}
+
+/* square 0px CAD keycaps */
+.cap {
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 1px 5px;
+    border: 1px solid @vp_border;
+}
+
+.cap-mod {
+    background-color: @vp_mod_bg;
+    color: @vp_dim;
+    font-weight: 400;
+}
+
+.cap-key {
+    background-color: @vp_cap_bg;
+    color: @vp_text;
+    font-weight: 700;
+}
+
+list#keys-list row:selected .cap-mod {
+    color: @vp_text;
+}
+
+list#keys-list row:selected .cap-action,
+.cap-action-lit {
+    background-color: @vp_signal;
+    border-color: @vp_signal;
+    color: @vp_bar;
+    font-weight: 700;
+}
+
+.cap-sep {
+    color: @vp_dim;
+    font-size: 12px;
+    padding: 0 2px;
+}
+
+.cap-step {
+    color: @vp_cyan;
+    font-size: 12px;
+    padding: 0 4px;
+}
+
+/* right group card */
+#keys-card-head {
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid @vp_border;
+}
+
+#keys-card-group {
+    color: @vp_cyan;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#keys-card-trigger {
+    color: @vp_orange;
+    border: 1px solid @vp_orange;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 6px;
+}
+
+.card-row {
+    padding: 4px 8px 5px 8px;
+    border-left: 2px solid transparent;
+    box-shadow: inset 0 -1px 0 transparent;
+}
+
+.card-row-selected {
+    background-color: @vp_hover;
+    border-left: 2px solid @vp_signal;
+    box-shadow: inset 0 -1px 0 @vp_cyan;
+}
+
+.card-desc {
+    color: @vp_text;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.card-row-selected .card-desc {
+    font-weight: 700;
+}
+
+#keys-empty {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 24px 12px;
+}
+
+/* footer legend: mirrors Walker's .keybinds */
+#keys-footer {
+    background-color: @vp_bar;
+    border-top: 1px solid @vp_border;
+    padding: 7px 14px;
+}
+
+.legend-cap {
+    color: @vp_cyan;
+    border: 1px solid @vp_border;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 1px 5px;
+    margin-right: 5px;
+}
+
+.legend-text {
+    color: @vp_dim;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-right: 14px;
+}
