@@ -211,7 +211,7 @@ Which apps use each role (generated from the templates):
 | `vp_orange` | greeter, hyprlock, mango, swaync, theme, walker, waybar |
 | `vp_signal` | ghostty, greeter, hyprlock, mango, swaync, theme, walker, waybar |
 | `vp_text` | ghostty, greeter, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
-| `vp_warn` | hyprlock, mango, swaync, theme, waybar |
+| `vp_warn` | greeter, hyprlock, mango, swaync, theme, waybar |
 | `warning` | btop, claude, fastfetch, gtk, helix, lazygit, mousepad, pi, qutebrowser, theme, vim |
 <!-- end generated -->
 

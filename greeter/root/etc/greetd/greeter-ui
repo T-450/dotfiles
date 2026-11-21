@@ -506,7 +506,10 @@ local step_lbl = Gtk.Label({ label = "USERNAME", xalign = 0 })
 step_lbl:set_name("console-step-label")
 local user_chip = Gtk.Label({ xalign = 1, no_show_all = true })
 user_chip:set_name("console-user-chip")
+local caps_chip = Gtk.Label({ label = "CAPS LOCK", xalign = 1, no_show_all = true })
+caps_chip:set_name("console-caps-chip")
 meta_row:pack_start(step_lbl, true, true, 0)
+meta_row:pack_end(caps_chip, false, false, 0)
 meta_row:pack_end(user_chip, false, false, 0)
 con_body:pack_start(meta_row, false, false, 0)
 
@@ -796,7 +799,23 @@ update_clock()
 update_session_labels()
 GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 15, update_clock)
 
+local disp = Gdk.Display.get_default()
+local keymap = disp and Gdk.Keymap.get_for_display(disp) or nil
+local function update_caps()
+	if keymap and keymap:get_caps_lock_state() then
+		caps_chip:show()
+	else
+		caps_chip:hide()
+	end
+end
+if keymap then
+	function keymap:on_state_changed()
+		update_caps()
+	end
+end
+
 win:show_all()
+update_caps()
 if last_user and last_user ~= "" then
 	entry.text = last_user
 	entry:select_region(0, -1)

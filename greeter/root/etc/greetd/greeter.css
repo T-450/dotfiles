@@ -214,6 +214,16 @@ button.bar-btn-power:hover {
     padding: 1px 6px;
 }
 
+#console-caps-chip {
+    color: @vp_bar;
+    background-color: @vp_warn;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 6px;
+    margin-left: 8px;
+}
+
 /* square 0px input framed with Walker/mango-keys-ui 2px signal left rail */
 #console-input-wrap {
     background-color: @vp_bar;

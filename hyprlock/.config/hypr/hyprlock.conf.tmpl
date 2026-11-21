@@ -79,23 +79,11 @@ shape {
 
 label {
     monitor =
-    text = cmd[update:0] printf '<span letter_spacing="1024">%s</span>' "$(uname -n | tr '[:lower:]' '[:upper:]')"
+    text = cmd[update:0] printf '<span foreground="##{{vp_cyan|bare}}" letter_spacing="1024">%s</span>   <span foreground="##{{vp_orange|bare}}" letter_spacing="1024"><b>[LOCKED]</b></span>' "$(uname -n | tr '[:lower:]' '[:upper:]')"
     color = rgb({{vp_cyan|bare}})
     font_family = Terminess Nerd Font
     font_size = 12
     position = 62, -13
-    halign = left
-    valign = top
-    zindex = 3
-}
-
-label {
-    monitor =
-    text = <span letter_spacing="1024"><b>[LOCKED]</b></span>
-    color = rgb({{vp_orange|bare}})
-    font_family = Terminess Nerd Font
-    font_size = 12
-    position = 186, -13
     halign = left
     valign = top
     zindex = 3

@@ -20,7 +20,7 @@ If the login screen doesn't come up, you get a text login instead. greetd then l
 
 **Rendered from the palette** (`theme`):
 
-- `greeter/root/etc/greetd/colors.css.tmpl` → `greeter/root/etc/greetd/colors.css`: `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_orange`, `vp_signal`, `vp_text`
+- `greeter/root/etc/greetd/colors.css.tmpl` → `greeter/root/etc/greetd/colors.css`: `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_orange`, `vp_signal`, `vp_text`, `vp_warn`
 
 **System files** (`greeter/root/`, copied by `install.sh --system`):
 
