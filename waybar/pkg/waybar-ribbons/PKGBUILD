@@ -1,25 +1,29 @@
-# waybar-ribbons: the media bar's audio visualizer (waybar config.jsonc, cffi/ribbons#left and
-# #right), a waybar CFFI module: cava's spectrum drawn as GL wireframe ribbons (ribbons.c, surfaceless EGL + cairo).
+# waybar-ribbons: the media bar's CFFI modules (waybar config.jsonc):
+#   ribbons.so  cava's spectrum drawn as GL wireframe ribbons (surfaceless EGL + cairo)
+#   triad.so    live 3D-rotating SGI CAD XYZ axis triad in Cairo (clicks to mango-keys)
 # The sources live in this folder; any change to them bumps pkgrel, since install.sh rebuilds a
 # pkg/ package only when its version changes.
 pkgname=waybar-ribbons
 pkgver=0.1.0
-pkgrel=6
-pkgdesc='Waybar CFFI module: cava spectrum as GL wireframe ribbons'
+pkgrel=7
+pkgdesc='Waybar CFFI modules: GL wireframe audio ribbons and live 3D CAD axis triad'
 arch=(x86_64)
 license=(MIT)
 depends=(waybar gtk3 libepoxy libglvnd mesa cava)
 # local files tracked in this repo, not downloads
-source=(ribbons.c ribbons.frag waybar_cffi_module.h)
-sha256sums=(SKIP SKIP SKIP)
+source=(ribbons.c ribbons.frag triad.c waybar_cffi_module.h)
+sha256sums=(SKIP SKIP SKIP SKIP)
 
 build() {
 	# C23 for #embed: ribbons.frag is compiled into the module. No -Werror: a new compiler's warning
 	# must not break a fresh install (CI bootstraps a VM on every push)
 	gcc -std=gnu23 $CPPFLAGS $CFLAGS -Wall -Wextra -fPIC -shared $LDFLAGS \
 		-o ribbons.so ribbons.c $(pkg-config --cflags --libs gtk+-3.0 epoxy) -lm
+	gcc -std=gnu23 $CPPFLAGS $CFLAGS -Wall -Wextra -fPIC -shared $LDFLAGS \
+		-o triad.so triad.c $(pkg-config --cflags --libs gtk+-3.0) -lm
 }
 
 package() {
 	install -Dm755 ribbons.so "$pkgdir/usr/lib/waybar-ribbons/ribbons.so"
+	install -Dm755 triad.so "$pkgdir/usr/lib/waybar-ribbons/triad.so"
 }

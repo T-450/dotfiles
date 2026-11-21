@@ -63,13 +63,13 @@ The second bar in `config.jsonc`: `"position": "bottom"`, 30px, `"layer": "top"`
 
 Left to right:
 
-- `custom/triad`: the XYZ axis triad, 40px (the λ's width above it), drawn by `icons/triad-symbolic.svg` with its axes in palette slots: X `orange`, Y `green`, Z `cyan`, the origin `text`.
+- `cffi/triad`: a live 3D-rotating SGI CAD XYZ axis triad (`waybar/pkg/waybar-ribbons/triad.c` → `/usr/lib/waybar-ribbons/triad.so`, 48px wide matching `λ` above it), drawn in Cairo with Z-sorted depth cueing, a precision gimbal reticle, and palette colors (`orange` X, `green` Y, `cyan` Z/reticle/hover, `text` origin). Runs a sleek periodic loop (2.4s quintic-eased 360° orbital sweep → 5.0s zero-CPU isometric lock), accelerates into a continuous orbit on hover, and opens `mango-keys` (`super+/`) on click.
 - `cffi/ribbons#left`: the left channel's ribbon, lows toward the player (`"channel": "left"`, `"expand": true`). With `expand-left`/`expand-right` on the bar, both ribbons fill the room the centered player leaves.
 - The player: waybar's `mpris` module once per part (`mpris#prev`, `#play`, `#next`, `#title`, `#artist`, `#time`), each instance id a CSS class, so each part has its own color. Prev and next are `cyan` 70% (chrome), play `orange` (the action); a button shows its action, so play shows pause while playing (`#mpris.play.playing`). The title is `text` bold (20 characters), the artist `magenta` (14) after a 5x1 `cyan` 55% dash (a CSS gradient in its left padding), the time `cyan`. A click on prev or next runs `playerctl previous`/`next`; on any other part waybar's default plays or pauses. The parts hide while no player runs.
 - `cffi/ribbons#right`: the right channel's ribbon.
 - `custom/clut`: the CLUT key, the ribbons' 16 colors as a 5x16 strip, low at the bottom (one CSS gradient over `clut0`..`clut15`).
 
-The triad and the CLUT key are zero-width labels, like the icon buttons; each has a tooltip (AXES, CLUT) with a one-line note.
+The CLUT key is a zero-width label like the icon buttons; both the triad and the CLUT key carry Viewport tooltips (AXES, CLUT) with one-line hints.
 
 ## Tooltips
 
@@ -154,7 +154,6 @@ The media bar's visualizer is `waybar-ribbons` (`waybar/pkg/waybar-ribbons`), a 
 - `~/.config/waybar/icons/power-symbolic.svg`
 - `~/.config/waybar/icons/prev-symbolic.svg`
 - `~/.config/waybar/icons/record-symbolic.svg`
-- `~/.config/waybar/icons/triad-symbolic.svg`
 - `~/.config/waybar/icons/wallpaper-symbolic.svg`
 - `~/.config/waybar/layouts/center_tile-symbolic.svg`
 - `~/.config/waybar/layouts/deck-symbolic.svg`

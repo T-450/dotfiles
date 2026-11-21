@@ -254,7 +254,7 @@
         "expand-right": true,
 
         "modules-left": [
-            "custom/triad", "custom/divider#bleft1", "cpu", "memory",
+            "cffi/triad", "custom/divider#bleft1", "cpu", "memory",
             "custom/divider#bleft2", "cffi/ribbons#left"
         ],
         "modules-center": ["mpris#prev", "mpris#play", "mpris#next", "custom/player"],
@@ -263,10 +263,8 @@
             "custom/divider#bright2", "custom/clut"
         ],
 
-        "custom/triad": {
-            "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>AXES</span>  Keybindings  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER /</span>\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens cheatsheet</span>",
-            "on-click": "~/.local/bin/mango-keys"
+        "cffi/triad": {
+            "module_path": "/usr/lib/waybar-ribbons/triad.so"
         },
         "custom/clut": {
             "format": "\u200b",

@@ -55,7 +55,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
 #custom-start, #workspaces button, #custom-special, #custom-layout, #custom-win,
 #network, #backlight, #pulseaudio, #cpu, #memory, #custom-temperature, #disk, #battery,
 #custom-nightlight, #custom-wallpaper, #bluetooth, #custom-notifications, #custom-power,
-#custom-triad, #custom-clut, #custom-player, #mpris {
+#custom-clut, #custom-player, #mpris {
     transition: color 150ms ease-out, background-color 150ms ease-out;
 }
 
@@ -65,7 +65,7 @@ menuitem:hover { background-color: @sel; color: @selfg; }
 box:hover > #custom-start, box:hover > #custom-layout, box:hover > #custom-win,
 box:hover > #custom-nightlight, box:hover > #custom-wallpaper, box:hover > #custom-notifications,
 box:hover > #custom-record, box:hover > #custom-temperature,
-box:hover > #custom-triad, box:hover > #custom-clut {
+box:hover > #custom-clut {
     color: @text;
     background-color: alpha(@cyan, 0.14);
     box-shadow: inset 0 -1px 0 @cyan;
@@ -305,19 +305,6 @@ box:hover > #custom-power { color: @crit; background-color: alpha(@crit, 0.16); 
 #tray > * { padding: 0 6px; }
 
 /* ---------------------------------------------------------------- bottom media bar */
-#custom-triad {
-    min-width: 48px;
-    min-height: 38px;
-    margin: 0;
-    padding: 0;
-    color: @text;
-    background-image: -gtk-recolor(url("icons/triad-symbolic.svg"));
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 40px 30px;
-    -gtk-icon-palette: warning @orange, success @green, error @cyan;
-}
-
 #custom-clut {
     min-width: 32px;
     min-height: 38px;
