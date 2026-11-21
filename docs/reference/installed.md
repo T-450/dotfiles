@@ -50,10 +50,9 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clang | `lldb` | 23.1.5-1 |
 | clang | `mold` | 3.0.0-4 |
 | clang | `meson` | 1.12.1-2 |
-| claude | `claude-code` | 2.1.328-1 |
+| claude | `claude-code` | 2.1.330-1 |
 | claude | `claude-desktop` | 5.11492.5-1 |
 | clipboard | `wl-clipboard` | 1:2.3.0-1 |
-| clipboard | `cliphist` | 1:0.7.0-2 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
 | desktop-vm | `edk2-ovmf` | 202608-1 |
 | desktop-vm | `qemu-hw-display-virtio-gpu-gl` | 11.1.3-1 |
@@ -84,7 +83,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `jq` | 1.8.2-1 |
 | greeter | `wlr-randr` | 0.5.0-1 |
 | greeter | `figlet` | 2.2.5-6 |
-| gslapper | `gslapper` | 1.5.4-1 |
+| gslapper | `gslapper` | 1.6.0-1 |
 | gslapper | `gst-plugin-va` | 1.28.9-3 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
@@ -95,11 +94,13 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | lazygit | `lazygit` | 0.66.3-1 |
 | llama-cpp | `llama-cpp` | 0.9.0-1 |
 | llama-cpp | `ggml-vulkan` | 0.29.0-2 |
-| mako | `mako` | 1.11.0-1 |
 | mango | `mangowm` | 0.18.6-1 |
 | mango | `wlr-randr` | 0.5.0-1 |
 | mango | `wev` | 1.1.0-1 |
 | mango | `xorg-xrdb` | 1.2.3-1 |
+| mango | `luajit` | 2.1.1795119671+96f7b29-1 |
+| mango | `lua51-lgi` | 0.9.2-14 |
+| mango | `gtk-layer-shell` | 0.10.1-1 |
 | mise | `mise` | 2026.11.10-1 |
 | mousepad | `mousepad` | 0.7.0-1 |
 | mousepad | `gspell` | 1.14.5-1 |
@@ -109,7 +110,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mpv | `mpv-uosc` | 5.13.0-1 |
 | mpv | `mpv-thumbfast-git` | r132.0f711de-1 |
 | mpv | `libva-utils` | 2.24.0-1 |
-| pi | `pi-coding-agent-bin` | 1.5.2-1 |
+| pi | `pi-coding-agent-bin` | 1.6.0-1 |
 | pi | `ripgrep` | 15.2.0-1 |
 | pi | `python-pillow` | 13.0.0-1 |
 | pi | `ffmpeg` | 2:9.1-1 |
@@ -129,7 +130,6 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | qt | `qt6-svg` | 6.12.0-1 |
 | qutebrowser | `qutebrowser` | 3.7.0-1 |
 | recorder | `gpu-screen-recorder` | 6.1.7-1 |
-| rofi | `rofi` | 2.1.1-1 |
 | runner-up | `github-cli` | 2.105.0-1 |
 | runner-up | `qemu-base` | 11.1.3-1 |
 | screenshot | `grim` | 1.5.0-2 |
@@ -139,6 +139,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | swaybg | `imagemagick` | 7.1.2.36-2 |
 | swayidle | `swayidle` | 1.9.1-1 |
 | swayidle | `dimland-git` | r40.76c653f-1 |
+| swaync | `swaync` | 0.12.6-2 |
 | swayosd | `swayosd` | 0.3.2-2 |
 | swayosd | `brightnessctl` | 0.5.1-3 |
 | tealdeer | `tealdeer` | 1.9.1-1 |
@@ -178,6 +179,12 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `unrar` | 1:7.3.2-1 |
 | vim | `vim` | 9.2.1178-1 |
 | vim | `yamllint` | 1.38.0-1 |
+| walker | `walker-bin` | 2.17.2-1 |
+| walker | `elephant-bin` | 2.22.1-1 |
+| walker | `elephant-desktopapplications-bin` | 2.22.1-1 |
+| walker | `elephant-runner-bin` | 2.22.1-1 |
+| walker | `elephant-clipboard-bin` | 2.22.1-1 |
+| walker | `elephant-menus-bin` | 2.22.1-1 |
 | way-displays | `way-displays` | 2.0.1-1 |
 | waybar | `waybar` | 0.16.0-2 |
 | waybar | `pamixer` | 1.6-4 |
