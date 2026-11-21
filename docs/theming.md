@@ -161,13 +161,13 @@ Which apps use each role (generated from the templates):
 | `key_legend` | theme |
 | `key_mod` | theme |
 | `link` | btop, claude, ghostty, lazygit, mousepad, mpv, pi, qutebrowser, theme, vim |
-| `name` | btop, claude, fastfetch, firefox, ghostty, gtk, helix, hyprlock, mango, mousepad, mpv, qutebrowser, swaync, swayosd, theme, vim, walker, waybar, wlogout |
+| `name` | btop, claude, fastfetch, firefox, ghostty, greeter, gtk, helix, hyprlock, mango, mousepad, mpv, qutebrowser, swaync, swayosd, theme, vim, walker, waybar, wlogout |
 | `prefer_dark` | gtk |
 | `repo` | runner-up |
 | `selection_bg` | btop, firefox, ghostty, gtk, helix, mousepad, qutebrowser, theme, vim, waybar |
 | `selection_fg` | btop, firefox, ghostty, gtk, helix, mousepad, qutebrowser, theme, vim, waybar |
 | `shadow` | mango, theme |
-| `slug` | fastfetch, firefox, ghostty, gtk, hyprlock, mango, mousepad, mpv, pi, swaync, swayosd, theme, walker, waybar, wlogout |
+| `slug` | fastfetch, firefox, ghostty, greeter, gtk, hyprlock, mango, mousepad, mpv, pi, swaync, swayosd, theme, walker, waybar, wlogout |
 | `success` | btop, claude, fastfetch, gtk, mpv, pi, qutebrowser, theme, vim |
 | `syn_boolean` | helix, mousepad, vim |
 | `syn_comment` | helix, mousepad, pi, vim |
@@ -185,7 +185,7 @@ Which apps use each role (generated from the templates):
 | `term_cursor` | ghostty, mousepad, theme |
 | `term_fg` | ghostty, theme |
 | `variant` | claude, lazygit, pi, qutebrowser, theme, vim |
-| `vp_bar` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
+| `vp_bar` | ghostty, greeter, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
 | `vp_clut0` | theme, waybar |
 | `vp_clut1` | theme, waybar |
 | `vp_clut10` | theme, waybar |
@@ -202,15 +202,15 @@ Which apps use each role (generated from the templates):
 | `vp_clut7` | theme, waybar |
 | `vp_clut8` | theme, waybar |
 | `vp_clut9` | theme, waybar |
-| `vp_crit` | hyprlock, mango, swaync, theme, walker, waybar, wlogout |
-| `vp_cyan` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
-| `vp_dim` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
+| `vp_crit` | greeter, hyprlock, mango, swaync, theme, walker, waybar, wlogout |
+| `vp_cyan` | ghostty, greeter, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
+| `vp_dim` | ghostty, greeter, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
 | `vp_green` | swaync, theme, waybar |
 | `vp_grid` | theme, waybar |
 | `vp_magenta` | mango, swaync, theme, walker, waybar |
-| `vp_orange` | mango, swaync, theme, walker, waybar |
-| `vp_signal` | ghostty, hyprlock, mango, swaync, theme, walker, waybar |
-| `vp_text` | ghostty, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
+| `vp_orange` | greeter, hyprlock, mango, swaync, theme, walker, waybar |
+| `vp_signal` | ghostty, greeter, hyprlock, mango, swaync, theme, walker, waybar |
+| `vp_text` | ghostty, greeter, hyprlock, mango, swaync, swayosd, theme, walker, waybar, wlogout |
 | `vp_warn` | hyprlock, mango, swaync, theme, waybar |
 | `warning` | btop, claude, fastfetch, gtk, helix, lazygit, mousepad, pi, qutebrowser, theme, vim |
 <!-- end generated -->

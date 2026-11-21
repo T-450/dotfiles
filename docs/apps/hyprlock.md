@@ -2,7 +2,7 @@
 
 The lock screen (`super+esc l`, the power menu, and after 5 min idle).
 
-hyprlock keeps the lock image (`~/.local/state/wallpaper/lock`, dimmed and crisp with no blur) and centers an opaque 0px `vp_bar` CAD authentication console built from `shape {}` blocks: a 1px `vp_cyan` 45% frame, a hairline rule under `SYSTEM LOCKED`, an integer-scaled 48px bold Terminess clock, an uppercase `vp_cyan` date readout, and a square 0px password field (`vp_signal` focus edge, `vp_warn` Caps Lock, `vp_crit` auth failure). Fades last 150 ms on mango's quadratic ease-out curve.
+hyprlock keeps the lock image (`~/.local/state/wallpaper/lock`, dimmed and crisp with no blur) framed by 38px top and bottom Viewport status bars (matching waybar's `24px` `λ`, hostname, `[LOCKED]` orange chip, centered clock, battery/session readout, and hairline cyan rules) and a centered `460×290` opaque `0px` `vp_bar` CAD authentication console: `1px` `vp_cyan` 45% frame, header and footer hairlines, integer-scaled `48px` bold Terminess clock, uppercase `vp_cyan` date readout, and a square `0px` password field with a `2px` `vp_signal` left focus rail (`vp_warn` Caps Lock, `vp_crit` auth failure). Fades last 150 ms on mango's quadratic ease-out curve.
 
 ## Reference
 
@@ -15,5 +15,5 @@ hyprlock keeps the lock image (`~/.local/state/wallpaper/lock`, dimmed and crisp
 
 **Rendered from the palette** (`theme`):
 
-- `hyprlock/.config/hypr/hyprlock.conf.tmpl` → `hyprlock/.config/hypr/hyprlock.conf`: `bg_desktop`, `home`, `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_signal`, `vp_text`, `vp_warn`
+- `hyprlock/.config/hypr/hyprlock.conf.tmpl` → `hyprlock/.config/hypr/hyprlock.conf`: `bg_desktop`, `home`, `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_orange`, `vp_signal`, `vp_text`, `vp_warn`
 <!-- end generated -->
