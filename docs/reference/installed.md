@@ -79,10 +79,12 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | git | `github-cli` | 2.105.0-1 |
 | git | `git-delta` | 0.21.2-1 |
 | greeter | `greetd` | 0.10.3-2 |
-| greeter | `sysc-greet-mango` | 1.3.1-2 |
 | greeter | `jq` | 1.8.2-1 |
 | greeter | `wlr-randr` | 0.5.0-1 |
-| greeter | `figlet` | 2.2.5-6 |
+| greeter | `luajit` | 2.1.1795119671+96f7b29-1 |
+| greeter | `lua51-lgi` | 0.9.2-14 |
+| greeter | `gtk-layer-shell` | 0.10.1-1 |
+| greeter | `swaybg` | 1.2.2-1 |
 | gslapper | `gslapper` | 1.6.0-1 |
 | gslapper | `gst-plugin-va` | 1.28.9-3 |
 | gtk | `gtk3` | 1:3.24.52-2 |

@@ -1,5 +1,7 @@
-greetd
-sysc-greet-mango   # AUR
-jq         # greeter-panel: finds the laptop panel and the enabled external displays
-wlr-randr  # greeter-panel: lists the greeter's outputs
-figlet     # greeter-hostname-art: the host name in sysc-greet's FIGlet font
+greetd          # login daemon: runs the locked-down mango greeter session
+jq              # greeter-panel: finds the laptop panel and the enabled external displays
+wlr-randr       # greeter-panel: lists the greeter's outputs
+luajit          # greeter-ui Lua runtime
+lua51-lgi       # greeter-ui GTK3/GtkLayerShell GObject bindings
+gtk-layer-shell # greeter-ui Wayland layer-shell overlay
+swaybg          # greeter-session.sh: static Blue Dawn eclipse backdrop

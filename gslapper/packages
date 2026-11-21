@@ -1,2 +1,2 @@
-gslapper       # AUR: video wallpapers, the desktop's (gslapper.service) and the login screen's (sysc-greet)
+gslapper       # AUR: video wallpapers for the desktop (gslapper.service)
 gst-plugin-va  # GStreamer's VA-API decoders, so gslapper plays HEVC on the GPU

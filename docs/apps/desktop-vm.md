@@ -48,7 +48,7 @@ user unit), `up` prints why and rebuilds it first; `--rebuild` forces that.
 the current run directory. It never stops the VM, pass or fail, so you can look at it; `down` ends it.
 
 1. Logs in unless the user already has a graphical session: types the user name and `ret` at the
-   greeter (sysc-greet), waits 2 s for the password prompt, types the password and `ret`.
+   greeter (greetd Viewport UI), waits 2 s for the password prompt, types the password and `ret`.
 2. Waits up to 120 s for a session of the user on `seat0` with `Type=wayland` and `Class=user` (the
    `manager` session has no seat and is ignored) and for `graphical-session.target` to be active for
    the user. On timeout it saves `login-failed.png` and fails saying which condition never held.
