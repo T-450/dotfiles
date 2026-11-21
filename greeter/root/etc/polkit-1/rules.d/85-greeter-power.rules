@@ -1,0 +1,10 @@
+// Allow the greetd greeter user to reboot or power off from the login screen.
+polkit.addRule(function(action, subject) {
+    if (subject.user == "greeter" &&
+        (action.id == "org.freedesktop.login1.power-off" ||
+         action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
+         action.id == "org.freedesktop.login1.reboot" ||
+         action.id == "org.freedesktop.login1.reboot-multiple-sessions")) {
+        return polkit.Result.YES;
+    }
+});

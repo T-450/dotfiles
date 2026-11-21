@@ -1,0 +1,805 @@
+#!/usr/bin/env luajit
+-- greeter-ui: native Viewport (SGI CAD) GTK3 layer-shell greeter for greetd.
+-- Speaks greetd-ipc over $GREETD_SOCK (4-byte native uint32 length prefix + UTF-8 JSON) via
+-- Gio.UnixSocketAddress, styled with /etc/greetd/greeter.css + /etc/greetd/colors.css (rendered
+-- by theme) to match waybar, walker, mango-keys-ui, and hyprlock.
+-- usage: greeter-ui [--test-ipc SOCKET]
+
+local ffi = require("ffi")
+local lgi = require("lgi")
+local GLib = lgi.require("GLib", "2.0")
+local Gio = lgi.require("Gio", "2.0")
+
+local css_path = os.getenv("GREETER_CSS") or "/etc/greetd/greeter.css"
+local cache_dir = (os.getenv("XDG_CACHE_HOME") or "/var/lib/greeter/.cache") .. "/viewport-greeter"
+local state_path = cache_dir .. "/state"
+
+-- ---------------------------------------------------------------- minimal JSON helpers
+
+local function json_escape(s)
+	return (s:gsub('[%z\1-\31\\"]', function(c)
+		if c == '\\' then return '\\\\'
+		elseif c == '"' then return '\\"'
+		elseif c == '\n' then return '\\n'
+		elseif c == '\r' then return '\\r'
+		elseif c == '\t' then return '\\t'
+		elseif c == '\b' then return '\\b'
+		elseif c == '\f' then return '\\f'
+		else return string.format("\\u%04x", c:byte())
+		end
+	end))
+end
+
+local function json_str(s)
+	return '"' .. json_escape(s) .. '"'
+end
+
+local function json_array(list)
+	local out = {}
+	for i, v in ipairs(list) do
+		out[i] = json_str(v)
+	end
+	return "[" .. table.concat(out, ",") .. "]"
+end
+
+-- Parse greetd's flat JSON response objects (string/bool/null fields) cleanly
+local function json_decode_object(text)
+	local obj = {}
+	local i, len = 1, #text
+	local function skip_ws()
+		local _, e = text:find("^[ \t\r\n]*", i)
+		i = e + 1
+	end
+	local function parse_string()
+		if text:sub(i, i) ~= '"' then return nil end
+		i = i + 1
+		local parts = {}
+		while i <= len do
+			local c = text:sub(i, i)
+			if c == '"' then
+				i = i + 1
+				return table.concat(parts)
+			elseif c == '\\' then
+				i = i + 1
+				local esc = text:sub(i, i)
+				if esc == '"' or esc == '\\' or esc == '/' then parts[#parts + 1] = esc
+				elseif esc == 'n' then parts[#parts + 1] = '\n'
+				elseif esc == 'r' then parts[#parts + 1] = '\r'
+				elseif esc == 't' then parts[#parts + 1] = '\t'
+				elseif esc == 'b' then parts[#parts + 1] = '\b'
+				elseif esc == 'f' then parts[#parts + 1] = '\f'
+				elseif esc == 'u' then
+					local hex = text:sub(i + 1, i + 4)
+					local code = tonumber(hex, 16)
+					if code and code < 128 then
+						parts[#parts + 1] = string.char(code)
+					end
+					i = i + 4
+				end
+				i = i + 1
+			else
+				local nxt = text:find('[\\"]', i) or (len + 1)
+				parts[#parts + 1] = text:sub(i, nxt - 1)
+				i = nxt
+			end
+		end
+		return nil
+	end
+
+	skip_ws()
+	if text:sub(i, i) ~= '{' then return obj end
+	i = i + 1
+	while i <= len do
+		skip_ws()
+		if text:sub(i, i) == '}' then break end
+		local key = parse_string()
+		if not key then break end
+		skip_ws()
+		if text:sub(i, i) ~= ':' then break end
+		i = i + 1
+		skip_ws()
+		local c = text:sub(i, i)
+		if c == '"' then
+			obj[key] = parse_string()
+		elseif text:sub(i, i + 3) == "true" then
+			obj[key] = true
+			i = i + 4
+		elseif text:sub(i, i + 4) == "false" then
+			obj[key] = false
+			i = i + 5
+		elseif text:sub(i, i + 3) == "null" then
+			obj[key] = nil
+			i = i + 4
+		else
+			local _, e = text:find("^[^,}%s]+", i)
+			if e then
+				obj[key] = text:sub(i, e)
+				i = e + 1
+			else
+				break
+			end
+		end
+		skip_ws()
+		if text:sub(i, i) == ',' then i = i + 1 end
+	end
+	return obj
+end
+
+-- ---------------------------------------------------------------- greetd-ipc client
+
+local function read_exact(inp, n)
+	local chunks = {}
+	local got = 0
+	while got < n do
+		local b, err = inp:read_bytes(n - got)
+		if not b then return nil, tostring(err) end
+		local s = b:get_data()
+		if not s or #s == 0 then return nil, "unexpected EOF from greetd" end
+		chunks[#chunks + 1] = s
+		got = got + #s
+	end
+	return table.concat(chunks)
+end
+
+local Greetd = {}
+Greetd.__index = Greetd
+
+function Greetd.connect(sock_path)
+	if not sock_path or sock_path == "" then
+		return nil, "GREETD_SOCK not set"
+	end
+	local client = Gio.SocketClient()
+	local addr = Gio.UnixSocketAddress.new(sock_path)
+	local conn, err = client:connect(addr)
+	if not conn then
+		return nil, tostring(err)
+	end
+	return setmetatable({
+		conn = conn,
+		inp = conn:get_input_stream(),
+		out = conn:get_output_stream(),
+	}, Greetd)
+end
+
+function Greetd:request(json_payload)
+	local len_buf = ffi.new("uint32_t[1]", #json_payload)
+	local frame = ffi.string(len_buf, 4) .. json_payload
+	local ok, _, err = self.out:write_all(frame)
+	if not ok then
+		return nil, tostring(err)
+	end
+	local hdr, rerr = read_exact(self.inp, 4)
+	if not hdr then return nil, rerr end
+	local rlen = ffi.new("uint32_t[1]")
+	ffi.copy(rlen, hdr, 4)
+	local n = tonumber(rlen[0])
+	if not n or n == 0 or n > 65536 then
+		return nil, "invalid greetd reply length: " .. tostring(n)
+	end
+	local body, berr = read_exact(self.inp, n)
+	if not body then return nil, berr end
+	return json_decode_object(body)
+end
+
+function Greetd:create_session(username)
+	return self:request('{"type":"create_session","username":' .. json_str(username) .. '}')
+end
+
+function Greetd:post_auth(response)
+	if response == nil then
+		return self:request('{"type":"post_auth_message_response"}')
+	end
+	return self:request('{"type":"post_auth_message_response","response":' .. json_str(response) .. '}')
+end
+
+function Greetd:start_session(cmd, env)
+	return self:request(
+		'{"type":"start_session","cmd":' .. json_array(cmd) .. ',"env":' .. json_array(env) .. '}'
+	)
+end
+
+function Greetd:cancel_session()
+	return self:request('{"type":"cancel_session"}')
+end
+
+function Greetd:close()
+	if self.conn then
+		pcall(function() self.conn:close() end)
+		self.conn = nil
+	end
+end
+
+-- Headless binary framing verification (--test-ipc SOCKET)
+if arg[1] == "--test-ipc" then
+	local g, err = Greetd.connect(arg[2])
+	assert(g, err)
+	local r1, e1 = g:create_session("alice")
+	assert(r1 and r1.type == "auth_message" and r1.auth_message_type == "secret", e1 or tostring(r1 and r1.type))
+	local r2, e2 = g:post_auth("s3cr3t")
+	assert(r2 and r2.type == "success", e2 or tostring(r2 and r2.type))
+	local r3, e3 = g:start_session({ "mango" }, { "XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=mango" })
+	assert(r3 and r3.type == "success", e3 or tostring(r3 and r3.type))
+	g:close()
+	print("ok: greetd-ipc binary framing verified")
+	os.exit(0)
+end
+
+-- ---------------------------------------------------------------- session & state helpers
+
+local function read_file(path)
+	local f = io.open(path, "r")
+	if not f then return nil end
+	local s = f:read("*a")
+	f:close()
+	return s
+end
+
+local function trim(s)
+	return (s:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function get_hostname()
+	local h = read_file("/etc/hostname")
+	if h then
+		h = trim(h):gsub("%..*$", "")
+		if h ~= "" then return h:upper() end
+	end
+	return "ARCH"
+end
+
+local function split_exec(exec_line)
+	local args = {}
+	for tok in exec_line:gmatch("%S+") do
+		if not tok:match("^%%[a-zA-Z]$") then
+			args[#args + 1] = tok
+		end
+	end
+	return args
+end
+
+local function discover_sessions()
+	local sessions = {}
+	local dirs = {
+		{ "/usr/share/wayland-sessions", "wayland" },
+		{ "/usr/share/xsessions", "x11" },
+	}
+	for _, d in ipairs(dirs) do
+		local dir = Gio.File.new_for_path(d[1])
+		local enum = dir:enumerate_children("standard::name", Gio.FileQueryInfoFlags.NONE)
+		if enum then
+			while true do
+				local info = enum:next_file()
+				if not info then break end
+				local fname = info:get_name()
+				if fname:match("%.desktop$") then
+					local content = read_file(d[1] .. "/" .. fname)
+					if content then
+						local name, exec_s, desktops, hidden
+						for line in (content .. "\n"):gmatch("([^\r\n]*)\r?\n") do
+							if line:match("^%[Desktop Entry%]") then
+								-- entry section
+							elseif line:match("^%[") then
+								break
+							elseif line:match("^Name=") then
+								name = trim(line:sub(6))
+							elseif line:match("^Exec=") then
+								exec_s = trim(line:sub(6))
+							elseif line:match("^DesktopNames=") then
+								desktops = trim(line:sub(14))
+							elseif line:match("^Hidden=true") or line:match("^NoDisplay=true") then
+								hidden = true
+							end
+						end
+						if not hidden and name and exec_s and exec_s ~= "" then
+							local cmd = split_exec(exec_s)
+							local primary = desktops and desktops:match("^([^;]+)") or name:lower()
+							local env = { "XDG_SESSION_TYPE=" .. d[2] }
+							if primary and primary ~= "" then
+								env[#env + 1] = "XDG_CURRENT_DESKTOP=" .. primary
+								env[#env + 1] = "XDG_SESSION_DESKTOP=" .. primary
+							end
+							sessions[#sessions + 1] = {
+								id = fname:gsub("%.desktop$", ""),
+								name = name,
+								kind = d[2],
+								cmd = cmd,
+								env = env,
+							}
+						end
+					end
+				end
+			end
+		end
+	end
+	table.sort(sessions, function(a, b)
+		local am = (a.id == "mango") and 0 or 1
+		local bm = (b.id == "mango") and 0 or 1
+		if am ~= bm then return am < bm end
+		return a.name:lower() < b.name:lower()
+	end)
+	if #sessions == 0 then
+		sessions[1] = {
+			id = "mango",
+			name = "Mango",
+			kind = "wayland",
+			cmd = { "mango" },
+			env = { "XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=mango", "XDG_SESSION_DESKTOP=mango" },
+		}
+	end
+	return sessions
+end
+
+local function load_state()
+	local text = read_file(state_path)
+	if not text then return nil, nil end
+	local u = text:match("user=([^\r\n]+)")
+	local s = text:match("session=([^\r\n]+)")
+	return u, s
+end
+
+local function save_state(user, sess_id)
+	pcall(function()
+		GLib.mkdir_with_parents(cache_dir, tonumber("755", 8))
+		local f = io.open(state_path .. ".tmp", "w")
+		if f then
+			f:write("user=" .. user .. "\nsession=" .. sess_id .. "\n")
+			f:close()
+			os.rename(state_path .. ".tmp", state_path)
+		end
+	end)
+end
+
+-- ---------------------------------------------------------------- GTK3 Viewport UI
+
+local Gdk = lgi.require("Gdk", "3.0")
+local Gtk = lgi.require("Gtk", "3.0")
+local GtkLayerShell = lgi.require("GtkLayerShell", "0.1")
+
+-- Solid caret matches CAD aesthetic and avoids 500ms cursor-blink diffs on idle settle checks
+local settings = Gtk.Settings.get_default()
+if settings then
+	settings.gtk_cursor_blink = false
+end
+
+local css_provider = Gtk.CssProvider()
+local ok_css, err_css = pcall(function()
+	css_provider:load_from_path(css_path)
+end)
+if not ok_css then
+	io.stderr:write("greeter-ui: css load failed: " .. tostring(err_css) .. "\n")
+end
+Gtk.StyleContext.add_provider_for_screen(
+	Gdk.Screen.get_default(),
+	css_provider,
+	Gtk.STYLE_PROVIDER_PRIORITY_USER
+)
+
+local function add_class(w, cls)
+	w:get_style_context():add_class(cls)
+	return w
+end
+
+local function remove_class(w, cls)
+	w:get_style_context():remove_class(cls)
+	return w
+end
+
+local hostname = get_hostname()
+local sessions = discover_sessions()
+local last_user, last_sess_id = load_state()
+local sess_idx = 1
+if last_sess_id then
+	for i, s in ipairs(sessions) do
+		if s.id == last_sess_id then
+			sess_idx = i
+			break
+		end
+	end
+end
+
+local win = Gtk.Window({
+	type = Gtk.WindowType.TOPLEVEL,
+	title = "Viewport Greeter",
+	decorated = false,
+	resizable = false,
+})
+win:set_name("greeter")
+
+GtkLayerShell.init_for_window(win)
+GtkLayerShell.set_namespace(win, "viewport-greeter")
+GtkLayerShell.set_layer(win, GtkLayerShell.Layer.OVERLAY)
+GtkLayerShell.set_keyboard_mode(win, GtkLayerShell.KeyboardMode.EXCLUSIVE)
+GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.TOP, true)
+GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.BOTTOM, true)
+GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.LEFT, true)
+GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.RIGHT, true)
+
+local root = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL, hexpand = true, vexpand = true })
+win:add(root)
+
+-- ---------------------------------------------------------------- top 38px bar
+local top_bar = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, hexpand = true })
+top_bar:set_name("greeter-top")
+
+local top_left = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, valign = Gtk.Align.CENTER })
+local lambda_lbl = Gtk.Label({ label = "λ" })
+lambda_lbl:set_name("greeter-lambda")
+local div1 = add_class(Gtk.Box({ valign = Gtk.Align.CENTER }), "bar-divider")
+local host_bar_lbl = Gtk.Label({ label = hostname })
+host_bar_lbl:set_name("greeter-host-bar")
+local mode_chip = Gtk.Label({ label = "LOGIN" })
+mode_chip:set_name("greeter-mode-chip")
+top_left:pack_start(lambda_lbl, false, false, 0)
+top_left:pack_start(div1, false, false, 0)
+top_left:pack_start(host_bar_lbl, false, false, 0)
+top_left:pack_start(mode_chip, false, false, 0)
+
+local top_center = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, valign = Gtk.Align.CENTER })
+local bar_day = Gtk.Label()
+bar_day:set_name("greeter-bar-day")
+local bar_time = Gtk.Label()
+bar_time:set_name("greeter-bar-time")
+local bar_date = Gtk.Label()
+bar_date:set_name("greeter-bar-date")
+top_center:pack_start(bar_day, false, false, 0)
+top_center:pack_start(bar_time, false, false, 0)
+top_center:pack_start(bar_date, false, false, 0)
+
+local top_right = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, valign = Gtk.Align.CENTER })
+local sess_btn = add_class(Gtk.Button({ can_focus = false }), "bar-btn")
+local div2 = add_class(Gtk.Box({ valign = Gtk.Align.CENTER }), "bar-divider")
+local reboot_btn = add_class(Gtk.Button({ label = "REBOOT", can_focus = false }), "bar-btn")
+add_class(reboot_btn, "bar-btn-power")
+local power_btn = add_class(Gtk.Button({ label = "POWEROFF", can_focus = false }), "bar-btn")
+add_class(power_btn, "bar-btn-power")
+top_right:pack_start(sess_btn, false, false, 0)
+top_right:pack_start(div2, false, false, 0)
+top_right:pack_start(reboot_btn, false, false, 0)
+top_right:pack_start(power_btn, false, false, 0)
+
+top_bar:pack_start(top_left, false, false, 0)
+top_bar:set_center_widget(top_center)
+top_bar:pack_end(top_right, false, false, 0)
+root:pack_start(top_bar, false, false, 0)
+
+-- ---------------------------------------------------------------- centered CAD auth console
+local center_stage = Gtk.Box({
+	orientation = Gtk.Orientation.VERTICAL,
+	hexpand = true,
+	vexpand = true,
+	halign = Gtk.Align.CENTER,
+	valign = Gtk.Align.CENTER,
+})
+root:pack_start(center_stage, true, true, 0)
+
+local console = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL })
+console:set_name("greeter-console")
+center_stage:pack_start(console, false, false, 0)
+
+local con_head = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL })
+con_head:set_name("console-head")
+local con_lambda = Gtk.Label({ label = "λ" })
+con_lambda:set_name("console-title-lambda")
+local con_title = Gtk.Label({ label = "SYSTEM LOGIN", xalign = 0 })
+con_title:set_name("console-title")
+local con_host = Gtk.Label({ label = hostname, xalign = 1 })
+con_host:set_name("console-host")
+con_head:pack_start(con_lambda, false, false, 0)
+con_head:pack_start(con_title, true, true, 0)
+con_head:pack_end(con_host, false, false, 0)
+console:pack_start(con_head, false, false, 0)
+
+local con_body = Gtk.Box({ orientation = Gtk.Orientation.VERTICAL })
+con_body:set_name("console-body")
+console:pack_start(con_body, true, true, 0)
+
+local con_clock = Gtk.Label({ halign = Gtk.Align.CENTER })
+con_clock:set_name("console-clock")
+local con_date = Gtk.Label({ halign = Gtk.Align.CENTER })
+con_date:set_name("console-date")
+con_body:pack_start(con_clock, false, false, 0)
+con_body:pack_start(con_date, false, false, 0)
+
+local meta_row = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL })
+meta_row:set_name("console-meta-row")
+local step_lbl = Gtk.Label({ label = "USERNAME", xalign = 0 })
+step_lbl:set_name("console-step-label")
+local user_chip = Gtk.Label({ xalign = 1, no_show_all = true })
+user_chip:set_name("console-user-chip")
+meta_row:pack_start(step_lbl, true, true, 0)
+meta_row:pack_end(user_chip, false, false, 0)
+con_body:pack_start(meta_row, false, false, 0)
+
+local input_wrap = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL })
+input_wrap:set_name("console-input-wrap")
+local entry = Gtk.Entry({
+	has_frame = false,
+	hexpand = true,
+	placeholder_text = "ENTER USERNAME",
+})
+entry:set_name("console-entry")
+input_wrap:pack_start(entry, true, true, 0)
+con_body:pack_start(input_wrap, false, false, 0)
+
+local err_lbl = Gtk.Label({ xalign = 0, no_show_all = true, wrap = true })
+err_lbl:set_name("console-error")
+con_body:pack_start(err_lbl, false, false, 0)
+
+local con_foot = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL })
+con_foot:set_name("console-foot")
+local sess_lbl = Gtk.Label({ label = "SESSION" })
+sess_lbl:set_name("console-session-lbl")
+local sess_val = Gtk.Label()
+sess_val:set_name("console-session-val")
+local hint_lbl = Gtk.Label({ label = "ENTER CONTINUE", xalign = 1 })
+hint_lbl:set_name("console-hint")
+con_foot:pack_start(sess_lbl, false, false, 0)
+con_foot:pack_start(sess_val, false, false, 0)
+con_foot:pack_end(hint_lbl, false, false, 0)
+console:pack_end(con_foot, false, false, 0)
+
+-- ---------------------------------------------------------------- bottom 38px floor bar
+local bot_bar = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, hexpand = true })
+bot_bar:set_name("greeter-bottom")
+local floor_tag = Gtk.Label({ label = "VIEWPORT · GREETD", valign = Gtk.Align.CENTER })
+floor_tag:set_name("greeter-floor-tag")
+bot_bar:pack_start(floor_tag, false, false, 0)
+
+local legend = Gtk.Box({ orientation = Gtk.Orientation.HORIZONTAL, valign = Gtk.Align.CENTER })
+local hints = {
+	{ "ENTER", "CONTINUE" },
+	{ "F2", "SESSION" },
+	{ "ESC", "RESET" },
+}
+for i, h in ipairs(hints) do
+	legend:pack_start(add_class(Gtk.Label({ label = h[1] }), "legend-cap"), false, false, 0)
+	local t = add_class(Gtk.Label({ label = h[2] }), "legend-text")
+	if i == #hints then t.margin_end = 0 end
+	legend:pack_start(t, false, false, 0)
+end
+bot_bar:pack_end(legend, false, false, 0)
+root:pack_end(bot_bar, false, false, 0)
+
+-- ---------------------------------------------------------------- clock & session helpers
+
+local last_clock_min = ""
+local function update_clock()
+	local now = os.time()
+	local hm = os.date("%H:%M", now)
+	if hm ~= last_clock_min then
+		last_clock_min = hm
+		bar_day.label = os.date("%a", now):upper()
+		bar_time.label = hm
+		bar_date.label = os.date("%d %b", now):gsub("^0", ""):upper()
+		con_clock.label = hm
+		con_date.label = os.date("%a · %d %b %Y", now):gsub("· 0", "· "):upper()
+	end
+	return true
+end
+
+local function update_session_labels()
+	local s = sessions[sess_idx]
+	local label = s.name:upper() .. " (" .. s.kind:upper() .. ")"
+	sess_val.label = label
+	sess_btn.label = "SESSION · " .. s.name:upper()
+end
+
+local function cycle_session()
+	sess_idx = (sess_idx % #sessions) + 1
+	update_session_labels()
+	entry:grab_focus()
+end
+
+function sess_btn:on_clicked()
+	cycle_session()
+end
+
+function reboot_btn:on_clicked()
+	os.execute("systemctl reboot &")
+end
+
+function power_btn:on_clicked()
+	os.execute("systemctl poweroff &")
+end
+
+-- ---------------------------------------------------------------- auth flow
+
+local STEP_USER, STEP_PASS, STEP_VISIBLE = 1, 2, 3
+local step = STEP_USER
+local current_user = ""
+local greetd_conn = nil
+local busy = false
+
+local function show_error(msg)
+	if msg and msg ~= "" then
+		err_lbl.label = msg:upper()
+		err_lbl:show()
+		add_class(input_wrap, "error-state")
+	else
+		err_lbl:hide()
+		remove_class(input_wrap, "error-state")
+	end
+end
+
+local function flush_ui()
+	while Gtk.events_pending() do
+		Gtk.main_iteration()
+	end
+end
+
+local function close_greetd(cancel)
+	if greetd_conn then
+		if cancel then
+			pcall(function() greetd_conn:cancel_session() end)
+		end
+		greetd_conn:close()
+		greetd_conn = nil
+	end
+end
+
+local function set_step_user(keep_err)
+	close_greetd(true)
+	step = STEP_USER
+	current_user = ""
+	step_lbl.label = "USERNAME"
+	user_chip:hide()
+	entry.visibility = true
+	entry.placeholder_text = "ENTER USERNAME"
+	entry.text = ""
+	hint_lbl.label = "ENTER CONTINUE"
+	if not keep_err then show_error(nil) end
+	entry:grab_focus()
+end
+
+local function set_step_prompt(is_secret, prompt_text)
+	step = is_secret and STEP_PASS or STEP_VISIBLE
+	local clean = trim((prompt_text or ""):gsub(":%s*$", ""))
+	step_lbl.label = (clean ~= "" and clean:upper()) or (is_secret and "PASSWORD" or "RESPONSE")
+	user_chip.label = "USER · " .. current_user:upper()
+	user_chip:show()
+	entry.visibility = not is_secret
+	if is_secret then
+		entry.invisible_char = 0x25CF -- ●
+	end
+	entry.placeholder_text = is_secret and "ENTER PASSWORD" or "ENTER RESPONSE"
+	entry.text = ""
+	hint_lbl.label = "ENTER LOGIN · ESC BACK"
+	entry:grab_focus()
+end
+
+local function handle_greetd_reply(reply, err)
+	if not reply then
+		show_error(err or "GREETD IPC ERROR")
+		set_step_user(true)
+		return
+	end
+
+	if reply.type == "success" then
+		local s = sessions[sess_idx]
+		save_state(current_user, s.id)
+		local r2, e2 = greetd_conn:start_session(s.cmd, s.env)
+		if r2 and r2.type == "success" then
+			greetd_conn:close()
+			greetd_conn = nil
+			Gtk.main_quit()
+			return
+		end
+		show_error((r2 and r2.description) or e2 or "SESSION START FAILED")
+		set_step_user(true)
+		return
+	end
+
+	if reply.type == "auth_message" then
+		local kind = reply.auth_message_type
+		if kind == "secret" then
+			set_step_prompt(true, reply.auth_message)
+			return
+		elseif kind == "visible" then
+			set_step_prompt(false, reply.auth_message)
+			return
+		elseif kind == "info" or kind == "error" then
+			if kind == "error" and reply.auth_message then
+				show_error(reply.auth_message)
+			end
+			local nxt, nerr = greetd_conn:post_auth(nil)
+			handle_greetd_reply(nxt, nerr)
+			return
+		end
+	end
+
+	if reply.type == "error" then
+		local msg = (reply.error_type == "auth_error") and "AUTH FAILED" or (reply.description or "AUTH ERROR")
+		show_error(msg)
+		if step ~= STEP_USER and current_user ~= "" then
+			-- Re-initiate session for the same user so user can retry password immediately
+			local retry_user = current_user
+			close_greetd(true)
+			local g, gerr = Greetd.connect(os.getenv("GREETD_SOCK"))
+			if g then
+				greetd_conn = g
+				local r, rerr = g:create_session(retry_user)
+				if r and r.type == "auth_message" and r.auth_message_type == "secret" then
+					current_user = retry_user
+					set_step_prompt(true, r.auth_message)
+					return
+				end
+				if not r then show_error(rerr) end
+			else
+				show_error(gerr)
+			end
+		end
+		set_step_user(true)
+		return
+	end
+
+	show_error("UNEXPECTED REPLY")
+	set_step_user(true)
+end
+
+local function submit()
+	if busy then return end
+	local val = entry.text or ""
+	if step == STEP_USER then
+		val = trim(val)
+		if val == "" then return end
+		busy = true
+		show_error(nil)
+		current_user = val
+		hint_lbl.label = "CONNECTING..."
+		flush_ui()
+
+		close_greetd(true)
+		local g, err = Greetd.connect(os.getenv("GREETD_SOCK"))
+		if not g then
+			busy = false
+			show_error(err or "NO GREETD SOCKET")
+			set_step_user(true)
+			return
+		end
+		greetd_conn = g
+		local reply, rerr = g:create_session(current_user)
+		busy = false
+		handle_greetd_reply(reply, rerr)
+	else
+		busy = true
+		show_error(nil)
+		hint_lbl.label = "AUTHENTICATING..."
+		flush_ui()
+		local reply, rerr = greetd_conn:post_auth(val)
+		busy = false
+		handle_greetd_reply(reply, rerr)
+	end
+end
+
+function entry:on_activate()
+	submit()
+end
+
+function win:on_key_press_event(event)
+	local kv = event.keyval
+	if kv == Gdk.KEY_Escape then
+		set_step_user(false)
+		return true
+	elseif kv == Gdk.KEY_F2 then
+		cycle_session()
+		return true
+	end
+	return false
+end
+
+function win:on_destroy()
+	close_greetd(true)
+	Gtk.main_quit()
+end
+
+update_clock()
+update_session_labels()
+GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 15, update_clock)
+
+win:show_all()
+if last_user and last_user ~= "" then
+	entry.text = last_user
+	entry:select_region(0, -1)
+end
+entry:grab_focus()
+Gtk.main()

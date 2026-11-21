@@ -26,7 +26,7 @@ archinstall's minimal profile is enough.
 	run's full log. If a phase fails, the run stops there and names the failing command, its line
 	and a likely fix.
 
-3. Reboot. The login screen is sysc-greet, stock. Log in to start mango, with
+3. Reboot. The Viewport login screen appears (`greetd`). Log in to start mango, with
    waybar's status bar at the top and its media bar at the bottom.
 
 ## Check that it matches the repo

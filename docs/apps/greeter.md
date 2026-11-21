@@ -1,16 +1,12 @@
 # greeter
 
-The login screen: greetd running stock sysc-greet in the small mango session that `sysc-greet-mango` ships. Its theme, ASCII art, last user and session are sysc-greet's own; it remembers the last user and session itself. The repo owns the greetd config (`greeter/root/etc/greetd/config.toml`, copied to `/` by `install.sh --system`, runs the greeter through `systemd-cat -t greeter`), enabling greetd, and the background: `setup.sh` links the Blue Dawn loop ([swaybg](swaybg.md)'s `wallpaper-cosmic-storm` package) into sysc-greet's custom wallpaper folder, `/var/lib/greeter/Pictures/wallpapers/`, where gslapper plays it, and sets two keys in sysc-greet's preferences (`/var/lib/greeter/.cache/sysc-greet/preferences`): `wallpaper` (that file) and `form_mode` `frosted`, a blurred, dimmed plate behind the login form so its small text reads over the clouds. sysc-greet rewrites that file when you change something at the login screen, so only those keys are set, when they differ; the file is the greeter's (0600), so the check runs as one `sudo` call. F1 → Wallpaper picks another background until the next `install.sh --setup`. The art above the form is this machine's host name in capitals, not sysc-greet's "mango": sysc-greet draws the art of the session it starts (`/usr/share/sysc-greet/ascii_configs/mango.conf`) and reads it only from its package's data dir, so `/etc/greetd/greeter-hostname-art` rewrites that file with `figlet` in sysc-greet's own `dos_rebel` font, its blocks and shade in ANSI 97 and 90 (sysc-greet maps them to its theme's text and muted colors). `setup.sh` runs it when the file differs (a new host name included), and a pacman hook (`/etc/pacman.d/hooks/greeter-hostname-art.hook`) after each `sysc-greet-mango` update, which puts the packaged art back. Capitals, because a lowercase `p` adds a descender row that runs into the background's eclipse.
+The login screen: `greetd` running a native Viewport (SGI CAD) GTK3 layer-shell greeter (`/etc/greetd/greeter-ui`, LuaJIT + `lua51-lgi` + `gtk-layer-shell` + `Gio.UnixSocketAddress`) inside a locked-down mango session.
 
-sysc-greet runs inside kitty: `sysc-greet-mango` depends on it, starts the login UI in it (`/etc/greetd/mango-greeter-session.sh`) and starts more kittys itself for a second monitor. So kitty stays installed, but only for the login screen; the desktop's terminal is [Ghostty](ghostty.md). `.local/share/applications/kitty.desktop` and `kitty-open.desktop` mask kitty's own entries, so it is not in the launcher and opens no files or links (kitty-open was the handler for `.sh` files and `ssh://` links): `Hidden=true` for GLib (Thunar, Firefox, Walker/Elephant), `Exec=false` for `xdg-open`, which ignores `Hidden`.
+The greeter mirrors the desktop's 38px bars, Walker, `mango-keys-ui`, and [hyprlock](hyprlock.md): dimmed Blue Dawn eclipse backdrop (`swaybg` displaying `/usr/share/backgrounds/cosmic-storm/blue-dawn-lock.png`), 38px top and bottom bars with mirrored `8px`/`32px` cyan ruler ticks, `24px` `λ`, uppercase hostname, `[LOGIN]` orange chip, live clock, session switcher (`F2`), Reboot/Poweroff buttons (permitted via `/etc/polkit-1/rules.d/85-greeter-power.rules`), and a centered `0px` opaque `@vp_bar` CAD auth console with a `2px` `@vp_signal` focus rail and square keycap hints. Colors come from `greeter/root/etc/greetd/colors.css.tmpl` (rendered by `theme`, installed to `/etc/greetd/colors.css` by `install.sh --system`), so the login screen tracks the active palette across dark and light themes. Last user and session are saved under `/var/lib/greeter/.cache/viewport-greeter/state`.
 
-With the lid closed and an external display connected, the login prompt would sit behind the lid (sysc-greet picks the monitor mango focuses first, the panel), and the greeter has no keybindings to move it. So the repo adds the desktop's lid rule in three files next to the config in `greeter/root/etc/greetd/`; the package's own files stay untouched. `greeter-panel` runs `mmsg dispatch disable_monitor,<panel>` when the lid (`/proc/acpi/button/lid/*/state`, none counts as open) is closed and `wlr-randr --json` shows an enabled external display, and `enable_monitor` otherwise; it exits 0 on any error so the greeter starts regardless. `mango-greeter.conf` sources the package's `mango-greeter-config.conf` and adds `switchbind=fold`/`unfold` that run `greeter-panel`, so the lid moves the prompt at the login screen too. `greeter-session.sh` runs `greeter-panel`, starts a background watcher that re-runs it whenever the set of monitor names in `mmsg watch all-monitors` changes (a display plugged in or out at the login screen; focus and tag events are ignored; the stream ends when mango quits, so the watcher dies with the greeter), and then execs the package's `mango-greeter-session.sh`, so the panel is off before sysc-greet picks its monitor. Both scripts are bash. `config.toml` starts mango with these two instead of the package's. After login the user's mango starts with the panel on until way-displays turns it off.
+With the lid closed and an external display connected, the login prompt would sit behind the lid, and the greeter has no keybindings to move it. `greeter-panel` runs `mmsg dispatch disable_monitor,<panel>` when the lid (`/proc/acpi/button/lid/*/state`, none counts as open) is closed and `wlr-randr --json` shows an enabled external display, and `enable_monitor` otherwise; it exits 0 on any error so the greeter starts regardless. `mango-greeter.conf` keeps zero keybinds and adds `switchbind=lid:on`/`lid:off` calling `greeter-panel`. `greeter-session.sh` runs `greeter-panel`, starts a background monitor-hotplug watcher (`mmsg watch all-monitors`), launches `swaybg` and `/etc/greetd/greeter-ui`, and runs `mmsg dispatch quit` once `greetd` authenticates the session.
 
-If the login screen doesn't come up, you get a text login instead. greetd then logs only "greeter
-exited without creating a session" (`journalctl -b -u greetd`), and after five tries in a row it
-stops trying until the next boot. The greeter's own output, mango, kitty and sysc-greet included,
-is in `journalctl -b -t greeter`. Once the cause is fixed, `sudo systemctl restart greetd` brings
-the login screen back without a reboot.
+If the login screen doesn't come up, you get a text login instead. greetd then logs only "greeter exited without creating a session" (`journalctl -b -u greetd`), and after five tries in a row it stops trying until the next boot. The greeter's own output is in `journalctl -b -t greeter`. Once the cause is fixed, `sudo systemctl restart greetd` brings the login screen back without a reboot.
 
 ## Reference
 
@@ -22,14 +18,22 @@ the login screen back without a reboot.
 - `~/.local/share/applications/kitty-open.desktop`
 - `~/.local/share/applications/kitty.desktop`
 
+**Rendered from the palette** (`theme`):
+
+- `greeter/root/etc/greetd/colors.css.tmpl` → `greeter/root/etc/greetd/colors.css`: `name`, `slug`, `vp_bar`, `vp_crit`, `vp_cyan`, `vp_dim`, `vp_orange`, `vp_signal`, `vp_text`
+
 **System files** (`greeter/root/`, copied by `install.sh --system`):
 
+- `/etc/greetd/colors.css`
 - `/etc/greetd/config.toml`
 - `/etc/greetd/greeter-hostname-art`
 - `/etc/greetd/greeter-panel`
 - `/etc/greetd/greeter-session.sh`
+- `/etc/greetd/greeter-ui`
+- `/etc/greetd/greeter.css`
 - `/etc/greetd/mango-greeter.conf`
 - `/etc/pacman.d/hooks/greeter-hostname-art.hook`
+- `/etc/polkit-1/rules.d/85-greeter-power.rules`
 
 **`setup.sh`** (run by `install.sh --setup`): start greetd at boot (its files come from greeter/root/ via install.sh --system), draw the host name as the login screen's art, and give sysc-greet the Blue Dawn loop (pkg wallpaper-cosmic-storm, swaybg/) as its background: a link in its custom wallpaper folder, played by gslapper, and two keys in its preferences, `wallpaper` (that file) and `form_mode` frosted (a blurred, dimmed plate behind the login form, so its small text reads over the clouds). sysc-greet rewrites the preferences file when you change something at the login screen, so only these keys are set, when they differ. The file is the greeter's own (0600 in its home), so even the check needs sudo: one call, which writes only on a difference.
 <!-- end generated -->

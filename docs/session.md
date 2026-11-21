@@ -1,6 +1,6 @@
 # Session
 
-**greetd** starts sysc-greet (see [greeter](apps/greeter.md)); logging in starts mango.
+**greetd** starts the Viewport GTK3 greeter (see [greeter](apps/greeter.md)); logging in starts mango.
 
 Mango imports `WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XCURSOR_* MANGO_INSTANCE_SIGNATURE`
 into systemd and dbus, then starts `mango-session.target` → `graphical-session.target`. Every daemon is
