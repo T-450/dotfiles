@@ -66,50 +66,24 @@ Every later change uses these two checks, so run them once now.
 	```
 
 	```
-	  alabaster
-	  alchemist
-	  apprentice
-	  carbonfox
-	  cassette
-	* colibri
-	  dark-2026
-	  deep-blue
-	  doom-one
-	  elysian
-	  everforest
-	  flexoki-dark
-	  flexoki-light
-	  gruber-darker
-	  gruvbox-material
-	  kanagawa-dragon
-	  kanso-zen
-	  light-2026
-	  metro
-	  oxide
-	  rain
-	  rose-pine
-	  rose-pine-dawn
-	  saturnite
-	  space
-	  tokyo-night
-	  vague
-	  vesper
+	* moonfly
+	  solarized-light
 	```
 
-2. Switch to Tokyo Night:
+2. Switch to Solarized Light:
 
 	```bash
-	theme set tokyo-night
+	theme set solarized-light
 	```
 
-	You see `tokyo-night: rendered 31 files`. Window borders, waybar, and notifications change at
-	once. The wallpaper stays, because every dark palette uses the same image. Open a new terminal
+	You see `Solarized Light: rendered 34 files`. Window borders, waybar, and notifications change at
+	once. A light palette replaces the dark wallpaper image with the desktop color. Open a new terminal
 	to see its new colors.
 
 3. The login screen lives outside your home, so it changes only when you run
    `./install.sh --system`, which asks for sudo. `theme set` reminds you.
 
-4. Switch back with `theme set colibri`, or pick a palette with super+p.
+4. Switch back with `theme set moonfly`, or pick a palette with super+shift+t.
 
 ## Add a program
 

@@ -23,9 +23,9 @@ set_json() {
 catalog() { (cd / && unset MISE_ENV && mise exec node -- npx -y "$lazypi" --yes) && echo "lazypi  $lazypi catalog"; }
 when_changed "$repo/pi/lazypi.stamp" catalog <<<"$lazypi"
 
-# the default palette's theme; every palette is dark, so a light/dark pair has nothing to pick
-if set_json "$agent/settings.json" 644 '.theme = "colibri"'; then
-	echo "pi      theme colibri"
+# the default palette's theme; solarized-light is rendered alongside it
+if set_json "$agent/settings.json" 644 '.theme = "moonfly"'; then
+	echo "pi      theme moonfly"
 fi
 # Claude Code's look (pi-claude-code-ui): tool calls fold into one-line rows, edits show
 # syntax-highlighted diffs, the spinner names what runs. Set before it first loads: terminalTheme

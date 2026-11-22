@@ -7,70 +7,47 @@ palettes; `theme lint` fails if one shows up anywhere else in the repo.
 
 ```bash
 theme list                 # palettes (* = active)
-theme set tokyo-night      # switch everything (also: super+shift+t picker)
+theme set solarized-light  # switch everything (also: super+shift+t picker)
 theme init                 # render the active palette without reloading (install.sh)
 theme lint                 # no color literals; rendered files gitignored; no secrets tracked
 ```
 
-The default palette is **Colibri**, from `archseer/colibri.vim` (`colors/colibri.vim`, its dark
-branch): each role, ANSI color and syntax color is one of that scheme's named colors (the comments
-in `colibri.toml` name it and its highlight group), except two tiers it lacks (`bg_hover`,
-`fg_secondary`), mixed from its own. The desktop (`bg_desktop`: bar, lock screen, GTK, browsers)
-sits on its darkest shade, revolver, a step below the terminal and the editors on midnight, its
-editor background. The others:
+The default palette is **Moonfly** (dark): official
+`terminalcolors.com/themes/moonfly/default/` and `bluz71/vim-moonfly-colors` Neovim/Vim scheme.
+Midnight obsidian canvas, charcoal UI tiers (`grey7`..`grey27`), blue accent, turquoise
+identifiers, sky functions, emerald types, violet keywords, khaki strings, cranberry
+operators, booleans and preproc, orange constants, grey comments.
 
-- Tokyo Night (`folke/tokyonight.nvim`, originally imported via omarchy, upgraded with full
-  `[syntax]` and `[diff]` and the NuPhy Air60 HE `[keycaps]`).
-- Cassette, by hand from a cassette J-card's tokens: black card, silver paper, a teal and a
-  cobalt stripe.
-- Written by hand the way Colibri is, each role named after its scheme's color and highlight
-  group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
-  name) and `[syntax]` and `[diff]` from its highlight groups:
-  - Minimalist dark obsidian/charcoal: Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
-    (`oxidescheme/nvim`), Carbonfox (`EdenEast/nightfox.nvim`, IBM Carbon Gray 100), Vesper
-    (`datsfilipe/vesper.nvim`), Vague (`vague2k/vague.nvim`), Kanso Zen (`webhooked/kanso.nvim`),
-    Flexoki Dark (`kepano/flexoki`) and Dark 2026 (`lewisblackburn/vscode-dark-2026`).
-  - Atmospheric deep dark: Doom One (`NTBBloodbath/doom-one.nvim`), Kanagawa Dragon
-    (`rebelot/kanagawa.nvim`), Rosé Pine (`rose-pine/neovim`), Gruvbox Material
-    (`sainnhe/gruvbox-material`, dark hard) and Everforest (`sainnhe/everforest`, dark hard).
-  - Vim xterm-256 classics: Apprentice (`romainl/Apprentice`), Alchemist (`habamax/vim-alchemist`),
-    Saturnite (`habamax/vim-saturnite`) and Elysian (`Aszarsha/elysian.vim`).
-  - Calibrated light palettes: Alabaster (`tonsky/sublime-scheme-alabaster`), Flexoki Light
-    (`kepano/flexoki`), Rosé Pine Dawn (`rose-pine/neovim`) and Light 2026 (`microsoft/vscode`
-    `2026-light.json`, light companion to Dark 2026). Alabaster's and Rosé Pine Dawn's `warning`
-    are darkened where upstream orange/gold reads too low as text.
-- Space, Rain and Metro, by hand from COLOURlovers palettes (CC BY-NC-SA 3.0: each file credits
-  its author) the way Cassette is: four or five colors, every other tier derived and marked so.
-  Rain and Metro are light; their yellows and Metro's blue read below 3:1 on white, so they stay
-  fills (badge, selection) and the text roles are them darkened.
-- Deep Blue (`kinqert/deep-blue-theme`): `theme import-vscode`, then corrected by hand with its
-  Flat terminal/git colors and token definitions.
-
-Only Tokyo Night sets `[keycaps]`; every other palette derives its caps from its own roles.
+**Solarized Light** (light): official `terminalcolors.com/themes/solarized/light/` and Ethan
+Schoonover's 16-color CIELAB Solarized palette (`altercation/vim-colors-solarized`, lualine
+`solarized_light`). Warm parchment canvas (`base3`) with `base2` highlighted chrome, `base01`
+high-contrast editor text, `base02` UI text and inverted `WildMenu` selection, `base03`
+headings and keycap legends, blue normal/focus accent distinct from cyan HUD chrome, violet
+links, and exact `solarized.vim` syntax groups. Templates apply `|legible` where needed so all
+text stays at WCAG AA (4.5:1) contrast on its surface.
 
 ## Keycaps
 
 An optional `[keycaps]` table gives the keybinding cheatsheet (`mango-keys`) its keycap colors, as
-roles `key_mod`, `key_cap`, `key_accent`, `key_legend`, `key_frame` (and
-`THEME_KEY_*` in `colors.sh`). Tokyo Night sets them from the NuPhy Air60 HE: black modifier
-caps, grey letter caps, white legends, the aluminium frame. `key_accent` is the one lit cap, under
-the selected row's action key only: the board's violet. A cap may be
-translucent (`#rrggbbaa`): `theme` composites it over `bg_desktop`, as you see the plate through
-the board's violet keys (85% on dark palettes; opaque on light ones, where blending would wash the
-legend out). `theme` fails a palette whose legend reads
-below WCAG AA (4.5:1) on any cap. A palette without the table
-(an import) derives them from its own roles: modifiers on its hover grey, the selected row's
-action key on its accent.
+roles `key_mod`, `key_cap`, `key_accent`, `key_legend`, `key_frame` (and `THEME_KEY_*` in
+`colors.sh`). `key_accent` is the one lit cap, under the selected row's action key only. A cap may
+be translucent (eight-digit hex with alpha): `theme` composites it over `bg_desktop`. `theme`
+fails a palette whose legend reads below WCAG AA (4.5:1) on any cap. A palette without the table
+derives the caps from its own roles: modifiers on its hover grey, the selected row's action key
+on its accent. Neither current palette sets `[keycaps]`, so both derive their caps that way and
+pass WCAG AA (4.5:1) legibility.
 
 ## Syntax
 
 An optional `[syntax]` table gives the editors (vim, helix) their syntax colors, as roles
 `syn_keyword`, `syn_preproc`, `syn_type`, `syn_function`, `syn_identifier`, `syn_string`,
 `syn_constant`, `syn_number`, `syn_boolean`, `syn_special`, `syn_operator`, `syn_comment`: for a
-palette taken from an editor scheme that maps syntax its own way (Colibri: keywords almond, types
-and functions white, strings silver, constants mint, numbers chamois, punctuation lilac). The
-templates still push each to 4.5:1 on `term_bg` (`|legible`; Colibri's sirocco comments, 3.2:1
-in colibri.vim, come out lighter). A palette without the table takes them from its terminal hues
+palette taken from an editor scheme that maps syntax its own way (Moonfly: keywords violet,
+preproc, operators and booleans cranberry, types emerald, functions sky, identifiers turquoise,
+strings khaki, constants and numbers orange, comments grey; Solarized Light: keywords and
+operators green, preproc orange, types yellow, functions and identifiers blue, strings,
+constants, numbers and booleans cyan, special red, comments `base1`). The templates still push
+each to 4.5:1 on `term_bg` (`|legible`). A palette without the table takes them from its terminal hues
 and greys: keyword `ansi5`, type `ansi13`, function `ansi12`, string `ansi2`, constant `ansi3`,
 special `ansi6`, identifier `fg_editor`, operator `fg_secondary`, comment `fg_muted`; preproc
 follows keyword, number and boolean follow constant.
@@ -81,7 +58,8 @@ An optional `[diff]` table (`add`, `remove`, `change`; roles `diff_add`, `diff_r
 `diff_change`) colors added, removed and changed lines in vim, helix, delta (git's pager and
 lazygit's), Pi, Claude Code and Mousepad; without it they are `success`, `error` and `ansi4`. An
 optional `info` in `[colors]` is the third diagnostic tier after error and warning (helix); without
-it, `ansi4`. Colibri sets both from swatch.html: plus, minus and delta. Every editor (vim, helix,
+it, `ansi4`. Moonfly sets add emerald, remove crimson, change blue, and info sky. Solarized
+Light sets add green, remove red, change blue, and info blue. Every editor (vim, helix,
 Mousepad, Pi) takes its syntax from the `syn_*` roles.
 
 ## Roles
@@ -150,7 +128,7 @@ Which apps use each role (generated from the templates):
 | `fg_editor` | gtk, helix, mousepad, pi, theme, vim |
 | `fg_muted` | btop, claude, helix, mousepad, pi, qutebrowser, theme, vim |
 | `fg_secondary` | btop, claude, firefox, helix, lazygit, mousepad, pi, qutebrowser, theme, vim |
-| `fg_text` | btop, claude, fastfetch, firefox, gtk, imv, mousepad, mpv, pi, qutebrowser, theme, vim |
+| `fg_text` | btop, claude, fastfetch, firefox, gtk, helix, imv, mousepad, mpv, pi, qutebrowser, theme, vim |
 | `git_email` | git |
 | `git_name` | git |
 | `home` | helix, hyprlock, runner-up |
@@ -223,22 +201,22 @@ back to VS Code's own defaults (`terminalColorRegistry.ts`). `meta.variant` (`da
 ## Adding a theme
 
 ```bash
-theme import-vscode https://raw.githubusercontent.com/microsoft/vscode/main/extensions/theme-defaults/themes/2026-light.json light-2026
-theme import-omarchy <colors.toml file or URL> tokyo-night
+theme import-vscode <theme.json file or URL> solarized-light
+theme import-omarchy <colors.toml file or URL> moonfly
 theme import-base24 <base16/base24 YAML file or URL> catppuccin-mocha
 ```
 
 Imports follow VS Code `include` chains and flatten alpha onto the right background.
-Missing tiers are derived with `mix`. Or copy `colibri.toml` and edit by hand.
+Missing tiers are derived with `mix`. Or copy `moonfly.toml` and edit by hand.
 
 ## How it fits together
 
 - Templates: any `<app>/**/NAME.tmpl` renders to `NAME` beside it (listed in `<app>/.gitignore`)
   from the active palette. A `NAME` with `{palette}` in it renders once per palette instead, each
   from its own palette, with the slug in place of `{palette}`: for an app that keeps a theme per
-  palette and picks one itself (Pi's `{palette}.json.tmpl` → `colibri.json`, `tokyo-night.json`).
-  `{{role}}` → `#rrggbb`. Filters: `|bare` (`rrggbb`), `|hex:88` / `|bare:88` (alpha), `|0x` /
-  `|0x:33` (mango `0xRRGGBBAA`), `|rgb` (`r, g, b`), `|rgba:0.9`, `|mix:<role>:<0-1>` (chainable,
+  palette and picks one itself (Pi's `{palette}.json.tmpl` → `moonfly.json`, `solarized-light.json`).
+  `{{role}}` becomes a six-digit hex. Filters: `|bare` (hex without the mark), `|hex:88` / `|bare:88` (alpha), `|0x` /
+  `|0x:33` (mango's eight-digit form), `|rgb` (`r, g, b`), `|rgba:0.9`, `|mix:<role>:<0-1>` (chainable,
   before the format). Contrast filters, also chainable: `|ink` turns a background into its text
   color (`bg_desktop` or `fg_bright`, whichever reads better, pushed to WCAG AA 4.5:1), e.g.
   `{{accent|mix:bg_surface:0.3|ink}}`; `|legible:<role>` nudges a foreground until it reads at
@@ -248,7 +226,7 @@ Missing tiers are derived with `mix`. Or copy `colibri.toml` and edit by hand.
   THEME_SLUG THEME_VARIANT THEME_ROOT`; a failure shows a critical notification.
 - `~/.config/theme/colors.sh` is the palette as `THEME_*` shell variables, for scripts
   (`. ~/.config/theme/colors.sh`) and units (`EnvironmentFile=%h/.config/theme/colors.sh`).
-- The active palette's name is in `~/.local/state/theme/current` (default `colibri`).
+- The active palette's name is in `~/.local/state/theme/current` (default `moonfly`).
 
 | app | how it gets colors | applies |
 |---|---|---|
@@ -268,7 +246,7 @@ Missing tiers are derived with `mix`. Or copy `colibri.toml` and edit by hand.
 | zsh, vim | terminal ANSI colors (Ghostty) | at once (Ghostty reloads) |
 | helix | `themes/palette.toml` rendered (syntax from the `syn_*` roles, interface from the roles), selected as `theme = "palette"` | at once (`helix/reload.sh`: SIGUSR1, helix's `:config-reload`) |
 | Claude Code | `~/.claude/themes/mango.json` (linked), selected in the linked `settings.json` | next session (`claude/reload.sh` says so while one runs) |
-| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked); `pi/setup.sh` selects `colibri` | at once (Pi hot-reloads its theme files) |
+| Pi | one theme per palette, `~/.pi/agent/themes/<slug>.json` (linked); `pi/setup.sh` selects `moonfly` | at once (Pi hot-reloads its theme files) |
 
 To theme a new app: add `NAME.tmpl` in its folder, the output to its `.gitignore`, an include
 line in its config, and a `reload.sh`: one that reloads it live, or, for an app that reads its colors

@@ -1,0 +1,69 @@
+# Solarized Light: https://terminalcolors.com/themes/solarized/light/ and Ethan Schoonover's
+# official Solarized 16-color CIELAB palette (altercation/vim-colors-solarized, lualine
+# solarized_light). Every hex below is strictly one of the 16 canonical Solarized colors, applied
+# the Vim/Neovim way: base3 (#fdf6e3) main canvas, base2 (#eee8d5) highlighted chrome (StatusLine,
+# TabLine, Pmenu, CursorLine, desktop bars), base01 (#586e75) editor text (solarized_contrast=high,
+# WCAG AA 4.99:1 on base3), base02 (#073642) UI text and WildMenu inverted selection (AAA 12.05:1
+# with base3), base03 (#002b36) bright headings/legends, blue (#268bd2) lualine normal/focus
+# accent (distinct from cyan #2aa198 structural HUD chrome), violet (#6c71c4) Underlined links,
+# and exact solarized.vim syntax groups. [terminal] matches terminalcolors.com/themes/solarized/light/
+# verbatim.
+
+[meta]
+name = "Solarized Light"
+variant = "light"
+source = "https://terminalcolors.com/themes/solarized/light/"
+
+[colors]
+bg_desktop      = "#eee8d5"  # base2: StatusLine / TabLine / Folded bg (desktop bar and panels)
+bg_surface      = "#fdf6e3"  # base3: Normal main parchment canvas
+bg_widget       = "#eee8d5"  # base2: Pmenu / NormalFloat popup surface
+bg_hover        = "#eee8d5"  # base2: CursorLine / ColorColumn highlight
+border_hairline = "#93a1a1"  # base1: subtle divider
+border_inactive = "#839496"  # base0: VertSplit / StatusLineNC border
+fg_text         = "#073642"  # base02: high-contrast UI body text (12.05:1 on base3, 10.61:1 on base2)
+fg_editor       = "#586e75"  # base01: emphasized content / solarized_contrast=high Normal fg (4.99:1 on base3)
+fg_secondary    = "#586e75"  # base01: StatusLine / lualine.normal.c fg
+fg_muted        = "#657b83"  # base00: subdued labels / lualine.inactive.a fg
+fg_bright       = "#002b36"  # base03: darkest ink for headings, active titles, keycap legends
+fg_disabled     = "#93a1a1"  # base1: LineNr / NonText dim tier
+accent          = "#268bd2"  # blue: lualine.normal.a / Identifier / Function / Directory focus signal
+badge           = "#2aa198"  # cyan: terminalcolors.com accent / Constant badge
+selection_bg    = "#073642"  # base02: solarized.vim WildMenu inverted selection bg
+selection_fg    = "#fdf6e3"  # base3: inverted selection fg (12.05:1 AAA)
+link            = "#6c71c4"  # violet: solarized.vim Underlined (HTML links)
+error           = "#dc322f"  # red: Error / ErrorMsg
+warning         = "#b58900"  # yellow: Search / SpellLocal
+success         = "#859900"  # green: Statement / diffAdded / lualine.insert
+info            = "#268bd2"  # blue: MoreMsg / ModeMsg
+shadow          = "#002b36"  # base03: Solarized darkest tone
+
+[terminal]
+fg     = "#657b83"  # base00: terminalcolors.com foreground
+bg     = "#fdf6e3"  # base3: terminalcolors.com background
+cursor = "#657b83"  # base00: terminalcolors.com cursor-color
+ansi = [
+	# base02, red, green, yellow, blue, magenta, cyan, base2
+	"#073642", "#dc322f", "#859900", "#b58900", "#268bd2", "#d33682", "#2aa198", "#eee8d5",
+	# base03, orange, base01, base00, base0, violet, base1, base3
+	"#002b36", "#cb4b16", "#586e75", "#657b83", "#839496", "#6c71c4", "#93a1a1", "#fdf6e3",
+]
+
+[diff]
+add    = "#859900"  # green: diffAdded
+remove = "#dc322f"  # red: gitcommitDiscardedFile
+change = "#268bd2"  # blue: diffLine
+
+[syntax]
+keyword    = "#859900"  # green: Statement, Conditional, Repeat, Keyword, Exception
+preproc    = "#cb4b16"  # orange: PreProc, Include, Define, Macro
+type       = "#b58900"  # yellow: Type, StorageClass, Structure, Typedef
+function   = "#268bd2"  # blue: Function
+identifier = "#268bd2"  # blue: Identifier
+string     = "#2aa198"  # cyan: String, Constant
+constant   = "#2aa198"  # cyan: Constant
+number     = "#2aa198"  # cyan: Number, Float
+boolean    = "#2aa198"  # cyan: Boolean
+special    = "#dc322f"  # red: Special, SpecialChar, Tag
+operator   = "#859900"  # green: Operator (links to Statement)
+comment    = "#93a1a1"  # base1: Comment

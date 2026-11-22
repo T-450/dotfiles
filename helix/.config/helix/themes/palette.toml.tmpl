@@ -91,7 +91,7 @@
 "ui.linenr" = "disabled"
 "ui.linenr.selected" = "secondary"
 "ui.gutter" = { bg = "ground" }
-"ui.statusline" = { fg = "text", bg = "desktop" }
+"ui.statusline" = { fg = "ui-text", bg = "desktop" }
 "ui.statusline.inactive" = { fg = "muted", bg = "ground" }
 "ui.statusline.normal" = { fg = "accent-ink", bg = "accent", modifiers = ["bold"] }
 "ui.statusline.insert" = { fg = "mint-ink", bg = "mint", modifiers = ["bold"] }
@@ -102,11 +102,11 @@
 "ui.bufferline.background" = { bg = "desktop" }
 "ui.breadcrumb" = "secondary"
 "ui.breadcrumb.separator" = "disabled"
-"ui.popup" = { fg = "text", bg = "widget" }
-"ui.popup.info" = { fg = "text", bg = "widget" }
+"ui.popup" = { fg = "ui-text", bg = "widget" }
+"ui.popup.info" = { fg = "ui-text", bg = "widget" }
 "ui.popup.border" = "border"
-"ui.help" = { fg = "text", bg = "widget" }
-"ui.menu" = { fg = "text", bg = "widget" }
+"ui.help" = { fg = "ui-text", bg = "widget" }
+"ui.menu" = { fg = "ui-text", bg = "widget" }
 "ui.menu.selected" = { fg = "selection-text", bg = "selection" }
 "ui.menu.scroll" = { fg = "border", bg = "widget" }
 "ui.picker.header" = { fg = "muted", modifiers = ["bold"] }
@@ -142,6 +142,7 @@ muted = "{{fg_muted|legible:term_bg}}"
 secondary = "{{fg_secondary|legible:term_bg}}"
 secondary-ink = "{{fg_secondary|legible:term_bg|ink}}"
 text = "{{fg_editor}}"
+ui-text = "{{fg_text}}"
 bright = "{{fg_bright}}"
 accent = "{{accent}}"
 accent-ink = "{{accent|ink}}"
@@ -171,7 +172,7 @@ syn-constant = "{{syn_constant|legible:term_bg}}"
 syn-number = "{{syn_number|legible:term_bg}}"
 syn-boolean = "{{syn_boolean|legible:term_bg}}"
 syn-special = "{{syn_special|legible:term_bg}}"
-syn-operator = "{{syn_operator}}"
+syn-operator = "{{syn_operator|legible:term_bg}}"
 syn-comment = "{{syn_comment|legible:term_bg}}"
 diff-add = "{{diff_add|legible:term_bg}}"
 diff-remove = "{{diff_remove|legible:term_bg}}"

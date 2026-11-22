@@ -3,7 +3,7 @@
 set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 scratch_home
-"$ROOT/theme/.local/bin/theme" init colibri --to "$TEST_TMP/r" >/dev/null
+"$ROOT/theme/.local/bin/theme" init moonfly --to "$TEST_TMP/r" >/dev/null
 # a home with the repo stowed, rendered files included (copied over the repo's own renders)
 cp -r "$ROOT" "$TEST_TMP/repo" && rm -rf "$TEST_TMP/repo/.git"
 (cd "$TEST_TMP/r" && find . -type f -exec cp --parents {} "$TEST_TMP/repo/" \;)

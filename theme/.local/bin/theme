@@ -22,6 +22,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -36,7 +37,7 @@ PALETTES = REPO / "theme" / "palettes"
 CURRENT = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state") / "theme" / "current"
 # not apps: never searched for templates or hooks
 NOT_APPS = {".git", ".github", "plans", "tests", "tools", "docs", "__pycache__"}
-DEFAULT = "colibri"
+DEFAULT = "moonfly"
 
 ROLES = [
     "bg_desktop", "bg_surface", "bg_widget", "bg_hover", "border_hairline", "border_inactive",
@@ -449,7 +450,50 @@ def render_all(slug, dest_root):
         for tmp, _ in staged:
             if os.path.exists(tmp):
                 os.unlink(tmp)
+    # a --to tree is a copy: only the repo render may drop outputs of palettes that no longer exist
+    if root == REPO.resolve():
+        prune_stale_palette_outputs(root)
     return loaded[None][1], [out for out, _, _ in rendered]
+
+
+def prune_stale_palette_outputs(root):
+    """Unlink regular files left by a {palette} template whose slug is gone.
+
+    Match only prefix+slug+suffix in that template's directory. A .tmpl is the source,
+    never an output, and a symlink is not a regular file.
+    """
+    live = set(palette_names())
+    seen = set()
+    for tmpl, _, palette in templates():
+        if palette is None or tmpl in seen:
+            continue
+        seen.add(tmpl)
+        name = tmpl.name[:-5]
+        if PER_PALETTE not in name:
+            continue
+        prefix, suffix = name.split(PER_PALETTE, 1)
+        parent = root / tmpl.parent
+        if not parent.is_dir():
+            continue
+        for child in parent.iterdir():
+            n = child.name
+            if n.endswith(".tmpl") or not n.startswith(prefix):
+                continue
+            rest = n[len(prefix):]
+            if suffix:
+                if not rest.endswith(suffix) or len(rest) == len(suffix):
+                    continue
+                slug = rest[: -len(suffix)]
+            else:
+                slug = rest
+            if not slug or slug in live or not SLUG.fullmatch(slug):
+                continue
+            try:
+                if not stat.S_ISREG(child.lstat().st_mode):
+                    continue
+                child.unlink()
+            except OSError:
+                continue
 
 
 def run_generators():
