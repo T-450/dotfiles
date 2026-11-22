@@ -25,7 +25,7 @@ sudo only where something must change. Every app folder goes through the same ph
 | `--system` | copies each `<app>/root/**` to `/**` when it differs (sudo); owner = owner of the nearest existing directory |
 | `--setup` | each `<app>/setup.sh`: state that isn't a file (services, gsettings, login shell, linger) |
 | `--units` | enables each app's user units and starts the new ones |
-| `--check` | changes nothing; reports links missing or replaced by real files and system files that differ; exit 1 on any |
+| `--check` | changes nothing; reports links missing or replaced by real files, system files that differ, and system services declared with `enable_system` in `<app>/setup.sh` that are not enabled; exit 1 on any |
 
 `--only APP...` limits any phase to some apps. `--home DIR` and `--root DIR` link and copy into
 another directory (tests).

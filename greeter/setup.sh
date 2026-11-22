@@ -3,7 +3,7 @@
 # and make /var/lib/greeter/.cache/viewport-greeter, owned by greeter:greeter, so greeter-ui can
 # save the last user and session. A second run changes nothing.
 . "$(dirname -- "${BASH_SOURCE[0]}")/../tools/setup-lib.sh"
-enable_system greetd.service
+enable_system --boot greetd.service
 
 cache=/var/lib/greeter/.cache/viewport-greeter
 owner=$(stat -c '%U:%G' -- "$cache" 2>/dev/null || true)

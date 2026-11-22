@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # tools/setup-lib.sh: helpers for <app>/setup.sh and install.sh (sourced): enable_system,
 # user_bus, default_app, retry, when_changed. A helper that changes state checks it first and acts
 # (and prints) only on a difference, so a second run is silent.
@@ -8,17 +9,27 @@ set -euo pipefail
 trap 'echo "interrupted" >&2; exit 130' INT
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 
-# enable_system UNIT...: enable (and start) system units not enabled yet. A unit that can't start
-# because this run's pacman -Syu upgraded the kernel away (its modules are gone until the reboot
-# into the new one; ufw needs netfilter's) stays enabled, so that boot starts it; its journal tail
-# shows why. Any other failure to start stops the run.
+# enable_system [--boot] UNIT...: enable system units not enabled yet, and start them unless
+# --boot is given (enable without --now). A display manager (greetd.service) takes over a VT and
+# must wait for the next boot: --now would hijack the active session or TTY mid-install. A unit
+# that can't start because this run's pacman -Syu upgraded the kernel away (its modules are gone
+# until the reboot into the new one; ufw needs netfilter's) stays enabled, so that boot starts it;
+# its journal tail shows why. Any other failure to start stops the run.
 enable_system() {
-	local u
+	local now=--now u
+	if [[ ${1:-} == --boot ]]; then
+		now=
+		shift
+	fi
 	for u; do
 		[[ $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]] && continue
-		if sudo systemctl enable --now "$u"; then
-			echo "enable  $u"
-		elif [[ ! -d /usr/lib/modules/$(uname -r) && $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]]; then
+		if sudo systemctl enable ${now:+"$now"} "$u"; then
+			if [[ -n $now ]]; then
+				echo "enable  $u"
+			else
+				echo "enable  $u (at the next boot)"
+			fi
+		elif [[ -n $now && ! -d /usr/lib/modules/$(uname -r) && $(systemctl is-enabled "$u" 2>/dev/null) == enabled ]]; then
 			sudo journalctl -b -u "$u" -n 5 --no-pager >&2 || true
 			echo "enable  $u (starts at the next boot: the running kernel $(uname -r) was upgraded away)"
 		else

@@ -11,7 +11,7 @@
 #   setup     <app>/setup.sh: state that isn't a file (services, gsettings, login shell)
 #   units     enable every <app>/.config/systemd/user/*.service; start the new ones, restart the
 #             running ones whose file changed
-# --check     report what differs from the repo (missing links, files in the way, system files);
+# --check     report what differs from the repo (missing links, files in the way, system files, disabled services);
 #             exit 1 on any difference. Changes nothing.
 # --home DIR / --root DIR  link / copy into DIR instead of $HOME / / (tests).
 # Run as your user, not root: sudo is called only where something must change.
@@ -275,8 +275,41 @@ enable_units() {
 }
 
 # ---------------------------------------------------------------- check
+# Units setup.sh would enable, without running it (that needs sudo). A continued
+# enable_system line is joined first; a leading --boot is not a unit.
+system_units() {
+	local a line buf rest u skip
+	local -a units
+	for a in $(apps); do
+		[[ -f $repo/$a/setup.sh ]] || continue
+		buf=
+		while IFS= read -r line || [[ -n $line ]]; do
+			line=${line%%#*}
+			line=${line%"${line##*[![:space:]]}"}
+			if [[ $line == *\\ ]]; then
+				buf+="${line%\\} "
+				continue
+			fi
+			line=$buf$line
+			buf=
+			[[ $line =~ ^[[:space:]]*enable_system([[:space:]]|$) ]] || continue
+			rest=${line#*enable_system}
+			read -ra units <<<"$rest" || true
+			skip=1
+			for u in "${units[@]}"; do
+				if ((skip)) && [[ $u == --boot ]]; then
+					skip=0
+					continue
+				fi
+				skip=0
+				printf '%s\t%s\n' "$a" "$u"
+			done
+		done <"$repo/$a/setup.sh"
+	done
+}
+
 check() {
-	local bad=0 out f pkgs a
+	local bad=0 out f pkgs a u state
 	# an app with dot-entries but no .stow-local-ignore is never stowed, and stow then sees nothing to
 	# compare: name it (copy any app's .stow-local-ignore into it)
 	for a in $(apps); do
@@ -302,6 +335,15 @@ check() {
 		esac
 	done < <(system_files)
 	((unknown == 0)) || echo "note: $unknown system file(s) need root to read; not compared (run --check in a terminal)"
+	if [[ $root == / && -d /run/systemd/system ]] && command -v systemctl >/dev/null; then
+		while IFS=$'\t' read -r a u; do
+			state=$(systemctl is-enabled "$u" 2>/dev/null || true)
+			if [[ $state != enabled ]]; then
+				echo "service: $u is ${state:-unknown} (install.sh --setup --only $a fixes it)"
+				bad=1
+			fi
+		done < <(system_units)
+	fi
 	((bad)) || echo "ok: home and system files match the repo"
 	return "$bad"
 }
