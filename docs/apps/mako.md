@@ -1,6 +1,8 @@
 # mako
 
-Notifications. Urgency reads at a glance in the editors' syntax colors: a normal one has the accent border and its summary in the keyword color, a low one the inactive border and a comment-colored summary, a critical one the error color for both (and it stays until dismissed).
+Notifications, as Material 3 cards ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)): `surface_container_high`, corner large (16px), 16px padding, no border, 360px wide; the summary in title medium (`on_surface`), the body in body medium (`on_surface_variant`). A low one dims its summary to `on_surface_variant`; a critical one is an `error_container` card (and it stays until dismissed). They stack top right, 8px under the bar and 8px from the edge, so the cards line up with the bar's right end, under the bell. Actions are not drawn as buttons: mako shows them through `makoctl menu`.
+
+The which-key popup (`app-name=mango-whichkey`) keeps its translucent look until the key overlay's own spec.
 
 super+n r restores the last one, super+n d dismisses all, super+n z toggles do-not-disturb (also right-click the bar's bell). `mako.service` is this repo's own unit, bound to the session like every other daemon. A mako that hangs on stop is aborted after 10s, so a logout waits at most that long and `coredumpctl info mako` has the stack of the hang.
 
@@ -17,7 +19,7 @@ super+n r restores the last one, super+n d dismisses all, super+n z toggles do-n
 
 **Rendered from the palette** (`theme`):
 
-- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `accent`, `bg_surface`, `bg_widget`, `border_inactive`, `error`, `fg_secondary`, `fg_text`, `name`, `selection_bg`, `slug`, `syn_comment`, `syn_keyword`
+- `mako/.config/mako/colors.tmpl` → `mako/.config/mako/colors`: `bg_surface`, `border_inactive`, `fg_text`, `m3_error_container`, `m3_on_error_container`, `m3_on_surface`, `m3_on_surface_variant`, `m3_outline_variant`, `m3_primary_container`, `m3_surface_container_high`, `name`, `slug`
 
 **User units** (enabled by `install.sh --units`): `mako.service`
 

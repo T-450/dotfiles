@@ -1,11 +1,16 @@
-# mako. Colors come from the active palette (theme/templates/mako -> colors)
+# mako. Colors come from the active palette (colors, rendered from colors.tmpl).
+# A Material 3 card (docs/designs/material-shapeshifter/SPEC-bar.md): surface_container_high,
+# corner large (16px), 16px padding, no border; the title in title medium and the body in body
+# medium (colors.tmpl's format; Pango points at 96 dpi: 10.5pt is 14px). It opens top right, 8px
+# under the bar (mako's margin counts from the bar's exclusive zone) and 8px from the edge, the
+# bar's own margin, so the card's right edge lines up with the power piece.
 include=~/.config/mako/colors
-font=IBM Plex Sans 11
-border-size=1
-border-radius=8
-padding=12,14
-margin=12
-width=320
+font=IBM Plex Sans 10.5
+border-size=0
+border-radius=16
+padding=16
+margin=8
+width=360
 default-timeout=5000
 anchor=top-right
 layer=overlay
@@ -30,6 +35,7 @@ markup=1
 format=%b
 default-timeout=0
 history=0
+border-size=1
 border-radius=8
 
 [mode=do-not-disturb app-name=mango-whichkey]
