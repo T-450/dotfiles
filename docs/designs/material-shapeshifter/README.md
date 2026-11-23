@@ -23,6 +23,11 @@ Explored on the design canvas; not a spec yet.
 - Direction: **Penrose**. The launcher is the bar's band pulled down into a loop whose left post
   passes in front of the bar and right post behind it; the band's length is the mass. The bar's
   silhouette (pill, islands, notch, frame or Möbius) is still open.
+- Reframed as ancient alien technology: a living, reactive structure with moving pieces (an
+  original design in that genre, not a recreation of any film's). Engraved carapace plates carry
+  the text and never move; between them a spine of 36 vertebrae breathes, leans toward the
+  pointer, and is the bar's mass. The launcher's Penrose loop is built from vertebrae; the ribs
+  under them are the spectrum. Breathing stops under reduced motion.
 - At the top of the screen, 64 px. Workspace rows never move and name their windows legibly.
 - Audio: the spectrum (the core that telescopes into blades) is liked. On a workspace with no
   windows it may extend below the bar; with windows open it stays inside the bar as a widget.
