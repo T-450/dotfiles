@@ -5,7 +5,7 @@ Approved 2026-11-22. Specs in this directory are named `SPEC-<module id>.md`. Th
 | Module id | Responsibility | Depends on | Spec |
 |---|---|---|---|
 | theme | One custom theme, `space` / `space-light`. Material 3 roles and tones. Key colors are COLOURlovers Space 787684, with Gruber Darker's red, green, and niagara, and Alchemist's yellow-as-cursor rule. `theme set` still paints the shell and GTK. The four existing palette files stay untouched. | none | [revision 3, approved](SPEC-theme.md), [plan](PLAN-theme.md): M1-M3 done, M4 (desktop-vm, merge) needs your machine |
-| bar | One shapeshifter. Visible morph, any direction, any form. Each morph spends mass. A destroyed shape returns that mass to the bar. The body is never in two places at full size. | theme | not started |
+| bar | One shapeshifter. Visible morph, any direction, any form. Each morph spends mass. A destroyed shape returns that mass to the bar. The body is never in two places at full size. | theme | [draft](SPEC-bar.md) |
 | greeter | The greeter is the bar in the greeter's shape. This is the success view. | bar | not started |
 | session | Every in-session shell piece is the bar in another shape: workspace list, menus, launcher, notifications, volume, brightness, power, lock, key overlay. The list stays up on the panel and on external screens. Each workspace row names the windows on that tag. | bar | not started |
 | gtk | GTK apps wear the active palette. They are not the bar. | theme | not started |
@@ -26,7 +26,7 @@ Explored on the design canvas; not a spec yet.
   split-flap readout of the focused window and the bar's spare mass.
 - Launcher: the query is typed into the socket the core leaves, from frame 0. Each core plate
   folds edge-on, crosses as a line of light at its own size and unfolds into a larger tile; the
-  last tile lands at about 420 ms. Mass is plate count (8 at every frame); the growth from plate
+  last tile lands at about 440 ms. Mass is plate count (8 at every frame); the growth from plate
   to tile is the one declared impossible beat.
 - Spectrum: the core plates split into 32 blades. With windows open they are meters inside the
   core, never over a window; on a workspace with no windows they telescope below the bar. Click-
