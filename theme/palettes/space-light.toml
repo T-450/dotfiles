@@ -1,0 +1,110 @@
+# Space Light: Material 3 palette for the shapeshifter shell
+# (docs/designs/material-shapeshifter/SPEC-theme.md).
+# Key colors: Space blue #3ea7ce (primary) from COLOURlovers 787684 Space by erinneryan,
+# CC BY-NC-SA 3.0; Alchemist yellow #fcef77 (secondary; habamax/vim-alchemist: the yellow is
+# the cursor and the keyword); Gruber Darker (blazkowolf/gruber-darker.nvim, MIT): niagara
+# #96a6c8 (tertiary), red #f43841 (error), green #73d936 (success, a custom color).
+# Neutral: the Space navy, HCT hue 283, chroma 6; neutral variant chroma 8. The key colors are
+# recovered from the uploaded inputs (their tonal palettes reproduce the inputs' 12 fixed roles
+# exactly); which 787684 swatch each one is was not checked.
+# Computed once with materialyoucolor 3.0.4, colour spec 2021, Variant.FIDELITY, contrast 0.
+# Dark keeps the red and green sources (they read 4.5:1 on surface); light uses their tone 40.
+# [colors], [terminal] and [syntax] map M3 roles by the spec's tables. Magenta and cyan are
+# custom colors at the sRGB primaries' HCT hues and primary's chroma; the bright row is
+# 10 tones toward the text.
+# Floors, measured by theme's contrast() (needs 4.5, outline 3):
+# on_primary/primary 6.49, on_secondary/secondary 6.44
+# on_tertiary/tertiary 6.43, on_error/error 6.46
+# on_primary_container/primary_container 4.58, on_secondary_container/secondary_container 4.59
+# on_tertiary_container/tertiary_container 4.57, on_error_container/error_container 7.22
+# on_surface/surface 16.30, on_surface_variant/surface 8.88
+# inverse_on_surface/inverse_surface 11.55, outline/surface 4.26
+
+[meta]
+name = "Space Light"
+variant = "light"
+source = "COLOURlovers 787684 Space by erinneryan, CC BY-NC-SA 3.0; Alchemist; Gruber Darker MIT"
+
+[material]
+primary                    = "#006684"
+on_primary                 = "#ffffff"
+primary_container          = "#3ea7ce"
+on_primary_container       = "#00384a"
+secondary                  = "#686000"
+on_secondary               = "#ffffff"
+secondary_container        = "#efe36c"
+on_secondary_container     = "#6c6400"
+tertiary                   = "#4f5f7d"
+on_tertiary                = "#ffffff"
+tertiary_container         = "#8c9cbe"
+on_tertiary_container      = "#243350"
+error                      = "#bf0322"
+on_error                   = "#ffffff"
+error_container            = "#ffdad7"
+on_error_container         = "#930017"
+surface                    = "#fbf8ff"
+on_surface                 = "#1b1b21"
+on_surface_variant         = "#46464f"
+surface_dim                = "#dcd9e0"
+surface_bright             = "#fbf8ff"
+surface_container_lowest   = "#ffffff"
+surface_container_low      = "#f5f2fa"
+surface_container          = "#f0ecf4"
+surface_container_high     = "#eae7ef"
+surface_container_highest  = "#e4e1e9"
+inverse_surface            = "#303036"
+inverse_on_surface         = "#f3eff7"
+inverse_primary            = "#70d2fb"
+outline                    = "#777680"
+outline_variant            = "#c7c5d0"
+primary_fixed              = "#bde9ff"
+primary_fixed_dim          = "#70d2fb"
+on_primary_fixed           = "#001f2a"
+on_primary_fixed_variant   = "#004d64"
+secondary_fixed            = "#f2e56f"
+secondary_fixed_dim        = "#d5c956"
+on_secondary_fixed         = "#1f1c00"
+on_secondary_fixed_variant = "#4e4800"
+tertiary_fixed             = "#d7e3ff"
+tertiary_fixed_dim         = "#b7c7ea"
+on_tertiary_fixed          = "#091b36"
+on_tertiary_fixed_variant  = "#374764"
+shadow                     = "#000000"
+scrim                      = "#000000"
+
+[colors]
+bg_desktop      = "#fbf8ff"
+bg_surface      = "#f0ecf4"
+bg_widget       = "#eae7ef"
+bg_hover        = "#e4e1e9"
+border_hairline = "#c7c5d0"
+border_inactive = "#777680"
+fg_text         = "#1b1b21"
+fg_editor       = "#1b1b21"
+fg_secondary    = "#46464f"
+fg_muted        = "#777680"
+fg_bright       = "#0e0e13"
+fg_disabled     = "#c7c5d0"
+accent          = "#006684"
+badge           = "#4f5f7d"
+selection_bg    = "#efe36c"
+selection_fg    = "#6c6400"
+link            = "#006684"
+error           = "#bf0322"
+warning         = "#686000"
+success         = "#2d6c00"
+shadow          = "#000000"
+
+[terminal]
+fg     = "#1b1b21"
+bg     = "#fbf8ff"
+cursor = "#686000"
+ansi = [
+	"#1b1b21", "#bf0322", "#2d6c00", "#686000", "#006684", "#874781", "#006a6a", "#c7c5d0",
+	"#777680", "#930017", "#205100", "#4e4800", "#004d63", "#6c2f68", "#004f4f", "#ffffff",
+]
+
+[syntax]
+keyword  = "#686000"  # secondary (Alchemist yellow)
+constant = "#4f5f7d"  # tertiary (niagara)
+number   = "#874781"  # custom magenta

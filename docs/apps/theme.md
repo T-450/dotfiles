@@ -2,7 +2,7 @@
 
 The template renderer: `theme` renders every app's `*.tmpl` from the active palette, runs each `render.sh`, and reloads the apps.
 
-See [Theming](../theming.md). Palettes: `palettes/*.toml` (colibri default: archseer/colibri.vim's dark scheme, lavender on hummingbird purples, with its own `[syntax]` table; tokyo-night; cassette: a cassette J-card's black, paper, teal and cobalt). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
+See [Theming](../theming.md). Palettes: `palettes/*.toml` (colibri default: archseer/colibri.vim's dark scheme, lavender on hummingbird purples, with its own `[syntax]` table; tokyo-night; cassette: a cassette J-card's black, paper, teal and cobalt; space and space-light: the shapeshifter shell's Material 3 pair, with a `[material]` table). Besides the color roles, templates can use `{{home}}` (for configs that need absolute paths, like runner-up's state dir).
 
 ## Reference
 

@@ -26,11 +26,16 @@ editor background. The others:
   group, with `[terminal]` from the scheme's own terminal colors (or ghostty's theme of the same
   name) and `[syntax]` and `[diff]` from its highlight groups: Doom One
   (`NTBBloodbath/doom-one.nvim`), Gruber Darker (`blazkowolf/gruber-darker.nvim`), Oxide
-  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), the one light palette.
+  (`oxidescheme/nvim`) and Alabaster (`tonsky/sublime-scheme-alabaster`), a light palette.
   Alabaster's `warning` is derived: the scheme's orange is a highlight fill, unreadable as text.
 - Deep Blue, Deep Blue Night and Deep Blue Flat (`kinqert/deep-blue-theme`): `theme
   import-vscode`, then corrected by hand where the importer fell back to VS Code's defaults. The
   three share Flat's terminal and git colors and one set of token colors.
+- Space and Space Light, the shapeshifter shell's Material 3 pair
+  ([SPEC-theme](designs/material-shapeshifter/SPEC-theme.md)): a `[material]` table computed once
+  with materialyoucolor's Fidelity scheme from the Space blue, the Alchemist yellow and Gruber
+  Darker's niagara, red and green, and `[colors]`, `[terminal]` and `[syntax]` mapped from its
+  roles. The yellow is the cursor, the keyword and the warning.
 
 None sets `[keycaps]`, so the cheatsheet derives its caps.
 
