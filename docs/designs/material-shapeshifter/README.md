@@ -21,10 +21,10 @@ Color system: [Material 3 color roles](https://m3.material.io/styles/color/roles
 Explored on the design canvas; not a spec yet.
 
 - Direction: **a small core and its pieces** (canvas board "Chosen, revised: a small core and
-  its pieces"). The bar is a small fixed core at the top centre (time and date); everything else
-  is moving pieces docked beside it. Every shell component is its own pieces: two for a large one
-  (workspaces, launcher, power, lock, key overlay), one for a small one (media, notifications,
-  volume, brightness). To open, a component's pieces detach, travel and morph into it, leaving a
+  its pieces"). The bar is a small core at the top centre (time and date) that never moves or
+  morphs; everything else is moving pieces docked beside it. Every shell component is its own
+  pieces: one for a small one (media, notifications, volume, brightness), two for a large one
+  (workspaces, launcher, power, lock, key overlay), or many where its shape is a grid of cells. To open, a component's pieces detach, travel and morph into it, leaving a
   dashed socket; they return on close. Mass is piece count. Machined pieces with cut corners.
 - Launcher: two pieces fold edge-on, cross and unfold side by side; query live from frame 0;
   settled at about 430 ms.

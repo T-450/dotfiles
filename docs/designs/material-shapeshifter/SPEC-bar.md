@@ -7,8 +7,9 @@ visual reference; where this text and the board differ, this text wins.
 
 ## Goal
 
-The bar is a small fixed core at the top of the screen; everything else is moving pieces. Every
-shell component is its own pieces: two for a large component, one for a small one. At rest the
+The bar is a small core at the top of the screen that never moves and never morphs; everything
+else is moving pieces. Every shell component is its own pieces: one for a small component, two
+for a large one, or many where its shape is a grid of cells. At rest the
 pieces dock beside the core, each showing its component's compact face; to open, a component's
 pieces detach, travel and morph into it, and they return when it closes. This spec covers the
 core, the pieces, the mass model, the morph engine, and the components whose pieces are drawn on
@@ -24,7 +25,7 @@ greeter, come in their own specs on the same engine.
 
 | component | pieces | docked face | opens into |
 |---|---|---|---|
-| core | fixed | time and date | never moves |
+| core | fixed | time and date | never moves, never morphs |
 | workspaces | 2 | two tags each, naming their windows (14 px) | stays docked |
 | launcher | 2 | `› run` / `apps` | search and list (left), details (right), side by side |
 | media | 1 | the track | the spectrum (below) |
@@ -52,12 +53,14 @@ component; the growth is declared, never hidden.
 
 ## Morph engine
 
-- A morph moves pieces; the core never moves. Text sits only on docked or settled pieces.
+- A morph moves pieces; the core never moves or morphs. Text sits only on docked or settled
+  pieces.
 - Two motions, both on motion tokens:
   - Large components (two pieces): fold edge-on (short2, emphasized accelerate), cross at the
     piece's own size as a line of light (short3, standard), unfold and grow (short3, emphasized
     decelerate); the second piece 30 ms behind the first; settled at about 430 ms.
   - Small components (one piece): move and stretch on the fast spatial spring.
+  - Many-piece components: each piece is a cell and runs the two-piece motion, 6 ms apart.
 - Usable from the first frame (the launcher's query is live as its pieces leave); complete
   within 450 ms; a second request mid-flight retargets pieces from where they are.
 - Two components never share a piece, so any of them can be open at once; where two would
@@ -119,3 +122,5 @@ its bottom media bar stays.
 4. **Workspaces**: they never leave the dock here. Should they also morph (an overview), and with
    how many pieces?
 5. **Waybar**: retire only the top status bar (proposed), or the media bar too.
+6. **Which components are many pieces**: proposed, the launcher as 8 tile pieces (as in v1) and
+   the key overlay as one piece per key group; everything else as in the table.
