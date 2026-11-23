@@ -1,14 +1,23 @@
-# SPEC-theme: Space, a Material 3 palette pair
+# SPEC-theme: Space, a Material 3 design system
 
-Module `theme` of the [Material shapeshifter map](README.md). Status: approved 2026-11-23.
-Date: 2026-11-23. Inputs: two computed palettes, `space.toml` (dark) and `space-light.toml`
-(light), audited below.
+Module `theme` of the [Material shapeshifter map](README.md). Status: revision 2, awaiting
+approval. Revision 1 (color only) was approved 2026-11-23; revision 2 widens the module to the
+whole M3 system: color, type, shape, elevation, motion and state. Date: 2026-11-23. Inputs: two
+computed palettes, `space.toml` (dark) and `space-light.toml` (light), audited below.
 
 ## Goal
 
-Two palettes, `space` and `space-light`, that carry the full Material 3 role set and still drive
-every app the repo themes today. `bar`, `greeter` and `session` read the M3 roles; every existing
-template keeps reading the legacy roles, which the palette maps from the M3 roles.
+The Material 3 design system the shapeshifter shell is built from, in two parts:
+
+- **Color**: two palettes, `space` and `space-light`, that carry the full M3 role set and still
+  drive every app the repo themes today. Every existing template keeps reading the legacy roles,
+  which the palette maps from the M3 roles.
+- **System tokens**: M3's type scale, shape scale, elevation levels, motion (durations and
+  easing) and state-layer opacities, one set for every palette.
+
+`bar`, `greeter` and `session` take every color, size, corner, curve and opacity from these
+tokens and write none of their own: a morph is a change between two shape tokens on a motion
+token.
 
 ## Non-goals
 
@@ -93,6 +102,35 @@ Bright row: the same palette 10 tones toward the text (lighter on dark, darker o
 
 No `[keycaps]` in either file: both derive from their own roles, like every imported palette.
 
+## System tokens (theme/tokens.toml)
+
+One file, read with the active palette, palette-independent (M3 defines these once, not per
+scheme). Values are M3's `md.sys.*` tokens as published in `@material/web` 2.5.0
+(`tokens/versions/v0_192`), read from the package, not from memory. Units: px at scale 1
+(M3's dp and sp; 1rem = 16px), ms, unitless opacity.
+
+| group | tokens |
+|---|---|
+| shape (corner radius) | none 0 · extra-small 4 · small 8 · medium 12 · large 16 · extra-large 28 · full (fully rounded, 9999) |
+| elevation (shadow) | level0 0 · level1 1 · level2 3 · level3 6 · level4 8 · level5 12 |
+| motion duration | short1-4 50/100/150/200 · medium1-4 250/300/350/400 · long1-4 450/500/550/600 · extra-long1-4 700/800/900/1000 |
+| motion easing (cubic bezier) | standard 0.2,0,0,1 · standard-accelerate 0.3,0,1,1 · standard-decelerate 0,0,0,1 · emphasized 0.2,0,0,1 (M3's emphasized is a path; this is the package's bezier stand-in) · emphasized-accelerate 0.3,0,0.8,0.15 · emphasized-decelerate 0.05,0.7,0.1,1 · linear 0,0,1,1 |
+| state layer opacity | hover 0.08 · focus 0.12 · pressed 0.12 · dragged 0.16 |
+| type scale (size/line height, weight, tracking) | display L/M/S 57/64, 45/52, 36/44 · headline L/M/S 32/40, 28/36, 24/32 · title L/M/S 22/28, 16/24, 14/20 · body L/M/S 16/24, 14/20, 12/16 · label L/M/S 14/20, 12/16, 11/16. Weight 400, except title M/S and every label 500. Tracking: display L -0.25, title M 0.15, title S and label L 0.1, body L 0.5, body M 0.25, body S 0.4, label M/S 0.5, the rest 0 |
+| typeface | `brand`, `plain`: see open question 4 |
+
+M3 Expressive adds spring motion (spatial and effects, fast/default/slow, as damping and
+stiffness) and more corner sizes (large-increased, extra-large-increased, extra-extra-large).
+They are in scope, since `bar` morphs shapes with motion, but `@material/web` does not publish
+them. Their source is Jetpack Compose `material3`, on a host this session cannot reach (open
+question 5). They join `tokens.toml` from that source, never from memory.
+
+Templates read tokens as words, `{{<group>_<token>}}` with dashes as underscores:
+`{{shape_corner_large}}` is `16`, `{{motion_duration_medium2}}` is `300`,
+`{{motion_easing_emphasized_decelerate}}` is `0.05, 0.7, 0.1, 1`,
+`{{type_label_large_size}}` is `14`. Each template adds its own unit, as it does for colors.
+A state layer is a color: `{{m3_surface|mix:m3_on_surface:state_hover}}`.
+
 ## Changes to `theme`
 
 1. `load_palette` reads an optional `[material]` table: all 45 names or none, known names only,
@@ -104,8 +142,11 @@ No `[keycaps]` in either file: both derive from their own roles, like every impo
 3. `load_palette` fails a palette whose pairs read below the floors: each `on_X` on `X` 4.5:1,
    `outline` on `surface` 3:1. This replaces the inputs' "Contrast from theme.contrast" comment
    (no such module exists in the repo) with a check that runs on every `theme set`.
-4. `docs/theming.md` lists Space and documents `[material]`; `tools/docs` regenerates the roles
-   table.
+4. `theme` reads `theme/tokens.toml` (known groups and names only, numbers or bezier lists) and
+   adds each token to the template words. `mix`'s amount accepts a `state_*` token name as well
+   as a number.
+5. `docs/theming.md` lists Space and documents `[material]` and the tokens; `tools/docs`
+   regenerates the roles table.
 
 ## Audit of the inputs
 
@@ -136,7 +177,9 @@ silently ignored. Defects:
 3. `load_palette` rejects a copy of `space.toml` with one `[material]` role removed, and one with
    `on_primary` lowered below 4.5:1 (scratchpad reproduction, not a committed test).
 4. Every floor in this spec measured by code on both files, numbers in the commit message.
-5. `theme lint`, `tools/docs --check`, `tests/run` pass; `desktop-vm check` PASS under each
+5. A scratchpad template using one token of each group renders the values in this spec; an
+   unknown token name fails with its name.
+6. `theme lint`, `tools/docs --check`, `tests/run` pass; `desktop-vm check` PASS under each
    variant, with `session.png` and a terminal frame looked at.
 
 ## Open questions
@@ -148,3 +191,8 @@ silently ignored. Defects:
    The palette header names them; a wrong name changes no color.
 3. **Default palette.** The map does not say whether `space` replaces `colibri` as `DEFAULT`.
    Recommendation: not in this module; decide when `bar` lands, since `bar` is what needs it.
+4. **Typeface.** M3's `brand` and `plain` typeface is Roboto, which is not installed. Recommendation:
+   IBM Plex Sans for both (installed, and already GTK's font), so no new package; Roboto would be a
+   new package and needs your approval. `bar` may still choose a face of its own in its spec.
+5. **Expressive tokens.** Allow `dl.google.com` (Google's Maven repo, where Compose `material3`
+   is published) for this environment, so the spring and corner tokens come from the source.

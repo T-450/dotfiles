@@ -1,6 +1,6 @@
-# PLAN-theme: build the Space palette pair
+# PLAN-theme: build the Space Material 3 design system
 
-Plan for [SPEC-theme](SPEC-theme.md). Status: draft, awaiting approval. Date: 2026-11-23.
+Plan for [SPEC-theme](SPEC-theme.md) revision 2. Status: draft, awaiting approval. Date: 2026-11-23.
 Prompt: the [capability map](README.md). The map builds `theme` first and only `theme` has an
 approved spec, so this plan builds `theme`; the rest of the map is in "After theme" at the end.
 
@@ -42,7 +42,28 @@ Checks:
    with an unknown role, one with `on_primary` below 4.5:1: each fails with a message naming it.
 3. `theme lint`, `tests/run` (theme-test renders every palette, no token left).
 
-## M2. The two palettes (theme/palettes/space.toml, space-light.toml)
+## M2. System tokens (theme/tokens.toml, theme/.local/bin/theme)
+
+- [ ] `theme/tokens.toml`: the spec's tables, `[shape]`, `[elevation]`, `[motion]` (durations and
+      easings), `[state]`, `[type]`, `[typeface]`; a header naming `@material/web` 2.5.0,
+      `tokens/versions/v0_192`, and its Apache-2.0 license.
+- [ ] Values copied by a scratchpad script that parses the package's `_md-sys-*.scss` files and
+      prints the TOML, so nothing is typed by hand; rem converted at 16px.
+- [ ] `theme`: load the file once per render (unknown group or token fails, values numbers or
+      four-number bezier lists); add `<group>_<token>` words; `mix` takes a `state_*` name as its
+      amount.
+- [ ] Expressive springs and corners: added in this milestone only if `dl.google.com` is allowed
+      (spec open question 5), from Compose `material3`'s token sources by the same kind of script;
+      otherwise a follow-up commit when it is.
+
+Checks:
+1. The scratchpad script rerun against the package diffs empty against the committed file.
+2. A scratchpad template with one token per group, and `mix:...:state_hover`, renders the spec's
+   values; an unknown token and a non-state `mix` name each fail with their name.
+3. M1's before/after render of all ten palettes is still byte-identical.
+4. `theme lint`, `tests/run`.
+
+## M3. The two palettes (theme/palettes/space.toml, space-light.toml)
 
 Computed once in the scratchpad, committed as plain TOML; the script is not committed (spec
 non-goal). Tool: `materialyoucolor` 3.0.4, colour spec 2021, `Variant.FIDELITY`, contrast 0.
@@ -65,14 +86,14 @@ Checks:
    number that shows it; every floor in the spec met.
 3. `theme init space --to <dir>` and `space-light`; `tests/run`; `theme lint`.
 
-## M3. Docs
+## M4. Docs
 
 - [ ] `docs/theming.md`: Space in the palette list; a `[material]` section (roles, `m3_` prefix,
-      defaults, floors).
+      defaults, floors); a tokens section (groups, word names, units, the `@material/web` source).
 - [ ] `docs/onboarding.md`: both slugs in the palette list.
 - [ ] `docs/apps/theme.md` hand-written part if it names palettes; `tools/docs`; `tools/docs --check`.
 
-## M4. Desktop check (needs your machine)
+## M5. Desktop check (needs your machine)
 
 `desktop-vm` is not available in this cloud container (Ubuntu, no qemu guest image), so this
 milestone runs where `desktop-vm` lives:
@@ -92,6 +113,8 @@ frames are looked at for the spec's findings, not only the PASS verdict.
   it reads as "yellow" enough.
 - `materialyoucolor` follows MCU; a later version may move tones. The header pins the version,
   and the committed TOML, not the tool, is the source of truth.
+- `@material/web`'s tokens are M3 before Expressive; Expressive mostly adds tokens, but if Compose's values differ for a shared name, Compose (the newer
+  source) wins and the header says so.
 - The derived `[material]` for the ten old palettes is used by nothing until `bar`; its
   formulas get their first real test there and may change then.
 
