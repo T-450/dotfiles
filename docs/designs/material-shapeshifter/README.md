@@ -20,16 +20,20 @@ Color system: [Material 3 color roles](https://m3.material.io/styles/color/roles
 
 Explored on the design canvas; not a spec yet.
 
-- Direction: **Penrose**. The launcher is the bar's band pulled down into a loop whose left post
-  passes in front of the bar and right post behind it; the band's length is the mass. The bar's
-  silhouette (pill, islands, notch, frame or Möbius) is still open.
-- Reframed as ancient alien technology: a living, reactive structure with moving pieces (an
-  original design in that genre, not a recreation of any film's). Engraved carapace plates carry
-  the text and never move; between them a spine of 36 vertebrae breathes, leans toward the
-  pointer, and is the bar's mass. The launcher's Penrose loop is built from vertebrae; the ribs
-  under them are the spectrum. Breathing stops under reduced motion.
-- At the top of the screen, 64 px. Workspace rows never move and name their windows legibly.
-- Audio: the spectrum (the core that telescopes into blades) is liked. On a workspace with no
-  windows it may extend below the bar; with windows open it stays inside the bar as a widget.
-- Rejected: jelly or goo connections, toy shapes, captions claiming effects the geometry does not
-  show, and shapes that cover windows for long stretches.
+- Direction: **the reserve core** (canvas board "Chosen: the reserve core bar"). The bar is
+  machined plates on a 64 px bar at the top. Workspace plates (left) and status plates (right)
+  never move; workspace rows name their windows at 14 px. Eight core plates in the middle are a
+  split-flap readout of the focused window and the bar's spare mass.
+- Launcher: the query is typed into the socket the core leaves, from frame 0. Each core plate
+  folds edge-on, crosses as a line of light at its own size and unfolds into a larger tile; the
+  last tile lands at about 420 ms. Mass is plate count (8 at every frame); the growth from plate
+  to tile is the one declared impossible beat.
+- Spectrum: the core plates split into 32 blades. With windows open they are meters inside the
+  core, never over a window; on a workspace with no windows they telescope below the bar. Click-
+  through, hidden with a key; under reduced motion a static PLAYING readout.
+- Explored and set aside: Penrose (five shapes), the relic and organism framings, the jelly
+  direction. Rejected outright: goo connections, toy shapes, captions claiming effects the
+  geometry does not show, shapes that cover windows for long stretches.
+- Open for the spec: the renderer (a layer-shell program; a new package needs approval), cut
+  corners as a shell-specific shape (not an M3 token), the other session shapes (notifications,
+  OSDs, power, lock, key overlay), and external screens.
