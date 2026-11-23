@@ -1,6 +1,6 @@
 # SPEC-theme: Space, a Material 3 palette pair
 
-Module `theme` of the [Material shapeshifter map](README.md). Status: draft, awaiting approval.
+Module `theme` of the [Material shapeshifter map](README.md). Status: approved 2026-11-23.
 Date: 2026-11-23. Inputs: two computed palettes, `space.toml` (dark) and `space-light.toml`
 (light), audited below.
 
@@ -37,8 +37,10 @@ The 14 fixed roles (`*_fixed*`, `shadow`, `scrim`) are identical in both files, 
 - Variant: **Fidelity** (M3 content-based): the key colors show as themselves in the containers.
   Light and dark come from the same tonal palettes; only tones differ.
 - Key colors: primary = Space's blue, secondary = the Alchemist/Space yellow, tertiary = Gruber
-  niagara, error = Gruber red, neutral = Space's navy hue at chroma 6. The
-  header lists each key color's hex and its source swatch.
+  niagara, error = Gruber red, neutral = Space's navy at HCT hue 283, chroma 6. The header lists
+  each key color's hex and its source swatch. Checked: HCT tonal palettes of the dark input's
+  `primary`, `secondary` and `tertiary` reproduce all 12 fixed roles of both inputs exactly, so
+  those three are the key colors.
 - Gruber's green is an M3 custom color (not harmonized: it is a named source color).
 - Rule for every named source color (red, green): dark uses the source hex if it reads 4.5:1 on
   `surface`, light uses its tone-40 version. The inputs already do this for red; green follows.
@@ -121,7 +123,7 @@ silently ignored. Defects:
 | 6 | dark | `ansi8` is a surface (zsh autosuggestions vanish); `ansi9` dark red | 8: 1.1, 9: 2.0, 14: 3.6 | `outline`, lighter bright row |
 | 7 | dark | `primary` ≈ `primary_container`: the container is not a lower-emphasis tier | 1.12:1 between them (light: 2.74) | Fidelity: primary tone 80 (the file's `primary_fixed_dim`), container = source |
 | 8 | dark | same for `tertiary` / `tertiary_container` (niagara and a tone below it) | 1.25:1 between them | tertiary tone 80, container = niagara |
-| 9 | light | neutrals are not the dark file's neutrals: chroma climbs to a lavender `surface_dim` | OKLCH C: dark surfaces 0.010-0.011, light `surface_dim` 0.055, `on_surface` 0.098 | one neutral palette for both |
+| 9 | light | neutrals are not the dark file's neutrals: chroma climbs to a lavender `surface_dim` | HCT chroma: dark neutrals 6, light `surface_dim` 24, `on_surface` 36 | one neutral palette for both |
 | 10 | dark | `on_surface` is a cyan tint, not the neutral tone 90 that `inverse_surface` is | | neutral tone 90 (see open question 1) |
 | 11 | dark | `[keycaps].accent` = `bg_desktop`: the lit cap is not lit | identical hex | drop `[keycaps]` |
 | 12 | both | `warning` = `tertiary` (blue-grey reads as info) | | `secondary` |
@@ -141,8 +143,8 @@ silently ignored. Defects:
 
 1. **`on_surface` tint.** The dark input tints body text cyan and the light input navy, each off its neutral palette. Recommendation: no per-role tint; if the text
    should lean navy, raise the neutral chroma for every neutral role in both variants.
-2. **Space's swatch hexes.** COLOURlovers is not reachable from this session, so which 787684
-   swatch is primary and which is the navy is taken from the inputs. The palette header must
-   name them.
+2. **Space's swatch hexes.** The key colors are recovered from the inputs (see Scheme), but
+   COLOURlovers is not reachable from this session to confirm which 787684 swatch each one is.
+   The palette header names them; a wrong name changes no color.
 3. **Default palette.** The map does not say whether `space` replaces `colibri` as `DEFAULT`.
    Recommendation: not in this module; decide when `bar` lands, since `bar` is what needs it.
