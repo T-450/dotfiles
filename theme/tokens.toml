@@ -1,0 +1,216 @@
+# Material 3 system tokens for the shell (docs/designs/material-shapeshifter/SPEC-theme.md).
+# Read by `theme` as template words <table>_<key>: {{shape_corner_large}}, {{state_hover}}.
+# Generated once from Jetpack Compose material3 1.5.0 (Apache-2.0), tokens/*.kt in
+# https://dl.google.com/android/maven2/androidx/compose/material3/material3-android/1.5.0/material3-android-1.5.0-sources.jar
+# sha256 0766621e44a17f544d438458d8af5078cfa1b216492891da887ee3e6397c9e6d
+# Token file versions: ShapeTokens 14_1_0, ElevationTokens v0_103, ExpressiveMotionTokens v0_14_0, MotionTokens v0_103, StateTokens v0_210, TypeScaleTokens v0_103, TypefaceTokens v0_103
+# Mapped by hand: CircleShape = 9999 (fully rounded), RectangleShape = 0; FontWeight Normal,
+# Medium, Bold = 400, 500, 700; type_font is IBM Plex Sans (the spec's typeface, for
+# FontFamily.SansSerif). Left out: one-sided corners, CornerValue* duplicates, legacy easings,
+# the Standard motion scheme's springs. Units: px at scale 1 (dp, sp), ms, opacity 0-1.
+
+[shape]
+corner_none = 0
+corner_extra_small = 4
+corner_small = 8
+corner_medium = 12
+corner_large = 16
+corner_large_increased = 20
+corner_extra_large = 28
+corner_extra_large_increased = 32
+corner_extra_extra_large = 48
+corner_full = 9999
+
+[elevation]
+level0 = 0
+level1 = 1
+level2 = 3
+level3 = 6
+level4 = 8
+level5 = 12
+
+[motion]
+spring_spatial_fast_damping = 0.6
+spring_spatial_fast_stiffness = 800
+spring_spatial_default_damping = 0.8
+spring_spatial_default_stiffness = 380
+spring_spatial_slow_damping = 0.8
+spring_spatial_slow_stiffness = 200
+spring_effects_fast_damping = 1
+spring_effects_fast_stiffness = 3800
+spring_effects_default_damping = 1
+spring_effects_default_stiffness = 1600
+spring_effects_slow_damping = 1
+spring_effects_slow_stiffness = 800
+duration_short1 = 50
+duration_short2 = 100
+duration_short3 = 150
+duration_short4 = 200
+duration_medium1 = 250
+duration_medium2 = 300
+duration_medium3 = 350
+duration_medium4 = 400
+duration_long1 = 450
+duration_long2 = 500
+duration_long3 = 550
+duration_long4 = 600
+duration_extra_long1 = 700
+duration_extra_long2 = 800
+duration_extra_long3 = 900
+duration_extra_long4 = 1000
+easing_standard = [0.2, 0, 0, 1]
+easing_standard_accelerate = [0.3, 0, 1, 1]
+easing_standard_decelerate = [0, 0, 0, 1]
+easing_emphasized = [0.2, 0, 0, 1]
+easing_emphasized_accelerate = [0.3, 0, 0.8, 0.15]
+easing_emphasized_decelerate = [0.05, 0.7, 0.1, 1]
+easing_linear = [0, 0, 1, 1]
+
+[state]
+hover = 0.08
+focus = 0.1
+pressed = 0.1
+dragged = 0.16
+
+[type]
+display_large_size = 57
+display_large_line_height = 64
+display_large_weight = 400
+display_large_tracking = -0.2
+display_medium_size = 45
+display_medium_line_height = 52
+display_medium_weight = 400
+display_medium_tracking = 0
+display_small_size = 36
+display_small_line_height = 44
+display_small_weight = 400
+display_small_tracking = 0
+headline_large_size = 32
+headline_large_line_height = 40
+headline_large_weight = 400
+headline_large_tracking = 0
+headline_medium_size = 28
+headline_medium_line_height = 36
+headline_medium_weight = 400
+headline_medium_tracking = 0
+headline_small_size = 24
+headline_small_line_height = 32
+headline_small_weight = 400
+headline_small_tracking = 0
+title_large_size = 22
+title_large_line_height = 28
+title_large_weight = 400
+title_large_tracking = 0
+title_medium_size = 16
+title_medium_line_height = 24
+title_medium_weight = 500
+title_medium_tracking = 0.2
+title_small_size = 14
+title_small_line_height = 20
+title_small_weight = 500
+title_small_tracking = 0.1
+body_large_size = 16
+body_large_line_height = 24
+body_large_weight = 400
+body_large_tracking = 0.5
+body_medium_size = 14
+body_medium_line_height = 20
+body_medium_weight = 400
+body_medium_tracking = 0.2
+body_small_size = 12
+body_small_line_height = 16
+body_small_weight = 400
+body_small_tracking = 0.4
+label_large_size = 14
+label_large_line_height = 20
+label_large_weight = 500
+label_large_tracking = 0.1
+label_medium_size = 12
+label_medium_line_height = 16
+label_medium_weight = 500
+label_medium_tracking = 0.5
+label_small_size = 11
+label_small_line_height = 16
+label_small_weight = 500
+label_small_tracking = 0.5
+
+[type_emphasized]
+display_large_size = 57
+display_large_line_height = 64
+display_large_weight = 500
+display_large_tracking = 0
+display_large_font = "brand"
+display_medium_size = 45
+display_medium_line_height = 52
+display_medium_weight = 500
+display_medium_tracking = 0
+display_medium_font = "brand"
+display_small_size = 36
+display_small_line_height = 44
+display_small_weight = 500
+display_small_tracking = 0
+display_small_font = "brand"
+headline_large_size = 32
+headline_large_line_height = 40
+headline_large_weight = 500
+headline_large_tracking = 0
+headline_large_font = "brand"
+headline_medium_size = 28
+headline_medium_line_height = 36
+headline_medium_weight = 500
+headline_medium_tracking = 0
+headline_medium_font = "brand"
+headline_small_size = 24
+headline_small_line_height = 32
+headline_small_weight = 500
+headline_small_tracking = 0
+headline_small_font = "brand"
+title_large_size = 22
+title_large_line_height = 28
+title_large_weight = 500
+title_large_tracking = 0
+title_large_font = "brand"
+title_medium_size = 16
+title_medium_line_height = 24
+title_medium_weight = 700
+title_medium_tracking = 0.15
+title_medium_font = "plain"
+title_small_size = 14
+title_small_line_height = 20
+title_small_weight = 700
+title_small_tracking = 0.1
+title_small_font = "plain"
+body_large_size = 16
+body_large_line_height = 24
+body_large_weight = 500
+body_large_tracking = 0.15
+body_large_font = "plain"
+body_medium_size = 14
+body_medium_line_height = 20
+body_medium_weight = 500
+body_medium_tracking = 0.25
+body_medium_font = "plain"
+body_small_size = 12
+body_small_line_height = 16
+body_small_weight = 500
+body_small_tracking = 0.4
+body_small_font = "plain"
+label_large_size = 14
+label_large_line_height = 20
+label_large_weight = 700
+label_large_tracking = 0.1
+label_large_font = "plain"
+label_medium_size = 12
+label_medium_line_height = 16
+label_medium_weight = 700
+label_medium_tracking = 0.5
+label_medium_font = "plain"
+label_small_size = 11
+label_small_line_height = 16
+label_small_weight = 700
+label_small_tracking = 0.5
+label_small_font = "plain"
+
+[type_font]
+brand = "IBM Plex Sans"
+plain = "IBM Plex Sans"
