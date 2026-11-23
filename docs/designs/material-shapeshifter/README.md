@@ -4,7 +4,7 @@ Approved 2026-11-22. Specs in this directory are named `SPEC-<module id>.md`. Th
 
 | Module id | Responsibility | Depends on | Spec |
 |---|---|---|---|
-| theme | One custom theme, `space` / `space-light`. Material 3 roles and tones. Key colors are COLOURlovers Space 787684, with Gruber Darker's red, green, and niagara, and Alchemist's yellow-as-cursor rule. `theme set` still paints the shell and GTK. The four existing palette files stay untouched. | none | [approved](SPEC-theme.md) |
+| theme | One custom theme, `space` / `space-light`. Material 3 roles and tones. Key colors are COLOURlovers Space 787684, with Gruber Darker's red, green, and niagara, and Alchemist's yellow-as-cursor rule. `theme set` still paints the shell and GTK. The four existing palette files stay untouched. | none | [approved](SPEC-theme.md), [plan](PLAN-theme.md) |
 | bar | One shapeshifter. Visible morph, any direction, any form. Each morph spends mass. A destroyed shape returns that mass to the bar. The body is never in two places at full size. | theme | not started |
 | greeter | The greeter is the bar in the greeter's shape. This is the success view. | bar | not started |
 | session | Every in-session shell piece is the bar in another shape: workspace list, menus, launcher, notifications, volume, brightness, power, lock, key overlay. The list stays up on the panel and on external screens. Each workspace row names the windows on that tag. | bar | not started |
