@@ -5,7 +5,7 @@ Approved 2026-11-22. Specs in this directory are named `SPEC-<module id>.md`. Th
 | Module id | Responsibility | Depends on | Spec |
 |---|---|---|---|
 | theme | One custom theme, `space` / `space-light`. Material 3 roles and tones. Key colors are COLOURlovers Space 787684, with Gruber Darker's red, green, and niagara, and Alchemist's yellow-as-cursor rule. `theme set` still paints the shell and GTK. The four existing palette files stay untouched. | none | [revision 3, approved](SPEC-theme.md), [plan](PLAN-theme.md): M1-M3 done, M4 (desktop-vm, merge) needs your machine |
-| bar | One shapeshifter. Visible morph, any direction, any form. Each morph spends mass. A destroyed shape returns that mass to the bar. The body is never in two places at full size. | theme | [revision 4, approved](SPEC-bar.md) |
+| bar | One shapeshifter, built from what the stack can draw: a fixed core and one Material 3 piece per shell component, each opening its component (the app that does the job, reshaped) under it. Pieces change shape in place; nothing travels, morphs between forms or spends mass. | theme | [revision 4, built](SPEC-bar.md) |
 | greeter | The greeter is the bar in the greeter's shape. This is the success view. | bar | not started |
 | session | Every in-session shell piece is the bar in another shape: workspace list, menus, launcher, notifications, volume, brightness, power, lock, key overlay. The list stays up on the panel and on external screens. Each workspace row names the windows on that tag. | bar | not started |
 | gtk | GTK apps wear the active palette. They are not the bar. | theme | not started |
@@ -16,9 +16,9 @@ Outside the map: terminals, editors, boot splash, the always-on instrument panel
 
 Color system: [Material 3 color roles](https://m3.material.io/styles/color/roles).
 
-## Bar: decisions so far (input to SPEC-bar)
+## Bar: how the design got here
 
-Explored on the design canvas; not a spec yet.
+Explored on the design canvas, then specified in [SPEC-bar](SPEC-bar.md) (built).
 
 - Direction: **the whole shell on waybar and the apps we have** (canvas board "Chosen: the
   shell redesigned on waybar and the existing apps"). No new renderer: the user ruled out
@@ -32,6 +32,6 @@ Explored on the design canvas; not a spec yet.
 - Explored and set aside: Penrose (five shapes), the relic and organism framings, the jelly
   direction. Rejected outright: goo connections, toy shapes, captions claiming effects the
   geometry does not show, shapes that cover windows for long stretches.
-- Open for the spec: the renderer (a layer-shell program; a new package needs approval), cut
-  corners as a shell-specific shape (not an M3 token), the other session shapes (notifications,
-  OSDs, power, lock, key overlay), and external screens.
+- Settled by the spec: no new renderer; components are the existing apps; layer motion stays
+  mango's 150 ms ease-out quad; external screens get the whole bar; the map's bar row drops the
+  morph and the mass. Left to their own specs: lock, greeter and the key overlay.
