@@ -1,6 +1,6 @@
 # PLAN-theme: build the Space Material 3 design system
 
-Plan for [SPEC-theme](SPEC-theme.md) revision 2. Status: draft, awaiting approval. Date: 2026-11-23.
+Plan for [SPEC-theme](SPEC-theme.md) revision 2. Status: approved 2026-11-23. Date: 2026-11-23.
 Prompt: the [capability map](README.md). The map builds `theme` first and only `theme` has an
 approved spec, so this plan builds `theme`; the rest of the map is in "After theme" at the end.
 
@@ -44,20 +44,17 @@ Checks:
 
 ## M2. System tokens (theme/tokens.toml, theme/.local/bin/theme)
 
-- [ ] `theme/tokens.toml`: the spec's tables, `[shape]`, `[elevation]`, `[motion]` (durations and
-      easings), `[state]`, `[type]`, `[typeface]`; a header naming `@material/web` 2.5.0,
-      `tokens/versions/v0_192`, and its Apache-2.0 license.
-- [ ] Values copied by a scratchpad script that parses the package's `_md-sys-*.scss` files and
-      prints the TOML, so nothing is typed by hand; rem converted at 16px.
+- [ ] `theme/tokens.toml`: the spec's tables, `[shape]`, `[elevation]`, `[motion]` (springs,
+      durations, easings), `[state]`, `[type]`, `[type_emphasized]`, `[typeface]`; a header naming
+      Compose `material3` 1.5.0, each token file's VERSION line, and the Apache-2.0 license.
+- [ ] Values copied by a scratchpad script that parses the sources jar's `tokens/*.kt` and prints
+      the TOML, so nothing is typed by hand; `CircleShape` becomes `full`.
 - [ ] `theme`: load the file once per render (unknown group or token fails, values numbers or
       four-number bezier lists); add `<group>_<token>` words; `mix` takes a `state_*` name as its
       amount.
-- [ ] Expressive springs and corners: added in this milestone only if `dl.google.com` is allowed
-      (spec open question 5), from Compose `material3`'s token sources by the same kind of script;
-      otherwise a follow-up commit when it is.
 
 Checks:
-1. The scratchpad script rerun against the package diffs empty against the committed file.
+1. The scratchpad script rerun against the jar diffs empty against the committed file.
 2. A scratchpad template with one token per group, and `mix:...:state_hover`, renders the spec's
    values; an unknown token and a non-state `mix` name each fail with their name.
 3. M1's before/after render of all ten palettes is still byte-identical.
@@ -89,7 +86,7 @@ Checks:
 ## M4. Docs
 
 - [ ] `docs/theming.md`: Space in the palette list; a `[material]` section (roles, `m3_` prefix,
-      defaults, floors); a tokens section (groups, word names, units, the `@material/web` source).
+      defaults, floors); a tokens section (groups, word names, units, the Compose `material3` source, the Expressive motion scheme).
 - [ ] `docs/onboarding.md`: both slugs in the palette list.
 - [ ] `docs/apps/theme.md` hand-written part if it names palettes; `tools/docs`; `tools/docs --check`.
 
@@ -109,12 +106,12 @@ frames are looked at for the spec's findings, not only the PASS verdict.
 ## Risks
 
 - Light `secondary` at tone 40 is an olive, not a bright yellow: it is the cursor, keyword and
-  warning in light. That is M3's tone rule working as specified; the frames in M4 decide whether
+  warning in light. That is M3's tone rule working as specified; the frames in M5 decide whether
   it reads as "yellow" enough.
 - `materialyoucolor` follows MCU; a later version may move tones. The header pins the version,
   and the committed TOML, not the tool, is the source of truth.
-- `@material/web`'s tokens are M3 before Expressive; Expressive mostly adds tokens, but if Compose's values differ for a shared name, Compose (the newer
-  source) wins and the header says so.
+- Compose ships token updates in its releases; the header pins 1.5.0 and the token VERSION lines,
+  and the committed TOML, not the jar, is the source of truth.
 - The derived `[material]` for the ten old palettes is used by nothing until `bar`; its
   formulas get their first real test there and may change then.
 

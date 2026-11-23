@@ -1,8 +1,8 @@
 # SPEC-theme: Space, a Material 3 design system
 
-Module `theme` of the [Material shapeshifter map](README.md). Status: revision 2, awaiting
-approval. Revision 1 (color only) was approved 2026-11-23; revision 2 widens the module to the
-whole M3 system: color, type, shape, elevation, motion and state. Date: 2026-11-23. Inputs: two
+Module `theme` of the [Material shapeshifter map](README.md). Status: revision 2, approved
+2026-11-23. Revision 1 (color only) was approved earlier the same day; revision 2 widens the
+module to the whole M3 system: color, type, shape, elevation, motion and state. Date: 2026-11-23. Inputs: two
 computed palettes, `space.toml` (dark) and `space-light.toml` (light), audited below.
 
 ## Goal
@@ -105,25 +105,33 @@ No `[keycaps]` in either file: both derive from their own roles, like every impo
 ## System tokens (theme/tokens.toml)
 
 One file, read with the active palette, palette-independent (M3 defines these once, not per
-scheme). Values are M3's `md.sys.*` tokens as published in `@material/web` 2.5.0
-(`tokens/versions/v0_192`), read from the package, not from memory. Units: px at scale 1
-(M3's dp and sp; 1rem = 16px), ms, unitless opacity.
+scheme). Values are M3's system tokens as Jetpack Compose `material3` 1.5.0 (latest stable,
+Apache-2.0) ships them in `androidx/compose/material3/tokens/*.kt`, read from the sources jar,
+not from memory. Units: px at scale 1 (M3's dp and sp), ms, unitless opacity.
 
 | group | tokens |
 |---|---|
-| shape (corner radius) | none 0 · extra-small 4 · small 8 · medium 12 · large 16 · extra-large 28 · full (fully rounded, 9999) |
+| shape (corner radius) | none 0 · extra-small 4 · small 8 · medium 12 · large 16 · large-increased 20 · extra-large 28 · extra-large-increased 32 · extra-extra-large 48 · full (a circle: half the short side) |
 | elevation (shadow) | level0 0 · level1 1 · level2 3 · level3 6 · level4 8 · level5 12 |
+| motion spring (damping, stiffness) | Expressive scheme: spatial fast 0.6/800 · default 0.8/380 · slow 0.8/200; effects fast 1/3800 · default 1/1600 · slow 1/800 |
 | motion duration | short1-4 50/100/150/200 · medium1-4 250/300/350/400 · long1-4 450/500/550/600 · extra-long1-4 700/800/900/1000 |
-| motion easing (cubic bezier) | standard 0.2,0,0,1 · standard-accelerate 0.3,0,1,1 · standard-decelerate 0,0,0,1 · emphasized 0.2,0,0,1 (M3's emphasized is a path; this is the package's bezier stand-in) · emphasized-accelerate 0.3,0,0.8,0.15 · emphasized-decelerate 0.05,0.7,0.1,1 · linear 0,0,1,1 |
-| state layer opacity | hover 0.08 · focus 0.12 · pressed 0.12 · dragged 0.16 |
-| type scale (size/line height, weight, tracking) | display L/M/S 57/64, 45/52, 36/44 · headline L/M/S 32/40, 28/36, 24/32 · title L/M/S 22/28, 16/24, 14/20 · body L/M/S 16/24, 14/20, 12/16 · label L/M/S 14/20, 12/16, 11/16. Weight 400, except title M/S and every label 500. Tracking: display L -0.25, title M 0.15, title S and label L 0.1, body L 0.5, body M 0.25, body S 0.4, label M/S 0.5, the rest 0 |
-| typeface | `brand`, `plain`: see open question 4 |
+| motion easing (cubic bezier) | standard 0.2,0,0,1 · standard-accelerate 0.3,0,1,1 · standard-decelerate 0,0,0,1 · emphasized 0.2,0,0,1 · emphasized-accelerate 0.3,0,0.8,0.15 · emphasized-decelerate 0.05,0.7,0.1,1 · linear 0,0,1,1 |
+| state layer opacity | hover 0.08 · focus 0.10 · pressed 0.10 · dragged 0.16 |
+| type scale (size/line height) | display L/M/S 57/64, 45/52, 36/44 · headline L/M/S 32/40, 28/36, 24/32 · title L/M/S 22/28, 16/24, 14/20 · body L/M/S 16/24, 14/20, 12/16 · label L/M/S 14/20, 12/16, 11/16 |
+| type weight, tracking | weight 400, except title M/S and every label 500. Tracking: display L -0.2, title M and body M 0.2, title S and label L 0.1, body L 0.5, body S 0.4, label M/S 0.5, the rest 0 |
+| emphasized type (Expressive) | same sizes; weight 500, except title M/S and every label 700; tracking: body L and title M 0.15, body M 0.25, body S 0.4, title S and label L 0.1, label M/S 0.5, the rest 0. Display, headline and title L use `brand`, the rest `plain` |
+| typeface | `brand` and `plain`: IBM Plex Sans (installed, GTK's font; M3's Roboto is not installed) |
 
-M3 Expressive adds spring motion (spatial and effects, fast/default/slow, as damping and
-stiffness) and more corner sizes (large-increased, extra-large-increased, extra-extra-large).
-They are in scope, since `bar` morphs shapes with motion, but `@material/web` does not publish
-them. Their source is Jetpack Compose `material3`, on a host this session cannot reach (open
-question 5). They join `tokens.toml` from that source, never from memory.
+Springs: the shell uses M3's **Expressive** motion scheme (spatial springs that overshoot), not
+Standard (damping 0.9 throughout): a shapeshifter is M3's case for expressive motion. Spatial
+springs move position and shape; effects springs (no overshoot) move color and opacity.
+Durations and easing stay for things that are not springs (fades in GTK CSS, mango's animation
+curves).
+
+Cross-check: `@material/web` 2.5.0 (`tokens/versions/v0_192`, older) agrees on durations,
+easing, elevation and the shared corners, and differs on focus and pressed (0.12) and three
+trackings (display L -0.25, body M 0.25, title M 0.15). Compose's token versions are newer
+(state `v0_210`), so Compose wins.
 
 Templates read tokens as words, `{{<group>_<token>}}` with dashes as underscores:
 `{{shape_corner_large}}` is `16`, `{{motion_duration_medium2}}` is `300`,
@@ -191,8 +199,7 @@ silently ignored. Defects:
    The palette header names them; a wrong name changes no color.
 3. **Default palette.** The map does not say whether `space` replaces `colibri` as `DEFAULT`.
    Recommendation: not in this module; decide when `bar` lands, since `bar` is what needs it.
-4. **Typeface.** M3's `brand` and `plain` typeface is Roboto, which is not installed. Recommendation:
-   IBM Plex Sans for both (installed, and already GTK's font), so no new package; Roboto would be a
-   new package and needs your approval. `bar` may still choose a face of its own in its spec.
-5. **Expressive tokens.** Allow `dl.google.com` (Google's Maven repo, where Compose `material3`
-   is published) for this environment, so the spring and corner tokens come from the source.
+
+Decided: typeface IBM Plex Sans (`bar` may still pick its own face in its spec); Expressive
+tokens from Compose `material3`, reached through the session's new `dotfiles` environment
+(`dl.google.com` allowed).
