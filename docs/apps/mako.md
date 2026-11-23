@@ -1,6 +1,6 @@
 # mako
 
-Notifications, as Material 3 cards ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)): `surface_container_high`, corner large (16px), 16px padding, no border, 360px wide; the summary in title medium (`on_surface`), the body in body medium (`on_surface_variant`). A low one dims its summary to `on_surface_variant`; a critical one is an `error_container` card (and it stays until dismissed). They stack top right, 8px under the bar and 8px from the edge, so the cards line up with the bar's right end, under the bell. Actions are not drawn as buttons: mako shows them through `makoctl menu`.
+Notifications, as Material 3 cards. The card ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)) is `surface_container_high`, corner large (16px), 16px padding, no border, 360px wide; the summary in title medium (`on_surface`), the body in body medium (`on_surface_variant`). A low one dims its summary to `on_surface_variant`; a critical one is an `error_container` card (and it stays until dismissed). They stack top right, 8px under the bar and 8px from the edge, so the cards line up with the bar's right end, under the bell. Actions are not drawn as buttons: mako shows them through `makoctl menu`.
 
 The which-key popup (`app-name=mango-whichkey`) keeps its translucent look until the key overlay's own spec.
 
