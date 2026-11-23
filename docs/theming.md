@@ -48,6 +48,22 @@ below WCAG AA (4.5:1) on any cap. A palette without the table
 (an import) derives them from its own roles: modifiers on its hover grey, the selected row's
 action key on its accent.
 
+## Material 3 roles
+
+An optional `[material]` table holds the 45 Material 3 color roles (`primary`, `on_primary`,
+`primary_container` … `surface_container_highest`, `outline`, the `*_fixed` roles, `shadow`,
+`scrim`), all of them or none; templates read them as `m3_<role>`. A palette without the table
+derives them from its own roles, the legacy mapping of
+[SPEC-theme](designs/material-shapeshifter/SPEC-theme.md) inverted: `primary` from `accent`,
+`secondary` from `warning`, `tertiary` from `badge`, containers mixed 60% toward `bg_desktop`, and
+every checked text role made legible, so any palette that loads today still loads.
+
+`theme` fails a palette whose M3 pairs read below the floors (`MATERIAL_FLOORS`): 4.5:1 for
+`on_X` on `X` (primary, secondary, tertiary, error and their containers), `on_surface` and
+`on_surface_variant` on `surface`, `inverse_on_surface` on `inverse_surface`; 3:1 for `outline`
+on `surface`. The fixed pairs and text on surface containers are left unchecked on purpose. One
+failing palette fails every render, since per-palette templates load them all.
+
 ## Syntax
 
 An optional `[syntax]` table gives the editors (vim, helix) their syntax colors, as roles
