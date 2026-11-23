@@ -20,7 +20,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | app | what | packages |
 |---|---|---|
 | [audio](apps/audio.md) | PipeWire audio: the server, its ALSA/JACK/Pulse front ends and WirePlumber | pipewire, pipewire-alsa, pipewire-jack, pipewire-pulse, wireplumber, gst-plugin-pipewire, libpulse, rtkit, sox, playerctl, cliamp |
-| [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, kernel-modules-hook, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, wireless-regdb, ufw, less, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python |
+| [base](apps/base.md) | The system layer: kernel, bootloader, networking, sudo and the tools install.sh itself needs | base, base-devel, linux, linux-zen, linux-firmware, kernel-modules-hook, mkinitcpio, grub, efibootmgr, f2fs-tools, sudo, zram-generator, networkmanager, iwd, wireless-regdb, ufw, less, tree, unzip, zip, net-tools, jq, libnotify, xdg-user-dirs, stow, python, flatpak |
 | [bluetooth](apps/bluetooth.md) | BlueZ and the Blueman applet | bluez, bluez-utils, blueman |
 | [btop](apps/btop.md) | btop, the system monitor (CPU, memory, disks, network, processes), in the palette's colors | btop |
 | [chrome](apps/chrome.md) | Google Chrome stable, tuned for speed on this T14 and with ads blocked by uBlock Origin Lite | google-chrome |
@@ -34,6 +34,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [ghostty](apps/ghostty.md) | The terminal (super+return), the dropdown terminal (alt+esc) and the floating terminal (super+shift+return), also every app's terminal: `xdg-terminals.list` names it for xdg-terminal-exec, which GLib uses to start `Terminal=true` apps (helix, vim) | ghostty, xdg-terminal-exec |
 | [git](apps/git.md) | git, with the GitHub CLI as the credential helper for GitHub over HTTPS and delta for diffs | git, github-cli, git-delta |
 | [greeter](apps/greeter.md) | The login screen: `greetd` running a native Viewport (SGI CAD) GTK3 layer-shell greeter (`/etc/greetd/greeter-ui`, LuaJIT + `lua51-lgi` + `gtk-layer-shell` + `Gio.UnixSocketAddress`) inside a locked-down mango session | greetd, jq, wlr-randr, luajit, lua51-lgi, gtk-layer-shell, swaybg |
+| [grok](apps/grok.md) | Grok CLI: xAI's Grok coding agent in the terminal (`grok`) | grok-build |
 | [grub](apps/grub.md) | The boot menu: GRUB with a ThinkPad-style theme, dark, at full-HD scale | - |
 | [gslapper](apps/gslapper.md) | Video wallpapers for the desktop, when the current wallpaper is a video | gslapper, gst-plugin-va |
 | [gtk](apps/gtk.md) | GTK 3 and 4 apps: Adwaita with the Tela-mango icons, dark or light from the palette's variant, with palette colors through `gtk.css` | gtk3, gtk4 |
@@ -42,7 +43,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and Walker | - |
 | [imv](apps/imv.md) | imv, the image viewer: just the image on the desktop color, in the palette's colors | imv |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
-| [llama-cpp](apps/llama-cpp.md) | Local LLM inference via `llama-cli` (and `llama-server`, `llama-bench`) with Vulkan offload on the ThinkPad T14's Intel UHD 620 (`ggml-vulkan` + `vulkan-intel`) | llama-cpp, ggml-vulkan |
+| [llama-cpp](apps/llama-cpp.md) | Local LLM inference via `llama-cli` (and `llama-server`, `llama-bench`) and `ollama` with Vulkan offload on the ThinkPad T14's Intel UHD 620 (`ggml-vulkan` + `vulkan-intel`) | llama-cpp, ggml-vulkan, ollama, python-huggingface-hub |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb, luajit, lua51-lgi, gtk-layer-shell |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
@@ -67,6 +68,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [thinkpad](apps/thinkpad.md) | ThinkPad T14 hardware: microcode, audio DSP firmware, Intel video drivers, fingerprint reader, firmware updates and TLP power management | intel-ucode, sof-firmware, intel-media-driver, vulkan-intel, fprintd, fwupd, bolt, tlp, powertop, smartmontools, nvme-cli |
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor for quick edits and jumping between a project's files, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor; no LSP or tree-sitter here) | vim, yamllint |
+| [vscodium](apps/vscodium.md) | VSCodium: VS Code without Microsoft branding or telemetry (`codium`) | vscodium-bin |
 | [walker](apps/walker.md) | The launcher (`super+d`), clipboard history (`super+v`) and dmenu picker (`theme pick`, `nightlight menu`), powered by Walker (GTK4) and Elephant's minimal provider set (`desktopapplications`, `runner`, `clipboard`, `menus`) | walker-bin, elephant-bin, elephant-desktopapplications-bin, elephant-runner-bin, elephant-clipboard-bin, elephant-menus-bin |
 | [way-displays](apps/way-displays.md) | Display manager: each display gets its native resolution at its highest refresh and a scale from its pixel density, the laptop panel sits rightmost with bottom edges aligned, the LG UltraFine is pinned to scale 1.25, and the panel turns off while the lid is closed with an external display connected | way-displays |
 | [waybar](apps/waybar.md) | Two 38px bars frame the screen like an SGI CAD viewport: a status line at the top with a bottom ruler and live controls, and a media + hardware telemetry floor at the bottom with a mirrored top ruler, the axis triad, CPU/MEM and TMP/DSK CLUT flanks, cava ribbons around the player with a 1px cyan progress rail, and the CLUT key | waybar, pamixer, cava |

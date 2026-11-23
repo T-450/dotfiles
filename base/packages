@@ -16,6 +16,7 @@ iwd          # NetworkManager's Wi-Fi backend (etc/NetworkManager/conf.d/wifi_ba
 wireless-regdb   # Wi-Fi channel rules per country (etc/modprobe.d/cfg80211.conf); without it: world domain 00
 ufw
 less
+tree        # directory listings
 unzip
 zip
 net-tools
@@ -24,3 +25,4 @@ libnotify   # notify-send
 xdg-user-dirs
 stow        # install.sh --link
 python      # theme engine
+flatpak     # sandboxed apps from Flathub

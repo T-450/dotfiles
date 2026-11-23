@@ -33,6 +33,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `wireless-regdb` | 2026.09.03-1 |
 | base | `ufw` | 0.36.2-7 |
 | base | `less` | 1:710-1 |
+| base | `tree` | 2.3.2-1 |
 | base | `unzip` | 6.0-23 |
 | base | `zip` | 3.0-14 |
 | base | `net-tools` | 2.10-3 |
@@ -41,6 +42,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | base | `xdg-user-dirs` | 0.20-1 |
 | base | `stow` | 2.4.1-1 |
 | base | `python` | 3.14.10-1 |
+| base | `flatpak` | 1:1.18.4-2 |
 | bluetooth | `bluez` | 5.88-1 |
 | bluetooth | `bluez-utils` | 5.88-1 |
 | bluetooth | `blueman` | 2.4.6-2 |
@@ -51,7 +53,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | clang | `mold` | 3.0.0-4 |
 | clang | `meson` | 1.12.1-2 |
 | claude | `claude-code` | 2.1.330-1 |
-| claude | `claude-desktop` | 5.11492.5-1 |
+| claude | `claude-desktop` | 6.28899.6-1 |
 | clipboard | `wl-clipboard` | 1:2.3.0-1 |
 | clipboard | `wl-clip-persist` | 0.5.0-2 |
 | desktop-vm | `edk2-ovmf` | 202608-1 |
@@ -73,7 +75,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | fonts | `ttf-nerd-fonts-symbols` | 3.5.1-1 |
 | fonts | `ttf-nerd-fonts-symbols-mono` | 3.5.1-1 |
 | fonts | `ttf-terminus-nerd` | 3.5.1-2 |
-| ghostty | `ghostty` | 1.4.0-1 |
+| ghostty | `ghostty` | 1.4.0-2 |
 | ghostty | `xdg-terminal-exec` | 0.14.4-1 |
 | git | `git` | 2.56.1-1 |
 | git | `github-cli` | 2.105.0-1 |
@@ -85,17 +87,20 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | greeter | `lua51-lgi` | 0.9.2-14 |
 | greeter | `gtk-layer-shell` | 0.10.1-1 |
 | greeter | `swaybg` | 1.2.2-1 |
+| grok | `grok-build` | 1.0.89-1 |
 | gslapper | `gslapper` | 1.6.0-1 |
 | gslapper | `gst-plugin-va` | 1.28.9-3 |
 | gtk | `gtk3` | 1:3.24.52-2 |
 | gtk | `gtk4` | 1:4.24.1-1 |
 | helix | `jdtls` | 1.63.0-1 |
 | helix | `jre-openjdk` | 27.0.1.1.u4-1 |
-| hyprlock | `hyprlock` | 0.9.7-2 |
+| hyprlock | `hyprlock` | 0.9.7-3 |
 | imv | `imv` | 5.0.1-3 |
 | lazygit | `lazygit` | 0.66.3-1 |
-| llama-cpp | `llama-cpp` | 0.9.0-1 |
-| llama-cpp | `ggml-vulkan` | 0.29.0-2 |
+| llama-cpp | `llama-cpp` | 1.0.0-1 |
+| llama-cpp | `ggml-vulkan` | 1.0.0-1 |
+| llama-cpp | `ollama` | 0.40.17-1 |
+| llama-cpp | `python-huggingface-hub` | 1:2.4.0-1 |
 | mango | `mangowm` | 0.18.6-1 |
 | mango | `wlr-randr` | 0.5.0-1 |
 | mango | `wev` | 1.1.0-1 |
@@ -103,7 +108,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | mango | `luajit` | 2.1.1795119671+96f7b29-1 |
 | mango | `lua51-lgi` | 0.9.2-14 |
 | mango | `gtk-layer-shell` | 0.10.1-1 |
-| mise | `mise` | 2026.11.10-1 |
+| mise | `mise` | 2026.11.12-1 |
 | mousepad | `mousepad` | 0.7.0-1 |
 | mousepad | `gspell` | 1.14.5-1 |
 | mpv | `mpv` | 1:0.42.0-3 |
@@ -181,6 +186,7 @@ written by `tools/docs --snapshot`. For reference only; install.sh installs the 
 | thunar | `unrar` | 1:7.3.2-1 |
 | vim | `vim` | 9.2.1178-1 |
 | vim | `yamllint` | 1.38.0-1 |
+| vscodium | `vscodium-bin` | 1.143.17232-1 |
 | walker | `walker-bin` | 2.17.2-1 |
 | walker | `elephant-bin` | 2.22.1-1 |
 | walker | `elephant-desktopapplications-bin` | 2.22.1-1 |

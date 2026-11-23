@@ -1,3 +1,5 @@
 # LLM inference (llama-cli, llama-server, llama-bench) + Vulkan backend for the T14's Intel UHD 620
 llama-cpp
 ggml-vulkan
+ollama                   # model runner and server (ollama run/serve), beside llama.cpp
+python-huggingface-hub   # hf CLI: downloads GGUF models from the Hugging Face Hub
