@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# waybar-notifications: print mako's held notifications as one waybar JSON line (custom/notifications)
-# text = count ("99+" above 99; a zero-width space at 0, since waybar hides a custom module whose
-# text is empty and the bell must stay); class gets unread, dnd and critical.
+# waybar-notifications: print mako's held notifications as one waybar JSON line, read by both halves
+# of the notifications piece: custom/notifications (the bell: its format ignores the text) and
+# custom/unread (the badge). text = count ("99+" above 99; empty at 0, which hides the badge);
+# class gets unread, dnd and critical.
 # Read-only: only `makoctl list -j` and `makoctl mode`.
 
 list=$(makoctl list -j 2>/dev/null) || list='[]'
@@ -14,13 +15,13 @@ jq -c --argjson dnd "$dnd" '
 	length as $n
 	| (any(.[]; .urgency == "critical")) as $crit
 	| {
-		text: (if $n == 0 then "\u200b" elif $n > 99 then "99+" else ($n | tostring) end),
+		text: (if $n == 0 then "" elif $n > 99 then "99+" else ($n | tostring) end),
 		class: ([if $n > 0 then "unread" else empty end,
 			if $dnd then "dnd" else empty end,
 			if $crit then "critical" else empty end]),
-		tooltip: ("<span font_desc=\u0027Terminess Nerd Font 12px\u0027 letter_spacing=\u00271024\u0027 fgalpha=\u002760%\u0027>NOTIFICATIONS</span>  "
+		tooltip: ("<span fgalpha=\u002760%\u0027>NOTIFICATIONS</span>  "
 			+ (if $dnd then "Do not disturb · \($n) held"
 				elif $n > 0 then "\($n) unread"
 				else "None" end)
-			+ "\n<span font_desc=\u0027Terminess Nerd Font 12px\u0027 letter_spacing=\u00270\u0027 fgalpha=\u002760%\u0027>Click restores · Middle-click dismisses all · Right-click toggles do not disturb</span>")
+			+ "\n<span fgalpha=\u002760%\u0027>Click restores · Middle-click dismisses all · Right-click toggles do not disturb</span>")
 	}' <<<"$list"

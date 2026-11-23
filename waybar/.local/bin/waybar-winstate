@@ -6,8 +6,8 @@
 # all-clients`.
 mmsg get all-clients 2>/dev/null | jq -c --arg q "'" '
 	def esc: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
-	def head(s): "<span font_desc=\($q)Terminess Nerd Font 12px\($q) letter_spacing=\($q)1024\($q) fgalpha=\($q)60%\($q)>\(s | ascii_upcase)</span>";
-	def note(s): "<span font_desc=\($q)Terminess Nerd Font 12px\($q) letter_spacing=\($q)0\($q) fgalpha=\($q)60%\($q)>\(s)</span>";
+	def head(s): "<span fgalpha=\($q)60%\($q)>\(s | ascii_upcase)</span>";
+	def note(s): "<span fgalpha=\($q)60%\($q)>\(s)</span>";
 	def names: [.[] | "  " + ((.title // .appid) | .[0:60] | esc)] | join("\n");
 	[{key: "pinned", label: "pinned", tip: "pinned to every tag", w: [.clients[] | select(.is_global)]},
 	 {key: "ontop", label: "on top", tip: "kept on top", w: [.clients[] | select(.is_overlay)]},

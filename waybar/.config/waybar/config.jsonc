@@ -1,47 +1,41 @@
-// waybar, "Viewport": two bars in one process (style.css), after SGI CAD workstations. The first
-// is the 30px status line at the top, with a ruler on its bottom edge. Left: the λ launcher, tags
-// 1-4 and tag 0 (the special tag), a rule, the layout glyph, the key mode and window state chips,
-// then the windows in view. Center: day, time, date. Right: recording, then the status chips
-// (network, volume, cpu, memory, temperature, disk, battery) as labels and values with a
-// registration cross between them, a rule, night light, wallpaper, bluetooth, the tray, the bell,
-// and power in the corner. The second is the media bar at the bottom (below).
-// Labels are Pango spans (12px Terminess capitals: a label, not a fact; the value is 14px bold).
+// waybar: two bars in one process (style.css). The first is the shell's top bar, Material 3
+// (docs/designs/material-shapeshifter/SPEC-bar.md): a transparent 48px row of pill pieces, 8px
+// apart, with the core (the clock) fixed in the centre. Left: the launcher, the tags with the
+// windows in view, the media piece (player and spectrum). Right: status (recording, network,
+// bluetooth, night light, battery, tray), notifications, volume, the brightness drawer, power.
+// Each piece opens its component under it: rofi, mako's history, swayosd, wlogout. The second is
+// the media bar at the bottom (below), outside the map, in its own "Viewport" face.
+// Tooltips are Pango markup: a dim NAME, the value, then an optional dim HINT row.
 // A zero-width space is a visible-but-empty label: waybar hides a module whose format is empty.
 [
     {
         "layer": "top",
         "position": "top",
-        "height": 30,
-        "spacing": 0,
+        "height": 48,
+        "margin-top": 8,
+        "margin-left": 8,
+        "margin-right": 8,
+        "spacing": 8,
         "reload_style_on_change": true,
 
-        "modules-left": ["custom/start", "mango/workspaces", "custom/special", "custom/divider#left", "custom/layout", "mango/keymode", "custom/winstate", "custom/windows",
-            "custom/win#1", "custom/win#2", "custom/win#3", "custom/win#4", "custom/win#5", "custom/win#6"],
-        "modules-center": ["group/datetime"],
-        "modules-right": [
-            "custom/record", "network", "pulseaudio", "cpu", "memory",
-            "custom/temperature", "disk", "battery", "custom/divider#tray", "custom/nightlight",
-            "custom/wallpaper", "bluetooth", "tray", "custom/notifications", "custom/power"
-        ],
+        "modules-left": ["custom/launcher", "group/tags", "group/media"],
+        "modules-center": ["group/core"],
+        "modules-right": ["group/status", "group/notifications", "pulseaudio", "group/brightness", "custom/power"],
 
-        // the λ is type; wallpaper and power are icons: the label is a zero-width space, style.css
-        // draws the SVG
-        "custom/start": {
-            "format": "λ",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>LAUNCHER</span>  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER D</span>",
-            "on-click": "rofi -show drun"
-        },
-        "custom/wallpaper": {
-            "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WALLPAPER</span>  Open picker  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER W</span>",
-            "on-click": "waypaper"
-        },
-        "custom/power": {
-            "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>POWER</span>  Session menu  <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='80%'>SUPER ESC  P</span>",
-            "on-click": "wlogout -b 6 --protocol layer-shell"
+        // the launcher piece: a search icon (style.css) and "Search"
+        "custom/launcher": {
+            "format": "Search",
+            "tooltip-format": "<span fgalpha='60%'>LAUNCHER</span>  Apps  <span fgalpha='80%'>Super D</span>",
+            "on-click": "rofi -show drun -theme launcher"
         },
 
+        // the tags piece: a connected button group. Tags 1-4, tag 0 (the special tag), the layout
+        // glyph, the key mode and window-state chips while they exist, then the windows in view
+        "group/tags": {
+            "orientation": "horizontal",
+            "modules": ["mango/workspaces", "custom/special", "custom/layout", "mango/keymode", "custom/winstate", "custom/windows",
+                "custom/win#1", "custom/win#2", "custom/win#3", "custom/win#4", "custom/win#5", "custom/win#6"]
+        },
         // tags 1-4 (super+1..4); style.css gives .empty, occupied, .active and .urgent their own looks
         "mango/workspaces": {
             "format": "{name}",
@@ -49,7 +43,16 @@
             "on-click": "activate",
             "on-click-right": "toggle"
         },
-
+        // tag 0, mango's special tag (super+0 shows it over the view, super+shift+0 sends a window);
+        // its state comes with the window list's signal
+        "custom/special": {
+            "exec": "~/.local/bin/waybar-windows special",
+            "return-type": "json",
+            "signal": 12,
+            "format": "0",
+            "tooltip": false,
+            "on-click": "mmsg dispatch toggle_special_tag"
+        },
         // the drawable glyph (layouts/<symbol>-symbolic.svg); waybar-layout prints the symbol as the
         // class and the tooltip (mango/layout has no tooltip support)
         "custom/layout": {
@@ -59,7 +62,12 @@
             "format": "{}",
             "on-click": "mmsg dispatch switch_layout"
         },
-
+        // the open key mode (super+esc, super+n or super+m)
+        "mango/keymode": {
+            "format": "{mode}",
+            // waybar names mango's normal mode "default" and shows it; an empty format hides the chip
+            "format-default": ""
+        },
         // windows pinned, kept on top or minimized (states nothing else shows); hidden when none is.
         // mango sends no event for them, so mango-state signals it (11); it also rechecks every 10s
         "custom/winstate": {
@@ -69,17 +77,9 @@
             "signal": 11,
             "on-click": "~/.local/bin/mango-state --clear"
         },
-
-        // the open key mode (super+esc, super+n or super+m)
-        "mango/keymode": {
-            "format": "{mode}",
-            // waybar names mango's normal mode "default" and shows it; an empty format hides the chip
-            "format-default": ""
-        },
-
-        // the windows in view by title, one chip each (mango has no wlr-foreign-toplevel-management for
-        // waybar's taskbar). custom/windows is the hidden feed: it follows mango's window stream and
-        // signals the six slots (12); a click focuses that window, the wheel moves focus along
+        // the windows in view by title, one segment each (mango has no wlr-foreign-toplevel-management
+        // for waybar's taskbar). custom/windows is the hidden feed: it follows mango's window stream
+        // and signals the six slots (12); a click focuses that window, the wheel moves focus along
         "custom/windows": {
             "exec": "~/.local/bin/waybar-windows feed",
             "restart-interval": 1,
@@ -140,126 +140,118 @@
             "on-scroll-down": "mmsg dispatch focusstack,next"
         },
 
-        // tag 0, mango's special tag (super+0 shows it over the view, super+shift+0 sends a window);
-        // its state comes with the window list's signal
-        "custom/special": {
-            "exec": "~/.local/bin/waybar-windows special",
-            "return-type": "json",
-            "signal": 12,
-            "format": "0",
-            "tooltip": false,
-            "on-click": "mmsg dispatch toggle_special_tag"
-        },
-
-        // day, time (calendar tooltip) and date; style.css styles the group's box as #datetime
-        "group/datetime": {
+        // the media piece: the play state and the track, then 14 bars of spectrum inside the piece
+        // while sound plays. Both hide while nothing plays, and so does the piece (style.css puts
+        // the fill on the group, which has no size when both are hidden)
+        "group/media": {
             "orientation": "horizontal",
-            "modules": ["custom/day", "clock#time", "custom/date"]
+            "modules": ["mpris", "cava"]
         },
-        // the day and date in capitals, labels around the time (waybar's clock can't upper-case)
-        "custom/day": { "exec": "date '+%^a'", "interval": 60, "tooltip": false },
-        "clock#time": {
+        "mpris": {
+            "format": "{title}",
+            "title-len": 24,
+            "tooltip-format": "<span fgalpha='60%'>PLAYING</span>  {title} · {artist}\n<span fgalpha='60%'>Click plays or pauses · Middle-click previous · Right-click next</span>"
+        },
+        // waybar's cava module (libcava); hide_on_silence keeps the bars to "while playing"
+        "cava": {
+            "framerate": 30,
+            "bars": 14,
+            "method": "pipewire",
+            "source": "auto",
+            "autosens": 1,
+            "sleep_timer": 1,
+            "hide_on_silence": true,
+            "bar_delimiter": 0,
+            "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+            "tooltip": false
+        },
+
+        // the core: the time and the date on primary_container. It never moves: it is the only
+        // centre module, and its width changes only with the date
+        "group/core": {
+            "orientation": "horizontal",
+            "modules": ["clock", "custom/date"]
+        },
+        "clock": {
             "format": "{:%H:%M}",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt><span letter_spacing='0'>{calendar}</span></tt>"
+            "tooltip-format": "<span fgalpha='60%'>CALENDAR</span>  {:%A, %e %B %Y · W%V}\n\n<tt>{calendar}</tt>"
         },
-        // waybar's clock zero-pads the day; a custom module keeps "12 NOV"
-        "custom/date": { "exec": "date '+%-d %^b'", "interval": 60 },
+        // waybar's clock zero-pads the day; a custom module keeps "Mon 12 Nov"
+        "custom/date": { "exec": "date '+%a %-d %b'", "interval": 60, "tooltip": false },
 
+        // the status piece: recording (only while gpurecord prints), network, bluetooth, night light,
+        // battery, the tray
+        "group/status": {
+            "orientation": "horizontal",
+            "modules": ["custom/record", "network", "bluetooth", "custom/nightlight", "battery", "tray"]
+        },
+        // gpurecord prints a line only while recording; the zero-width label keeps it hidden otherwise
+        "custom/record": {
+            "exec": "~/.local/bin/gpurecord status",
+            "signal": 8,
+            "format": "​",
+            "tooltip-format": "<span fgalpha='60%'>RECORDING</span>  Click stops",
+            "on-click": "~/.local/bin/gpurecord"
+        },
+        // icons only (style.css by class); the name and speeds are in the tooltip
         "network": {
-            // a long SSID is cut at 16 characters before it reaches the centered clock (the full one is
-            // in the tooltip). The cut is fmt precision, not max-length: max-length makes GTK
-            // ellipsize, and an ellipsizing label with letter spacing drops its last glyph even when
-            // the text fits (Pango), so every SSID lost its last letter.
-            "format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {essid:.16}",
-            "format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>NET</span> {ifname}",
-            "format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>OFFLINE</span>",
-            "format-alt": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DN</span> {bandwidthDownBytes} <span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>UP</span> {bandwidthUpBytes}",
-            "align": 1,
-            "tooltip-format-wifi": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
-            "tooltip-format-ethernet": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>ETHERNET</span>  {ifname} · connected\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>",
-            "tooltip-format-disconnected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>NETWORK</span>  Offline\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click toggles speeds</span>"
+            "format": "​",
+            "tooltip-format-wifi": "<span fgalpha='60%'>WI-FI</span>  {essid} · {signalStrength}%\n<span fgalpha='60%'>Down {bandwidthDownBytes} · Up {bandwidthUpBytes}</span>",
+            "tooltip-format-ethernet": "<span fgalpha='60%'>ETHERNET</span>  {ifname}\n<span fgalpha='60%'>Down {bandwidthDownBytes} · Up {bandwidthUpBytes}</span>",
+            "tooltip-format-disconnected": "<span fgalpha='60%'>NETWORK</span>  Offline"
         },
-        "pulseaudio": {
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>VOL</span> {volume}",
-            "format-muted": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MUTE</span>",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>VOLUME</span>  {volume}%\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Scroll ±5 · Click, right- or middle-click mutes</span>",
-            "align": 1,
-            "on-click": "pamixer -t",
-            "on-click-right": "pamixer -t",
-            "on-click-middle": "pamixer -t",
-            "on-scroll-up": "pamixer -i 5",
-            "on-scroll-down": "pamixer -d 5"
+        "bluetooth": {
+            "format": "​",
+            "format-connected": "{num_connections}",
+            "format-off": "​",
+            "format-disabled": "​",
+            "format-no-controller": "",
+            "tooltip-format-on": "<span fgalpha='60%'>BLUETOOTH</span>  On · none connected",
+            "tooltip-format-connected": "<span fgalpha='60%'>BLUETOOTH</span>  {num_connections} connected",
+            "tooltip-format-off": "<span fgalpha='60%'>BLUETOOTH</span>  Off",
+            "tooltip-format-disabled": "<span fgalpha='60%'>BLUETOOTH</span>  Off",
+            "on-click": "blueman-manager"
         },
-        "cpu": {
-            "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CPU</span> {usage}",
-            // full load is work, not a failure: a warning, no critical tier
-            "states": { "warning": 85 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>CPU</span>  {usage}%",
-            "align": 1
-        },
-        "memory": {
-            "interval": 5,
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>MEM</span> {percentage}",
-            "states": { "warning": 80, "critical": 90 },
-            "align": 1,
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>MEMORY</span>  {percentage}%"
-        },
-        // CPU package temperature. Waybar's temperature module ignores "states", so waybar-temperature
-        // prints the label and its own classes: "high" from 80 C, "critical" from 95 C
-        "custom/temperature": {
-            "exec": "~/.local/bin/waybar-temperature",
-            "return-type": "json",
-            "interval": 5,
-            "align": 1,
-            "format": "{}"
-        },
-        "disk": {
-            "interval": 30,
-            "paths": ["/"],
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>DSK</span> {percentage_used}",
-            "states": { "warning": 80, "critical": 90 },
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>DISK</span>  {percentage_used}%",
-            "align": 1
-        },
-        "battery": {
-            // charge counts down: a warning at 20% and below, critical at 10% (style.css shows them on
-            // battery only)
-            "states": { "warning": 20, "critical": 10 },
-            "format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>BAT</span> {capacity}",
-            "format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>CHG</span> {capacity}",
-            "format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
-            "format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
-            "format-not-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024'>AC</span> {capacity}",
-            "tooltip-format-discharging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · on battery\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-charging": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · charging\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-plugged": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · plugged in\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
-            "tooltip-format-full": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BATTERY</span>  {capacity}% · full\n<span font_desc='Terminess Nerd Font 12px' letter_spacing='0' fgalpha='60%'>Click opens the session menu</span>",
-            "align": 1,
-            "on-click": "wlogout -b 6 --protocol layer-shell"
-        },
-
         // wlsunset (wlsunset/.local/bin/nightlight): automatic rests, warm is held, off is faded
         "custom/nightlight": {
             "exec": "~/.local/bin/nightlight status",
             "return-type": "json",
             "interval": 60,
             "signal": 9,
-            "format": "\u200b",
+            "format": "​",
             "on-click": "~/.local/bin/nightlight toggle",
             "on-click-right": "~/.local/bin/nightlight menu"
         },
-
-        // gpurecord prints a line only while recording; the zero-width label keeps it hidden otherwise
-        "custom/record": {
-            "exec": "~/.local/bin/gpurecord status",
-            "signal": 8,
-            "format": "\u200b",
-            "tooltip-format": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>RECORDING</span>  Click stops",
-            "on-click": "~/.local/bin/gpurecord"
+        "battery": {
+            // charge counts down: a warning at 20% and below, critical at 10% (style.css shows them on
+            // battery only)
+            "states": { "warning": 20, "critical": 10 },
+            "format": "{capacity}%",
+            "tooltip-format-discharging": "<span fgalpha='60%'>BATTERY</span>  {capacity}% · on battery · {time}",
+            "tooltip-format-charging": "<span fgalpha='60%'>BATTERY</span>  {capacity}% · charging",
+            "tooltip-format-plugged": "<span fgalpha='60%'>BATTERY</span>  {capacity}% · plugged in",
+            "tooltip-format-full": "<span fgalpha='60%'>BATTERY</span>  {capacity}% · full"
         },
+        "tray": { "icon-size": 16, "spacing": 0 },
 
+        // the notifications piece: the bell (state by class) and a count badge, hidden at 0.
+        // Both read waybar-notifications; a click restores, middle dismisses all, right toggles
+        // do-not-disturb
+        "group/notifications": {
+            "orientation": "horizontal",
+            "modules": ["custom/notifications", "custom/unread"]
+        },
         "custom/notifications": {
+            "exec": "~/.local/bin/waybar-notifications",
+            "return-type": "json",
+            "interval": 2,
+            "signal": 10,
+            "format": "​",
+            "on-click": "makoctl restore; pkill -RTMIN+10 waybar",
+            "on-click-middle": "makoctl dismiss --all; pkill -RTMIN+10 waybar",
+            "on-click-right": "makoctl mode -t do-not-disturb; pkill -RTMIN+10 waybar"
+        },
+        "custom/unread": {
             "exec": "~/.local/bin/waybar-notifications",
             "return-type": "json",
             "interval": 2,
@@ -270,24 +262,36 @@
             "on-click-right": "makoctl mode -t do-not-disturb; pkill -RTMIN+10 waybar"
         },
 
-        "bluetooth": {
-            "format": "\u200b",
-            "format-connected": "{num_connections}",
-            "format-off": "\u200b",
-            "format-disabled": "\u200b",
-            "format-no-controller": "",
-            "tooltip-format-on": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  On · none connected",
-            "tooltip-format-connected": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  {num_connections} connected",
-            "tooltip-format-off": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  Off",
-            "tooltip-format-disabled": "<span font_desc='Terminess Nerd Font 12px' letter_spacing='1024' fgalpha='60%'>BLUETOOTH</span>  Off",
-            "on-click": "blueman-manager"
+        // the volume piece: an icon by class (style.css); the keys show swayosd under it
+        "pulseaudio": {
+            "format": "​",
+            "format-muted": "​",
+            "tooltip-format": "<span fgalpha='60%'>VOLUME</span>  {volume}%\n<span fgalpha='60%'>Scroll ±5 · Click mutes</span>",
+            "on-click": "pamixer -t",
+            "on-click-right": "pamixer -t",
+            "on-click-middle": "pamixer -t",
+            "on-scroll-up": "pamixer -i 5",
+            "on-scroll-down": "pamixer -d 5"
         },
 
-        "tray": { "icon-size": 14, "spacing": 0 },
+        // the brightness piece: a drawer that widens in place into a slider on hover (250 ms,
+        // medium1)
+        "group/brightness": {
+            "orientation": "horizontal",
+            "drawer": { "transition-duration": 250, "transition-left-to-right": true },
+            "modules": ["backlight", "backlight/slider"]
+        },
+        "backlight": {
+            "format": "​",
+            "tooltip-format": "<span fgalpha='60%'>BRIGHTNESS</span>  {percent}%\n<span fgalpha='60%'>Scroll or drag the slider</span>"
+        },
+        "backlight/slider": { "min": 1, "max": 100, "orientation": "horizontal" },
 
-        // 1x12 rules (style.css paints them); zero-width labels keep the custom module alive
-        "custom/divider#left": { "format": "\u200b" },
-        "custom/divider#tray": { "format": "\u200b" }
+        "custom/power": {
+            "format": "​",
+            "tooltip-format": "<span fgalpha='60%'>POWER</span>  Session menu  <span fgalpha='80%'>Super Esc P</span>",
+            "on-click": "wlogout -b 1 -c 0 -r 0 -T 64 -R 8 -L 1632 -B 680 --protocol layer-shell"
+        }
     },
     // the media bar (style.css "the media bar"): the floor of the viewport. The XYZ axis triad,
     // the left channel's ribbon, the player (prev, play, next, title, artist, time), the right

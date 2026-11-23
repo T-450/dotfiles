@@ -41,7 +41,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [icons](apps/icons.md) | Tela-mango: the Tela icon theme in the palette's accent, for GTK, Qt (through the settings portal) and rofi | - |
 | [imv](apps/imv.md) | imv, the image viewer: just the image on the desktop color, in the palette's colors | imv |
 | [lazygit](apps/lazygit.md) | lazygit, a terminal UI for git (stage hunks, review diffs, rebase, commit), in the palette's colors with delta for diffs | lazygit |
-| [mako](apps/mako.md) | Notifications | mako |
+| [mako](apps/mako.md) | Notifications, as Material 3 cards ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)): `surface_container_high`, corner large (16px), 16px padding, no border, 360px wide; the summary in title medium (`on_surface`), the body in body medium (`on_surface_variant`) | mako |
 | [mango](apps/mango.md) | The compositor (mangowm 0.18): config, keybindings, window rules, the session environment and its helper commands | mangowm, wlr-randr, wev, xorg-xrdb |
 | [mise](apps/mise.md) | Language toolchains, build systems and editor tooling, pinned by a committed lockfile | mise |
 | [mousepad](apps/mousepad.md) | Mousepad, the plain-text editor GTK apps open text files with | mousepad, gspell |
@@ -67,9 +67,9 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
 | [thunar](apps/thunar.md) | Thunar, the file manager (super+e), with thumbnails, archives, network places and automounting | thunar, thunar-archive-plugin, thunar-media-tags-plugin, thunar-volman, tumbler, ffmpegthumbnailer, poppler-glib, libgsf, libgepub, libopenraw, libheif, gvfs, gvfs-mtp, gvfs-gphoto2, gvfs-afc, gvfs-smb, gvfs-nfs, udisks2, xarchiver, 7zip, unrar |
 | [vim](apps/vim.md) | Vim, the fallback editor for quick edits and jumping between a project's files, in the active palette's colors, formatting and linting with mise's tools (helix is the full editor; no LSP or tree-sitter here) | vim, yamllint |
 | [way-displays](apps/way-displays.md) | Display manager: each display gets its native resolution at its highest refresh and a scale from its pixel density, the laptop panel sits rightmost with bottom edges aligned, the LG UltraFine is pinned to scale 1.25, and the panel turns off while the lid is closed with an external display connected | way-displays |
-| [waybar](apps/waybar.md) | Two 30px bars frame the screen like an SGI CAD viewport: a status line at the top with a ruler on its edge, and a media bar at the bottom, the viewport's floor, with the axis triad, cava ribbons around the player, and the CLUT key | waybar, pamixer, cava |
+| [waybar](apps/waybar.md) | The shell's top bar, Material 3 pill pieces around a fixed clock, each opening its component under it, and the media bar at the bottom, with cava ribbons around the player | waybar, pamixer, cava |
 | [waypaper](apps/waypaper.md) | The wallpaper picker (super+w): a pick survives logins and `theme set`, while picking the palette's own `wallpaper.png` follows the palette | waypaper |
-| [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown | wlogout |
+| [wlogout](apps/wlogout.md) | The power menu (super+esc p, or the bar's power piece), a Material 3 menu ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)) under the power piece: lock, suspend, hibernate, log out, restart, power off | wlogout |
 | [wlsunset](apps/wlsunset.md) | Night light: warmer colors after sunset, controlled from the bar | wlsunset |
 | [zsh](apps/zsh.md) | The shell: zsh with oh-my-zsh (cdimascio's lambda prompt; git, mise, node and docker plugins), fzf completion, autosuggestions, syntax highlighting and zoxide | zsh, oh-my-zsh-git, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, fzf, fzf-tab, zoxide, eza, bat, fd, ripgrep, btop |
 <!-- end generated -->
