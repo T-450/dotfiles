@@ -1,0 +1,5 @@
+/* The launcher (rofi -show drun -theme launcher): the search view of quickinput.rasi, opened 8px
+   under its bar piece. The bar (waybar) is 48px with an 8px margin on top and at the sides, and
+   the launcher is its first piece: x 8, y 8 + 48 + 8. */
+@import "quickinput"
+window { location: north west; anchor: north west; x-offset: 8px; y-offset: 64px; }

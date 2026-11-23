@@ -7,7 +7,8 @@ configuration {
     matching: "fuzzy";
     display-drun: "run";
     display-run: "cmd";
-    drun-display-format: "{name}";
+    // supporting text after the name (M3 list row); 80% alpha keeps it 4.5:1 on the selected row too
+    drun-display-format: "{name}[<span fgalpha='80%'>  {generic}</span>]";
 }
 
 @theme "quickinput"

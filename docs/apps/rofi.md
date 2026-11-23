@@ -2,7 +2,9 @@
 
 The launcher (super+d) and every menu: clipboard history, theme picker, night light.
 
-`themes/quickinput.rasi` holds the layout (VS Code's quick input) and imports `colors.rasi`.
+`themes/quickinput.rasi` holds the look and imports `colors.rasi`: a Material 3 docked search view ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)). One `surface_container_high` card, corner extra large (28px), its elevation by tone (mango draws no shadows); a 56px search row with the search icon, the prompt and the field, an `outline_variant` divider, then 56px rows with 24px icons in body large. The selected row is a `secondary` pill (the shell's selected state; `secondary_container` is as light as the card on a light palette), matched letters `primary`. App rows carry their generic name as supporting text (`drun-display-format`, 80% alpha: 4.5:1 on the selected row too).
+
+Menus open centred. The launcher runs `rofi -show drun -theme launcher`: `themes/launcher.rasi` imports the search view and anchors it 8px under the bar's launcher piece (x 8, y 64). rofi's layer spans the screen above the bar, so the offsets count from the screen's corner. `rule.conf` turns blur off under it: the card is opaque.
 
 ## Reference
 
@@ -13,9 +15,10 @@ The launcher (super+d) and every menu: clipboard history, theme picker, night li
 
 - `~/.config/rofi/config.rasi`
 - `~/.config/rofi/themes/colors.rasi`
+- `~/.config/rofi/themes/launcher.rasi`
 - `~/.config/rofi/themes/quickinput.rasi`
 
 **Rendered from the palette** (`theme`):
 
-- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `accent`, `bg_hover`, `bg_surface`, `bg_widget`, `border_hairline`, `border_inactive`, `fg_muted`, `fg_secondary`, `fg_text`, `link`, `name`, `selection_bg`, `selection_fg`, `slug`
+- `rofi/.config/rofi/themes/colors.rasi.tmpl` → `rofi/.config/rofi/themes/colors.rasi`: `m3_on_secondary`, `m3_on_surface`, `m3_on_surface_variant`, `m3_outline_variant`, `m3_primary`, `m3_secondary`, `m3_surface_container_high`, `name`, `slug`
 <!-- end generated -->
