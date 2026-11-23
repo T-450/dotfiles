@@ -1,9 +1,12 @@
 # SPEC-bar: the shell on waybar and the apps we have
 
-Module `bar` of the [Material shapeshifter map](README.md). Status: revision 4, approved and built
-2026-11-23 (what the build changed is under "As built"). Date: 2026-11-23. Depends on [SPEC-theme](SPEC-theme.md) (built: `m3_*` roles and the
-system tokens). The design canvas board "Chosen: the shell redesigned on waybar and the existing
-apps" is the visual reference; where this text and the board differ, this text wins.
+Module `bar` of the [Material shapeshifter map](README.md). Status: revision 4. On main the M3 bar
+is superseded by the Viewport shell and kept as the M3 option. The build itself is commit
+`0c5adaaac2f7c931ce1ebfbaf8ceeb5adcf010c8` on branch `material-shell`, not the files on main
+(what that build changed is under "As built"). Date: 2026-11-23. Depends on [SPEC-theme](SPEC-theme.md)
+(built: `m3_*` roles and the system tokens). The design canvas board "Chosen: the shell redesigned
+on waybar and the existing apps" is the visual reference; where this text and the board differ,
+this text wins.
 
 ## Goal
 
@@ -88,6 +91,8 @@ everywhere). rofi, mako, swayosd and wlogout open on the focused output, as they
 4. **Waybar's top bar** (the CAD viewport status line) is replaced; the bottom media bar stays.
 
 ## As built
+
+These notes describe `material-shell` at `0c5adaaac2f7c931ce1ebfbaf8ceeb5adcf010c8`, not main.
 
 Where the build differs from the text above, and why:
 
