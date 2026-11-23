@@ -1,20 +1,19 @@
-# SPEC-bar: a small core and its pieces
+# SPEC-bar: a fixed core, one piece per component
 
-Module `bar` of the [Material shapeshifter map](README.md). Status: draft (revision 2), awaiting
+Module `bar` of the [Material shapeshifter map](README.md). Status: draft (revision 3), awaiting
 approval. Date: 2026-11-23. Depends on [SPEC-theme](SPEC-theme.md) (built: `m3_*` roles and the
-system tokens). The design canvas board "Chosen, revised: a small core and its pieces" is the
+system tokens). The design canvas board "Chosen, polished: one piece per component (M3)" is the
 visual reference; where this text and the board differ, this text wins.
 
 ## Goal
 
-The bar is a small core at the top of the screen that never moves and never morphs; everything
-else is moving pieces. Every shell component is its own pieces: one for a small component, two
-for a large one, or many where its shape is a grid of cells. At rest the
-pieces dock beside the core, each showing its component's compact face; to open, a component's
-pieces detach, travel and morph into it, and they return when it closes. This spec covers the
-core, the pieces, the mass model, the morph engine, and the components whose pieces are drawn on
-the board. The detailed shapes of notifications, OSDs, power, lock and the key overlay, and the
-greeter, come in their own specs on the same engine.
+The bar is a small core at the top of the screen that never moves and never morphs. Every shell
+component is exactly one piece. At rest the pieces dock beside the core as Material 3 buttons,
+each showing its component's compact face; to open, a component's piece moves and stretches into
+the component (M3's container transform) and returns when it closes. This spec covers the core,
+the pieces, the mass model, the morph engine, and the components drawn on the board. The detailed
+shapes of notifications, OSDs, power, lock and the key overlay, and the greeter, come in their own
+specs on the same engine.
 
 ## Non-goals
 
@@ -23,58 +22,57 @@ greeter, come in their own specs on the same engine.
 
 ## The core and the pieces
 
-| component | pieces | docked face | opens into |
-|---|---|---|---|
-| core | fixed | time and date | never moves, never morphs |
-| workspaces | 2 | two tags each, naming their windows (14 px) | stays docked |
-| launcher | 2 | `› run` / `apps` | search and list (left), details (right), side by side |
-| media | 1 | the track | the spectrum (below) |
-| notifications | 1 | the count | a card under its dock |
-| volume, brightness | 1 each | the level | a vertical meter under its dock |
-| power | 2 | glyphs | two rows: lock and log out, reboot and power off |
-| lock, key overlay | 2 each | none | ride under the core; slide out when called |
+| component | docked face | opens into (M3 component, corner token) |
+|---|---|---|
+| core | time (title medium), date (label medium) | never moves or morphs |
+| workspaces | connected button group: each tag naming its windows, the active one in `secondary_container` | stays docked |
+| launcher | search bar: icon and "Search" | search view: field and list, corner extra-large |
+| media | play icon and the track | the spectrum (below) |
+| notifications | bell with a count badge (`error` / `on_error`) | card with text buttons, corner large |
+| volume, brightness | icon | vertical slider, corner full |
+| power | icon | menu, corner large; power off in `error` |
+| lock, key overlay | none | ride under the core; open from it when called |
 
-- Pieces: 56 px tall, docked 8 px apart either side of the core, 8 px cut corners (a
-  shell-specific shape, not an M3 shape token, recorded here). The core is 64 px tall, centred.
-- Color only from `m3_*` roles: pieces `surface_container_high`, borders `outline`, the core
-  `surface_container_highest` with a `primary` edge, text `on_surface` / `on_surface_variant`,
-  the active workspace `secondary`, meters and lit edges `primary` / `primary_container`, the
-  destructive action `error`. No color literal: a `.tmpl` per the repo's rule.
-- Type from the type tokens (IBM Plex Sans); IBM Plex Mono for codes and readouts, a deviation
-  from SPEC-theme's single typeface, recorded here.
+- Pieces: M3 buttons, 48 px tall, corner full, 8 px apart either side of the core, on
+  `surface_container_high`; icons and labels `on_surface_variant` / `on_surface`. The core: 56 px,
+  corner full, `primary_container` with `on_primary_container` text.
+- Open components: `surface_container`, elevation level 3, the component's corner token. A
+  vacated dock keeps an `outline_variant` outline.
+- States: hover 0.08 and pressed 0.10 `on_surface` state layers (the state tokens).
+- Type from the type tokens, IBM Plex Sans only. Color only from `m3_*` roles; no literal, a
+  `.tmpl` per the repo's rule.
 - At rest nothing moves: no idle animation.
 
 ## Mass
 
-Mass is piece count: 10 docked plus 4 under the core. A component spends only its own pieces and
-returns them when it closes. A piece is in exactly one place at any frame: docked, in transit, or
-in its component. An empty dock shows a dashed socket. A piece may grow as it becomes its
-component; the growth is declared, never hidden.
+Mass is piece count: one per component, 7 docked beside the core and 2 under it. A component
+spends only its own piece and returns it on close. A piece is in exactly one place at any frame:
+docked, stretching, or open. Its growth into the component is declared, not hidden.
 
 ## Morph engine
 
-- A morph moves pieces; the core never moves or morphs. Text sits only on docked or settled
-  pieces.
-- Two motions, both on motion tokens:
-  - Large components (two pieces): fold edge-on (short2, emphasized accelerate), cross at the
-    piece's own size as a line of light (short3, standard), unfold and grow (short3, emphasized
-    decelerate); the second piece 30 ms behind the first; settled at about 430 ms.
-  - Small components (one piece): move and stretch on the fast spatial spring.
-  - Many-piece components: each piece is a cell and runs the two-piece motion, 6 ms apart.
-- Usable from the first frame (the launcher's query is live as its pieces leave); complete
-  within 450 ms; a second request mid-flight retargets pieces from where they are.
-- Two components never share a piece, so any of them can be open at once; where two would
-  overlap on screen, the later one opens beside the earlier.
-- Reduced motion: states switch without travel; the spectrum becomes a static PLAYING face.
+- The container transform: the piece moves and stretches from its dock to the component's bounds
+  on the spatial spring (default, 0.8 / 380), its corner morphing from full to the component's
+  token, its tone from `surface_container_high` to `surface_container`, rising to level 3.
+  Content fades in on the effects spring once the piece is 60% open. Close: emphasized
+  accelerate, 300 ms.
+- The core never moves or morphs. Text sits only on docked or settled pieces.
+- Usable from the first frame (the launcher's field takes input as the piece starts to move);
+  settled within 450 ms (the spring is within 2% at about 200 ms); a second request mid-flight
+  retargets the piece from where it is.
+- Two components never share a piece, so any can be open at once; where two would overlap on
+  screen, the later one opens beside the earlier.
+- Reduced motion: no travel or stretch; the component fades in and out over 200 ms, as M3
+  prescribes; the spectrum shows a static face.
 
 ## The spectrum
 
 | | |
 |---|---|
 | Trigger | a player reports Playing over MPRIS; the media piece shows the track |
-| Windows on the workspace | 16 meters inside the media piece: never drawn over a window |
-| Workspace with no windows | the meters telescope below the media piece, up to 190 px, lit tips |
-| Input | click-through: the blades are outside the bar's input region |
+| Windows on the workspace | 16 bars inside the media piece: never drawn over a window |
+| Workspace with no windows | the bars run below the piece, up to 190 px |
+| Input | click-through: the bars are outside the bar's input region |
 | Hide | a key toggles it (to be chosen: super+m is mango's monitor mode) |
 | Data | `cava` (already installed for waybar's ribbons), 16 bands at 30 frames a second |
 
@@ -87,11 +85,11 @@ notification daemon (mako today: the notifications spec decides whether the bar 
 
 ## Renderer
 
-A Wayland layer-shell program that can draw pieces, 3D rotation about the x axis and per-frame
-geometry at the display's refresh rate. Recommendation: **Quickshell** (QML on Qt Quick:
-layer-shell surfaces, `Rotation` with an x axis, springs and easing curves, MPRIS built in, runs
+A Wayland layer-shell program with free geometry, corner and shadow animation, and per-frame
+updates at the display's refresh rate. Recommendation: **Quickshell** (QML on Qt Quick:
+layer-shell surfaces, springs and easing curves, animated radius and shadows, MPRIS built in, runs
 `mmsg` and `cava` as processes). It is a new package (AUR `quickshell`), so it needs approval.
-Rejected: waybar (no free geometry or morphs), eww (no 3D transforms, polling model), AGS/Astal on
+Rejected: waybar (no free geometry or morphs), eww (polling model, limited animation), AGS/Astal on
 GTK4 (possible, weaker motion primitives).
 
 Repo shape, one model for every app: a `bar/` app folder with `packages` (quickshell), the QML
@@ -102,15 +100,16 @@ its bottom media bar stays.
 
 ## Acceptance
 
-1. In desktop-vm, shots of rest, launcher, notification, volume, spectrum (windows open and an
-   empty workspace) and power, in `space` and `space-light`.
-2. Launcher: query echoes on the first frame after super+d; both pieces settled within 450 ms
-   (frame timestamps logged in a debug mode).
-3. Mass: the debug mode logs the piece count per frame; 10 docked + 4 under the core in every
+1. In desktop-vm, shots of rest, the hover state, launcher, notification, volume, spectrum
+   (windows open and an empty workspace) and power, in `space` and `space-light`.
+2. Launcher: the field takes input on the first frame after super+d; the piece settled within
+   450 ms (frame timestamps logged in a debug mode).
+3. Mass: the debug mode logs the piece count per frame; 7 beside the core and 2 under it in every
    frame of a scripted run (each component open and closed, two at once, reopen mid-close).
-4. The core and the workspace pieces never change position (logged before and after every morph).
-5. Reduced motion: no piece travels; the spectrum shows the static face.
-6. `theme lint`, `tools/docs --check`, `tests/run`; the keybindings cheatsheet lists new keys.
+4. The core and the workspace piece never change position (logged before and after every morph).
+5. Reduced motion: no piece travels or stretches; components fade; the spectrum is static.
+6. Contrast: every text pair at least 4.5:1, every component edge at least 3:1 (from the palette's
+   floors); `theme lint`, `tools/docs --check`, `tests/run`; the cheatsheet lists new keys.
 
 ## Open questions
 
@@ -119,8 +118,5 @@ its bottom media bar stays.
    everywhere); a component opens only on the focused output, and only that output's pieces move
    (the body is never in two places at full size). Proposal; confirm.
 3. **The spectrum's key**: which binding hides it (super+m is taken).
-4. **Workspaces**: they never leave the dock here. Should they also morph (an overview), and with
-   how many pieces?
+4. **Workspaces**: their piece stays docked here. Should it also stretch into an overview?
 5. **Waybar**: retire only the top status bar (proposed), or the media bar too.
-6. **Which components are many pieces**: proposed, the launcher as 8 tile pieces (as in v1) and
-   the key overlay as one piece per key group; everything else as in the table.
