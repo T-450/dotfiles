@@ -1,22 +1,25 @@
-/* swayosd (volume/brightness OSD), styled like the mako toasts: flat widget
-   background, the inactive border, the fill in the editors' constant color. Colors: colors.css, rendered from
-   the active palette by theme/theme. Loaded with -s by swayosd.service. */
+/* swayosd (volume/brightness OSD): a Material 3 slider pill (docs/designs/material-shapeshifter/
+   SPEC-bar.md). surface_container_high, corner full, the icon in on_surface_variant, a 16px track
+   in surface_container_highest with the level in primary. swayosd centres it; swayosd.service's
+   --top-margin puts it at the top, 8px under the bar. Colors: colors.css, rendered from the active
+   palette by theme/theme. Loaded with -s by swayosd.service. */
 @import "colors.css";
 
 window#osd {
-	border-radius: 8px;
-	border: 1px solid @osd_border;
+	border-radius: 9999px;
+	border: none;
 	background: @osd_bg;
+	font-family: "IBM Plex Sans";
 }
-window#osd #container { margin: 14px 16px; }
+window#osd #container { margin: 12px 20px; }
 window#osd image,
 window#osd label { color: @osd_fg; }
 window#osd progressbar:disabled,
-window#osd image:disabled { opacity: 0.5; }
+window#osd image:disabled { opacity: 0.38; }
 window#osd progressbar,
 window#osd segmentedprogress {
-	min-height: 6px;
-	border-radius: 4px;
+	min-height: 16px;
+	border-radius: 9999px;
 	background: transparent;
 	border: none;
 }
@@ -34,5 +37,5 @@ window#osd segment.active {
 	border: none;
 	background: @osd_fill;
 }
-window#osd segment { margin-left: 8px; }
+window#osd segment { margin-left: 4px; }
 window#osd segment:first-child { margin-left: 0; }

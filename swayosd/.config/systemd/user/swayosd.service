@@ -5,7 +5,9 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/swayosd-server -s %h/.config/swayosd/style.css
+# --top-margin is a fraction of the room above and below the OSD (0.5 centres it): 0.0625 puts a
+# 56px pill 64px down a 1080px screen, 8px under the bar (8px margin, 48px pieces)
+ExecStart=/usr/bin/swayosd-server -s %h/.config/swayosd/style.css --top-margin 0.0625
 Restart=on-failure
 
 [Install]
