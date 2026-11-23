@@ -71,7 +71,7 @@ Checks:
       Mapped by hand and stated in the header: `CircleShape` → `full = 9999`; `FontFamily.SansSerif`
       → `IBM Plex Sans` (the spec's typeface decision); font weights Normal, Medium, Bold → 400,
       500, 700.
-- [ ] `theme`: a `TOKENS` allowlist generated from the spec's word list; load `tokens.toml` once
+- [x] `theme`: a `SYSTEM_TOKENS` allowlist (`TOKENS` is taken by `theme lint`'s secret pattern) generated from the spec's word list; load `tokens.toml` once
       per render; unknown group or key fails; value types number, four-number list, string; each
       token added to `words`; `mix`'s amount takes a `state_*` word.
 - [ ] Docs in the same commit: the tokens section of `docs/theming.md` (word list, units, source,

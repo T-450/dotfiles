@@ -17,6 +17,8 @@ with its slug in place of {palette} (an app that keeps a theme per palette).
 A palette's optional [material] table holds the 45 Material 3 roles, read by templates as m3_<role>;
 a palette without it derives them from its own roles, and every palette must meet the M3 contrast
 floors (MATERIAL_FLOORS).
+theme/tokens.toml holds the Material 3 system tokens (type, shape, elevation, motion, state), read
+by templates as words <table>_<key> ({{shape_corner_large}}); `mix` takes a state_* word as its amount.
 Reload hooks (<app>/reload.sh) must not leave background processes holding stdout/stderr.
 The active palette's name is kept in $XDG_STATE_HOME/theme/current.
 Stdlib only, so it runs on a bare Arch install with just `python`.
@@ -82,7 +84,27 @@ MATERIAL = [
     "tertiary_fixed", "tertiary_fixed_dim", "on_tertiary_fixed", "on_tertiary_fixed_variant",
     "shadow", "scrim",
 ]
-HEX =re.compile(r"#[0-9a-fA-F]{6}")
+# theme/tokens.toml: the Material 3 system tokens (type, shape, elevation, motion, state), one set for
+# every palette, read by templates as words <table>_<key>. This is the whole allowlist: the bar and
+# the session pieces depend on these names.
+TOKENS_FILE = REPO / "theme" / "tokens.toml"
+_TYPE_KEYS = [f"{r}_{s}_{p}" for r in ("display", "headline", "title", "body", "label")
+              for s in ("large", "medium", "small") for p in ("size", "line_height", "weight", "tracking")]
+SYSTEM_TOKENS = {
+    "shape": [f"corner_{c}" for c in ("none", "extra_small", "small", "medium", "large", "large_increased",
+                                      "extra_large", "extra_large_increased", "extra_extra_large", "full")],
+    "elevation": [f"level{i}" for i in range(6)],
+    "motion": [f"spring_{k}_{s}_{p}" for k in ("spatial", "effects") for s in ("fast", "default", "slow")
+               for p in ("damping", "stiffness")]
+              + [f"duration_{d}{i}" for d in ("short", "medium", "long", "extra_long") for i in range(1, 5)]
+              + [f"easing_{e}" for e in ("standard", "standard_accelerate", "standard_decelerate", "emphasized",
+                                         "emphasized_accelerate", "emphasized_decelerate", "linear")],
+    "state": ["hover", "focus", "pressed", "dragged"],
+    "type": _TYPE_KEYS,
+    "type_emphasized": _TYPE_KEYS + [k[:-len("_size")] + "_font" for k in _TYPE_KEYS if k.endswith("_size")],
+    "type_font": ["brand", "plain"],
+}
+HEX = re.compile(r"#[0-9a-fA-F]{6}")
 UNSAFE = re.compile(r"[\x00-\x1f\x7f\"'`$\\{}]")
 
 
@@ -209,6 +231,58 @@ def material_defaults(v, dark):
     return m
 
 
+_token_words = None
+
+
+def token_words():
+    """theme/tokens.toml as template words <table>_<key>, checked against SYSTEM_TOKENS once per run."""
+    global _token_words
+    if _token_words is not None:
+        return _token_words
+    try:
+        data = tomllib.loads(TOKENS_FILE.read_text())
+    except (OSError, tomllib.TOMLDecodeError) as e:
+        raise ThemeError(f"tokens.toml: {e}") from None
+    unknown = sorted(set(data) - set(SYSTEM_TOKENS))
+    if unknown:
+        raise ThemeError(f"tokens.toml: unknown table {', '.join(unknown)} (have: {', '.join(SYSTEM_TOKENS)})")
+    words = {}
+    for table in sorted(SYSTEM_TOKENS, key=lambda t: t != "type_font"):  # fonts first: *_font names one
+        got, keys = data.get(table, {}), SYSTEM_TOKENS[table]
+        extra, missing = sorted(set(got) - set(keys)), [k for k in keys if k not in got]
+        if extra or missing:
+            raise ThemeError(f"tokens.toml [{table}]: " + "; ".join(
+                [f"unknown {', '.join(extra)}"] * bool(extra) + [f"missing {', '.join(missing)}"] * bool(missing)))
+        for k in keys:
+            words[f"{table}_{k}"] = token_value(table, k, got[k], words)
+    _token_words = words
+    return words
+
+
+def token_value(table, key, x, words):
+    """A token as template text: numbers as `16` or `0.08`, an easing as `0.05, 0.7, 0.1, 1`,
+    a font as its family; an emphasized style's `brand` or `plain` resolves to [type_font]."""
+    where = f"tokens.toml {table}.{key}"
+
+    def number(n):
+        if isinstance(n, bool) or not isinstance(n, (int, float)):
+            raise ThemeError(f"{where}: expected a number, got {n!r}")
+        return f"{n:g}"
+    if key.startswith("easing_"):
+        if not (isinstance(x, list) and len(x) == 4):
+            raise ThemeError(f"{where}: expected four numbers, got {x!r}")
+        return ", ".join(number(n) for n in x)
+    if table == "type_font":
+        if not isinstance(x, str) or not x.strip():
+            raise ThemeError(f"{where}: expected a font family, got {x!r}")
+        return clean_name(x)
+    if key.endswith("_font"):
+        if x not in ("brand", "plain"):
+            raise ThemeError(f"{where}: expected \"brand\" or \"plain\", got {x!r}")
+        return words[f"type_font_{x}"]
+    return number(x)
+
+
 def flatten(value, over):
     """#rrggbb or #rrggbbaa -> opaque rgb tuple composited over `over`."""
     v = value.strip()
@@ -318,6 +392,7 @@ def load_palette(slug, path=None):
         "color_scheme": "prefer-dark" if dark else "prefer-light",
         "home": str(Path.home()),   # for configs that need absolute paths (runner-up)
     }
+    words.update(token_words())
     return v, words
 
 
@@ -384,8 +459,8 @@ def apply_filters(name, filters, colors, words, where):
             other, _, t = rest.partition(":")
             if other not in colors:
                 raise ThemeError(f"{where}: mix with unknown role {other!r}")
-            try:
-                amount = float(t)
+            try:  # a state layer opacity by name: {{m3_surface|mix:m3_on_surface:state_hover}}
+                amount = float(words[t] if t.startswith("state_") and t in words else t)
             except ValueError:
                 raise ThemeError(f"{where}: mix amount {t!r} is not a number") from None
             if not 0 <= amount <= 1:  # also rejects nan/inf

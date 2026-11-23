@@ -96,7 +96,7 @@ repo; GNU stow links each folder's `.config/`, `.local/` and dotfiles into your 
     .config/systemd/user/*.service   user units, enabled by install.sh
     .stow-local-ignore  marks the app as linked; keeps everything but dot-entries out of $HOME
     .gitignore       rendered and generated files
-  theme/            the renderer (~/.local/bin/theme) and palettes/
+  theme/            the renderer (~/.local/bin/theme), palettes/ and tokens.toml (M3 system tokens)
   tools/            docs (generator/checker), setup-lib.sh (setup.sh helpers, retry), test-home
   tests/            tests/run + tests/unit.d/*-test.sh
   docs/             you are here

@@ -64,6 +64,19 @@ every checked text role made legible, so any palette that loads today still load
 on `surface`. The fixed pairs and text on surface containers are left unchecked on purpose. One
 failing palette fails every render, since per-palette templates load them all.
 
+## System tokens
+
+`theme/tokens.toml` holds the Material 3 system tokens, one set for every palette: corner sizes,
+elevation, motion (Expressive springs, durations, easings), state-layer opacities and the type
+scale. They come from Jetpack Compose `material3` 1.5.0's token sources (the file's header pins the
+jar's URL and sha256); the shell's typeface is IBM Plex Sans. Templates read each as a word
+`<table>_<key>`, with the unit added by the template: `{{shape_corner_large}}` is `16` (px),
+`{{motion_duration_medium2}}` is `300` (ms), `{{motion_easing_emphasized_decelerate}}` is
+`0.05, 0.7, 0.1, 1`, `{{type_label_large_size}}` is `14`. A state layer is a color:
+`{{m3_surface|mix:m3_on_surface:state_hover}}`. The names are fixed by `SYSTEM_TOKENS` in `theme`
+(the full list is in [SPEC-theme](designs/material-shapeshifter/SPEC-theme.md)); an unknown or
+missing name fails the render.
+
 ## Syntax
 
 An optional `[syntax]` table gives the editors (vim, helix) their syntax colors, as roles

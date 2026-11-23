@@ -185,7 +185,7 @@ A state layer is a color: `{{m3_surface|mix:m3_on_surface:state_hover}}`.
    One failing palette fails every render (`render_all` loads all palettes for per-palette
    templates), which is why derived roles are made to pass. This replaces the inputs' "Contrast
    from theme.contrast" comment (no such module exists in the repo).
-4. `theme` reads `theme/tokens.toml` against an allowlist in `theme` (a `TOKENS` table, as
+4. `theme` reads `theme/tokens.toml` against an allowlist in `theme` (a `SYSTEM_TOKENS` table, as
    `ROLES` is for colors): known groups and names only. Value types: number, a four-number list
    (easings), string (the typeface family; the emphasized styles' font resolves to it). Each token
    becomes a template word (below). `mix`'s amount accepts a `state_*` word as well as a number.
