@@ -1,4 +1,10 @@
-/* wlogout. Colors: colors.css, rendered from the active palette by theme/theme. */
+/* wlogout: a Material 3 menu (docs/designs/material-shapeshifter/SPEC-bar.md) under the bar's power
+   piece. wlogout fills the screen, so the menu is its button grid, framed by the -T/-R/-L/-B
+   margins the callers pass (mango/bind.conf's $sessionmenu, waybar's custom/power): one column,
+   280px wide, 64px down and 8px in from the right, the bar's edge. The grid is the card
+   (surface_container_high, corner large); each row is 48px with 4px around it, a 24px icon 16px
+   in (-gtk-recolor: the label's color), the label in body large; power off is error. The rest of the screen stays clear.
+   Colors: colors.css, rendered from the active palette by theme/theme. */
 @import "colors.css";
 * {
     background-image: none;
@@ -8,32 +14,31 @@
 window {
     font-family: "IBM Plex Sans", sans-serif;
     font-size: 12pt;
-    color: @fg;
-    background-color: @desktop;
+    color: @on_menu;
+    background-color: transparent;
 }
+
+grid { background-color: @menu; border-radius: 16px; }
 
 button {
+    min-height: 48px;
+    margin: 4px 8px;
+    padding: 0 16px 0 52px;
     background-repeat: no-repeat;
-    background-position: center;
-    background-size: 35%;
+    background-position: 16px center;
+    background-size: 24px 24px;
     background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    color: @muted;
+    border: none;
+    border-radius: 9999px;
+    color: @on_menu;
     text-shadow: none;
-    margin: 160px 8px;
+    transition: background-color 150ms ease-out;
 }
+button:focus, button:hover { background-color: @menu_hover; }
 
-button:focus,
-button:hover {
-    background-color: @widget;
-    border-color: @accent;
-    color: @selfg;
-}
-
-#lock      { background-image: image(url("./icons/lock.png")); }
-#logout    { background-image: image(url("./icons/logout.png")); }
-#suspend   { background-image: image(url("./icons/sleep.png")); }
-#shutdown  { background-image: image(url("./icons/power.png")); }
-#reboot    { background-image: image(url("./icons/restart.png")); }
-#hibernate { background-image: image(url("./icons/hibernate.png")); }
+#lock      { background-image: -gtk-recolor(url("icons/lock-symbolic.svg")); }
+#suspend   { background-image: -gtk-recolor(url("icons/suspend-symbolic.svg")); }
+#hibernate { background-image: -gtk-recolor(url("icons/hibernate-symbolic.svg")); }
+#logout    { background-image: -gtk-recolor(url("icons/logout-symbolic.svg")); }
+#reboot    { background-image: -gtk-recolor(url("icons/reboot-symbolic.svg")); }
+#shutdown  { background-image: -gtk-recolor(url("icons/shutdown-symbolic.svg")); color: @danger; }

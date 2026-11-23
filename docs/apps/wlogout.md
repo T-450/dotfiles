@@ -1,8 +1,8 @@
 # wlogout
 
-The power menu (super+esc p, or the bar's power icon): lock, logout, suspend, hibernate, reboot, shutdown. Its background is the opaque desktop color, and `rule.conf` turns blur off under it: the menu acts on single keys, so it stays solid and unmistakable.
+The power menu (super+esc p, or the bar's power piece), a Material 3 menu ([SPEC-bar](../designs/material-shapeshifter/SPEC-bar.md)) under the power piece: lock, suspend, hibernate, log out, restart, power off. wlogout fills the screen, so the menu is its button grid framed by margins: one column (`-b 1`), 280px wide, 64px down and 8px in from the right (`-T 64 -R 8 -L 1632 -B 680`, worked out in `mango/bind.conf`'s `$sessionmenu`, which waybar's `custom/power` repeats). The grid is the card (`surface_container_high`, corner large); each row is a 48px pill with a 24px icon and the label in body large (`layout`: `"width": 0` aligns it left), power off in `error`. The rest of the screen stays clear, and `rule.conf` turns blur off under it. The icons are symbolic SVGs (`icons/*-symbolic.svg`) recolored to the row's text. The margins assume the T14's 1920x1080 panel.
 
-Logout runs `mango-quit`. Each button acts on a single key (`l` lock, `m` logout, `d` shutdown, `r` reboot, `s` suspend, `h` hibernate), so the menu sits in the session group (super+esc, then p), two deliberate steps away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
+Log out runs `mango-quit`. Each row acts on a single key (`l` lock, `m` log out, `d` power off, `r` restart, `s` suspend, `h` hibernate), so the menu sits in the session group (super+esc, then p), two deliberate steps away from anything a slip could reach. The keys can't simply be removed: wlogout leaves a button's key uninitialized when `keybind` is missing.
 
 The AUR package checks wlogout's signed release against its maintainer's key (`validpgpkeys`). That key is kept in `keys/F4FDB18A9937358364B276E9E25D679AF73C6D2F.asc` and imported by `install.sh` before the AUR builds, so a fresh install doesn't fetch it from a public keyserver; when the keyservers were down (2026-11-11), every clean install failed there. It came from the maintainer's GitHub keys and verified the 1.2.2 release's signature. If a new wlogout release is signed with another key, the build fails until that key is added the same way.
 
@@ -14,16 +14,16 @@ The AUR package checks wlogout's signed release against its maintainer's key (`v
 **Linked into your home** (stow, `install.sh --link`):
 
 - `~/.config/wlogout/colors.css`
-- `~/.config/wlogout/icons/hibernate.png`
-- `~/.config/wlogout/icons/lock.png`
-- `~/.config/wlogout/icons/logout.png`
-- `~/.config/wlogout/icons/power.png`
-- `~/.config/wlogout/icons/restart.png`
-- `~/.config/wlogout/icons/sleep.png`
+- `~/.config/wlogout/icons/hibernate-symbolic.svg`
+- `~/.config/wlogout/icons/lock-symbolic.svg`
+- `~/.config/wlogout/icons/logout-symbolic.svg`
+- `~/.config/wlogout/icons/reboot-symbolic.svg`
+- `~/.config/wlogout/icons/shutdown-symbolic.svg`
+- `~/.config/wlogout/icons/suspend-symbolic.svg`
 - `~/.config/wlogout/layout`
 - `~/.config/wlogout/style.css`
 
 **Rendered from the palette** (`theme`):
 
-- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `accent`, `bg_desktop`, `bg_widget`, `fg_secondary`, `fg_text`, `name`, `selection_fg`, `slug`
+- `wlogout/.config/wlogout/colors.css.tmpl` → `wlogout/.config/wlogout/colors.css`: `m3_error`, `m3_on_surface`, `m3_surface_container_high`, `name`, `slug`
 <!-- end generated -->

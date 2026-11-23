@@ -1,41 +1,53 @@
 {
-    "label" : "lock",
-    "action" : "pidof -q hyprlock || hyprlock &",
-    "text" : "  Lock   ",
-    "keybind" : "l"
+    "label": "lock",
+    "action": "pidof -q hyprlock || hyprlock &",
+    "text": "Lock",
+    "keybind": "l",
+    "width": 0,
+    "height": 0.5
 }
 
 {
-    "label" : "logout",
-    "action" : "~/.local/bin/mango-quit",
-    "text" : " Logout  ",
-    "keybind" : "m"
+    "label": "suspend",
+    "action": "systemctl suspend",
+    "text": "Suspend",
+    "keybind": "s",
+    "width": 0,
+    "height": 0.5
 }
 
 {
-    "label" : "shutdown",
-    "action" : "systemctl poweroff",
-    "text" : "Shutdown ",
-    "keybind" : "d"
+    "label": "hibernate",
+    "action": "systemctl hibernate",
+    "text": "Hibernate",
+    "keybind": "h",
+    "width": 0,
+    "height": 0.5
 }
 
 {
-    "label" : "reboot",
-    "action" : "systemctl reboot",
-    "text" : " Reboot  ",
-    "keybind" : "r"
+    "label": "logout",
+    "action": "~/.local/bin/mango-quit",
+    "text": "Log out",
+    "keybind": "m",
+    "width": 0,
+    "height": 0.5
 }
 
 {
-    "label" : "suspend",
-    "action" : "systemctl suspend",
-    "text" : " Suspend ",
-    "keybind" : "s"
+    "label": "reboot",
+    "action": "systemctl reboot",
+    "text": "Restart",
+    "keybind": "r",
+    "width": 0,
+    "height": 0.5
 }
 
 {
-    "label" : "hibernate",
-    "action" : "systemctl hibernate",
-    "text" : "Hibernate",
-    "keybind" : "h"
+    "label": "shutdown",
+    "action": "systemctl poweroff",
+    "text": "Power off",
+    "keybind": "d",
+    "width": 0,
+    "height": 0.5
 }
