@@ -56,7 +56,7 @@ larger than it was in the bar: that growth is the declared impossible beat, neve
 
 | | |
 |---|---|
-| Trigger | Super (as today's launcher key) |
+| Trigger | super+d, today's launcher key |
 | Frame 0 | the core plates leave a dashed socket; the query is typed into it, already live |
 | Motion | per plate, 6 ms apart: fold edge-on (short2, emphasized accelerate), cross the screen at the plate's own size as a line of light (short3, standard), unfold and grow to a 200 × 168 tile (short3, emphasized decelerate); last tile at about 440 ms |
 | Content | eight tiles: index, code, name; the selected tile's light `secondary` |
@@ -102,7 +102,7 @@ its bottom media bar stays.
 
 1. In desktop-vm: shots of rest, launcher open, spectrum with windows (blades inside the core)
    and on an empty workspace (blades below), in `space` and `space-light`.
-2. Launcher: query echoes on the first frame after Super; last tile settled within 450 ms
+2. Launcher: query echoes on the first frame after super+d; last tile settled within 450 ms
    (frame timestamps logged by the bar in a debug mode).
 3. Mass: the debug mode logs the plate count per frame; it is 8 in every frame of a scripted run
    (open, close, open mid-close, spectrum on and off, launcher during spectrum).
