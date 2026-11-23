@@ -1,7 +1,7 @@
 # SPEC-bar: the shell on waybar and the apps we have
 
-Module `bar` of the [Material shapeshifter map](README.md). Status: draft (revision 4), awaiting
-approval. Date: 2026-11-23. Depends on [SPEC-theme](SPEC-theme.md) (built: `m3_*` roles and the
+Module `bar` of the [Material shapeshifter map](README.md). Status: revision 4, approved
+2026-11-23. Date: 2026-11-23. Depends on [SPEC-theme](SPEC-theme.md) (built: `m3_*` roles and the
 system tokens). The design canvas board "Chosen: the shell redesigned on waybar and the existing
 apps" is the visual reference; where this text and the board differ, this text wins.
 
